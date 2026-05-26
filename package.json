@@ -1,0 +1,41 @@
+{
+  "name": "hive",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hive OS - Framework de Inteligência Simbiótica para Orquestração de Squads",
+  "engines": {
+    "node": "18.20.8"
+  },
+  "scripts": {
+    "// --- PRODUTO (Apps Proxy) ---": "",
+    "dev": "npm --prefix apps/core run dev",
+    "dev:core": "npm --prefix apps/core run dev",
+    "dev:frontend": "npm --prefix apps/frontend run dev",
+    "dev:backend": "npm --prefix apps/backend run dev",
+    "check:types": "npm --prefix apps/core run check:types",
+    "build": "npm --prefix apps/core run build",
+    "check:all": "npm run check:types && npm run build",
+    "test": "npm --prefix apps/core run test",
+    
+    "// --- HIVE FRAMEWORK (Orchestrator) ---": "",
+    "hive": "bash ./beehive/bin/hive.sh",
+    "squad": "npm run hive --",
+    "hive:inbox": "npm run hive -- inbox",
+    "hive:status": "npm run hive -- status",
+    "hive:lock": "npm run hive -- lock",
+    "hive:gate": "npm run hive -- gate",
+    "hive:insight": "npm run hive -- insight",
+    
+    "// --- AGENT SESSIONS ---": "",
+    "hive:session:gemini": "npm run hive -- session-start gemini",
+    "hive:session:claude": "npm run hive -- session-start claude",
+    "hive:session:copilot": "npm run hive -- session-start copilot",
+    "hive:session:state": "npm run hive -- session-update",
+    
+    "// --- OPS / HML ---": "",
+    "ops:deploy:hml": "bash ./legacy/ops/scripts/deploy-hml.sh",
+    "ops:smoke:hml": "bash ./legacy/ops/scripts/smoke-hml.sh",
+    "ops:status:hml": "bash ./legacy/ops/scripts/status-hml.sh",
+    "ops:logs:hml": "bash ./legacy/ops/scripts/logs-hml.sh"
+  }
+}

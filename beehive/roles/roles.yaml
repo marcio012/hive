@@ -1,0 +1,42 @@
+# hive/config/roles.yaml
+# Governança Global do Hive Framework — Edição 2026
+
+hive:
+  name: "Hive Framework"
+  owner: "Márcio"
+  currency: "BRL"
+  
+agents:
+  gemini:
+    role: "Hive Lead / Tech Lead"
+    capabilities:
+      can_orchestrate: true
+      can_veto: true           # Poder de barrar Claude/Copilot
+      can_read_all: true       # Visão total do Reino e da Obra
+      can_write_config: true
+    models:
+      complex: "gemini-3.5-pro"   # Orquestração e Estratégia
+      routine: "gemini-3.5-flash" # Automação e Triagem
+    
+  claude:
+    role: "Arquiteto / Estrategista"
+    model: "claude-3-5-sonnet"
+    capabilities:
+      can_design_blueprints: true
+      can_read_product: true
+      can_write_files: false      # Delegado ao Copilot via contrato
+    escalation_path: "Gemini"
+    
+  copilot:
+    role: "Engenheiro de Software / Executor"
+    model: "gpt-4o-mini"
+    capabilities:
+      can_implement: true
+      can_execute_tests: true
+      can_read_task_context: true # Só vê o que o Hive permitir
+    escalation_path: "Gemini"
+
+rules:
+  context_caching: true           # Ativa economia de 90% via cache 3.5
+  enforce_contracts: true         # Gemini DEVE barrar se fugir do contrato
+  telemetry_log: "intelligence/logs/custos.log"

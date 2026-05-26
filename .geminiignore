@@ -1,0 +1,26 @@
+# .geminiignore - Omitir arquivos do contexto do Gemini CLI
+# Hive Lead: Isolamento de Legado para economia de tokens e precisão.
+
+# Diretórios de Infra de IA (Não precisam ser lidos em cada prompt)
+.hive/
+.agile-squad/
+.hive-agent/locks.json
+
+# CÓDIGO LEGADO (Purge de Contexto)
+# Este diretório contém o sistema antigo e scripts obsoletos.
+# Ignorar para focar 100% no TenantOS.
+legacy/
+
+# Artefatos Temporários e Logs
+.tmp/
+ai/construcao/logs/
+*.log
+npm-debug.log*
+
+# Node Modules
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+debug_dist/
