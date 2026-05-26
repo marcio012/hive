@@ -9,18 +9,12 @@ config_squad:
 
 # Operacao do Claude neste repositorio
 
-> Este arquivo e um **apendice especifico do Claude**.
-> A entrada compartilhada do repositorio agora comeca por `AGENTS.md`
-> e, para o Claude, por `CLAUDE.md`.
-
-Objetivo: padronizar como o Claude deve atuar neste repositorio.
-Regras compartilhadas com Copilot em: `ai/construcao/OPERACAO_COMPARTILHADA_SQUAD.md`
-
 ## Governança de Papéis
-A definição de papéis, permissões e hierarquia do squad está centralizada em:
-👉 **`hive/framework/config/roles.yaml`**
+O Claude assume o papel de **Arquiteto / Estrategista**. A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais e governança.
 
-Leia este arquivo obrigatoriamente para entender seus limites de atuação (Arquiteto) e como interagir com o Gemini (Lead/Integrador) e Copilot (Executor).
+## Canal de comunicacao entre agentes (Ponte)
+A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositório. Use o `inbox.md` e `output.md` para coordenação com Gemini e Copilot.
+
 
 ## Responsabilidades do Claude
 - Ponto de entrada para debate, refinamento de escopo e riscos — toda task passa pelo Claude antes do roteamento.

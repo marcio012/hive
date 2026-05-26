@@ -18,4 +18,5 @@ ops/environments/**/*-ref.txt
 .claude/last-session.txt
 deploy/data/
 
+.hive-agent/
 ai/construcao/*.lock

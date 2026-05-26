@@ -6,7 +6,7 @@ set -euo pipefail
 
 # Configuração de Caminhos
 # Assume o diretório atual do framework se HIVE_HOME não for fornecido externamente
-HIVE_HOME="${HIVE_HOME:-$(pwd)/hive/framework}"
+HIVE_HOME="${HIVE_HOME:-$(pwd)}"
 PROJECT_PATH=$(pwd) # Assume o diretório atual como projeto por padrão
 
 # Cores para saída
@@ -35,20 +35,20 @@ CMD=$1
 shift
 
 # Verifica se o comando existe no bin/ do Hive
-SCRIPT_PATH="$HIVE_HOME/bin/hive-$CMD.sh"
+SCRIPT_PATH="$HIVE_HOME/beehive/bin/hive-$CMD.sh"
 
 if [[ ! -f "$SCRIPT_PATH" ]]; then
   # Tenta mapeamento de nomes (retrocompatibilidade e conveniência)
   case "$CMD" in
-    inbox) SCRIPT_PATH="$HIVE_HOME/bin/hive-inbox.sh" ;;
-    *) echo -e "${RED}Erro: Comando '$CMD' não encontrado em $HIVE_HOME/bin/${NC}"; exit 1 ;;
+    inbox) SCRIPT_PATH="$HIVE_HOME/beehive/bin/hive-inbox.sh" ;;
+    *) echo -e "${RED}Erro: Comando '$CMD' não encontrado em $HIVE_HOME/beehive/bin/${NC}"; exit 1 ;;
   esac
 fi
 
 # Injeção de Contexto Global para o Script Filho
 export HIVE_HOME
 export PROJECT_PATH
-export HIVE_ROLES="$HIVE_HOME/config/roles.yaml"
+export HIVE_ROLES="$HIVE_HOME/beehive/roles/roles.yaml"
 
 # Executa o script específico do comando
 exec bash "$SCRIPT_PATH" "$@"

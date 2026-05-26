@@ -39,3 +39,10 @@ if [[ ! -d "$PROJECT_PATH/.hive-agent" ]]; then
 fi
 
 echo -e "\033[0;32mHive operacional. Pronto para orquestrar.\033[0m"
+
+# 5. Exibe a Página Inicial (HIVE.md)
+if [[ -f "$HIVE_HOME/beehive/HIVE.md" ]]; then
+  echo -e "\n"
+  cat "$HIVE_HOME/beehive/HIVE.md"
+  echo -e "\n"
+fi

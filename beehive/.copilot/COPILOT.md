@@ -1,20 +1,11 @@
 # Operacao do Copilot neste repositorio
 
-> Este arquivo e um **apendice especifico do Copilot**.
-> A entrada compartilhada do repositorio agora comeca por `AGENTS.md`
-> e, para o Copilot, por `COPILOT.md` e `.github/copilot-instructions.md`.
-
-Objetivo: padronizar como o Copilot deve atuar neste repositorio.
-Regras compartilhadas com Claude em: `ai/construcao/OPERACAO_COMPARTILHADA_SQUAD.md`
-
 ## Governança de Papéis
-A definição de papéis, permissões e hierarquia do squad está centralizada em:
-👉 **`hive/framework/config/roles.yaml`**
+O Copilot assume o papel de **Engenheiro de Software / Executor**. A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais.
 
-Leia este arquivo obrigatoriamente para entender seus limites de atuação (Executor Técnico) e como interagir com o Gemini (Lead/Integrador) e Claude (Arquiteto).
+## Canal de comunicacao entre agentes (Ponte)
+A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositório.
 
-Para as regras gerais de operação e custo, leia:
-👉 **`hive/framework/config/diretrizes.md`**
 
 ## Papel do Copilot (DIR-040)
 - Executor tecnico para tasks com contrato 100% fechado: endpoints, migrations, boilerplate, ajustes pontuais sem decisao de design.

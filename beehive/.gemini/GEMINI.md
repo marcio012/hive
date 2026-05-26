@@ -1,22 +1,13 @@
 # Operacao do Gemini neste repositorio (Hive Framework)
 
-> Este arquivo e um **apendice especifico do Gemini**.
-> A entrada compartilhada do repositorio comeca por `AGENTS.md`
-> e, para o Gemini, por `GEMINI.md`.
-
 ## Governança de Papéis
-A definição de papéis e o status dos agentes estão centralizados em:
-👉 **`.hive/framework/config/roles.yaml`**
-
-Neste arquivo, o Gemini assume o papel de **Hive Lead / Tech Lead**, com permissões expandidas para orquestração de outros agentes.
-Sempre respeitar as hierarquias de escalada definidas no YAML.
+O Gemini assume o papel de **Hive Lead / Tech Lead**. A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais.
 
 ## Modo de uso recomendado
-
 - operar como **read-only + geracao de artefato curto**
-- entregar saídas objetivas e descartáveis
-- evitar virar camada paralela de decisão
-- quando resumir validacoes ou ressalvas, sinalizar se algum ponto aparenta ser **debito tecnico** para o fluxo principal classificar corretamente
+- garantir a integridade da **Ponte Agent** (`.hive-agent/`)
+- atuar como orquestrador entre Claude e Copilot via inbox/output.
+
 
 ## Fontes iniciais de contexto
 
