@@ -1,8 +1,5 @@
 # HIVE OS - Interface de Início de Sessão (Home Screen)
 
-> **Caminho Sugerido:** `beehive/cognition/welcome.md`
-> **Propósito:** Esta é a "Tela de Boas-vindas" que o script de bootstrap deve exibir ao iniciar o HIVE. Ela serve para contextualizar o usuário e forçar a escolha do papel especializado.
-
 ---
 
 ## 🎨 Layout Visual (Terminal UI)
@@ -42,6 +39,7 @@ TELEMETRIA DA SESSÃO:
 [TOKENS]: {{SESSION_TOKENS}}
 [CUSTO ]: {{ESTIMATED_COST}} BRL
 ============================================================
+```
 
 ---
 
