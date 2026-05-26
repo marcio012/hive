@@ -6,13 +6,13 @@
 
 ```text
 ============================================================
-🐝 HIVE OS v1.0 — Kernel de Inteligência Simbiótica
+🐝 HIVE OS {{KERNEL_VERSION}} — Kernel de Inteligência Simbiótica
 ============================================================
 
 STATUS DO REPOSITÓRIO:
-[MARCO]: v1.1.0 - Cognição Refatorada (DRIVER.md)
-[PRODUTO]: TenantOS (Em modelagem de Ciclo 2)
-[ACTIVE_ISSUE]: #97 Onboarding Full (Bloqueado)
+[MARCO]: {{SYSTEM_VERSION}} — Cognição Refatorada (DRIVER.md)Vamos 
+[PRODUTO]: {{PRODUCT_NAME}} ({{PRODUCT_STATUS}} — Fonte: Board de Evolução)
+[ACTIVE_ISSUE]: {{CURRENT_ISSUE}}
 
 ------------------------------------------------------------
 SELECIONE O CARTUCHO DE INTELIGÊNCIA:
@@ -35,9 +35,12 @@ SELECIONE O CARTUCHO DE INTELIGÊNCIA:
 ------------------------------------------------------------
 [?] Seleção (1-3): _
 
-TELEMETRIA DA SESSÃO:
+<!-- {{IF_RETURN_FROM_MENU}} -->
+------------------------------------------------------------
+TELEMETRIA DA ÚLTIMA SESSÃO (Resumo):
 [TOKENS]: {{SESSION_TOKENS}}
 [CUSTO ]: {{ESTIMATED_COST}} BRL
+{{ENDIF}}
 ============================================================
 ```
 
@@ -47,12 +50,14 @@ TELEMETRIA DA SESSÃO:
 
 Quando o usuário seleciona uma opção (ex: `2`), o sistema deve realizar os seguintes procedimentos técnicos:
 
-1.  **Context Flush (Opcional):** Limpar o buffer de mensagens anteriores para evitar a "Amnésia do 3º Dia".
-2.  **Injeção de Driver:** Carregar o arquivo `beehive/cognition/system/[papel].md` como a instrução primária de sistema.
-3.  **Habilidade Âncora:** Ler o `beehive/manifesto.md` para garantir que o papel selecionado não fira o DNA do HIVE.
-4.  **Prompt de Abertura:** A IA deve responder confirmando o papel:
-    > *"Driver [Projetista] carregado. Estou ouvindo, Márcio. O que vamos desenhar hoje?"*
-
----
-**Pergunta para o Márcio:**
-Faz sentido esse layout ser a primeira coisa que você vê ao abrir o terminal? Quer adicionar algum campo de "Telemetria" (ex: custo da última sessão, tokens usados) nessa tela inicial?
+1.  **Busca de Dados Dinâmicos:** 
+    - `{{KERNEL_VERSION}}`: Versão atual do core.
+    - `{{PRODUCT_STATUS}}`: Deve ser extraído do Board de Evolução do Projeto.
+2.  **Context Flush (Opcional):** Limpar o buffer de mensagens anteriores para evitar a "Amnésia do 3º Dia".
+3.  **Injeção de Driver:** Carregar o arquivo `beehive/cognition/system/[papel].md` como a instrução primária de sistema.
+4.  **Habilidade Âncora:** Ler o `beehive/manifesto.md` para garantir que o papel selecionado não fira o DNA do HIVE.
+5.  **Controle de Visibilidade (Telemetria):**
+    - O bloco `{{IF_RETURN_FROM_MENU}}` deve permanecer oculto no BOOT inicial.
+    - Deve ser renderizado apenas quando o usuário encerra um fluxo e retorna à tela principal.
+6.  **Prompt de Abertura:** A IA deve responder confirmando o papel:
+    > *"Driver [Papel] carregado. Estou ouvindo, Márcio. O que vamos fazer agora?"*
