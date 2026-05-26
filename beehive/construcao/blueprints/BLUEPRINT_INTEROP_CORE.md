@@ -1,34 +1,22 @@
 # Blueprint: Interoperabilidade de Core (Ponte NestJS <> Express)
-**Vínculo:** INITIALIZATION_MAP.md
-**Status:** Em Desenho (Projetista)
-**Versão:** 1.0.0
+**Vínculo:** DEBATE-011 (Consolidado)
+**Status:** ✅ APROVADO (Aguardando OK Owner)
+**Versão:** 1.1.0
 
 ---
 
 ## 1. 🎯 Objetivo Técnico
-Resolver a "Bifurcação de Cérebros" unificando a identidade do usuário e o contexto do Tenant entre o novo Core (NestJS) e o Legado (Express). O objetivo é que o Frontend opere de forma transparente, sem precisar gerenciar logins diferentes para rotas diferentes.
+Unificar a identidade do usuário e o contexto do Tenant entre NestJS (:3000) e Express (:5000) via Shared JWT.
 
 ## 2. 🔐 O Contrato de Identidade (Shared JWT)
-Para que ambos os backends reconheçam o usuário, adotaremos um **JWT Único**:
-- **Emissor (Issuer):** NestJS (Responsável único pela geração de tokens e renovação).
-- **Validador (Validator):** Ambos. O Express deve possuir um Middleware que valida a assinatura do JWT usando a **mesma Secret Key** do NestJS.
-- **Payload Padrão:**
-```json
-{
-  "sub": "user_id_123",
-  "email": "admin@petshop.com",
-  "tenantId": "cuid_tenant_xyz",
-  "role": "admin",
-  "iat": 1716750000,
-  "exp": 1716836400
-}
-```
+- **Emissor (Issuer):** NestJS.
+- **Validador:** Middleware em ambos os backends.
+- **Algoritmo:** Forçar `HS256`.
+- **Segurança (MANDATÓRIO):** A Secret Key **NUNCA** deve ser hardcoded. Deve ser lida da ENV `JWT_SECRET`.
 
 ## 3. 📡 O Contrato de Contexto (Tenant Propagation)
-Para garantir que o `tenantId` seja detectado de forma idêntica:
-1.  **Prioridade 1:** Payload do JWT (Campo `tenantId`).
-2.  **Prioridade 2 (Fallback/Check):** Header HTTP `x-tenant-id`.
-- **Regra de Ouro:** Se o `tenantId` do Header for diferente do `tenantId` do JWT, a transação deve ser bloqueada por conflito de segurança.
+- **Fonte de Verdade:** Payload do JWT (Campo `tenantId`).
+- **Middleware Express:** Deve injetar `req.context.tenantId`.
 
 ---
 
