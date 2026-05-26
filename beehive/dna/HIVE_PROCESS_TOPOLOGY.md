@@ -70,13 +70,14 @@ graph LR
 *   **📤 Saída:** Commit consolidado + Issue fechada no Board.
 *   **⚖️ Critério de Aceite do PO:** *"Eu autorizo este trabalho a se tornar parte permanente do meu patrimônio técnico?"*
 
-### 🎨 7. Cano: Materialização (Visão do Dono)
+### 🎨 4. Cano: Materialização (Visão do Dono)
 *   **Valor de Negócio:** Eliminar o "voo" do Owner sobre a tecnologia. Traduzir o terminal profundo em narrativa e visão de produto.
 *   **📥 Entrada:** Sucesso na Auditoria + Artefato Técnico.
 *   **⚙️ Regras (Guards):**
     - Proibido finalizar task sem Narrativa Humana.
-    - Obrigatoriedade de Diagrama Visual de entrega.
-*   **📤 Saída:** `beehive/docs/materializacao/NARRATIVA.md` + Diagramas.
+    - Obrigatoriedade de Diagrama Visual Dual (Fluxo + Sequência).
+*   **📤 Saída:** `MATERIALIZACAO_FULL.md` + **Status Report Final** em `registry/reports/`.
+
 *   **⚖️ Critério de Aceite do PO:** *"Eu entendi o que foi feito, por que foi feito e como isso muda o meu produto?"*
 
 ---
