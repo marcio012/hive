@@ -13,6 +13,7 @@ Este é o guia definitivo de navegação do Hive Framework. Ele separa o "Céreb
 *Onde reside a inteligência e o futuro.*
 - **`manifesto.md`:** A constituição do Hive.
 - **`HIVE_PROCESS_TOPOLOGY.md`:** O mapa dos processos (Canos).
+- **`SQUAD_SOS_GUIDE.md`:** Manual de intervenção manual para o Owner.
 - **`incubadora/`:** Projetos e ideias estratégicas em fase de maturação.
 
 ## 🚿 3. Camada de Cognição (`beehive/cognition/`)

@@ -33,6 +33,7 @@
     "hive:lock": "npm run hive -- lock",
     "hive:gate": "npm run hive -- gate",
     "hive:check": "npm run hive -- check",
+    "hive:health": "bash beehive/bin/hive-health.sh",
     "hive:telemetry": "bash beehive/bin/hive-telemetry.sh",
     "hive:insight": "npm run hive -- insight",
     "hive:view": "bash beehive/bin/hive-view.sh",
