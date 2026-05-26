@@ -1,17 +1,13 @@
-# Processo: Conectividade (Client-IA)
+# 🌐 Cano: Conectividade (External Bridge)
+**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
 
-## 🎯 Objetivo
-Gerenciar a interconectividade entre o HIVE e inteligências artificiais externas para integração de fluxos e requisitos.
+## 📥 [IN] Entrada (Válvula)
+- Manifestos ou requisitos vindos de IAs externas ou clientes (comando `client:connect`).
 
-## 📜 Regras e Contratos
-- Isolamento de Kernel: Nunca expor o código fonte ou segredos internos do HIVE para a IA externa.
-- Tradução de Protocolo: Mapear os requisitos da IA externa para as Skills e Processos internos do HIVE.
-- GAP Analysis: Gerar relatório de incompatibilidade caso o HIVE não possua a habilidade solicitada.
+## ⚙️ [RULES] Paredes do Cano (Regras)
+1. **ISOLAMENTO DE KERNEL:** Proibido expor segredos ou o core do Hive para o exterior.
+2. **SKILL MAPPING:** Traduzir pedidos externos para os processos [Canos] internos existentes.
+3. **GAP ALERT:** Sinalizar imediatamente se a requisição exigir uma Skill que o Hive ainda não possui.
 
-## ⚡ Gatilhos (Triggers)
-- Comando: `client:connect`.
-- Recebimento de manifestos externos em `ai/inbox/`.
-
-## 🔗 Conexões
-- [ai/roles/po.md]
-- [ai/cognition/registry/active-processes.md]
+## 📤 [OUT] Saída (Bocal)
+- Relatório de Compatibilidade e próximos passos em `beehive/collective_intelligence/`.

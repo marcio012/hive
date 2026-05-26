@@ -1,17 +1,14 @@
-# Processo: Especialização (Switch)
+# 🔄 Cano: Especialização (Switch de Papel)
+**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
 
-## 🎯 Objetivo
-Gerenciar a troca de papéis e a limpeza de contexto para garantir foco e evitar alucinações por excesso de ruído histórico.
+## 📥 [IN] Entrada (Válvula)
+- Comando `switch:<role>` ou seleção no menu `HIVE.md`.
 
-## 📜 Regras e Contratos
-- Sempre realizar o `Context Flush` ao trocar de papel.
-- Carregar o driver correspondente em `ai/roles/`.
-- Validar a intenção do papel contra o Manifesto do HIVE.
+## ⚙️ [RULES] Paredes do Cano (Regras)
+1. **CONTEXT FLUSH:** Limpar o buffer de mensagens anteriores para evitar amnésia ou confusão de papéis.
+2. **ROLE LOADING:** Carregar obrigatoriamente as instruções em `beehive/roles/[papel].md`.
+3. **MANIFESTO ALIGNMENT:** Verificar se o novo papel respeita o DNA da Colmeia.
 
-## ⚡ Gatilhos (Triggers)
-- Escolha na tela inicial (`HIVE.md`).
-- Comandos manuais: `switch:po`, `switch:projetista`, `switch:lead`.
-
-## 🔗 Conexões
-- [ai/roles/]
-- [HIVE.md]
+## 📤 [OUT] Saída (Bocal)
+- IA operando sob novo Driver cognitivo.
+- Mensagem de confirmação: "Driver [Papel] carregado. Estou ouvindo, Márcio."

@@ -1,18 +1,19 @@
 # Hive Framework OS
 
-Este repositório contém o **Hive Framework**, um Kernel de Inteligência Simbiótica projetado para orquestração de squads e gestão autônoma de projetos (Obras).
+Este repositório **é** o Hive Framework, um Kernel de Inteligência Simbiótica projetado para orquestração de squads e gestão autônoma de projetos.
 
-## Estrutura do Framework
+## Estrutura do Sistema
 
-O Framework opera a partir da raiz deste repositório, utilizando a seguinte organização:
+O Hive opera a partir da raiz deste repositório. O "Sistema" compreende toda a estrutura de arquivos aqui presente, organizada da seguinte forma:
 
-- **`.hive-agent/`**: Ponte de comunicação ativa (Agent Bridge) para o desenvolvimento do próprio Framework.
-- **`beehive/`**: Diretório de Ativos Operacionais. Contém os binários, regras de governança (roles), diretrizes de cognição e documentação técnica.
-- **`package.json`**: Ponto de entrada para comandos orquestradores.
+- **Raiz (`/`)**: O corpo principal do Framework, contendo as pontes de comunicação e pontos de entrada.
+<!-- - **`.hive-agent/`**: Ponte de comunicação ativa (Agent Bridge) para o desenvolvimento do próprio Framework. -->
+- **`beehive/`**: **Diretório de Ativos Operacionais**. É o "HD" do sistema, contendo binários, regras de governança (roles), diretrizes de cognição e documentação técnica.
+- **`package.json`**: O console de comandos do Kernel.
 
 ## Como funciona
 
-O Hive é um framework **portável**. Ele pode ser "acoplado" a qualquer projeto externo (como o TenantOS) apontando para os seus binários em `beehive/bin/`. Quando acoplado, ele cria uma ponte de comunicação na raiz do projeto alvo, mantendo a inteligência centralizada aqui.
+O Hive é um framework **portável**. O repositório inteiro funciona como um Sistema Operacional que pode ser "acoplado" a qualquer projeto externo. A inteligência e os processos residem na raiz e em suas subpastas operacionais.
 
 ## Comandos Principais
 

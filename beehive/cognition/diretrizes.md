@@ -23,8 +23,13 @@ Este documento é a **Fonte Única de Verdade (Single Source of Truth)** para o 
 - **Segurança:** Credenciais e chaves de API **NUNCA** entram no repositório. Devem morar em Vault ou variáveis de ambiente seguras.
 - **Economia:** O agente deve ser conciso. Evitar prolixidade para reduzir consumo de tokens.
 
+## 2. Contexto Obrigatório (O que você lê)
+- `beehive/dna/manifesto.md` (Constituição).
+- `beehive/dna/HIVE_PROCESS_TOPOLOGY.md` (Mapa da Fábrica).
+- `beehive/MAPA_DA_COLMEIA.md` (Manual de Navegação).
+
 ## 3. Protocolos de Operação
-- **Vago? Pare.** Se a instrução for ambígua, o agente não chuta. Usa o Template de Ambiguidade.
+- **Topologia de Processos:** Todos os fluxos seguem o modelo de "Canos" definido em `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`.
 - **Handoffs:** A transição entre agentes deve conter: Contexto, Objetivo, Passos e Ponto de Parada.
 - **Certificação de Risco:** Antes de alterações críticas (deleções, migrações), rodar um relatório de "Go/No-Go".
 
@@ -44,11 +49,31 @@ As diretrizes abaixo foram estabelecidas ao longo da evolução da Colmeia e per
 | DIR-040 | Governança V2 | Claude (Arquiteto), Copilot (Engenheiro), Gemini (Lead). |
 | DIR-042 | Gemini Lead | Gemini CLI orquestra inboxes e facilita processos criativos. |
 | DIR-051 | Âncora da Verdade | `resposta-ancora.md` na raiz é lei máxima e deve ser limpa após uso. |
+| DIR-060 | Role vs Process | Separação entre Regras de Papel e Regras de Processo. |
+| DIR-070 | Materialização | Proibido finalizar task sem Narrativa e Diagrama visual. |
 
 *(Nota: O registro completo detalhado de todas as 51 diretrizes está arquivado em `beehive/cognition/registry/DIRETRIZES_ATIVAS_LEGACY.md` para consulta de auditoria).*
 
 ---
-## 5. Manutenção de Diretrizes
+
+## 5. Arquitetura de Cognição: Role vs Process (DIR-060)
+
+Para garantir a modularidade e a escalabilidade do HIVE, as regras de atuação são divididas em duas camadas independentes:
+
+### 1. Camada de Papel (Role Rules)
+- **Onde moram:** `beehive/roles/`
+- **O que definem:** A **personalidade, postura e limites cognitivos** do agente (Ex: Tom de voz, foco em valor, proibições de conhecimento técnico).
+- **Vigência:** Permanente enquanto o papel estiver ativo. É o "Como o agente pensa".
+
+### 2. Camada de Processo (Process Rules)
+- **Onde moram:** `beehive/cognition/intuition/[processo]/GUARDS.md`
+- **O que definem:** Os **limites físicos, operacionais e rituais** de uma etapa específica da linha de produção (Ex: Proibição de criar arquivos, diagramas obrigatórios, local de saída de dados).
+- **Vigência:** Temporária, restrita à execução daquela fase específica. É o "O que o agente pode fazer aqui".
+
+**Regra de Ouro:** O Processo invoca o Papel. A execução final deve ser a intersecção de ambas as camadas, garantindo que o agente certo opere dentro do trilho certo.
+
+---
+## 6. Manutenção de Diretrizes
 - Toda nova diretriz recebe um ID sequencial (`DIR-NNN`).
 - Nunca deletar uma entrada — apenas marcar como revogada no histórico.
 - O Tech Lead é o responsável por manter este documento sincronizado com as decisões do Márcio.

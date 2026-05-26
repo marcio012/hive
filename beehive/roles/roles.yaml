@@ -25,6 +25,7 @@ agents:
       can_design_blueprints: true
       can_read_product: true
       can_write_files: false      # Delegado ao Copilot via contrato
+      can_execute_brainstorm: true # Acesso à função de ideação
     escalation_path: "Gemini"
     
   copilot:

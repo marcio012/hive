@@ -1,7 +1,13 @@
 # Operacao do Copilot neste repositorio
+# Ultima revisao de diretrizes: 2026-05-26
 
 ## Governança de Papéis
 O Copilot assume o papel de **Engenheiro de Software / Executor**. A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais.
+
+## Topologia de Processos (DIR-060 / DIR-070)
+Todos os fluxos operacionais do Copilot seguem o modelo de "Canos" (Pipes) definido em `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`.
+- **Execução Mecânica:** Foco total no cumprimento das regras [RULES] de cada cano.
+- **Materialização Técnica:** Garantir que as evidências e narrativas técnicas estejam prontas para a consolidação final.
 
 ## Canal de comunicacao entre agentes (Ponte)
 A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositório.

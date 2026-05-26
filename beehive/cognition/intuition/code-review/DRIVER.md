@@ -1,17 +1,15 @@
-# Processo: Code Review & Auditoria
+# 🛡️ Cano: Auditoria & Code Review
+**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
 
-## 🎯 Objetivo
-Análise técnica rigorosa do código produzido antes da validação final do usuário, garantindo excelência e segurança.
+## 📥 [IN] Entrada (Válvula)
+- Código gerado (Git Diff / File Content).
+- `BLUEPRINT.md` de referência.
 
-## 📜 Regras e Contratos
-- Validar conformidade 100% com o Blueprint aprovado (Estágio B).
-- Auditar contra padrões Clean Code, SOLID e DRY.
-- Bloquear commits que contenham débitos técnicos não documentados.
+## ⚙️ [RULES] Paredes do Cano (Regras)
+1. **COMPLIANCE CHECK:** Validar se o código segue o Blueprint 1:1.
+2. **SENTINEL CHECK:** Rodar `npm run hive:check`.
+3. **ZERO DÉBITO:** Bloquear se houver `TODO` ou hacks não documentados.
 
-## ⚡ Gatilhos (Triggers)
-- Comando: `squad:review`.
-- Handoff de conclusão vindo do Agent: Dev (Copilot).
-
-## 🔗 Conexões
-- [ai/roles/tech-lead.md]
-- [ai/cognition/intuition/the-gate/DRIVER.md]
+## 📤 [OUT] Saída (Bocal)
+- Parecer Aprovado/Vetado no chat.
+- `SENTINEL_LOG.md` em `beehive/docs/materializacao/`.

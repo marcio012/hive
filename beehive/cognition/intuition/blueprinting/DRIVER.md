@@ -1,17 +1,15 @@
-# Processo: Blueprinting
+# 📐 Cano: Blueprinting (Arquitetação)
+**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
 
-## 🎯 Objetivo
-Transformar conceitos amadurecidos (Ideação) em especificações técnicas estritas e contratos de implementação.
+## 📥 [IN] Entrada (Válvula)
+- `RESUMO_INTENCAO.md` amadurecido.
+- Contexto Técnico: Schema DB e API Docs.
 
-## 📜 Regras e Contratos
-- Uso obrigatório do `TEMPLATE_ESPECIFICACAO_TECNICA.md`.
-- Priorizar a definição de interfaces e DTOs antes da lógica de implementação.
-- Mapear explicitamente dependências cruzadas e riscos de quebra.
+## ⚙️ [RULES] Paredes do Cano (Regras)
+1. **NÃO EXECUTAR:** Proibido criar arquivos de implementação (.ts, .js).
+2. **MERMAID OBRIGATÓRIO:** Desenhar diagramas de sequência ou entidade.
+3. **CONTRATO FECHADO:** Definir interfaces de entrada e saída explicitamente.
 
-## ⚡ Gatilhos (Triggers)
-- Estado `MADURO` atingido no Processo de Ideação.
-- Comando: `blueprint:create`.
-
-## 🔗 Conexões
-- [ai/produto/blueprints/README.md]
-- [ai/cognition/intuition/code-review/DRIVER.md]
+## 📤 [OUT] Saída (Bocal)
+- `BLUEPRINT.md` na issue correspondente.
+- Materialização DIR-070.

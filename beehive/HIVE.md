@@ -2,46 +2,43 @@
 
 ---
 
-## 🎨 Layout Visual (Terminal UI)
+## 🎨 Layout Visual (Safe UI)
 
-```text
-============================================================
-🐝 HIVE OS {{KERNEL_VERSION}} — Kernel de Inteligência Simbiótica
-============================================================
+```markdown
+# 🐝 HIVE OS {{KERNEL_VERSION}} — Kernel de Inteligência Simbiótica
 
-STATUS DO REPOSITÓRIO:
-[MARCO]: {{SYSTEM_VERSION}} — Cognição Refatorada (DRIVER.md)Vamos 
-[PRODUTO]: {{PRODUCT_NAME}} ({{PRODUCT_STATUS}} — Fonte: Board de Evolução)
-[ACTIVE_ISSUE]: {{CURRENT_ISSUE}}
+---
 
-------------------------------------------------------------
-SELECIONE O CARTUCHO DE INTELIGÊNCIA:
-------------------------------------------------------------
+### 📡 STATUS DO REPOSITÓRIO:
+*   **[MARCO]:** {{SYSTEM_VERSION}} — Cognição Refatorada (DRIVER.md)
+*   **[PRODUTO]:** {{PRODUCT_NAME}} ({{PRODUCT_STATUS}} — Fonte: Board de Evolução)
+*   **[ACTIVE_ISSUE]:** {{CURRENT_ISSUE}}
 
-1) 🧠 PRODUCT OWNER (Guardião do Valor)
-   - Uso: Prospecção, alinhamento de DNA, visão de negócio.
-   - Gatilho: `client:connect`, `hive:manifesto`.
+---
 
-2) 📐 PROJETISTA (Arquiteto de Produto)
-   - Uso: Brainstorming ativo, desenho de fluxos, Blueprints.
-   - Gatilho: `brainstorm:ativa`, `design:fluxo`.
+### 🧩 SELECIONE O CARTUCHO DE INTELIGÊNCIA:
 
-3) 🛡️ TECH LEAD (Auditor Clínico)
-   - Uso: Code Review, The Gate, Auditoria, Infraestrutura.
-   - Gatilho: `squad:review`, `squad:gate`.
+1.  **🧠 PRODUCT OWNER (Guardião do Valor)**
+    *   Uso: Prospecção, alinhamento de DNA, visão de negócio.
+    *   Gatilho: `client:connect`, `hive:manifesto`.
 
-0) 🚪 SAIR
+2.  **📐 PROJETISTA (Arquiteto de Produto)**
+    *   Uso: Brainstorming ativo, desenho de fluxos, Blueprints.
+    *   Gatilho: `brainstorm:ativa`, `design:fluxo`.
 
-------------------------------------------------------------
-[?] Seleção (1-3): _
+3.  **🛡️ TECH LEAD (Auditor Clínico)**
+    *   Uso: Code Review, The Gate, Auditoria, Infraestrutura.
+    *   Gatilho: `squad:review`, `squad:gate`.
+
+0.  **🚪 SAIR**
+
+---
 
 <!-- {{IF_RETURN_FROM_MENU}} -->
-------------------------------------------------------------
-TELEMETRIA DA ÚLTIMA SESSÃO (Resumo):
-[TOKENS]: {{SESSION_TOKENS}}
-[CUSTO ]: {{ESTIMATED_COST}} BRL
-{{ENDIF}}
-============================================================
+### 📊 TELEMETRIA DA ÚLTIMA SESSÃO (Resumo):
+*   **[TOKENS]:** {{SESSION_TOKENS}}
+*   **[CUSTO ]:** {{ESTIMATED_COST}} BRL
+<!-- {{ENDIF}} -->
 ```
 
 ---

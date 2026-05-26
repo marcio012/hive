@@ -1,7 +1,7 @@
 # 🐝 Manifesto HIVE: O DNA da Colmeia
 
 ## 1. Visão Central (O Coração)
-- **HIVE como Sistema Operacional (SO):** O Hive não é apenas um conjunto de scripts, é o "Kernel" que gerencia a fábrica de software. Ele detém a custódia estrita dos processos, segredos (infraestrutura) e metodologias (cognição). O Produto gerado (ex: TenantOS) opera no "User Space" e contém apenas a implementação volátil. A fronteira entre o motor de criação (Hive) e o artefato criado (Produto) é inviolável.
+- **HIVE como Sistema Operacional (SO):** O Hive **é o repositório inteiro**. Não é apenas um conjunto de scripts ou a pasta `beehive/`, é o "Kernel" completo que gerencia a fábrica de software. A pasta `beehive/` funciona como o diretório de ativos (HD) do sistema. O Hive detém a custódia estrita dos processos, segredos (infraestrutura) e metodologias (cognição). O Produto gerado (ex: TenantOS) opera no "User Space" e contém apenas a implementação volátil. A fronteira entre o motor de criação (Hive) e o artefato criado (Produto) é inviolável.
 - **A Colmeia Independente:** O Hive é agnóstico e portátil. Sua inteligência e processos de desenvolvimento devem evoluir independentemente da tecnologia ou do produto final.
 - **Software-as-a-Squad (Simbiose):** O Hive posiciona-se como uma "Offshore Automatizada" projetada para otimizar times e escalar a produtividade. O Usuário (Owner/PO) detém a **Intenção** e o Valor de Negócio; o Hive detém a **Orquestração** Técnica. O objetivo sistêmico é eliminar a fricção temporal e técnica entre o Levantamento de Requisitos e o Commit final.
 

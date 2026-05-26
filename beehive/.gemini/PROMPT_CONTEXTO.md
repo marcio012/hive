@@ -1,4 +1,4 @@
-# Prompt de Contexto — bootstrap manual de sessão Gemini
+<!-- # Prompt de Contexto — bootstrap manual de sessão Gemini
 
 Use este bloco no início de uma nova conversa para reduzir perda de contexto.
 
@@ -37,4 +37,4 @@ em ai/construcao/. Devolva um resumo de contexto em até 5 bullets e aguarde ins
 
 O Gemini só escreve em arquivo `.md` **explicitamente indicado pelo Márcio**.
 Antes de qualquer escrita, declarar intenção e aguardar confirmação.
-Sem confirmação — não escreve.
+Sem confirmação — não escreve. -->

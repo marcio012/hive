@@ -1,17 +1,17 @@
-# Processo: Protocolo The Gate
+# 🛡️ Cano: The Gate (Afirmação Final)
+**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
 
-## 🎯 Objetivo
-Garantir que nenhum código atinja o estado de permanência no repositório sem validação objetiva e afirmação do usuário.
+## 📥 [IN] Entrada (Válvula)
+- Parecer Aprovado do Cano: Auditoria.
+- Arquivo de Evidência em `docs/evidencias/`.
+- Narrativa de Materialização (DIR-070).
 
-## 📜 Regras e Contratos
-- Inviolabilidade: Nenhum commit é realizado sem arquivo de evidência em `docs/evidencias/`.
-- Rastreabilidade: Toda alteração deve estar vinculada a uma Issue e um Blueprint.
-- Soberania Humana: O commit final depende sempre da afirmação do Usuário (Márcio).
+## ⚙️ [RULES] Paredes do Cano (Regras)
+1. **SOBERANIA HUMANA:** Proibido realizar commit sem o "OK" explícito do Márcio.
+2. **RASTREABILIDADE TOTAL:** O commit deve referenciar a Issue e o Agente Executor.
+3. **CONVENTIONAL COMMITS:** Seguir estritamente o padrão de mensagens de commit.
 
-## ⚡ Gatilhos (Triggers)
-- Comando: `squad:gate`.
-- Aprovação do Code Review pelo Tech Lead.
-
-## 🔗 Conexões
-- [docs/planning/THE_GATE_PROTOCOL.md]
-- [docs/evidencias/]
+## 📤 [OUT] Saída (Bocal)
+- Commit consolidado no repositório.
+- Issue movida para `Done` no Board.
+- Arquivo de Task movido para `historico/`.

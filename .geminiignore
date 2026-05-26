@@ -6,10 +6,6 @@
 .agile-squad/
 .hive-agent/locks.json
 
-# CÓDIGO LEGADO (Purge de Contexto)
-# Este diretório contém o sistema antigo e scripts obsoletos.
-# Ignorar para focar 100% no TenantOS.
-legacy/
 
 # Artefatos Temporários e Logs
 .tmp/

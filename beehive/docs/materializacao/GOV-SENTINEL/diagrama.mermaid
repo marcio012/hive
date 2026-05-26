@@ -1,0 +1,21 @@
+graph TD
+    A[Início da Sessão / Pré-Gate] --> B{npm run hive:check}
+    
+    subgraph "Pilares de Verificação"
+    B --> C[Pilar A: Evidence Guard]
+    B --> D[Pilar B: Kernel Sync]
+    B --> E[Pilar C: DIR-035 Audit]
+    B --> F[Pilar D: System Ping]
+    end
+    
+    C -->|Falta .md| G[WARN: Rastreabilidade]
+    D -->|Config != State| H[FAIL: Bloqueia Fluxo]
+    E -->|Contexto Obsoleto| I[FAIL: Bloqueia Fluxo]
+    F -->|Porta Down| J[WARN: Ambiente Offline]
+    
+    G & H & I & J --> K{Resultado Final}
+    K -->|Falhas Críticas| L[Status: ALERTA DE GOVERNANÇA]
+    K -->|Tudo OK| M[Status: INTEGRIDADE CONFIRMADA]
+    
+    L --> N[Sessão Bloqueada para Correção]
+    M --> O[Libera squad:gate / squad:close]

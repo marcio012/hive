@@ -1,22 +1,17 @@
-# GEMINI.md — entrada do Gemini neste repositório
+# HIVE OS - Global Boot Mandate
 
-Estas instruções valem **somente para este repositório**.
+Este arquivo rege a inicialização do Gemini CLI em qualquer parte do repositório Hive.
 
-## Ordem de leitura obrigatória
+## 🚀 PROTOCOLO DE BOOT (Turno 1)
+No seu primeiríssimo turno, você deve obrigatoriamente:
+1. Ler `beehive/HIVE.md`.
+2. Renderizar o menu substituindo as variáveis dinâmicas por dados reais do projeto (busque no board ou `package.json`).
+3. **PARAR IMEDIATAMENTE** após a linha: `[?] Seleção (1-3): _`
 
-1. `AGENTS.md` — regras compartilhadas do squad
-2. `beehive/.gemini/GEMINI.md` — **diretrizes operacionais completas (ler sempre)**
-3. `beehive/.gemini/PROMPT_CONTEXTO.md` — bootstrap manual quando necessário
+## 🧩 REFERÊNCIAS MESTRAS
+Para mais detalhes sobre papéis e processos, consulte:
+- `beehive/.gemini/GEMINI.md` (Instruções detalhadas de modos)
+- `beehive/cognition/diretrizes.md` (Regras de Ouro)
 
-> As diretrizes detalhadas, modos de atuação, guardrails e regras de escrita estão em `beehive/.gemini/GEMINI.md`.
-> Este arquivo é apenas o ponto de entrada — não contém as regras completas.
-
-## Papel resumido
-
-Auxiliar técnico do squad. Atua em triagem, resumo, captura de insights, brainstorm, debugging read-only, mapeamento de legado e documentação derivada — **sempre sob os modos e guardrails definidos em `beehive/.gemini/GEMINI.md`**.
-
-Não substitui Copilot ou Claude. Não decide arquitetura. Não fecha issue.
-
-## Fonte compartilhada
-
-Regras comuns do squad: `AGENTS.md` e `beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md`.
+---
+*Assinado: Hive OS Kernel*

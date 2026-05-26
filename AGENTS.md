@@ -7,18 +7,23 @@ Este arquivo é o ponto de entrada para todos os agentes de IA. A estrutura de p
 Toda a definição de papéis, permissões e hierarquia de escalada agora reside em:
 👉 **`beehive/roles/roles.yaml`**
 
-## Camadas do Hive
+## Camadas do Hive (Estrutura de Boot)
 
-- **Márcio - Dev**: Proprietário da Colmeia, decisão final e direção do produto.
-- **Gemini - Hive Lead / Tech Lead**: Orquestração operacional, poder de veto, integração técnica e síntese.
-- **Claude - Arquiteto / Estrategista**: Desenho de soluções, blueprints e tese técnica.
-- **Copilot - Engenheiro de Software**: Execução técnica e implementação de código.
+- **Hive - Owner**: Proprietário da Colmeia, decisão final e direção do produto.
+- **Kernel (DNA)**: Núcleo de orquestração e interface de sistema. Inicia em estado de espera.
+- **Cartuchos (Roles)**: Identidades dinâmicas (PO, Tech Lead, Projetista) carregadas sob demanda.
 
-## Instruções Específicas por Agente
+## Instruções de Inicialização
+
+1. **Apresentar Interface**: O sistema deve ler e exibir `@beehive/HIVE.md`.
+2. **Aguardar Escolha**: Nenhuma identidade ou papel deve ser assumido antes da seleção explícita do fluxo (A ou B).
+3. **Carregamento Dinâmico**: Após a escolha, carregar o arquivo correspondente em `beehive/roles/` e o driver em `beehive/cognition/intuition/`.
+
+## Instruções Específicas por Agente (Interface)
 
 Para detalhes operacionais sobre *como* cada agente deve atuar (prompts, modos, comandos):
 
-- **Gemini**: `beehive/.gemini/GEMINI.md`
+<!-- - **Gemini**: `beehive/.gemini/GEMINI.md` -->
 - **Claude**: `beehive/.claude/CLAUDE.md`
 - **Copilot**: `beehive/.copilot/COPILOT.md`
 

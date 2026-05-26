@@ -1,17 +1,14 @@
-# Processo: Captura de Insights
+# 📡 Cano: Captura de Insights
+**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
 
-## 🎯 Objetivo
-Transformar observações soltas e pensamentos rápidos em sementes estruturadas para o desenvolvimento futuro.
+## 📥 [IN] Entrada (Válvula)
+- Pensamentos soltos ou observações (comando `insight:`).
+- Logs de erro ou sinais de melhoria identificados durante a execução.
 
-## 📜 Regras e Contratos
-- Operação em background: Não interromper o fluxo de raciocínio técnico atual.
-- Formato append-only: Preservar a ordem cronológica dos pensamentos.
-- Uso obrigatório de tags (#tag) para facilitar a futura promoção ao backlog.
+## ⚙️ [RULES] Paredes do Cano (Regras)
+1. **MODO APPEND:** Nunca sobrescrever, apenas adicionar ao final do buffer.
+2. **CATEGORIZAÇÃO:** Uso obrigatório de tags (ex: #escala-claude, #infra, #ux).
+3. **CONCISÃO:** Máximo de 1 linha por insight capturado.
 
-## ⚡ Gatilhos (Triggers)
-- Comando: `squad:insight`.
-- Prefixo `insight:` no chat.
-
-## 🔗 Conexões
-- [ai/construcao/insights-buffer.md]
-- [ai/cognition/intuition/ideacao/DRIVER.md]
+## 📤 [OUT] Saída (Bocal)
+- Entrada registrada em `beehive/construcao/insights-buffer.md`.

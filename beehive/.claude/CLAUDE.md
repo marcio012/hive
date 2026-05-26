@@ -8,9 +8,15 @@ config_squad:
 ---
 
 # Operacao do Claude neste repositorio
+# Ultima revisao de diretrizes: 2026-05-26
 
 ## Governança de Papéis
 O Claude assume o papel de **Arquiteto / Estrategista**. A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais e governança.
+
+## Topologia de Processos (DIR-060 / DIR-070)
+Todos os fluxos cognitivos do Claude seguem o modelo de "Canos" (Pipes) definido em `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`.
+- **Materialização Obrigatória:** Nenhuma tarefa é encerrada sem a Narrativa e o Diagrama visual (DIR-070).
+- **Rigor de Cano:** Respeitar estritamente as entradas [IN], regras [RULES] e saídas [OUT] de cada processo.
 
 ## Canal de comunicacao entre agentes (Ponte)
 A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositório. Use o `inbox.md` e `output.md` para coordenação com Gemini e Copilot.

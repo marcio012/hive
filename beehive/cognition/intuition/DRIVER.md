@@ -1,17 +1,12 @@
-# Camada Intuition
+# Camada Intuition: O Mapa dos Canos
 
 ## 🎯 Objetivo
-Armazenar os Workflows de Raciocínio do HIVE, ensinando à IA "como" pensar e agir em cada estágio do ciclo de vida.
+Armazenar a topologia de processos (Canos) do HIVE. Esta camada define como a IA deve fluir entre o pensamento estratégico e a execução técnica.
 
-## 📜 Regras e Contratos
-- Cada subpasta deve representar um processo atômico e independente.
-- Proibida a sobreposição de responsabilidades entre pastas de intuição.
-- Seguir o padrão de escrita encadeada para evolução de processos.
+## 📜 Regras de Ouro (HPP - Hive Process Pipes)
+- **Fluxo Único:** Cada processo deve ter uma Entrada [IN] e uma Saída [OUT] clara.
+- **Paredes Rígidas:** As Regras [RULES] de cada cano são invioláveis.
+- **Materialização Forçada:** Nenhum cano termina sem gerar valor visível (DIR-070).
 
-## ⚡ Gatilhos (Triggers)
-- Ativação de um papel especializado (PO, Projetista, Lead).
-- Carregamento de uma Skill via registro.
-
-## 🔗 Conexões
-- [ai/cognition/DRIVER.md]
-- Subpastas de Processos (Ideação, Blueprinting, etc).
+## 🗺️ Mapa Mestre
+Consulte `beehive/docs/HIVE_PROCESS_TOPOLOGY.md` para a visão completa da fábrica.

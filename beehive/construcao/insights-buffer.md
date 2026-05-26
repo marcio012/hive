@@ -16,6 +16,7 @@ Promoção: `idea:inside` no GitHub → debate aberto → issue → descarta.
 ---
 
 <!-- insights abaixo — mais recente no topo -->
+- [2026-05-26] REVISÃO: Tela Inicial (beehive/HIVE.md) não está carregando/refletindo corretamente o papel do agente (Gemini) na sessão atual. Necessário alinhar a UI de entrada com os drivers reais. #hive-os #ui-terminal #cognicao-agente
 - [2026-05-26T14:16:14Z] Framework reparado e caminhos unificados em beehive/ #framework #reparo #gemini-lead
 - [2026-05-24T10:00:00Z] Governança de Agentes: Evoluir a declaração de papéis de texto livre espalhado (.md) para arquivos de configuração estritos (JSON/YAML) para impor limites via CLI no Squad Framework. #squad-framework #arquitetura-agentes #escala-claude
 - [2026-05-23T23:55:00Z] Estratégia de QA Executivo: O Gemini assume papel de Engenheiro de Testes E2E (Playwright) para validar comportamento de tela e visual do White Label. Proposta em viabilidade-agente-qa.md. #agente-qa #teste-e2e #qualidade
