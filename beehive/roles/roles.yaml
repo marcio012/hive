@@ -39,4 +39,4 @@ agents:
 rules:
   context_caching: true           # Ativa economia de 90% via cache 3.5
   enforce_contracts: true         # Gemini DEVE barrar se fugir do contrato
-  telemetry_log: "intelligence/logs/custos.log"
+  telemetry_log: "beehive/construcao/logs/custos.log"

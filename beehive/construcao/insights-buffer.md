@@ -16,6 +16,7 @@ Promoção: `idea:inside` no GitHub → debate aberto → issue → descarta.
 ---
 
 <!-- insights abaixo — mais recente no topo -->
+- [2026-05-26T14:16:14Z] Framework reparado e caminhos unificados em beehive/ #framework #reparo #gemini-lead
 - [2026-05-24T10:00:00Z] Governança de Agentes: Evoluir a declaração de papéis de texto livre espalhado (.md) para arquivos de configuração estritos (JSON/YAML) para impor limites via CLI no Squad Framework. #squad-framework #arquitetura-agentes #escala-claude
 - [2026-05-23T23:55:00Z] Estratégia de QA Executivo: O Gemini assume papel de Engenheiro de Testes E2E (Playwright) para validar comportamento de tela e visual do White Label. Proposta em viabilidade-agente-qa.md. #agente-qa #teste-e2e #qualidade
 - [2026-05-23T23:55:00Z] Squad Vault (Cofre de Keys): Necessidade de camada unificada de segredos (Tier 1 Framework, Tier 2 Projeto, Tier 3 Tenant) com injeção em memória e zero-persistence em disco. #squad-framework #seguranca #vault

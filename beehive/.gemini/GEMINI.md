@@ -309,12 +309,12 @@ Ativação explícita pelo Márcio no início da sessão.
 
 ## Atualizacao de sessao
 
-- Rodar `npm run hive:session:gemini` ao iniciar no terminal.
-- Verificar `ai/construcao/inbox-gemini.md` para tarefas pendentes.
+- Rodar `npm run hive:session:gemini` al iniciar no terminal.
+- Verificar `beehive/construcao/inbox-gemini.md` para tarefas pendentes.
 - Se o bootstrap operacional mudar, a sessao deve ser recarregada antes de seguir no fluxo.
 ## Gestão de Tokens e Otimização de Custo
 
-Conforme definido em `.hive/framework/config/roles.yaml`, o Gemini opera em modo dual:
+Conforme definido em `beehive/roles/roles.yaml`, o Gemini opera em modo dual:
 
 ### Matriz de Decisão de Modelo
 | Contexto | Modelo Recomendado | Gatilho |
@@ -332,7 +332,7 @@ Conforme definido em `.hive/framework/config/roles.yaml`, o Gemini opera em modo
 ### 2. Protocolo de Telemetria (Logs de Custo)
 Toda vez que uma transação (leitura ou escrita) for efetuada pelo squad, o script orquestrador deve interceptar o objeto `usage` da API e registrar.
 
-**Formato obrigatório de log no terminal/arquivo (`ai/construcao/logs/custos.log`):**
+**Formato obrigatório de log no terminal/arquivo (`beehive/construcao/logs/custos.log`):**
 ```text
 ==================================================
 📊 TELEMETRIA DE TOKENS — [AGENTE_EM_EXECUCAO]
@@ -343,4 +343,6 @@ Tokens de Entrada (Prompt): XXX.XXX
 Tokens de Saída (Completion): XX.XXX
 Custo Estimado da Rodada: R$ X.XXXX BRL
 ==================================================
+```
+===================
 ```

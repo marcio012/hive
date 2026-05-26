@@ -8,14 +8,14 @@ A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositó
 
 
 ## Papel do Copilot (DIR-040)
-- Executor tecnico para tasks com contrato 100% fechado: endpoints, migrations, boilerplate, ajustes pontuais sem decisao de design.
+- Executor tecnico para tasks with contrato 100% fechado: endpoints, migrations, boilerplate, ajustes pontuais sem decisao de design.
 - O debate e refinamento de escopo chegam prontos do Claude — Copilot nao redefine escopo, executa o que foi acordado.
 - Antes de pedir o OK final do Márcio, verificar se alguma ressalva remanescente configura debito tecnico e registrar explicitamente.
-- Criterio de roteamento completo em `ai/construcao/OPERACAO_COMPARTILHADA_SQUAD.md`.
+- Criterio de roteamento completo em `beehive/construcao/OPERACAO_COMPARTILHADA_SQUAD.md`.
 
 ## Canal de comunicacao entre agentes (inbox)
 
-O Copilot recebe mensagens via `ai/construcao/inbox-copilot.md`.
+O Copilot recebe mensagens via `beehive/construcao/inbox-copilot.md`.
 Toda escrita em qualquer inbox usa `npm run hive:inbox:write` — nunca edicao manual.
 
 **Regras de higiene do inbox:**
@@ -26,7 +26,7 @@ Toda escrita em qualquer inbox usa `npm run hive:inbox:write` — nunca edicao m
 - Sempre referenciar `thread:` correto ao responder
 
 **Leitura no inicio de sessao:**
-- Ler `ai/construcao/inbox-copilot.md` e listar entradas com `status: pendente`
+- Ler `beehive/construcao/inbox-copilot.md` e listar entradas com `status: pendente`
 - Atalho no chat: digitar `inbox` lista automaticamente as pendencias
 
 ## Comandos de Chat
@@ -48,7 +48,7 @@ Antes de iniciar qualquer tarefa, o usuario deve rodar:
   npm run hive:inbox
 
 Atalho universal:
-- Se o usuario digitar `inbox` no chat, tratar como comando para ler `ai/construcao/inbox-copilot.md` e listar entradas com `status: pendente`.
+- Se o usuario digitar `inbox` no chat, tratar como comando para ler `beehive/construcao/inbox-copilot.md` e listar entradas com `status: pendente`.
 - Para leitura detalhada no terminal: `npm run hive:inbox:full`.
 
 Guard de atualizacao operacional:
@@ -62,7 +62,7 @@ Fallback (apenas incidente):
 O bloco contem o estado atual da sessao, incluindo:
 - Issue ativa
 - Ultima acao realizada
-- **Proximo passo** — pode apontar para um artefato em `ai/construcao/` que deve ser lido antes de executar
+- **Proximo passo** — pode apontar para um artefato em `beehive/construcao/` que deve ser lido antes de executar
 
 Se `NEXT_STEP` referenciar um arquivo, ler o arquivo antes de qualquer implementacao.
 
@@ -71,7 +71,7 @@ Se `NEXT_STEP` referenciar um arquivo, ler o arquivo antes de qualquer implement
 - `COPILOT.md` (entrada especifica do Copilot na raiz)
 - `.github/copilot-instructions.md` (entrada especifica do Copilot)
 - `.copilot/COPILOT.md` (este apendice)
-- `ai/construcao/OPERACAO_COMPARTILHADA_SQUAD.md` (regras comuns entre agentes)
+- `beehive/construcao/OPERACAO_COMPARTILHADA_SQUAD.md` (regras comuns entre agentes)
 - `docs/history/CHECKPOINT_RETOMADA.md` (continuidade)
 - `.hive-agent/session-state.env` (estado compartilhado do Hive)
 

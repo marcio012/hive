@@ -4,8 +4,10 @@
 
 set -euo pipefail
 
-# Variáveis injetadas pelo hive.sh principal:
-# HIVE_HOME, PROJECT_PATH, HIVE_ROLES
+# Variáveis injetadas pelo hive.sh principal (com fallbacks para execução direta):
+HIVE_HOME="${HIVE_HOME:-$(pwd)}"
+PROJECT_PATH="${PROJECT_PATH:-$(pwd)}"
+HIVE_ROLES="${HIVE_ROLES:-$HIVE_HOME/beehive/roles/roles.yaml}"
 
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -34,19 +36,26 @@ fi
 
 # 3. Agentes e Modelos (Extraído do roles.yaml)
 echo -e "\n${BLUE}[Enxame de Agentes]${NC}"
-# Extrai as chaves sob 'agents:' (ex: gemini, claude, copilot)
-grep -E "^  [a-z]+:" "$HIVE_ROLES" | while read -r line; do
-  AGENT=$(echo "$line" | sed 's/  //' | sed 's/://')
-  # Busca a role logo abaixo do nome do agente
-  ROLE=$(grep -A 1 "  $AGENT:" "$HIVE_ROLES" | grep "role:" | cut -d'"' -f2 || echo "n/a")
-  echo -e "  - ${AGENT^} ($ROLE)"
-done
+if [[ -f "$HIVE_ROLES" ]]; then
+  # Extrai as chaves sob 'agents:' de forma mais precisa
+  sed -n '/^agents:/,/^rules:/p' "$HIVE_ROLES" | grep -E "^  [a-z]+:" | while read -r line; do
+    AGENT=$(echo "$line" | sed 's/  //' | sed 's/://')
+    # Busca a role logo abaixo do nome do agente
+    ROLE=$(grep -A 1 "  $AGENT:" "$HIVE_ROLES" | grep "role:" | cut -d'"' -f2 || echo "n/a")
+    echo -e "  - ${AGENT^} ($ROLE)"
+  done
+else
+  echo "  (Governança não disponível)"
+fi
 
 # 4. Estado da Sessão (via ponte)
 STATE_FILE="$PROJECT_PATH/.hive-agent/session-state.env"
 if [[ -f "$STATE_FILE" ]]; then
   echo -e "\n${BLUE}[Última Atividade]${NC}"
+  # set +u temporário para dar source no arquivo que pode ter variáveis faltando
+  set +u
   source "$STATE_FILE" 2>/dev/null || true
+  set -u
   echo "  Ação: ${LAST_ACTION:-"Nenhuma registrada"}"
   echo "  Foco: ${ACTIVE_ISSUE:-"Livre"}"
 fi

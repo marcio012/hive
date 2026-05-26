@@ -27,7 +27,7 @@ A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositó
 ## Criterio de roteamento (DIR-040)
 - Claude executa: contexto acumulado, conceito + codigo, doc estrategica, ideia ainda em formacao.
 - Copilot executa: contrato 100% fechado, endpoint/migration, boilerplate puro, execucao sem decisao de design.
-- Ver fluxo completo em `ai/construcao/OPERACAO_COMPARTILHADA_SQUAD.md`.
+- Ver fluxo completo em `beehive/construcao/OPERACAO_COMPARTILHADA_SQUAD.md`.
 
 ## Comando opiniao:
 
@@ -62,7 +62,7 @@ Quando o Márcio digitar `opiniao: <DEBATE-NNN | arquivo | tema>`, ativar modo o
 
 ## Canal de comunicacao entre agentes (inbox)
 
-O Claude recebe mensagens via `ai/construcao/inbox-claude.md`.
+O Claude recebe mensagens via `beehive/construcao/inbox-claude.md`.
 Toda escrita em qualquer inbox usa `npm run squad:inbox:write` — nunca edicao manual.
 
 **Regras de higiene do inbox:**
@@ -73,7 +73,7 @@ Toda escrita em qualquer inbox usa `npm run squad:inbox:write` — nunca edicao 
 - Sempre referenciar `thread:` correto ao responder
 
 **Leitura no inicio de sessao:**
-- Ler `ai/construcao/inbox-claude.md` e listar entradas com `status: pendente`
+- Ler `beehive/construcao/inbox-claude.md` e listar entradas com `status: pendente`
 - Formato de saida:
   ```
   ## Inbox — pendentes

@@ -1,6 +1,6 @@
 # HIVE OS - Interface de Início de Sessão (Home Screen)
 
-> **Caminho Sugerido:** `ai/cognition/system/welcome.md`
+> **Caminho Sugerido:** `beehive/cognition/welcome.md`
 > **Propósito:** Esta é a "Tela de Boas-vindas" que o script de bootstrap deve exibir ao iniciar o HIVE. Ela serve para contextualizar o usuário e forçar a escolha do papel especializado.
 
 ---
@@ -37,7 +37,11 @@ SELECIONE O CARTUCHO DE INTELIGÊNCIA:
 
 ------------------------------------------------------------
 [?] Seleção (1-3): _
-```
+
+TELEMETRIA DA SESSÃO:
+[TOKENS]: {{SESSION_TOKENS}}
+[CUSTO ]: {{ESTIMATED_COST}} BRL
+============================================================
 
 ---
 
@@ -46,8 +50,8 @@ SELECIONE O CARTUCHO DE INTELIGÊNCIA:
 Quando o usuário seleciona uma opção (ex: `2`), o sistema deve realizar os seguintes procedimentos técnicos:
 
 1.  **Context Flush (Opcional):** Limpar o buffer de mensagens anteriores para evitar a "Amnésia do 3º Dia".
-2.  **Injeção de Driver:** Carregar o arquivo `ai/cognition/system/[papel].md` como a instrução primária de sistema.
-3.  **Habilidade Âncora:** Ler o `ai/manifesto.md` para garantir que o papel selecionado não fira o DNA do HIVE.
+2.  **Injeção de Driver:** Carregar o arquivo `beehive/cognition/system/[papel].md` como a instrução primária de sistema.
+3.  **Habilidade Âncora:** Ler o `beehive/manifesto.md` para garantir que o papel selecionado não fira o DNA do HIVE.
 4.  **Prompt de Abertura:** A IA deve responder confirmando o papel:
     > *"Driver [Projetista] carregado. Estou ouvindo, Márcio. O que vamos desenhar hoje?"*
 
