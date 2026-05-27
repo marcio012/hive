@@ -7,7 +7,7 @@ set -euo pipefail
 # Caminhos base
 HIVE_HOME="${HIVE_HOME:-$(pwd)}"
 PROJECT_PATH="${PROJECT_PATH:-$(pwd)}"
-CONFIG_FILE="$HIVE_HOME/beehive/config/config.env"
+CONFIG_FILE="$HIVE_HOME/beehive/config.env"
 STATE_FILE="$PROJECT_PATH/.hive-agent/session-state.env"
 DIRETRIZES_FILE="$HIVE_HOME/beehive/cognition/diretrizes.md"
 EVIDENCIAS_DIR="$HIVE_HOME/beehive/docs/evidencias"
@@ -80,23 +80,15 @@ CORE_UP=0
 LEGACY_UP=0
 
 echo -n "Pinging Port 3000 (Core)... "
-if (echo > /dev/tcp/127.0.0.1/3000) >/dev/null 2>&1; then 
+if (echo > /dev/tcp/127.0.0.1/3000) >/dev/null 2>&1; then
   echo -e "${GREEN}UP${NC}"; CORE_UP=1
-else 
-  echo -e "${RED}DOWN${NC}"
-fi
-
-echo -n "Pinging Port 5000 (Legado)... "
-if (echo > /dev/tcp/127.0.0.1/5000) >/dev/null 2>&1; then 
-  echo -e "${GREEN}UP${NC}"; LEGACY_UP=1
-else 
-  echo -e "${RED}DOWN${NC}"
+else
+  echo -e "${RED}DOWN${NC}"; CORE_UP=0
 fi
 
 echo "---------------------------------------------------------"
 if [[ $STATUS_FINAL -eq 0 ]]; then
-  # Se houver avisos de ping ou evidência, o status é "OK com ressalvas"
-  if [[ $CORE_UP -eq 1 && $LEGACY_UP -eq 1 ]]; then
+  if [[ $CORE_UP -eq 1 ]]; then
     echo -e "Status Final: ${GREEN}INTEGRIDADE CONFIRMADA${NC}"
   else
     echo -e "Status Final: ${YELLOW}ESTÁVEL (Ambiente Offline)${NC}"

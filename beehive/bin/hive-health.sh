@@ -63,8 +63,8 @@ fi
 
 # 4. Check de Configuração
 echo -n "Integridade de Configuração (config.env)... "
-if [ -f "$HIVE_HOME/beehive/config/config.env" ]; then
-  if grep -q "SQUAD_OWNER" "$HIVE_HOME/beehive/config/config.env"; then
+if [ -f "$HIVE_HOME/beehive/config.env" ]; then
+  if grep -q "SQUAD_OWNER" "$HIVE_HOME/beehive/config.env"; then
     echo -e "${GREEN}OK${NC}"
   else
     echo -e "${RED}CORRUPTO${NC} (SQUAD_OWNER não encontrado)"
