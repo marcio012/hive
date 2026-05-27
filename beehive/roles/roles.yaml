@@ -3,9 +3,16 @@
 #
 # Os 4 atores do squad:
 #   Márcio        → Owner. Aprova tudo via The Gate. Único com autoridade de commit.
-#   Gemini (Lead) → Orquestrador. Opera em 3 modos: PO, Projetista, Tech Lead.
-#   Claude        → Arquiteto. Filtro técnico entre intenção e execução.
-#   Copilot       → Engenheiro. Implementa contratos fechados. Não decide design.
+#   Gemini (Lead) → Facilitador Estratégico. Opera em 3 modos: PO, Projetista, Coordenador.
+#                   NUNCA audita código nem revisa spec técnica — isso é Claude.
+#   Claude        → Arquiteto + Auditor Técnico. Filtro entre intenção e execução.
+#                   Revisa código que o Copilot escreveu (não há conflito de interesse).
+#   Copilot       → Engenheiro / Executor. Implementa contratos fechados. Não decide design.
+#
+# Regra anti-chapéu-duplo:
+#   Gemini NÃO audita o que Gemini projetou.
+#   Claude audita o que Copilot implementou.
+#   Nenhum agente revisa o próprio trabalho.
 
 hive:
   name: "Hive Framework"
@@ -14,52 +21,65 @@ hive:
 
 agents:
 
+  marcio:
+    role: "Owner / The Gate"
+    description: "Dono do produto e do repositório. Autoridade final de commit e aprovação. Não executa, não implementa — decide e aprova."
+    capabilities:
+      can_commit: true          # Único com autoridade de commit
+      can_approve_all: true     # Última palavra em qualquer decisão
+      can_veto: true
+
   gemini:
-    role: "Squad Lead / Orquestrador"
-    description: "Opera em 3 modos via cartuchos: PO, Projetista, Tech Lead. Visão total do repositório."
+    role: "Facilitador Estratégico / Squad Lead"
+    description: "Facilita o pensamento do Márcio. Opera em 3 modos de conversa: PO (valor), Projetista (design), Coordenador (planning). NÃO audita código nem spec — essa função pertence ao Claude."
     capabilities:
       can_orchestrate: true
-      can_veto: true              # Pode barrar Claude/Copilot por violação de contrato
-      can_read_all: true          # Visão total do framework e do produto
-      can_write_config: true
+      can_facilitate_design: true       # Ajuda a modelar soluções junto com Márcio
+      can_prioritize_backlog: true
+      can_audit_code: false             # EXPLÍCITO: Gemini não faz code review
+      can_audit_specs: false            # EXPLÍCITO: Gemini não audita specs do Projetista
     models:
       # Valores de referência — versões reais dependem da API disponível no momento
-      complex: "gemini-1.5-pro"   # Orquestração, estratégia, governança
-      routine: "gemini-1.5-flash" # Triagem, automação, documentação derivada
+      complex: "gemini-1.5-pro"         # Orquestração, estratégia, planejamento
+      routine: "gemini-1.5-flash"       # Triagem, automação, documentação derivada
     cartuchos:
-      - po          # beehive/roles/po.md
-      - projetista  # beehive/roles/projetista.md
-      - tech-lead   # beehive/roles/tech-lead.md
+      - po           # beehive/roles/po.md — foco: valor de negócio
+      - projetista   # beehive/roles/projetista.md — foco: design e modelagem
+      - coordenador  # beehive/roles/coordenador.md — foco: planejamento e orquestração
 
   claude:
-    role: "Arquiteto / Estrategista"
-    description: "Filtro técnico. Todo debate arquitetural passa pelo Claude antes de chegar ao Copilot."
+    role: "Arquiteto + Auditor Técnico"
+    description: "Filtro técnico e guardião da qualidade. Especifica o que o Copilot vai construir e audita o que o Copilot entregou. Sem conflito de interesse: Claude especifica, Copilot implementa, Claude revisa."
     model: "claude-sonnet-4-6"
     capabilities:
-      can_design_blueprints: true
+      can_design_blueprints: true       # Cria specs, Work Orders, blueprints
+      can_audit_code: true              # Code review do que o Copilot entregou
+      can_audit_specs: true             # Audita specs antes de passar ao Copilot
+      can_risk_analysis: true           # Segurança, escalabilidade, débito técnico
       can_read_product: true
-      can_write_framework_docs: true   # Blueprints, Work Orders, documentação de framework
-      can_write_product_code: false    # Código de produto é responsabilidade do Copilot
-      can_execute_brainstorm: true
-    escalation_path: "Gemini"
+      can_write_framework_docs: true    # Blueprints, Work Orders, docs de framework
+      can_write_product_code: false     # Código de produto é responsabilidade do Copilot
+    escalation_path: "Gemini ou Márcio"
     inbox: "beehive/construcao/inbox-claude.md"
-    reference: "beehive/.claude/CLAUDE.md"
+    reference: "beehive/roles/claude.md"
 
   copilot:
     role: "Engenheiro de Software / Executor"
-    description: "Implementa contratos fechados. Não redefine escopo, não toma decisões de design."
+    description: "Implementa contratos fechados. Não redefine escopo, não toma decisões de design. Se o contrato estiver ambíguo, para e escala para Claude."
     model: "gpt-4o"               # Versão real pode variar conforme plano
     capabilities:
       can_implement: true
       can_execute_tests: true
       can_write_product_code: true
-      can_read_task_context: true  # Lê apenas o que o contrato e o inbox especificam
-    escalation_path: "Claude"     # Dúvida técnica → Claude. Dúvida de negócio → Gemini/Márcio
+      can_read_task_context: true   # Lê apenas o que o contrato e o inbox especificam
+      can_audit_code: false         # Não auto-revisa nem revisa trabalho de outros agentes
+    escalation_path: "Claude"       # Dúvida técnica → Claude. Dúvida de negócio → Gemini/Márcio
     inbox: "beehive/construcao/inbox-copilot.md"
-    reference: "beehive/.copilot/COPILOT.md"
+    reference: "beehive/roles/copilot.md"
 
 rules:
   context_caching: true           # Ativa economia via cache nas APIs que suportam
-  enforce_contracts: true         # Gemini DEVE barrar se implementação fugir do contrato
+  enforce_contracts: true         # Claude DEVE barrar se spec fugir do que foi aprovado
   gate_required: true             # Nenhum commit sem OK explícito do Márcio
+  no_self_review: true            # Nenhum agente revisa o próprio trabalho
   telemetry_log: "beehive/registry/telemetria/custos.log"

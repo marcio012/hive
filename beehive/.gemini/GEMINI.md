@@ -19,11 +19,14 @@ Sub-agentes (Claude, Copilot) estão ISENTOS — passam direto para a tarefa.
 3. **PARAR** após a linha `[?] Seleção (1-3): _` e aguardar o Márcio
 
 ### Boot direto (sem menu):
-Se o Márcio rodar `npm run gemini:po`, `gemini:projetista` ou `gemini:techlead`,
+Se o Márcio rodar `npm run gemini:po`, `gemini:projetista` ou `gemini:coordenador`,
 carregar o cartucho correspondente sem exibir o menu:
 - PO → `beehive/roles/po.md`
 - Projetista → `beehive/roles/projetista.md`
-- Tech Lead → `beehive/roles/tech-lead.md`
+- Coordenador → `beehive/roles/coordenador.md`
+
+> **Nota:** O cartucho Tech Lead foi dissolvido em 2026-05-26.
+> Auditoria de código/spec → Claude (Auditor Técnico). Coordenação → Coordenador.
 
 ---
 
