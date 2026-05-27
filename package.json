@@ -16,18 +16,8 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "// --- PRODUTO (Apps Proxy) ---": "",
-    "dev": "npm --prefix apps/core run dev",
-    "dev:core": "npm --prefix apps/core run dev",
-    "dev:frontend": "npm --prefix apps/frontend run dev",
-    "dev:backend": "npm --prefix apps/backend run dev",
-    "check:types": "npm --prefix apps/core run check:types",
-    "build": "npm --prefix apps/core run build",
-    "check:all": "npm run check:types && npm run build",
-    "test": "npm --prefix apps/core run test",
-    "// --- HIVE FRAMEWORK (Orchestrator) ---": "",
+    "// --- HIVE FRAMEWORK ---": "",
     "hive": "bash beehive/bin/hive.sh",
-    "squad": "npm run hive --",
     "hive:inbox": "npm run hive -- inbox",
     "hive:status": "npm run hive -- status",
     "hive:lock": "npm run hive -- lock",
@@ -37,6 +27,7 @@
     "hive:telemetry": "bash beehive/bin/hive-telemetry.sh",
     "hive:insight": "npm run hive -- insight",
     "hive:view": "bash beehive/bin/hive-view.sh",
+
     "// --- AGENT SESSIONS ---": "",
     "hive:session:gemini": "npm run hive -- session-start gemini",
     "hive:session:claude": "npm run hive -- session-start claude",
@@ -45,15 +36,23 @@
     "gemini:po": "npm run hive -- session-start gemini --role po",
     "gemini:projetista": "npm run hive -- session-start gemini --role projetista",
     "gemini:coordenador": "npm run hive -- session-start gemini --role coordenador",
+
+    "// --- ALIASES squad:* (atalhos para os comandos hive:*) ---": "",
+    "squad:inbox": "npm run hive:inbox",
+    "squad:session:claude": "npm run hive:session:claude",
+    "squad:session:gemini": "npm run hive:session:gemini",
+    "squad:session:copilot": "npm run hive:session:copilot",
+    "squad:lock:acquire": "npm run hive -- lock set",
+    "squad:lock:release": "npm run hive -- lock release",
+    "squad:lock:assert": "npm run hive -- lock check",
+
     "// --- CUSTO / TELEMETRIA ---": "",
     "squad:cost": "bash beehive/bin/hive-cost.sh",
     "squad:cost:all": "bash beehive/bin/hive-cost.sh --all",
     "squad:cost:log": "bash beehive/bin/hive-cost.sh --log",
-    "// --- OPS / HML ---": "",
-    "ops:deploy:hml": "bash ./legacy/ops/scripts/deploy-hml.sh",
-    "ops:smoke:hml": "bash ./legacy/ops/scripts/smoke-hml.sh",
-    "ops:status:hml": "bash ./legacy/ops/scripts/status-hml.sh",
-    "ops:logs:hml": "bash ./legacy/ops/scripts/logs-hml.sh"
+
+    "// --- PO ---": "",
+    "po:demand": "bash beehive/bin/hive-po-demand.sh"
   },
   "engines": {
     "node": "24.7.0"

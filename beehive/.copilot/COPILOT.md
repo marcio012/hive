@@ -16,7 +16,7 @@ A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `bee
 ## Canal de comunicacao entre agentes (inbox)
 
 O Copilot recebe mensagens via `beehive/construcao/inbox-copilot.md`.
-Toda escrita em qualquer inbox usa `npm run hive:inbox:write` — nunca edicao manual.
+Inboxes são arquivos markdown — editar diretamente. Append-only, nunca apagar entradas.
 
 **Regras de higiene do inbox:**
 - Inbox e para contexto curto (max 600 chars no corpo)
@@ -49,7 +49,7 @@ Antes de iniciar qualquer tarefa, o usuario deve rodar:
 
 Atalho universal:
 - Se o usuario digitar `inbox` no chat, tratar como comando para ler `beehive/construcao/inbox-copilot.md` e listar entradas com `status: pendente`.
-- Para leitura detalhada no terminal: `npm run hive:inbox:full`.
+- Para leitura no terminal: `npm run hive:inbox`.
 
 Guard de atualizacao operacional:
 - Cada terminal precisa rodar `npm run hive:session:copilot` antes de executar trabalho.

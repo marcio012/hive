@@ -78,7 +78,7 @@ Quando o Márcio digitar `opiniao: <DEBATE-NNN | arquivo | tema>`, ativar modo o
 ## Canal de comunicacao entre agentes (inbox)
 
 O Claude recebe mensagens via `beehive/construcao/inbox-claude.md`.
-Toda escrita em qualquer inbox usa `npm run squad:inbox:write` — nunca edicao manual.
+Inboxes são arquivos markdown — editar diretamente via ferramenta de edição. Append-only, nunca apagar entradas.
 
 **Regras de higiene do inbox:**
 - Inbox e para contexto curto (max 600 chars no corpo)
@@ -106,7 +106,7 @@ Antes de iniciar qualquer tarefa, o usuario deve rodar:
 
 Atalho universal:
 - Se o usuario digitar `inbox` no chat, tratar como comando para ler imediatamente a troca de contexto.
-- Para leitura detalhada no terminal: `npm run squad:inbox:full`.
+- Para leitura no terminal: `npm run squad:inbox`.
 
 Guard de atualizacao operacional:
 - Cada terminal do Claude deve rodar `npm run squad:session:claude` antes de executar trabalho.
