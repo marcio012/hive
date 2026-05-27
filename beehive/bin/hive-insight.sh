@@ -4,8 +4,8 @@
 
 set -euo pipefail
 
-# Variáveis injetadas pelo hive.sh principal:
-HIVE_HOME="${HIVE_HOME:-$(pwd)}"
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
 BUFFER_FILE="$HIVE_HOME/beehive/construcao/insights-buffer.md"
 
 INSIGHT=$1

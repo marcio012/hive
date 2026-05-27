@@ -76,7 +76,7 @@ antes de responder. Isso garante que apenas as regras necessárias estejam ativa
 ---
 
 ## Atualização de sessão
-- Rodar `npm run hive:session:gemini` ao iniciar no terminal
+- Rodar `npm run squad:session:gemini` ao iniciar no terminal
 - Verificar `beehive/construcao/inbox-gemini.md` para tarefas pendentes
 - Se regras operacionais mudaram → recarregar contexto antes de prosseguir
 

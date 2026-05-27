@@ -1,0 +1,36 @@
+{
+  "name": "hive-framework-sidecar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Runtime isolado do Hive Framework",
+  "type": "commonjs",
+  "scripts": {
+    "hive": "bash \"$HIVE_HOME/beehive/bin/hive.sh\"",
+    "hive:inbox": "npm run hive -- inbox",
+    "hive:status": "npm run hive -- status",
+    "hive:lock": "npm run hive -- lock",
+    "hive:gate": "npm run hive -- gate",
+    "hive:check": "npm run hive -- check",
+    "hive:health": "bash \"$HIVE_HOME/beehive/bin/hive-health.sh\"",
+    "hive:telemetry": "bash \"$HIVE_HOME/beehive/bin/hive-telemetry.sh\"",
+    "hive:insight": "npm run hive -- insight",
+    "hive:view": "bash \"$HIVE_HOME/beehive/bin/hive-view.sh\"",
+    "hive:session:gemini": "npm run hive -- session-start gemini",
+    "hive:session:claude": "npm run hive -- session-start claude",
+    "hive:session:copilot": "npm run hive -- session-start copilot",
+    "hive:session:state": "npm run hive -- session-update",
+    "gemini:po": "npm run hive -- session-start gemini --role po",
+    "gemini:projetista": "npm run hive -- session-start gemini --role projetista",
+    "gemini:coordenador": "npm run hive -- session-start gemini --role coordenador",
+    "squad:bridge": "bash \"$HIVE_HOME/.agile-squad/framework/squad-bridge.sh\"",
+    "squad:cost": "bash \"$HIVE_HOME/beehive/bin/hive-cost.sh\"",
+    "squad:cost:all": "npm run squad:cost -- --all",
+    "squad:cost:log": "npm run squad:cost -- --log",
+    "squad:next": "bash \"$HIVE_HOME/beehive/bin/hive-next.sh\"",
+    "po:demand": "bash \"$HIVE_HOME/beehive/bin/hive-po-demand.sh\"",
+    "setup": "bash \"$HIVE_HOME/.agile-squad/framework/setup.sh\""
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

@@ -4,8 +4,8 @@
 
 set -euo pipefail
 
-# Configurações
-HIVE_HOME="${HIVE_HOME:-$(pwd)}"
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
 LOG_FILE="$HIVE_HOME/beehive/registry/telemetria/custos.log"
 DATE_STAMP=$(date '+%Y-%m-%d %H:%M:%S')
 

@@ -4,12 +4,17 @@
 
 set -euo pipefail
 
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
 if [[ $# -lt 1 ]]; then
   echo "Uso: npm run hive:view -- <caminho_do_arquivo>"
   exit 1
 fi
 
 FILE_PATH=$1
+if [[ "$FILE_PATH" != /* ]]; then
+  FILE_PATH="$ROOT_DIR/$FILE_PATH"
+fi
 
 if [[ ! -f "$FILE_PATH" ]]; then
   echo "Erro: Arquivo '$FILE_PATH' não encontrado."

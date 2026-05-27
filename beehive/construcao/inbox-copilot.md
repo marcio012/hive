@@ -8,6 +8,142 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [COPILOT-020] Implementar Blueprints Plugáveis — ModuloGuard + OnboardingService (DEBATE-014)
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-26
+**thread:** debate-014-modulos-plugaveis
+**Status:** pendente
+
+DEBATE-014 consolidado e aprovado. Implementar a arquitetura de módulos plugáveis no NestJS Core (`tenantOS/backend`).
+
+**Sequência obrigatória:**
+
+**1. `ModuloGuard` + decorator `@Modulo('slug')`**
+```typescript
+// beehive/src/modulos/modulo.guard.ts
+// beehive/src/modulos/modulo.decorator.ts
+@Modulo('pdv') // aplica nos controllers
+```
+- Guard consulta `TenantModulo` onde `tenantId = contexto` e `moduloSlug = slug`
+- Retorna 403 se o tenant não tiver o módulo ativo
+
+**2. Constante `BLUEPRINT_PRESETS`**
+```typescript
+// src/modulos/blueprint-presets.ts
+export const BLUEPRINT_PRESETS = {
+  varejo:      ['pdv', 'estoque', 'clientes'],
+  servicos:    ['agenda', 'clientes'],
+  restaurante: ['pdv', 'estoque', 'clientes', 'mesas', 'cozinha'],
+}
+```
+
+**3. `OnboardingService` — transação única**
+```typescript
+// src/platform/onboarding.service.ts
+async onboard(dto: OnboardingDto) {
+  return this.prisma.$transaction([
+    prisma.tenant.create(...),
+    prisma.tenantModulo.createMany({ data: presets }),
+    prisma.usuario.create(...admin...),
+  ])
+}
+```
+
+**4. `/session/me` retorna `modulosAtivos`**
+- Adicionar ao response: `modulosAtivos: string[]` — lista dos slugs ativos do tenant
+
+**5. Aplicar `@Modulo()` nos controllers existentes**
+- `VendasController` → `@Modulo('pdv')`
+- `ProdutosController` → `@Modulo('estoque')`
+- `ClientesController` → `@Modulo('clientes')`
+- `AgendamentosController` → `@Modulo('agenda')`
+
+**Critérios de aceite:**
+- [ ] Tenant sem módulo `pdv` recebe 403 em `POST /vendas`
+- [ ] `OnboardingService` com `blueprint=varejo` cria tenant + 3 módulos + admin em transação única
+- [ ] `GET /session/me` retorna `modulosAtivos: ['pdv', 'estoque', 'clientes']` para tenant Varejo
+- [ ] Adicionar Blueprint novo = 1 linha em `BLUEPRINT_PRESETS`, zero migration
+
+**Ponto de parada:** retornar ao Claude com evidência de `POST /vendas` retornando 403 para tenant sem `pdv`.
+
+---
+
+### [COPILOT-019] Script `squad:next` — Roteamento do Coordenador (DEBATE-013)
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-26
+**thread:** debate-013-orquestrador
+**Status:** executada
+
+**Contexto:** DEBATE-013 aprovado. O Gemini Coordenador propõe um Plano de Voo numerado. O `squad:next` executa o item escolhido pelo Márcio.
+
+**Contrato fechado:**
+
+Criar `beehive/bin/hive-next.sh` e registrar como `squad:next` no `package.json`.
+
+```bash
+# Uso: npm run squad:next <número>
+# Exemplo: npm run squad:next 1
+```
+
+**Comportamento esperado:**
+1. Recebe o número do item do Plano de Voo como argumento
+2. Lê `session-state.env` para saber qual agente está associado ao item
+   - Formato esperado: `NEXT_1_AGENT=claude`, `NEXT_1_TASK="DEBATE-014"`
+   - Se não encontrar → pede ao Gemini para gerar o Plano de Voo primeiro
+3. Abre a sessão do agente correto:
+   - `claude` → `npm run hive:session:claude`
+   - `copilot` → `npm run hive:session:copilot`
+   - `gemini` → `npm run hive:session:gemini`
+4. Exibe contexto do item: agente, tarefa, referência (inbox/debate/handoff)
+5. Registra em `session-state.env`: `CURRENT_ITEM=<N>`, `CURRENT_AGENT=<agente>`
+
+**Alternativa simples (se session-state não tiver os itens):**
+Exibir mensagem: `"Plano de Voo não encontrado. Rode npm run gemini:coordenador primeiro."`
+
+**Adicionar ao package.json:**
+```json
+"squad:next": "bash beehive/bin/hive-next.sh"
+```
+
+**Critérios de aceite:**
+- [ ] `npm run squad:next 1` abre sessão do agente do item 1 sem erro
+- [ ] Exibe tarefa e referência do item antes de abrir sessão
+- [ ] Falha graciosamente se Plano de Voo não existir no session-state
+
+---
+
+### [COPILOT-018] Parecer técnico no DEBATE-014 — Módulos Plugáveis
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-26
+**thread:** debate-modulos-plugaveis
+**Status:** executada
+
+Ler `beehive/construcao/debates/DEBATE-014-MODULOS-PLUGAVEIS.md` e responder na seção **"Parecer do Copilot"**.
+
+Questões direcionadas (seção 3 do debate):
+1. O `TenantModulo` atual suporta presets ou precisa de tabela `Perfil` separada?
+2. Melhor forma de implementar guard de módulo no NestJS (decorator, middleware ou interceptor)?
+3. Como o frontend lê módulos ativos eficientemente — API por rota ou flag no JWT?
+4. Risco de performance: flags por request vs. cache no token?
+
+---
+
+### [COPILOT-016] Sidecar V3 — Implementação do runtime isolado do Squad Framework
+**thread:** DEBATE-007
+**de:** claude
+**para:** copilot
+**status:** executada
+**data:** 2026-05-26
+
+DEBATE-007 consolidado e aprovado pelo Márcio. Implementar o isolamento do Squad Framework em `.agile-squad/framework/` com runtime Node v24 próprio.
+
+**Handoff completo:** `beehive/construcao/handoff-copilot-debate007-sidecar.md`
+
+Sequência obrigatória: estrutura do sidecar → migrar inbox/bridge → demais scripts → proxies na raiz → validação final.
+Condições C1–C6 são gate de entrega — ver handoff.
+
+---
+
 <!-- novas entradas abaixo — mais recente no topo -->
 
 ---
@@ -16,7 +152,7 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-26
 **thread:** bin-scripts-debttech
-**Status:** pendente
+**Status:** executada
 
 ---
 
@@ -91,7 +227,7 @@ O lock atual é advisory (convenção). Esta implementação ainda não previne 
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-26
 **thread:** po-backlog
-**Status:** pendente
+**Status:** executada
 
 ---
 
@@ -167,3 +303,45 @@ Adicionar o script na seção `// --- HIVE FRAMEWORK ---`:
 Após execução, rodar `npm run po:demand`, criar uma demanda de teste e confirmar
 que o BACKLOG.md foi atualizado corretamente. Registrar saída no terminal.
 
+### [COPILOT-017] Legacy Death Módulo 2 — Vendas com estoque e MovimentoEstoque
+**De:** Claude (Arquiteto)
+**Para:** Copilot (Engenheiro)
+**Data:** 2026-05-26
+**thread:** legacy-death-sales
+**Status:** executada
+
+Blueprint completo em `beehive/construcao/blueprints/BLUEPRINT_LEGACY_DEATH_SALES.md` (v2.0).
+
+**Resumo dos 4 gaps a fechar:**
+- G1: Validar estoque antes de criar venda
+- G2: Decrementar estoque na `$transaction`
+- G3: Criar model `MovimentoEstoque` no schema Prisma
+- G4: Filtros de data + paginação no `listar()`
+
+Implementar na sequência: schema → migration → service → controller → testes.
+
+---
+
+### [COPILOT-015] Implementar script de migração de usuários (Legacy Death - Módulo 1)
+**De:** Gemini (Lead) → Copilot (Executor)
+**Data:** 2026-05-26
+**thread:** legacy-death-auth
+**Status:** executada (2026-05-26)
+
+#### Contexto
+Conforme DEBATE-012 e BLUEPRINT_LEGACY_DEATH_AUTH.md, precisamos migrar os usuários do backend Express legado para o NestJS Core. O legado armazena senhas em texto plano; o Core exige BCrypt.
+
+#### Tarefas:
+1. **Schema Update:** Adicionar `legacy_id Int? @unique` ao model `Usuario` no `../tenantOS/backend/prisma/schema.prisma`.
+2. **Script de Migração:** Criar `../tenantOS/backend/scripts/migrate-legacy-users.ts`.
+   - O script deve ler usuários do banco legado (usar o Prisma Client do legado ou query direta se preferir).
+   - Para cada usuário:
+     - Gerar hash BCrypt da senha.
+     - Criar no Core associado ao `tenant_id` de um tenant padrão (ex: 'default' ou 'matriz').
+     - Mapear `tipo` (legado) para `role` (core).
+3. **Trigger:** Adicionar `"db:migrate:legacy-users": "ts-node scripts/migrate-legacy-users.ts"` ao package.json do core.
+
+#### Critérios de Aceite:
+- [ ] `npm run db:migrate:legacy-users` executa sem erros.
+- [ ] Usuários aparecem no banco do Core com senhas hasheadas.
+- [ ] Login via `POST /auth/login` no Core funciona para um usuário migrado.

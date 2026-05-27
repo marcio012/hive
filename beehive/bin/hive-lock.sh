@@ -4,8 +4,9 @@
 
 set -euo pipefail
 
-# Variáveis injetadas pelo hive.sh principal:
-# HIVE_HOME, PROJECT_PATH
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
+PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
 
 LOCK_FILE="$PROJECT_PATH/.hive-agent/locks.json"
 YELLOW='\033[1;33m'
@@ -24,6 +25,7 @@ usage() {
 }
 
 # Inicializa o arquivo de locks se não existir
+mkdir -p "$PROJECT_PATH/.hive-agent"
 if [[ ! -f "$LOCK_FILE" ]]; then
   echo "{}" > "$LOCK_FILE"
 fi

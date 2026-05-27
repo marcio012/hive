@@ -45,18 +45,18 @@ Modo principal:
 - Referencia da decisao: `docs/planning/DECISAO_OPERACAO_SQUAD_CLI.md`.
 
 Antes de iniciar qualquer tarefa, o usuario deve rodar:
-  npm run hive:inbox
+  npm run squad:inbox -- copilot
 
 Atalho universal:
 - Se o usuario digitar `inbox` no chat, tratar como comando para ler `beehive/construcao/inbox-copilot.md` e listar entradas com `status: pendente`.
-- Para leitura no terminal: `npm run hive:inbox`.
+- Para leitura no terminal: `npm run squad:inbox -- copilot`.
 
 Guard de atualizacao operacional:
-- Cada terminal precisa rodar `npm run hive:session:copilot` antes de executar trabalho.
+- Cada terminal precisa rodar `npm run squad:session:copilot` antes de executar trabalho.
 - Se regras ou scripts operacionais mudarem, a sessao anterior fica bloqueada para lock/handoff ate recarregar esse comando.
 
 Fallback (apenas incidente):
-- `npm run hive:session:copilot` e colagem manual do bloco de contexto.
+- `npm run squad:session:copilot` e colagem manual do bloco de contexto.
 - Chat sem CLI nao deve ser tratado como modo oficial do squad.
 
 O bloco contem o estado atual da sessao, incluindo:

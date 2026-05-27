@@ -4,10 +4,9 @@
 
 set -euo pipefail
 
-# Configuração de Caminhos
-# Assume o diretório atual do framework se HIVE_HOME não for fornecido externamente
-HIVE_HOME="${HIVE_HOME:-$(pwd)}"
-PROJECT_PATH=$(pwd) # Assume o diretório atual como projeto por padrão
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
+PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
 
 # Cores para saída
 GREEN='\033[0;32m'

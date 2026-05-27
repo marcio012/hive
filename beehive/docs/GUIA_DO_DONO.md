@@ -81,13 +81,13 @@ Na prática é simples: o Gemini ou Claude apresenta um resumo do que foi feito,
 
 ```bash
 # Com o Gemini (para planejar / brainstorm):
-npm run hive:session:gemini
+npm run squad:session:gemini
 
 # Com o Claude (para arquitetura / revisão):
 cd beehive && claude   # Claude Code abre aqui
 
 # Com o Copilot (para implementar):
-npm run hive:session:copilot
+npm run squad:session:copilot
 ```
 
 Ao abrir o Claude, ele automaticamente verifica se há mensagens pendentes para você no inbox.

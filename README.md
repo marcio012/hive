@@ -18,6 +18,6 @@ O Hive é um framework **portável**. O repositório inteiro funciona como um Si
 ## Comandos Principais
 
 Utilize os scripts do `package.json` na raiz:
-- `npm run hive:status`: Dashboard de controle.
-- `npm run hive:session:gemini`: Início de sessão para o Tech Lead.
-- `npm run hive:insight`: Captura de ideias para o buffer.
+- `npm run squad:inbox -- copilot`: Leitura rápida do inbox operacional.
+- `npm run squad:session:gemini`: Início de sessão para o Tech Lead.
+- `npm run squad:bridge -- copilot`: Inicializa a ponte operacional do agente.

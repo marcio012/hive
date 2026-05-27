@@ -122,6 +122,13 @@ for entrada in "${ENTRADAS[@]}"; do
   total_custo=$(echo "scale=4; $total_custo + $custo" | bc)
 done
 
+# ── Helpers ───────────────────────────────────────────────────────────────────
+fmt_brl() {
+  local v="$1"
+  [[ "$v" == .* ]] && v="0$v"
+  printf "%.4f" "$v" 2>/dev/null || echo "$v"
+}
+
 # ── Exibe dashboard ───────────────────────────────────────────────────────────
 echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════╗${RESET}"
@@ -132,18 +139,26 @@ echo ""
 printf "${BOLD}%-25s %8s %12s %12s %12s${RESET}\n" "Agente" "Rodadas" "Tokens IN" "Tokens OUT" "Custo (BRL)"
 echo -e "${DIM}──────────────────────────────────────────────────────────────────${RESET}"
 
-for agente in "${!agente_custo[@]}"; do
+# Ordena agentes por custo decrescente (usa | como separador para nomes com espaço)
+sorted_agents=$(for agente in "${!agente_custo[@]}"; do
+  echo "${agente_custo[$agente]}|$agente"
+done | sort -t'|' -k1 -rn | cut -d'|' -f2-)
+
+while IFS= read -r agente; do
+  [[ -z "$agente" ]] && continue
+  custo_fmt=$(fmt_brl "${agente_custo[$agente]}")
   printf "%-25s %8s %12s %12s %12s\n" \
     "$agente" \
     "${agente_rodadas[$agente]}" \
     "${agente_tokens_in[$agente]}" \
     "${agente_tokens_out[$agente]}" \
-    "R\$ ${agente_custo[$agente]}"
-done
+    "R\$ $custo_fmt"
+done <<< "$sorted_agents"
 
+total_fmt=$(fmt_brl "$total_custo")
 echo -e "${DIM}──────────────────────────────────────────────────────────────────${RESET}"
 echo -e "${BOLD}Total de rodadas: ${#ENTRADAS[@]}${RESET}"
-echo -e "${BOLD}${GREEN}Total estimado:   R\$ $total_custo BRL${RESET}"
+echo -e "${BOLD}${GREEN}Total estimado:   R\$ $total_fmt BRL${RESET}"
 echo ""
 echo -e "${DIM}⚠  Estimativas. Para custo exato do Claude: use /cost no Claude Code.${RESET}"
 echo -e "${DIM}   Para registrar custo manual do Claude: npm run squad:cost -- --log${RESET}"

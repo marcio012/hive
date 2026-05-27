@@ -4,8 +4,10 @@
 
 set -euo pipefail
 
-# Variáveis injetadas pelo hive.sh principal:
-# HIVE_HOME, PROJECT_PATH, HIVE_ROLES
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
+PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
+HIVE_ROLES="${HIVE_ROLES:-$HIVE_HOME/beehive/roles/roles.yaml}"
 
 AGENT_NAME=${1:-"gemini"} # Assume gemini se não for passado nada
 
@@ -18,8 +20,8 @@ if [[ ! -f "$PROJECT_PATH/package.json" ]] && [[ ! -d "$PROJECT_PATH/.git" ]]; t
 fi
 
 # 2. Extração de Metadados da Colmeia (via roles.yaml)
-# Busca o modelo complexo definido para o agente
-MODEL=$(grep -A 15 "$AGENT_NAME:" "$HIVE_ROLES" | grep "complex:" | cut -d'"' -f2 || echo "default")
+# Busca o modelo complexo ou dedicado definido para o agente
+MODEL=$(grep -A 15 "$AGENT_NAME:" "$HIVE_ROLES" | grep -E "complex:|model:" | head -1 | cut -d'"' -f2 || echo "default")
 
 # 3. Registro de Sessão
 echo -e "Agente Ativo : \033[0;32m$AGENT_NAME\033[0m"
@@ -39,10 +41,3 @@ if [[ ! -d "$PROJECT_PATH/.hive-agent" ]]; then
 fi
 
 echo -e "\033[0;32mHive operacional. Pronto para orquestrar.\033[0m"
-
-# 5. Exibe a Página Inicial (HIVE.md)
-if [[ -f "$HIVE_HOME/beehive/HIVE.md" ]]; then
-  echo -e "\n"
-  cat "$HIVE_HOME/beehive/HIVE.md"
-  echo -e "\n"
-fi

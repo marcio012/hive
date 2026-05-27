@@ -4,8 +4,10 @@
 
 set -euo pipefail
 
-# Variáveis injetadas pelo hive.sh principal:
-# HIVE_HOME, PROJECT_PATH, HIVE_ROLES
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
+PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
+HIVE_ROLES="${HIVE_ROLES:-$HIVE_HOME/beehive/roles/roles.yaml}"
 
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'

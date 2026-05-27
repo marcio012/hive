@@ -4,9 +4,9 @@
 
 set -euo pipefail
 
-# Variáveis injetadas pelo hive.sh principal:
-HIVE_HOME="${HIVE_HOME:-$(pwd)}"
-PROJECT_PATH="${PROJECT_PATH:-$(pwd)}"
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
+PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
 
 AGENT_NAME=${1:-"gemini"}
 INBOX_FILE="$HIVE_HOME/beehive/construcao/inbox-$AGENT_NAME.md"
@@ -26,8 +26,43 @@ fi
 
 echo -e "${BLUE}Pendências em $(basename "$INBOX_FILE"):${NC}"
 
-# Procura por blocos que contenham 'pendente' (case-insensitive)
-# Usa RS para separar por '---' e filtra blocos com 'pendente'
-awk -v RS='---' 'tolower($0) ~ /status: pendente/ { print "---" $0 }' "$INBOX_FILE" | grep -E "^### |[Ss]tatus: " || echo "  (Nenhuma tarefa pendente)"
+# Procura por entradas iniciadas por `###` e filtra as que estão pendentes
+PENDING_OUTPUT="$(
+  awk '
+    function flush_entry() {
+      if (capturing && pending) {
+        print "---"
+        print entry
+      }
+      entry = ""
+      pending = 0
+      capturing = 0
+    }
+
+    /^### / {
+      flush_entry()
+      entry = $0
+      capturing = 1
+      next
+    }
+
+    capturing {
+      entry = entry ORS $0
+      if (tolower($0) ~ /^\*\*status:\*\*[[:space:]]*pendente/ || tolower($0) ~ /^status:[[:space:]]*pendente/) {
+        pending = 1
+      }
+    }
+
+    END {
+      flush_entry()
+    }
+  ' "$INBOX_FILE" | sed '/^[[:space:]]*$/d'
+)"
+
+if [[ -n "$PENDING_OUTPUT" ]]; then
+  printf '%s\n' "$PENDING_OUTPUT"
+else
+  echo "  (Nenhuma tarefa pendente)"
+fi
 
 echo -e "\n===================================="

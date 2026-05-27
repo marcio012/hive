@@ -4,9 +4,9 @@
 
 set -euo pipefail
 
-# Caminhos base
-HIVE_HOME="${HIVE_HOME:-$(pwd)}"
-PROJECT_PATH="${PROJECT_PATH:-$(pwd)}"
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
+PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
 CONFIG_FILE="$HIVE_HOME/beehive/config.env"
 STATE_FILE="$PROJECT_PATH/.hive-agent/session-state.env"
 DIRETRIZES_FILE="$HIVE_HOME/beehive/cognition/diretrizes.md"
