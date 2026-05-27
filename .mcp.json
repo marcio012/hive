@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "hive-filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem@0.6.2",
+        "/home/marcio/job/hive/beehive"
+      ]
+    }
+  }
+}
