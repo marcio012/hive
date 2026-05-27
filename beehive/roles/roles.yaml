@@ -1,43 +1,65 @@
-# hive/config/roles.yaml
-# Governança Global do Hive Framework — Edição 2026
+# beehive/roles/roles.yaml
+# Governança Global do Hive Framework — Revisado 2026-05-26
+#
+# Os 4 atores do squad:
+#   Márcio        → Owner. Aprova tudo via The Gate. Único com autoridade de commit.
+#   Gemini (Lead) → Orquestrador. Opera em 3 modos: PO, Projetista, Tech Lead.
+#   Claude        → Arquiteto. Filtro técnico entre intenção e execução.
+#   Copilot       → Engenheiro. Implementa contratos fechados. Não decide design.
 
 hive:
   name: "Hive Framework"
   owner: "Márcio"
   currency: "BRL"
-  
+
 agents:
+
   gemini:
-    role: "Hive Lead / Tech Lead"
+    role: "Squad Lead / Orquestrador"
+    description: "Opera em 3 modos via cartuchos: PO, Projetista, Tech Lead. Visão total do repositório."
     capabilities:
       can_orchestrate: true
-      can_veto: true           # Poder de barrar Claude/Copilot
-      can_read_all: true       # Visão total do Reino e da Obra
+      can_veto: true              # Pode barrar Claude/Copilot por violação de contrato
+      can_read_all: true          # Visão total do framework e do produto
       can_write_config: true
     models:
-      complex: "gemini-3.5-pro"   # Orquestração e Estratégia
-      routine: "gemini-3.5-flash" # Automação e Triagem
-    
+      # Valores de referência — versões reais dependem da API disponível no momento
+      complex: "gemini-1.5-pro"   # Orquestração, estratégia, governança
+      routine: "gemini-1.5-flash" # Triagem, automação, documentação derivada
+    cartuchos:
+      - po          # beehive/roles/po.md
+      - projetista  # beehive/roles/projetista.md
+      - tech-lead   # beehive/roles/tech-lead.md
+
   claude:
     role: "Arquiteto / Estrategista"
-    model: "claude-3-5-sonnet"
+    description: "Filtro técnico. Todo debate arquitetural passa pelo Claude antes de chegar ao Copilot."
+    model: "claude-sonnet-4-6"
     capabilities:
       can_design_blueprints: true
       can_read_product: true
-      can_write_files: false      # Delegado ao Copilot via contrato
-      can_execute_brainstorm: true # Acesso à função de ideação
+      can_write_framework_docs: true   # Blueprints, Work Orders, documentação de framework
+      can_write_product_code: false    # Código de produto é responsabilidade do Copilot
+      can_execute_brainstorm: true
     escalation_path: "Gemini"
-    
+    inbox: "beehive/construcao/inbox-claude.md"
+    reference: "beehive/.claude/CLAUDE.md"
+
   copilot:
     role: "Engenheiro de Software / Executor"
-    model: "gpt-4o-mini"
+    description: "Implementa contratos fechados. Não redefine escopo, não toma decisões de design."
+    model: "gpt-4o"               # Versão real pode variar conforme plano
     capabilities:
       can_implement: true
       can_execute_tests: true
-      can_read_task_context: true # Só vê o que o Hive permitir
-    escalation_path: "Gemini"
+      can_write_product_code: true
+      can_read_task_context: true  # Lê apenas o que o contrato e o inbox especificam
+    escalation_path: "Claude"     # Dúvida técnica → Claude. Dúvida de negócio → Gemini/Márcio
+    inbox: "beehive/construcao/inbox-copilot.md"
+    reference: "beehive/.copilot/COPILOT.md"
 
 rules:
-  context_caching: true           # Ativa economia de 90% via cache 3.5
-  enforce_contracts: true         # Gemini DEVE barrar se fugir do contrato
-  telemetry_log: "beehive/construcao/logs/custos.log"
+  context_caching: true           # Ativa economia via cache nas APIs que suportam
+  enforce_contracts: true         # Gemini DEVE barrar se implementação fugir do contrato
+  gate_required: true             # Nenhum commit sem OK explícito do Márcio
+  telemetry_log: "beehive/registry/telemetria/custos.log"

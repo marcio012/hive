@@ -112,7 +112,7 @@ Fallback (apenas incidente):
 3. Gemini (opcional) faz triagem se o contexto for volumoso.
 4. Claude debate, afina escopo e riscos.
 5. Usuario aprova decisao final.
-6. Roteamento: Claude executa (contexto/conceito) ou Copilot executa (contrato fechado/mecanico).Ja e
+6. Roteamento: Claude executa (contexto/conceito) ou Copilot executa (contrato fechado/mecânico).
 7. Revisao cruzada entre os dois agentes.
 8. OK final do Márcio.
 9. Ao finalizar: `npm run squad:lock:release -- <owner>` e atualizar `session-state.env`.
@@ -132,7 +132,8 @@ Apos qualquer mudanca de estado no servidor, atualizar: `.claude/CLAUDE_HML.md`
 ## Referencias locais
 - `AGENTS.md` (entrada compartilhada do repositorio)
 - `CLAUDE.md` (entrada especifica do Claude na raiz)
-- `ai/construcao/OPERACAO_COMPARTILHADA_SQUAD.md` (regras comuns entre agentes)
+- `beehive/roles/claude.md` (resumo do papel do Claude no squad)
+- `beehive/cognition/diretrizes.md` (regras globais do framework)
 - `.claude/CLAUDE_ERP.md`
 - `.claude/CLAUDE_WhiteLabel.md`
 - `.claude/CLAUDE_HML.md` (estado do servidor HML — ler antes de qualquer SSH)
