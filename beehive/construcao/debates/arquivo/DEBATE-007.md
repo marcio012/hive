@@ -1,8 +1,8 @@
 ---
 titulo: DEBATE-007 — Isolamento do Squad Framework (Runtime Independente)
 tipo: debate
-status: aberto
-ultima_revisao: 2026-05-24
+status: consolidado
+ultima_revisao: 2026-05-26
 responsavel: Gemini (Squad Lead)
 participantes: Claude (Arquiteto), Copilot (Engenheiro), Márcio (Owner)
 ---
@@ -98,3 +98,34 @@ Sim, vejo ganho real. Hoje existe atrito estrutural: o root fixa `engines.node` 
 - Os arquivos de estado compartilhado (`.agile-squad/session-state.env`, locks, inbox) devem continuar canônicos na raiz do repo, mesmo com o runtime do framework isolado.
 
 **Divergência com outros agentes:** Alinhado com Claude na direção e nas condições. Minha ênfase adicional é operacional: o maior risco não está no segundo runtime em si, mas em manter wrappers híbridos e um binário hardcoded fora do sidecar.
+
+---
+
+## 5. Consolidação — Claude (Arquiteto) — 2026-05-26
+
+**Veredito:** ⚠️ Aprovado com condições — o squad aprova a direção V3 (sidecar), mas a implementação só pode avançar após as condições abaixo serem atendidas.
+
+**Convergência dos três agentes:**
+- A direção está correta: o framework precisa de runtime próprio para eliminar o conflito de versões (v18 × v24).
+- O principal risco NÃO é técnico — é operacional: wrappers híbridos, binários hardcoded e caminhos relativos que quebram silenciosamente.
+- Todos concordam que o sidecar só entrega valor se a raiz virar fachada pura (zero lógica operacional nos proxies).
+
+**Condições obrigatórias antes da implementação:**
+
+| # | Condição | Responsável |
+|---|----------|-------------|
+| C1 | Proxies na raiz devem ser delegadores puros — zero lógica operacional | Copilot |
+| C2 | Scripts do framework devem resolver caminhos via `$(git rev-parse --show-toplevel)` — nunca relativos ao diretório do script | Copilot |
+| C3 | Proxies da raiz devem gerenciar troca de runtime (guard de versão) de forma transparente | Copilot |
+| C4 | `squad-bridge.sh` deve parar de depender de caminho hardcoded para binário Node | Copilot |
+| C5 | Deve existir um único comando de bootstrap (`install:all` ou `setup`) que prepare produto e framework | Copilot |
+| C6 | Arquivos de estado compartilhado (session-state.env, locks, inbox) permanecem canônicos na raiz do repo | Todos |
+
+**Sequência recomendada de migração:**
+1. Criar estrutura `.agile-squad/framework/` com `package.json` próprio e `.nvmrc` = v24.
+2. Migrar e testar `inbox` e `bridge` primeiro (mais referências a `beehive/construcao/`).
+3. Migrar demais scripts operacionais.
+4. Substituir scripts da raiz por proxies puros.
+5. Validar que nenhuma `require`/`import` cruza a fronteira produto ↔ framework.
+
+**Decisão do Márcio (2026-05-26):** ✅ Aprovado — sequência de implementação aprovada. Copilot pode iniciar.

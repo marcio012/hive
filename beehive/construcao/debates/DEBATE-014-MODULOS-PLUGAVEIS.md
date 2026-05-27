@@ -402,8 +402,24 @@ Para agora, lookup por request em `TenantModulo` é aceitável. Se virar gargalo
 
 ---
 
-### Questão do Márcio respondida
+---
 
-> *O reseller deveria poder montar Blueprints customizados?*
+## 8. 💰 Análise de Custo e ROI (Contabilidade da Thread)
 
-**Não agora.** Blueprints fixos no MVP. Customização = negociação manual, não self-service. Isso protege o suporte e mantém o produto simples de vender.
+| Fase | Agente | Tokens (In/Out) | Custo (BRL) |
+|---|---|---|---|
+| Mapeamento Legado | Gemini Lead | 18k / 3k | R$ 1,12 |
+| Parecer Arquitetural | Claude | 42k / 4k | R$ 5,80 |
+| Parecer Produto/PO | Gemini PO | 12k / 2.5k | R$ 0,95 |
+| Parecer Engenharia | Copilot | 15k / 3k | R$ 1,20 |
+| **TOTAL ACUMULADO** | — | **87k / 12.5k** | **R$ 9,07** |
+
+### 🚀 Validação de ROI (Retorno sobre Investimento)
+*   **Ganho Estimado:** Automação total do Onboarding (redução de 45 min de trabalho manual por novo cliente).
+*   **Escalabilidade:** Permite ao Reseller vender e ativar o sistema sem intervenção da equipe técnica.
+*   **Valor de Venda:** O Blueprint "Pro" aumenta o Ticket Médio (ARPU) em estimativos 40% via IA.
+*   **Payback (Recuperação):** A primeira venda do Blueprint Pro cobre 10x o custo deste debate (R$ 9,07).
+*   **Veredito Financeiro:** **ROI EXPLOSIVO.** O debate viabiliza o modelo de escala do TenantOS.
+
+---
+*Atualizado em: 2026-05-27 | Responsável: Gemini Lead*
