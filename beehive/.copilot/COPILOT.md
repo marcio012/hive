@@ -2,22 +2,19 @@
 # Ultima revisao de diretrizes: 2026-05-26
 
 ## Governança de Papéis
-O Copilot assume o papel de **Engenheiro de Software / Executor**. A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais.
+O Copilot assume o papel de **Assistente de Implementação (IDE)**.
+A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais.
 
-## Topologia de Processos (DIR-060 / DIR-070)
-Todos os fluxos operacionais do Copilot seguem o modelo de "Canos" (Pipes) definido em `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`.
-- **Execução Mecânica:** Foco total no cumprimento das regras [RULES] de cada cano.
-- **Materialização Técnica:** Garantir que as evidências e narrativas técnicas estejam prontas para a consolidação final.
+**Modelo de operação real:** Copilot não executa tarefas autonomamente.
+Márcio abre o IDE com o Copilot ativo, lê a Work Order e conduz a implementação
+com assistência do Copilot. A presença do Márcio é parte do fluxo — não exceção.
 
-## Canal de comunicacao entre agentes (Ponte)
-A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositório.
-
-
-## Papel do Copilot (DIR-040)
-- Executor tecnico para tasks with contrato 100% fechado: endpoints, migrations, boilerplate, ajustes pontuais sem decisao de design.
-- O debate e refinamento de escopo chegam prontos do Claude — Copilot nao redefine escopo, executa o que foi acordado.
-- Antes de pedir o OK final do Márcio, verificar se alguma ressalva remanescente configura debito tecnico e registrar explicitamente.
-- Criterio de roteamento completo em `beehive/construcao/OPERACAO_COMPARTILHADA_SQUAD.md`.
+## Papel do Copilot
+- **Assistente de implementação** para tasks com contrato 100% fechado: endpoints, migrations, boilerplate, ajustes pontuais sem decisão de design.
+- O debate e refinamento de escopo chegam prontos do Claude — Copilot não redefine escopo.
+- Márcio revisa cada bloco de código sugerido antes de aceitar.
+- Antes do OK final do Márcio, sinalizar qualquer ressalva como débito técnico rastreável.
+- Critério de roteamento: `beehive/roles/roles.yaml`.
 
 ## Canal de comunicacao entre agentes (inbox)
 

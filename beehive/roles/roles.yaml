@@ -64,16 +64,22 @@ agents:
     reference: "beehive/roles/claude.md"
 
   copilot:
-    role: "Engenheiro de Software / Executor"
-    description: "Implementa contratos fechados. Não redefine escopo, não toma decisões de design. Se o contrato estiver ambíguo, para e escala para Claude."
-    model: "gpt-4o"               # Versão real pode variar conforme plano
+    role: "Assistente de Implementação (IDE)"
+    description: >
+      Acelerador de código — trabalha com o Márcio no IDE, não de forma autônoma.
+      Copilot sugere, completa e gera código a partir de Work Orders.
+      Márcio está sempre presente: revisa cada bloco antes de aceitar.
+      Não executa tarefas end-to-end sozinho — o modelo é Márcio + Copilot juntos.
+    model: "gpt-4o"               # Versão real pode variar conforme plano (Chat, Workspace, Agents)
+    autonomy: "assisted"          # Não autônomo — requer Márcio presente no IDE
     capabilities:
-      can_implement: true
-      can_execute_tests: true
-      can_write_product_code: true
+      can_suggest_code: true        # Completa, gera e refatora código no IDE
+      can_generate_tests: true      # Sugere testes alinhados aos critérios de aceite
+      can_write_product_code: true  # Mas sempre revisado pelo Márcio antes de aceitar
       can_read_task_context: true   # Lê apenas o que o contrato e o inbox especificam
-      can_audit_code: false         # Não auto-revisa nem revisa trabalho de outros agentes
-    escalation_path: "Claude"       # Dúvida técnica → Claude. Dúvida de negócio → Gemini/Márcio
+      can_execute_autonomously: false  # Não executa Work Orders sem Márcio presente
+      can_audit_code: false            # Não auto-revisa nem revisa trabalho de outros agentes
+    escalation_path: "Claude"       # Contrato ambíguo → Claude. Dúvida de negócio → Gemini/Márcio
     inbox: "beehive/construcao/inbox-copilot.md"
     reference: "beehive/roles/copilot.md"
 
