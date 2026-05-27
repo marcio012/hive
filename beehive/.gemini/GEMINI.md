@@ -82,10 +82,34 @@ antes de responder. Isso garante que apenas as regras necessárias estejam ativa
 
 ---
 
-## Gestão de Tokens
+## Gestão de Tokens e Telemetria
+
 - **Proibido Prolixidade:** Documentos de contexto em tópicos diretos
 - **Context Caching:** Manter flag `context_caching: true` ativa quando disponível
 - **Modos sob demanda:** Carregar apenas o arquivo do modo ativado, não todos
+
+### Registro de custo por interação (obrigatório)
+
+Após **cada resposta**, o Gemini deve registrar os tokens usados chamando:
+
+```bash
+bash beehive/bin/hive-telemetry.sh "Gemini [MODO]" "[MODELO]" [TOKENS_IN] [TOKENS_OUT] [CUSTO_BRL]
+```
+
+**Onde:**
+- `[MODO]` = cartucho ativo: `Lead`, `PO`, `Projetista` ou `Coordenador`
+- `[MODELO]` = modelo usado nessa resposta (ex: `gemini-1.5-pro`)
+- `[TOKENS_IN]` = tokens de entrada da interação (disponível via `/stats` no CLI)
+- `[TOKENS_OUT]` = tokens de saída gerados
+- `[CUSTO_BRL]` = estimativa em BRL (gemini-1.5-pro: input R$0.0000375/token, output R$0.00015/token)
+
+**Exemplo após uma resposta com ~2.000 tokens in / 500 tokens out:**
+```bash
+bash beehive/bin/hive-telemetry.sh "Gemini Lead" "gemini-1.5-pro" 2000 500 0.1500
+```
+
+> Se os tokens exatos não estiverem disponíveis, usar `/stats` no CLI para obter o delta
+> desde a última interação registrada. Em último caso, estimar com base no tamanho da resposta.
 
 ---
 *Refatorado em 2026-05-26 — modos extraídos para `beehive/.gemini/modes/`*

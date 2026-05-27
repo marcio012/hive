@@ -129,18 +129,25 @@ Como este manual é injetado em cada requisição de contexto, as seguintes regr
 - **Proibido Prolixidade:** Documentos de contexto de entrada devem ser escritos em tópicos diretos. Cada 1.000 palavras adicionais custam dinheiro.
 - **Context Caching:** O script de execução DEVE manter a flag `context_caching: true` ativa para congelar o estado deste manual nas APIs que suportam o recurso (Gemini/Claude), reduzindo o custo de re-leitura em até 90%.
 
-### 2. Protocolo de Telemetria (Logs de Custo)
-Toda vez que uma transação (leitura ou escrita) for efetuada pelo squad, o script orquestrador deve interceptar o objeto `usage` da API e registrar.
+### 2. Protocolo de Telemetria — Registro por Interação (obrigatório)
 
-**Formato obrigatório de log no terminal/arquivo (`ai/construcao/logs/custos.log`):**
-```text
-==================================================
-📊 TELEMETRIA DE TOKENS — [AGENTE_EM_EXECUCAO]
-Data/Hora: YYYY-MM-DD HH:mm:ss
-Modelo Ativo: [modelo_utilizado]
---------------------------------------------------
-Tokens de Entrada (Prompt): XXX.XXX
-Tokens de Saída (Completion): XX.XXX
-Custo Estimado da Rodada: R$ X.XXXX BRL
-==================================================
+Após **cada resposta**, o Copilot deve registrar os tokens usados chamando:
+
+```bash
+bash beehive/bin/hive-telemetry.sh "Copilot" "[MODELO]" [TOKENS_IN] [TOKENS_OUT] [CUSTO_BRL]
 ```
+
+**Onde:**
+- `[MODELO]` = modelo usado (ex: `gpt-4o`, `gpt-4o-mini`)
+- `[TOKENS_IN]` = tokens de entrada da interação
+- `[TOKENS_OUT]` = tokens de saída gerados
+- `[CUSTO_BRL]` = estimativa em BRL:
+  - gpt-4o: input R$0.000025/token, output R$0.0001/token
+  - gpt-4o-mini: input R$0.0000015/token, output R$0.000006/token
+
+**Exemplo após uma resposta com ~3.000 tokens in / 800 tokens out (gpt-4o):**
+```bash
+bash beehive/bin/hive-telemetry.sh "Copilot" "gpt-4o" 3000 800 0.1550
+```
+
+O log é gravado em `beehive/registry/telemetria/custos.log` (gitignored — fica só local).
