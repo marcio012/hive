@@ -20,6 +20,7 @@
     "hive:session:copilot": "npm run hive -- session-start copilot",
     "hive:session:state": "npm run hive -- session-update",
     "gemini:po": "npm run hive -- session-start gemini --role po",
+    "gemini:po:auditoria": "npm run hive -- session-start gemini --role po --mode auditoria",
     "gemini:projetista": "npm run hive -- session-start gemini --role projetista",
     "gemini:coordenador": "npm run hive -- session-start gemini --role coordenador",
     "squad:bridge": "bash \"$HIVE_HOME/.agile-squad/framework/squad-bridge.sh\"",

@@ -30,6 +30,7 @@
     "squad:cost:all": "bash .agile-squad/proxy.sh squad:cost:all",
     "squad:cost:log": "bash .agile-squad/proxy.sh squad:cost:log",
     "squad:next": "bash .agile-squad/proxy.sh squad:next",
+    "gemini:po:auditoria": "bash .agile-squad/proxy.sh gemini:po:auditoria",
     "po:demand": "bash .agile-squad/proxy.sh po:demand"
   },
   "engines": {

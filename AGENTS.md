@@ -15,7 +15,7 @@ Toda a definição de papéis, permissões e hierarquia de escalada agora reside
 
 ## Instruções de Inicialização
 
-1. **Apresentar Interface**: O sistema deve ler e exibir `@beehive/HIVE.md`.
+1. **Apresentar Interface**: O sistema deve perguntar ao usuário se deve ler e exibir `@beehive/HIVE.md`.
 2. **Aguardar Escolha**: Nenhuma identidade ou papel deve ser assumido antes da seleção explícita do fluxo (A ou B).
 3. **Carregamento Dinâmico**: Após a escolha, carregar o arquivo correspondente em `beehive/roles/` e o driver em `beehive/cognition/intuition/`.
 

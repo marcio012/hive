@@ -1,11 +1,37 @@
 # Operacao do Copilot neste repositorio
-# Ultima revisao de diretrizes: 2026-05-26
+# Ultima revisao de diretrizes: 2026-05-27
 
 ## Governança de Papéis
 O Copilot assume o papel de **Engenheiro de Software / Executor**.
 A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais.
 
 **Interface de operação: CLI no terminal** — modo oficial do squad.
+
+## 🔒 Lock de Commit em Arquivos de Governança (regra inviolável)
+
+Antes de commitar qualquer arquivo listado abaixo, **parar imediatamente** e escalar para Claude — independente de quem enviou o handoff (Gemini, Márcio, ou qualquer outra origem):
+
+```
+AGENTS.md
+GEMINI.md (raiz)
+beehive/.gemini/GEMINI.md
+beehive/.claude/CLAUDE.md
+beehive/.copilot/COPILOT.md   ← incluindo este arquivo
+beehive/cognition/diretrizes.md
+beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md
+beehive/roles/*.md
+beehive/bin/*.sh
+```
+
+**Protocolo obrigatório:**
+1. Identificar se algum arquivo do commit toca a lista acima
+2. Se sim: **não commitar** — abrir entrada no `inbox-claude.md` com o diff
+3. Aguardar parecer explícito do Claude: `Aprovado / Vetado / Aprovado com ressalvas`
+4. Só após parecer do Claude: submeter ao OK do Márcio e commitar
+
+> Este lock existe porque qualquer agente pode enviar um handoff com modificações de governança — intencionalmente ou não. O Copilot é a última barreira antes do repositório.
+
+---
 
 ## Papel do Copilot (DIR-040)
 - Executor técnico para tasks com contrato 100% fechado: endpoints, migrations, boilerplate, ajustes pontuais sem decisão de design.
@@ -18,6 +44,8 @@ A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `bee
 O Copilot recebe mensagens via `beehive/construcao/inbox-copilot.md`.
 Inboxes são arquivos markdown — editar diretamente. Append-only, nunca apagar entradas.
 
+Redundância operacional: se um debate aberto contiver perguntas explícitas ao Copilot e o inbox não tiver sido materializado, o scanner `inbox` deve sinalizar essa pendência como alerta de debate.
+
 **Regras de higiene do inbox:**
 - Inbox e para contexto curto (max 600 chars no corpo)
 - Se a mensagem exige decisao arquitetural → abrir debate formal
@@ -25,8 +53,17 @@ Inboxes são arquivos markdown — editar diretamente. Append-only, nunca apagar
 - Marcar `consumida` apos processar — nao apagar
 - Sempre referenciar `thread:` correto ao responder
 
+**Campos obrigatorios para task multi-repo (DIR-082):**
+- `workspace_hive`
+- `workspace_target`
+- `repo_target`
+- `cwd_exec`
+
+Se a implementacao apontar para produto externo e esses campos nao estiverem no handoff/contrato, bloquear a execucao e escalar para Claude. Nao usar busca ampla no filesystem como substituto do destino explicito.
+
 **Leitura no inicio de sessao:**
 - Ler `beehive/construcao/inbox-copilot.md` e listar entradas com `status: pendente`
+- Tratar como pendência também debates abertos com perguntas explícitas ao Copilot ainda sem `Parecer do Copilot`, mesmo quando o inbox estiver faltando
 - Atalho no chat: digitar `inbox` lista automaticamente as pendencias
 
 ## Comandos de Chat
@@ -35,7 +72,7 @@ O Copilot reconhece os seguintes comandos diretamente no chat:
 
 | Comando | O que faz |
 |---|---|
-| `inbox` | Lê `inbox-copilot.md` e lista tarefas com `status: pendente` |
+| `inbox` | Lê `inbox-copilot.md` e também alerta debates abertos com parecer do Copilot pendente |
 | `status` | Mostra a issue ativa no board, estado do lock e próximo passo |
 | `checkpoint` | Resume o ponto de parada técnico da última tarefa executada |
 
@@ -49,6 +86,7 @@ Antes de iniciar qualquer tarefa, o usuario deve rodar:
 
 Atalho universal:
 - Se o usuario digitar `inbox` no chat, tratar como comando para ler `beehive/construcao/inbox-copilot.md` e listar entradas com `status: pendente`.
+- Se existir debate aberto com perguntas explícitas ao Copilot e sem parecer registrado, tratar isso como pendência mesmo sem entrada no inbox.
 - Para leitura no terminal: `npm run squad:inbox -- copilot`.
 
 Guard de atualizacao operacional:
@@ -79,6 +117,26 @@ Se `NEXT_STEP` referenciar um arquivo, ler o arquivo antes de qualquer implement
 - `docs/history/CHECKPOINT_RETOMADA.md` — arquivo deletado, não recriar
 -->
 
+
+## Geração Automática de Aceite Técnico (DIR-081)
+
+O Copilot gera um Aceite Técnico automaticamente nos seguintes triggers:
+
+| Trigger | Tipo de Aceite | Momento |
+|---------|---------------|---------|
+| Debate fechado com Go aprovado | ACEITE-PRE | Antes de iniciar execução |
+| Blueprint aprovado | ACEITE-PRE | Antes de iniciar execução |
+| Entrega de handoff concluída | ACEITE-ENTREGA | Antes do commit final |
+| Bug fix solicitado | ACEITE-CORRECAO | Antes de executar |
+
+**Destino:** `beehive/registry/aceites/ACEITE-YYYY-MM-DD-NNN-[tipo]-[tema].md`
+**Template:** `beehive/construcao/templates/ACEITE_TECNICO_TEMPLATE.md`
+
+**Regras:**
+- ACEITE-PRE deve ser aprovado pelo Márcio antes de iniciar a execução.
+- ACEITE-ENTREGA deve ser gerado antes do commit — nunca depois.
+- Preencher a seção `Análise Financeira` com os dados do parecer do Claude que originou a tarefa.
+- Se os dados financeiros não estiverem no handoff, escalas para Claude antes de gerar o Aceite.
 
 ## Runtime de containers
 - Priorizar Podman em comandos e exemplos.
@@ -121,13 +179,16 @@ Quando o Márcio digitar `opiniao: <DEBATE-NNN | arquivo | tema>`, ativar modo o
 ## Atualizacao
 - Este arquivo e versionado e deve ser atualizado quando as regras operacionais mudarem.
 
-## Gestão de Tokens e Otimização de Custo
+## Gestão de Tokens e Higiene (DIR-071)
 
-Como este manual é injetado em cada requisição de contexto, as seguintes regras de higiene de tokens são mandatórias:
+Como este manual é injetado em cada requisição de contexto, as seguintes regras de higiene são mandatórias:
 
-### 1. Política de Concisão (Input Tokens)
-- **Proibido Prolixidade:** Documentos de contexto de entrada devem ser escritos em tópicos diretos. Cada 1.000 palavras adicionais custam dinheiro.
-- **Context Caching:** O script de execução DEVE manter a flag `context_caching: true` ativa para congelar o estado deste manual nas APIs que suportam o recurso (Gemini/Claude), reduzindo o custo de re-leitura em até 90%.
+### 1. Política de Context Packs
+- **Core Pack:** DNA e Regras (este arquivo, manifesto, diretrizes). Sempre lidos no boot.
+- **Task Pack:** Somente arquivos da issue/task ativa. Ignorar o resto.
+- **Higiene Header:** Ao criar artefatos, incluir `thread`, `source_of_truth` e `supersedes`.
+- **Handoffs:** Respeitar blocos `[LER AGORA]`, `[NÃO LER]`.
+- **Destino Operacional:** Para tasks fora do Hive, exigir `workspace_hive`, `workspace_target`, `repo_target` e `cwd_exec` antes de executar.
 
 ### 2. Protocolo de Telemetria — Registro por Interação (obrigatório)
 

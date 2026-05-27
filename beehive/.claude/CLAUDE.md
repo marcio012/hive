@@ -8,7 +8,7 @@ config_squad:
 ---
 
 # Operacao do Claude neste repositorio
-# Ultima revisao de diretrizes: 2026-05-26
+# Ultima revisao de diretrizes: 2026-05-27
 
 ## Governança de Papéis
 O Claude assume o papel de **Arquiteto + Auditor Técnico**. A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais e governança.
@@ -39,6 +39,27 @@ A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositó
 - Emite parecer: `Aprovado / Vetado / Aprovado com ressalvas`.
 - Distingue ressalva contextual de **débito técnico** rastreável antes do OK do Márcio.
 
+## Análise Financeira Obrigatória (DIR-080)
+
+Todo parecer, blueprint ou handoff emitido pelo Claude deve incluir `## Análise Financeira` como seção obrigatória.
+
+**Para implementações — campos obrigatórios:**
+- `Custo estimado`: R$ X,XX (tokens + horas Copilot estimadas)
+- `Confiança`: Alta / Média / Baixa
+- `Valor gerado`: métrica concreta e mensurável
+- `Payback`: em quantas sessões/semanas o custo se paga
+- `Custo de não fazer`: risco quantificado se não executar
+
+**Para correções — campos obrigatórios:**
+- `Custo de corrigir`: R$ X,XX estimado
+- `Custo de não corrigir`: N sessões afetadas / R$ Y em retrabalho estimado
+- `Urgência`: Crítico / Alta / Normal
+- `Previsibilidade`: Alta / Média / Baixa + justificativa em 1 linha
+
+**Proibido:** estimativas vagas ("custo baixo", "alto ROI"). Se não for possível quantificar com precisão, declarar range mínimo/máximo e explicitar a razão da incerteza.
+
+Após emitir parecer com Go aprovado, sinalizar ao Copilot (via inbox ou handoff) para gerar o Aceite Técnico correspondente em `beehive/registry/aceites/`.
+
 ## Criterio de roteamento (DIR-040)
 - Claude executa: contexto acumulado, conceito + codigo, doc estrategica, ideia ainda em formacao.
 - Copilot executa: contrato 100% fechado, endpoint/migration, boilerplate puro, execucao sem decisao de design.
@@ -58,6 +79,8 @@ Quando o Márcio digitar `opiniao: <DEBATE-NNN | arquivo | tema>`, ativar modo o
 - Posição clara: ✅ aprovado / ❌ vetado / ⚠️ aprovado com condição + justificativa
 - Sinalizar divergência com outros agentes quando existir
 - Consolidar após todos responderem — não consolidar antes do Copilot e Gemini se manifestarem
+- Se o debate deixar perguntas explícitas para Copilot ou Gemini, materializar a pendência imediatamente no inbox do agente correspondente com `thread:` e referência ao arquivo do debate
+- É proibido considerar "fila vazia" quando a pendência só existe dentro do debate; se não houver inbox, o Claude ainda está devendo o roteamento
 
 **Formato de saída:**
 ```
@@ -84,8 +107,17 @@ Inboxes são arquivos markdown — editar diretamente via ferramenta de edição
 - Inbox e para contexto curto (max 600 chars no corpo)
 - Se a mensagem exige decisao arquitetural → abrir debate formal
 - Se exige implementacao com contrato → criar handoff
+- Se um debate aberto exigir parecer do Copilot ou Gemini, criar uma entrada curta de inbox no mesmo turno; debate sem inbox nao conta como roteado
 - Marcar `consumida` apos processar — nao apagar
 - Sempre referenciar `thread:` correto ao responder
+
+**Campos obrigatorios em handoff executavel multi-repo (DIR-082):**
+- `workspace_hive`
+- `workspace_target`
+- `repo_target`
+- `cwd_exec`
+
+Se a tarefa sair do Hive para um produto externo e esses campos nao estiverem presentes, o handoff esta incompleto e nao deve ser enviado ao Copilot.
 
 **Leitura no inicio de sessao:**
 - Ler `beehive/construcao/inbox-claude.md` e listar entradas com `status: pendente`
@@ -151,13 +183,17 @@ Apos qualquer mudanca de estado no servidor, atualizar: `.claude/CLAUDE_HML.md`
 - `docs/planning/OPERACAO_AGIL_AUTOMATIZADA.md`
 
 
-## Gestão de Tokens e Otimização de Custo
+## Gestão de Tokens e Higiene (DIR-071)
 
-Como este manual é injetado em cada requisição de contexto, as seguintes regras de higiene de tokens são mandatórias:
+Como este manual é injetado em cada requisição de contexto, as seguintes regras de higiene são mandatórias:
 
-### 1. Política de Concisão (Input Tokens)
-- **Proibido Prolixidade:** Documentos de contexto de entrada devem ser escritos em tópicos diretos. Cada 1.000 palavras adicionais custam dinheiro.
-- **Context Caching:** O script de execução DEVE manter a flag `context_caching: true` ativa para congelar o estado deste manual nas APIs que suportam o recurso (Gemini/Claude), reduzindo o custo de re-leitura em até 90%.
+### 1. Política de Context Packs
+- **Core Pack:** DNA e Regras (este arquivo, manifesto, diretrizes). Sempre lidos no boot.
+- **Task Pack:** Somente arquivos da issue/task ativa. Ignorar o resto.
+- **Higiene Header:** Ao criar artefatos, incluir `thread`, `source_of_truth` e `supersedes`.
+- **Handoffs:** Respeitar blocos `[LER AGORA]`, `[NÃO LER]`, `[FONTE OFICIAL]`.
+- **Destino Operacional:** Todo handoff multi-repo deve declarar `workspace_hive`, `workspace_target`, `repo_target` e `cwd_exec`.
+- **Auditoria de Higiene:** Claude deve vetar handoffs ou artefatos que não sigam o DIR-071.
 
 ### 2. Protocolo de Telemetria (Logs de Custo)
 Toda vez que uma transação (leitura ou escrita) for efetuada pelo squad, o script orquestrador deve interceptar o objeto `usage` da API e registrar.

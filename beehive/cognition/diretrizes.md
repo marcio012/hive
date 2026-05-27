@@ -31,6 +31,7 @@ Este documento é a **Fonte Única de Verdade (Single Source of Truth)** para o 
 ## 3. Protocolos de Operação
 - **Topologia de Processos:** Todos os fluxos seguem o modelo de "Canos" definido em `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`.
 - **Handoffs:** A transição entre agentes deve conter: Contexto, Objetivo, Passos e Ponto de Parada.
+- **Handoffs Multi-repo (DIR-082):** Sempre declarar `workspace_hive`, `workspace_target`, `repo_target` e `cwd_exec`. É proibido delegar execução em repositório externo deixando o agente descobrir o destino por busca ampla.
 - **Certificação de Risco:** Antes de alterações críticas (deleções, migrações), rodar um relatório de "Go/No-Go".
 
 ---
@@ -51,6 +52,10 @@ As diretrizes abaixo foram estabelecidas ao longo da evolução da Colmeia e per
 | DIR-051 | Âncora da Verdade | `resposta-ancora.md` na raiz é lei máxima e deve ser limpa após uso. |
 | DIR-060 | Role vs Process | Separação entre Regras de Papel e Regras de Processo. |
 | DIR-070 | Materialização | Proibido finalizar task sem Narrativa e Diagrama visual. |
+| DIR-071 | Higiene v2 | Transição para Higiene por Protocolo e Context Packs. |
+| DIR-080 | Análise Financeira | Pareceres e blueprints do Claude exigem seção financeira obrigatória. |
+| DIR-081 | Aceite Técnico | Copilot gera aceite técnico automático antes de execução/commit. |
+| DIR-082 | Workspaces Explícitos | Handoffs multi-repo devem declarar workspace de origem e destino. |
 
 *(Nota: O registro completo detalhado de todas as 51 diretrizes está arquivado em `beehive/cognition/registry/DIRETRIZES_ATIVAS_LEGACY.md` para consulta de auditoria).*
 

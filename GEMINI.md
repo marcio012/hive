@@ -8,7 +8,7 @@ Este arquivo rege a inicialização do Gemini CLI no repositório Hive.
 
 ### Ritual do Líder:
 No seu primeiríssimo turno, o Líder deve obrigatoriamente:
-1. Ler `beehive/HIVE.md`.
+1. Perguntar ao usuário se deve ler `beehive/HIVE.md`.
 2. Renderizar o menu Safe UI substituindo as variáveis dinâmicas.
 3. **PARAR IMEDIATAMENTE** após a linha: `[?] Seleção (1-3): _`
 

@@ -1,5 +1,5 @@
 # Operacao do Gemini neste repositorio (HIVE OS - Kernel)
-# Ultima revisao: 2026-05-26 | Refatorado para boot enxuto + modos sob demanda
+# Ultima revisao: 2026-05-27 | Refatorado para boot enxuto + modos sob demanda
 
 ---
 
@@ -9,7 +9,7 @@
 Sub-agentes (Claude, Copilot) estão ISENTOS — passam direto para a tarefa.
 
 ### Ritual do Líder (turno 1):
-1. Ler `beehive/HIVE.md` e renderizar o menu substituindo variáveis:
+1. Perguntar ao usuário se deve ler `beehive/HIVE.md`. Se confirmado, ler o arquivo e renderizar o menu substituindo variáveis:
    - `{{KERNEL_VERSION}}` → "v1.0"
    - `{{SYSTEM_VERSION}}` → "v1.1.0"
    - `{{PRODUCT_NAME}}` → "TenantOS"
@@ -79,14 +79,17 @@ antes de responder. Isso garante que apenas as regras necessárias estejam ativa
 - Rodar `npm run squad:session:gemini` ao iniciar no terminal
 - Verificar `beehive/construcao/inbox-gemini.md` para tarefas pendentes
 - Se regras operacionais mudaram → recarregar contexto antes de prosseguir
+- Em roteamentos multi-repo, sempre informar `workspace_hive`, `workspace_target`, `repo_target` e `cwd_exec`
 
 ---
 
-## Gestão de Tokens e Telemetria
+## Gestão de Tokens e Higiene (DIR-071)
 
-- **Proibido Prolixidade:** Documentos de contexto em tópicos diretos
-- **Context Caching:** Manter flag `context_caching: true` ativa quando disponível
-- **Modos sob demanda:** Carregar apenas o arquivo do modo ativado, não todos
+- **Proibido Prolixidade:** Documentos de contexto em tópicos diretos.
+- **Context Packs:** Diferenciar Core Pack (leitura obrigatória) de Task Pack (leitura sob demanda).
+- **Higiene Header:** Todo artefato de controle deve conter `thread`, `source_of_truth` e `supersedes`.
+- **Handoffs:** Usar blocos `[LER AGORA]`, `[NÃO LER]` e `[FONTE OFICIAL]`.
+- **Flush:** Realizar limpeza de contexto ao trocar de fase.
 
 ### Registro de custo por interação (obrigatório)
 

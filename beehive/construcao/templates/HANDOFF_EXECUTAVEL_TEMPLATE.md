@@ -67,6 +67,18 @@ cwd_exec:         [caminho absoluto onde os comandos devem ser executados]
 - **NÃO** [o que não deve ser feito]
 - Parar e retornar ao Claude se [condição de bloqueio].
 
+### 🔒 Checklist de governança (verificar antes do commit)
+
+Se qualquer arquivo abaixo aparecer no diff deste handoff, **não commitar sem parecer explícito do Claude**:
+
+- [ ] `AGENTS.md` / `GEMINI.md` / `beehive/.gemini/GEMINI.md`
+- [ ] `beehive/.claude/CLAUDE.md` / `beehive/.copilot/COPILOT.md`
+- [ ] `beehive/cognition/diretrizes.md` / `beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md`
+- [ ] `beehive/roles/*.md`
+- [ ] `beehive/bin/*.sh`
+
+Se algum estiver marcado: abrir entrada em `inbox-claude.md` com o diff antes de prosseguir.
+
 ---
 
 ## Critérios de aceite
