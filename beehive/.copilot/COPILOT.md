@@ -75,11 +75,15 @@ Se `NEXT_STEP` referenciar um arquivo, ler o arquivo antes de qualquer implement
 ## Arquivos de referencia obrigatoria no inicio da sessao
 - `AGENTS.md` (entrada compartilhada do repositorio)
 - `COPILOT.md` (entrada especifica do Copilot na raiz)
-- `.github/copilot-instructions.md` (entrada especifica do Copilot)
 - `.copilot/COPILOT.md` (este apendice)
-- `beehive/construcao/OPERACAO_COMPARTILHADA_SQUAD.md` (regras comuns entre agentes)
-- `docs/history/CHECKPOINT_RETOMADA.md` (continuidade)
+- `beehive/construcao/inbox-copilot.md` (tarefas pendentes — leia PRIMEIRO)
 - `.hive-agent/session-state.env` (estado compartilhado do Hive)
+
+<!-- REMOVIDOS (arquivo inexistente ou redundante):
+- `.github/copilot-instructions.md` — não existe mais
+- `beehive/construcao/OPERACAO_COMPARTILHADA_SQUAD.md` — regras consolidadas no COPILOT.md
+- `docs/history/CHECKPOINT_RETOMADA.md` — arquivo deletado, não recriar
+-->
 
 
 ## Runtime de containers
