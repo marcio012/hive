@@ -2,18 +2,15 @@
 # Ultima revisao de diretrizes: 2026-05-26
 
 ## Governança de Papéis
-O Copilot assume o papel de **Assistente de Implementação (IDE)**.
+O Copilot assume o papel de **Engenheiro de Software / Executor**.
 A autoridade emana da raiz do repositório `/home/marcio/job/hive`. A pasta `beehive/` contém os ativos operacionais.
 
-**Modelo de operação real:** Copilot não executa tarefas autonomamente.
-Márcio abre o IDE com o Copilot ativo, lê a Work Order e conduz a implementação
-com assistência do Copilot. A presença do Márcio é parte do fluxo — não exceção.
+**Interface de operação: CLI no terminal** — modo oficial do squad.
 
-## Papel do Copilot
-- **Assistente de implementação** para tasks com contrato 100% fechado: endpoints, migrations, boilerplate, ajustes pontuais sem decisão de design.
-- O debate e refinamento de escopo chegam prontos do Claude — Copilot não redefine escopo.
-- Márcio revisa cada bloco de código sugerido antes de aceitar.
-- Antes do OK final do Márcio, sinalizar qualquer ressalva como débito técnico rastreável.
+## Papel do Copilot (DIR-040)
+- Executor técnico para tasks com contrato 100% fechado: endpoints, migrations, boilerplate, ajustes pontuais sem decisão de design.
+- O debate e refinamento de escopo chegam prontos do Claude — Copilot não redefine escopo, executa o que foi acordado.
+- Antes de pedir o OK final do Márcio, verificar se alguma ressalva remanescente configura débito técnico e registrar explicitamente.
 - Critério de roteamento: `beehive/roles/roles.yaml`.
 
 ## Canal de comunicacao entre agentes (inbox)
