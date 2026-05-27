@@ -2,7 +2,7 @@
 titulo: Operacao Compartilhada entre agentes (Márcio + Copilot + Claude)
 tipo: operacao
 status: ativo
-ultima_revisao: 2026-05-21
+ultima_revisao: 2026-05-27
 responsavel: Márcio - Dev | Copilot - Dev | Claude - Arquiteto
 ---
 
@@ -15,23 +15,18 @@ Tudo que for especifico de um agente deve ficar na pasta dedicada desse agente.
 - Claude (especifico): `.claude/`
 - Copilot (especifico): `.copilot/`
 - Gemini (especifico): `.gemini/`
-- Comum entre agentes: `ai/construcao/`
-- Papeis e agentes: `ai/construcao/agentes/`
+- Comum entre agentes: `beehive/construcao/`
+- Papeis e agentes: `beehive/roles/`
 
 ## Governança do Squad (V2)
-A definição de papéis e permissões está centralizada em `ai/construcao/agentes/ROLES_CONFIG.yaml`.
+A definição de papéis e permissões está centralizada em `beehive/roles/roles.yaml`.
 
 ### Liderança Operacional: Gemini (Squad Lead)
 - O Gemini atua como **Squad Lead / Integrador**. 
 - **Função:** Orquestrar o fluxo entre Claude (Arquitetura) e Copilot (Execução), consolidar debates e garantir a integridade do Onboarding.
 - **Diferencial:** Possui permissão para escrever nos Inboxes dos outros agentes para agilizar a entrega.
 
-### Fluxo de Trabalho Integrado
-1. **Gemini** facilita o Brainstorm/Planejamento.
-2. **Claude** define a arquitetura (Thread Técnica).
-3. **Gemini** sintetiza a visão e gera o Handoff para o **Copilot**.
-4. **Copilot** executa a implementação e valida com testes.
-5. **Márcio** dá o OK final.
+Ver diagrama de fluxo em "Roteamento de execucao por agente" neste arquivo.
 
 ## Regras gerais
 - Uma atividade principal por vez em execucao.
@@ -67,7 +62,6 @@ A definição de papéis e permissões está centralizada em `ai/construcao/agen
 - A diretriz so deixa de valer em escopo de repositorio quando o usuario mudar explicitamente a configuracao.
 
 ## Rastreabilidade de diretrizes ativas
-- Toda diretriz registrada neste arquivo ou proposta pelo usuario deve ter entrada em `ai/construcao/DIRETRIZES_ATIVAS.md`.
 - Campos obrigatorios: `Diretriz`, `Origem` (issue #N ou chat + data) e `Revogacao` (pendente ou issue que revogou).
 - O agente que implementa a diretriz e responsavel por criar ou atualizar a entrada antes de liberar o lock.
 - Nunca deletar entradas — apenas marcar como revogada com referencia cruzada.
@@ -75,7 +69,6 @@ A definição de papéis e permissões está centralizada em `ai/construcao/agen
 ## Cabecalho minimo em documentos Markdown
 - Para melhorar leitura humana e futura leitura por sistemas, documentos Markdown vivos e operacionais podem usar cabecalho minimo no inicio do arquivo.
 - O uso deve ser seletivo, nao universal, para evitar burocracia desnecessaria.
-- Escopo inicial recomendado: documentos vivos em `ai/construcao/` e `docs/planning/`.
 - Recebem cabecalho por padrao:
   - documentos em operacao ativa
   - documentos revisados com frequencia
@@ -131,7 +124,6 @@ A definição de papéis e permissões está centralizada em `ai/construcao/agen
   ```
 
 - O card so sai da coluna de revisao quando o Márcio decidir o destino final.
-- Ver DIR-038 e DIR-039 em `ai/construcao/DIRETRIZES_ATIVAS.md`.
 
 ## Revisao cruzada entre agentes
 - A revisao cruzada deve declarar explicitamente o foco principal da analise conforme a natureza da mudanca:
@@ -154,15 +146,14 @@ A definição de papéis e permissões está centralizada em `ai/construcao/agen
 ## Contexto inicial versionado
 - Antes de iniciar uma sessao, usar arquivos versionados de contexto para reduzir custo de tokens.
 - Cada agente deve ler seu arquivo dedicado e este arquivo compartilhado.
-- Checkpoint de continuidade deve ser lido de `docs/history/CHECKPOINT_RETOMADA.md`.
 - Em cada terminal/sessao ativa, rodar o comando de sessao do agente (`squad:session:claude`, `squad:session:copilot` ou `squad:session:gemini`) para registrar o bootstrap atual daquele terminal.
 - Quando regras ou scripts operacionais mudarem, sessoes antigas devem ser consideradas desatualizadas; lock e handoff podem bloquear ate o recarregamento do comando de sessao correspondente.
 
 ## Contexto vivo por task (anti-perda)
-- Para tarefas longas/complexas, aplicar o mecanismo definido em `ai/construcao/CONTEXTO_TASK_COMPARTILHADO.md`.
-- Arquivo ativo por task: `ai/construcao/tasks/task-NNN-context.md`.
+- Para tarefas longas/complexas, aplicar o mecanismo definido em `beehive/construcao/CONTEXTO_TASK_COMPARTILHADO.md`.
+- Arquivo ativo por task: `beehive/construcao/tasks/task-NNN-context.md`.
 - Quando o usuario digitar `checkpoint`, o owner com lock deve ler e sincronizar esse arquivo antes de seguir.
-- Ao fechar a issue, mover o arquivo para `ai/construcao/tasks/historico/` como evidencia.
+- Ao fechar a issue, mover o arquivo para `beehive/construcao/tasks/historico/` como evidencia.
 
 ## Sinalizacao de diluicao de contexto
 - Se o agente perceber risco real de mistura de frentes, perda de continuidade ou resposta na trilha errada, deve avisar explicitamente o Márcio.
@@ -281,7 +272,6 @@ Márcio traz a ideia ou issue
 ### Fluxo criativo entre agentes (DIR-042)
 
 - Ideias brutas nascem em sessao livre entre Marcio e Gemini — sem protocolo, sem contrato
-- Gemini cria um arquivo em `ai/construcao/criativo/` com `status: draft` e `proximo: claude`
 - Claude le, qualifica e adiciona camada arquitetural — muda para `status: qualificado`
 - Qualquer agente pode propor promocao da ideia para debate formal — Marcio decide se abre ou descarta
 - Board fica preferencialmente com o Copilot; Claude continua como alternativa quando acionado diretamente
@@ -298,7 +288,7 @@ Márcio traz a ideia ou issue
 
 Camada anterior ao board — captura pensamentos soltos sem interromper o fluxo em curso.
 
-**Artefato:** `ai/construcao/insights-buffer.md`
+**Artefato:** `beehive/construcao/insights-buffer.md`
 **Comando:** `npm run squad:insight -- "texto" "#tag1 #tag2"`
 
 **Fluxo de captura:**
@@ -367,10 +357,14 @@ Quando um agente recebe uma mensagem de troca de opiniao (brainstorm, debate, pa
 1. **Ler o contexto completo** — inbox, output-gemini.md ou arquivo de debate indicado
 2. **Apresentar o parecer no terminal** — visivelmente, para o Marcio acompanhar
 3. **Pedir confirmacao ao Marcio antes de agir** — nao executar nenhuma acao decorrente sem aval explicito
+4. **Materializar a pendencia cruzada no inbox** — se o debate deixar questoes explicitas para outro agente, criar ou atualizar a entrada correspondente no inbox desse agente no mesmo turno
+
+- Debate aberto com pergunta direcionada e sem inbox correspondente conta como **handoff perdido**
+- O scanner `inbox` deve alertar esse estado mesmo quando o arquivo `inbox-*.md` nao tiver sido atualizado
 
 ### Protocolo de Alinhamento Estruturado (DIR-051)
 Para evitar alucinações de visão e garantir que a hierarquia do projeto seja respeitada, o Márcio poderá utilizar arquivos Markdown dedicados para correção de rota.
-- **Obrigatoriedade:** Todo agente (Gemini, Claude, Copilot) deve tratar um arquivo indicado pelo Márcio com o prefixo `@resposta-` ou em `ai/construcao/debates/` como a "Âncora da Verdade", sobrepondo qualquer interpretação anterior do chat.
+- **Obrigatoriedade:** Todo agente (Gemini, Claude, Copilot) deve tratar um arquivo indicado pelo Márcio com o prefixo `@resposta-` ou em `beehive/construcao/debates/` como a "Âncora da Verdade", sobrepondo qualquer interpretação anterior do chat.
 
 > Vale para Copilot e Gemini. Claude ja apresenta no chat por natureza — a regra de confirmacao antes de agir vale para os tres.
 

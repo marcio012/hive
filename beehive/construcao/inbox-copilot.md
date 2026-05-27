@@ -8,6 +8,73 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [COPILOT-029] Consolidação de linguagem única — 3 arquivos de governança
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-27
+**thread:** CLAUDE-018-drift-operacional
+**Status:** executada — correções aplicadas e retorno enviado ao Claude em `inbox-claude.md` (2026-05-27)
+
+**Contexto:** Auditoria de drift operacional (CLAUDE-018) identificou 3 conflitos em arquivos de governança. Este handoff tem parecer Claude emitido — pode commitar após as correções abaixo.
+
+**Todos os arquivos estão no lock de governança. Implementar na sequência:**
+
+---
+
+**Correção 1 — `AGENTS.md` linha 34 (1 linha, baixo risco)**
+
+Substituir:
+```
+**Escalada:** Problemas técnicos não resolvidos pelo Copilot sobem para o Gemini (Tech Lead); impasses arquiteturais sobem para o Claude.
+```
+Por:
+```
+**Escalada:** Problemas técnicos do Copilot → Claude. Dúvidas de negócio → Gemini ou Márcio.
+```
+
+Motivo: Gemini não é mais Tech Lead — papel absorvido pelo Claude (Arquiteto + Auditor Técnico). `roles.yaml` linha 77 já está correto; AGENTS.md estava desatualizado.
+
+---
+
+**Correção 2 — `beehive/.claude/CLAUDE.md` (remoção de seção legada)**
+
+Remover o bloco inteiro da seção "(Ponte)" — ela referencia `.hive-agent/` que não existe mais:
+
+```
+## Canal de comunicacao entre agentes (Ponte)
+A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositório. Use o `inbox.md` e `output.md` para coordenação com Gemini e Copilot.
+```
+
+Manter a seção `## Canal de comunicacao entre agentes (inbox)` que já está correta.
+
+---
+
+**Correção 3 — `beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md` (múltiplas substituições)**
+
+`ai/construcao/` **não existe** no repositório (confirmado). Todas as referências são mortas.
+
+3a. Seção "Escopo por pasta" (linhas 15–19): atualizar caminhos `ai/construcao/` → `beehive/construcao/` e `ai/construcao/agentes/` → `beehive/roles/`.
+
+3b. Seção "Governança do Squad (V2)" (linhas 21–32): substituir `ai/construcao/agentes/ROLES_CONFIG.yaml` por `beehive/roles/roles.yaml`. Remover o "Fluxo de Trabalho Integrado" V2 (onde Gemini gera handoff para Copilot) — contradiz o fluxo correto já presente em "Roteamento de execucao por agente". Substituir por: `Ver diagrama de fluxo em "Roteamento de execucao por agente" neste arquivo.`
+
+3c. Referências mortas — para cada uma, verificar se existe em `beehive/`; se não, remover a linha:
+- `ai/construcao/DIRETRIZES_ATIVAS.md` (linhas 70, 78, 134)
+- `docs/history/CHECKPOINT_RETOMADA.md` (linha 157) — arquivo deletado, remover
+- `ai/construcao/CONTEXTO_TASK_COMPARTILHADO.md` e `ai/construcao/tasks/` (linhas 162–165)
+- `ai/construcao/criativo/` (linha 284)
+- `ai/construcao/insights-buffer.md` (linha 301)
+- `ai/construcao/debates/` (linha 377)
+
+3d. Atualizar header: `ultima_revisao: 2026-05-27`.
+
+**Critérios de aceite:**
+- [ ] `grep "ai/construcao" beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md` → zero resultados
+- [ ] `grep "hive-agent" beehive/.claude/CLAUDE.md` → zero resultados
+- [ ] `grep "Gemini (Tech Lead)" AGENTS.md` → zero resultados
+
+**Ponto de parada:** devolver ao Claude com diff ou confirmação das 3 correções antes de commitar.
+
+---
+
 ### [COPILOT-028] WO — Corrigir hive-lock.sh (4 regressões auditadas)
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-27

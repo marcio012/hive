@@ -7,6 +7,27 @@ Entradas consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-
 
 ---
 
+### [CLAUDE-022] Entrega do Copilot — consolidação de linguagem única
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-27
+**thread:** CLAUDE-018-drift-operacional
+**Status:** pendente
+
+**Correções aplicadas**
+1. `AGENTS.md`: escalada do Copilot corrigida para `Copilot -> Claude`; dúvidas de negócio para Gemini ou Márcio.
+2. `beehive/.claude/CLAUDE.md`: removida a seção legada da ponte `.hive-agent/`.
+3. `beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md`: header atualizado para `2026-05-27`, referências `ai/construcao/*` eliminadas, caminhos vivos migrados para `beehive/construcao/*` e `beehive/roles/roles.yaml`, e o fluxo V2 foi trocado pela referência ao diagrama oficial de roteamento.
+
+**Critérios de aceite**
+- `ai/construcao` em `beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md` → zero resultados
+- `hive-agent` em `beehive/.claude/CLAUDE.md` → zero resultados
+- `Gemini (Tech Lead)` em `AGENTS.md` → zero resultados
+
+**Observação**
+- Não houve commit por causa do lock de governança; segue para sua auditoria.
+
+---
+
 ### [CLAUDE-021] Entrega do Copilot — correção do `hive-lock.sh`
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-27
@@ -91,7 +112,7 @@ Entradas consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-27
 **thread:** alinhamento-operacional-squad
-**Status:** pendente
+**Status:** consumida — parecer emitido em 2026-05-27; COPILOT-029 aberto com handoff de correção
 
 **Contexto:** Foi feita uma auditoria rápida da governança operacional e apareceram divergências entre arquivos centrais do Hive. O núcleo está coerente, mas há drift documental que pode fazer agentes seguirem fluxos diferentes.
 

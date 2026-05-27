@@ -20,10 +20,6 @@ Todos os fluxos cognitivos do Claude seguem o modelo de "Canos" (Pipes) definido
 - **Materialização Obrigatória:** Nenhuma tarefa é encerrada sem a Narrativa e o Diagrama visual (DIR-070).
 - **Rigor de Cano:** Respeitar estritamente as entradas [IN], regras [RULES] e saídas [OUT] de cada processo.
 
-## Canal de comunicacao entre agentes (Ponte)
-A comunicação ocorre via **Ponte Agent** (`.hive-agent/`) na raiz do repositório. Use o `inbox.md` e `output.md` para coordenação com Gemini e Copilot.
-
-
 ## Responsabilidades do Claude
 
 ### Como Arquiteto

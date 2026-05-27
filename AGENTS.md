@@ -31,7 +31,7 @@ Para detalhes operacionais sobre *como* cada agente deve atuar (prompts, modos, 
 
 1. **Leitura Obrigatória:** Antes de qualquer tarefa, leia o `roles.yaml` e as `beehive/cognition/diretrizes.md`.
 2. **Handoffs:** Devem seguir o padrão: Contexto, Objetivo, Sequência e Checkpoint.
-3. **Escalada:** Problemas técnicos não resolvidos pelo Copilot sobem para o Gemini (Tech Lead); impasses arquiteturais sobem para o Claude.
+3. **Escalada:** Problemas técnicos do Copilot → Claude. Dúvidas de negócio → Gemini ou Márcio.
 
 ---
 *Este arquivo deve ser mantido enxuto. Alterações estruturais nos papéis devem ser feitas no arquivo YAML.*
