@@ -38,7 +38,8 @@ graph LR
 ### 🚿 Regras Gerais dos Canos (HPP Standards)
 - **Métrica Obrigatória:** Todo cano deve registrar seu custo estimado (tokens/tempo) no fechamento.
 - **Saída Materializada:** Proibido finalizar sem DIR-070.
-- **Trava do Arquiteto:** Mudanças na fundação (Auth, DB, Inter-agentes) exigem obrigatoriedade de passagem pelo **Cano: Debate** antes do Blueprint.
+- **Trava do Arquiteto:** Mudanças na fundação exigem obrigatoriedade de passagem pelo **Cano: Debate**.
+- **Agent Pass-Through:** Sub-agentes técnicos (Copilot/Claude) não renderizam o menu inicial; eles passam direto para o bocal de entrada [IN] da tarefa delegada.
 
 ---
 

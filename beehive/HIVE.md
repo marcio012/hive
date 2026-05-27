@@ -45,7 +45,10 @@
 
 ## ⚙️ Lógica de Ativação (Background)
 
-Quando o usuário seleciona uma opção (ex: `2`), o sistema deve realizar os seguintes procedimentos técnicos:
+**REGRA DE SOBERANIA:** Esta interface de Início de Sessão é de uso EXCLUSIVO do **Agente Líder (Gemini Lead)**. 
+- **Sub-agentes Técnicos:** Devem ignorar este arquivo e passar diretamente para o bocal de entrada [IN] da tarefa delegada (Agent Pass-Through).
+
+Quando o Líder renderiza o menu e o usuário seleciona uma opção (ex: `2`), o sistema deve realizar os seguintes procedimentos técnicos:
 
 1.  **Busca de Dados Dinâmicos:** 
     - `{{KERNEL_VERSION}}`: Versão atual do core.
