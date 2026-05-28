@@ -19,7 +19,8 @@ echo -e "${YELLOW}=== HIVE QUALITY GATE ===${NC}"
 # 1. Validação de Commits (Conventional Commits)
 echo -n "Check: Commits... "
 LAST_COMMIT=$(git log -1 --pretty=%s)
-if [[ $LAST_COMMIT =~ ^(feat|fix|chore|docs|test|refactor|style|perf)(\(.*\))?: .+$ ]]; then
+COMMIT_REGEX='^(feat|fix|chore|docs|test|refactor|style|perf)(\([[:alnum:]_.-]+\))?(!)?: .+$'
+if [[ $LAST_COMMIT =~ $COMMIT_REGEX ]]; then
   echo -e "${GREEN}PASS${NC} ($LAST_COMMIT)"
 else
   echo -e "${RED}FAIL${NC}"

@@ -102,6 +102,8 @@ Gerenciados por `docker-compose.hml.yml`:
 | 2026-05-24 | Adicionou `JWT_REFRESH_SECRET` ao HML; sincronizou local `.env` com HML | ✅ container recriado, secret confirmado |
 | 2026-05-28 | Reconfigurou runner de `marcio012/white-label-mvp` → `marcio012/tenantos` | ✅ serviço ativo |
 | 2026-05-28 | Deploy completo do NestJS core (MVP2) via GitHub Actions | ✅ `/api/health` OK — produto no ar |
+| 2026-05-28 | Copilot: `fix: materialize HML deploy operations` (`2870673`) | ✅ operações de deploy materializadas |
+| 2026-05-28 | Copilot: `fix: alinhar CI com estrutura atual` (`85c4cd6`) — `ci.yml` apontava para `apps/*` inexistente | ✅ CI corrigido; frontend e backend CI passando |
 
 ---
 

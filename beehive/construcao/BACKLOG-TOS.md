@@ -3,12 +3,13 @@
 > Para itens do Hive Framework: `beehive/construcao/BACKLOG.md`
 
 ## 🔴 Alta prioridade
-- [ ] TOS-013 — Branding Dinâmico (Logo/Cores por Tenant)
+- [/] TOS-013 — Branding Dinâmico (Blueprinting)
 - [ ] TOS-015 — Gestão de Agenda (Módulo Serviços)
 
 ## 🟡 Média prioridade
 - [ ] TOS-012 — Módulo de Usuários e Permissões (Roles)
 - [ ] TOS-014 — Frente de Vendas (PDV) Lite
+- [ ] TOS-017 — Saneamento e taxonomia da documentação do TenantOS
 - [ ] TOS-018 — Painel Operacional do Dia (Dashboard)
 
 ## ✅ Concluído

@@ -10,7 +10,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **Data:** 2026-05-28
 **backlog_ref:** TOS-017
 **thread:** tenantos-hml-ci-estabilizacao
-**Status:** pendente
+**Status:** consumida — HML/CI confirmados estabilizados em 2026-05-28; fluxo DEBATE-020 desbloqueado
 
 Atualização de estado após a rodada técnica no `tenantOS`.
 

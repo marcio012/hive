@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+MSG_FILE="${1:-}"
+
+if [[ -z "$MSG_FILE" || ! -f "$MSG_FILE" ]]; then
+  echo "Erro: arquivo da mensagem de commit não informado." >&2
+  exit 1
+fi
+
+SUBJECT="$(grep -m1 -v '^[[:space:]]*$' "$MSG_FILE" || true)"
+
+if [[ -z "$SUBJECT" ]]; then
+  echo "Erro: mensagem de commit vazia." >&2
+  exit 1
+fi
+
+if ! [[ "$SUBJECT" =~ ^(feat|fix|chore|docs|test|refactor|style|perf)(\([[:alnum:]_.-]+\))?(!)?:\ .+$ ]]; then
+  cat >&2 <<'EOF'
+Erro: o commit foi bloqueado pelo The Gate.
+- Use Conventional Commits no assunto. Ex.: feat: adicionar trava de commit
+EOF
+  exit 1
+fi
+
+if ! grep -Eq '^Approved by: Márcio$' "$MSG_FILE"; then
+  cat >&2 <<'EOF'
+Erro: o commit foi bloqueado pelo The Gate.
+- Inclua no corpo: Approved by: Márcio
+EOF
+  exit 1
+fi
+
+AUTHOR_NAME="$(git config user.name || true)"
+AUTHOR_EMAIL="$(git config user.email || true)"
+if ! printf '%s\n%s\n' "$AUTHOR_NAME" "$AUTHOR_EMAIL" | grep -Eiq 'marcio'; then
+  if ! grep -Eq '^Dev: .+$' "$MSG_FILE"; then
+    cat >&2 <<'EOF'
+Erro: o commit foi bloqueado pelo The Gate.
+- Quando o committer não for o executor final, inclua no corpo: Dev: Nome - Papel
+EOF
+    exit 1
+  fi
+fi
+
+if grep -Eiq '^Co-authored-by:' "$MSG_FILE"; then
+  cat >&2 <<'EOF'
+Erro: o commit foi bloqueado pelo The Gate.
+- O Hive não permite trailers Co-authored-by em commits do core.
+EOF
+  exit 1
+fi

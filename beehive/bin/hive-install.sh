@@ -45,10 +45,12 @@ mkdir -p \
   "$TARGET_BEEHIVE/registry/archive/inbox" \
   "$TARGET_BEEHIVE/registry/telemetria" \
   "$TARGET_BEEHIVE/registry/aceites" \
+  "$TARGET_REPO/.githooks" \
   "$TARGET_FRAMEWORK" \
   "$TARGET_REPO/.claude"
 
 cp "$HIVE_HOME/.agile-squad/proxy.sh" "$TARGET_REPO/.agile-squad/proxy.sh"
+cp "$HIVE_HOME/.githooks/commit-msg" "$TARGET_REPO/.githooks/commit-msg"
 cp "$HIVE_HOME/.agile-squad/framework/run.sh" "$TARGET_FRAMEWORK/run.sh"
 cp "$HIVE_HOME/.agile-squad/framework/setup.sh" "$TARGET_FRAMEWORK/setup.sh"
 cp "$HIVE_HOME/.agile-squad/framework/squad-bridge.sh" "$TARGET_FRAMEWORK/squad-bridge.sh"
@@ -115,6 +117,7 @@ SQUAD_SCRIPTS='{
   "squad:lock:acquire": "bash .agile-squad/proxy.sh hive lock set",
   "squad:lock:release": "bash .agile-squad/proxy.sh hive lock release",
   "squad:lock:assert": "bash .agile-squad/proxy.sh hive lock check",
+  "squad:gate": "bash .agile-squad/proxy.sh hive:gate",
   "squad:cost": "bash .agile-squad/proxy.sh squad:cost",
   "squad:cost:all": "bash .agile-squad/proxy.sh squad:cost:all",
   "squad:cost:log": "bash .agile-squad/proxy.sh squad:cost:log",

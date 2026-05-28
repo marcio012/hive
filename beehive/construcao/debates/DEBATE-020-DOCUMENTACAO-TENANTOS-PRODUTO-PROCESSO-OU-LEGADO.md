@@ -26,17 +26,56 @@ cwd_exec: /home/marcio/job/tenantOS
 | Claude | [x] |
 | Gemini (Tech Lead) | [x] |
 | Copilot | [x] |
-| Márcio | [ ] |
+| Márcio | [x] |
 
 **Fases:**
 - [x] Abertura
 - [x] Parecer Tech Lead
 - [x] Parecer Claude
 - [x] Parecer Copilot
-- [ ] Consolidação / Veredito
-- [ ] Aprovação Márcio
-- [-] Work Orders despachadas
-- [-] Execução concluída
+- [x] Consolidação / Veredito
+- [x] Aprovação Márcio
+- [x] Work Orders despachadas
+- [ ] Execução concluída
+
+---
+
+## 5. 🏁 Consolidação / Veredito — Claude (Arquiteto) — 2026-05-28
+
+**Veredito:** ✅ Opção B aprovada — taxonomia 4 zonas + refatoração em 2 ondas
+
+**Convergência:** todos os 4 agentes (Gemini Tech Lead, Gemini PO, Claude, Copilot) aprovaram a Opção B sem divergência.
+
+**Decisões consolidadas:**
+
+| Decisão | Definição |
+|---|---|
+| Taxonomia oficial | 4 zonas: **LIVE** / **ACTIVE** / **PROCESS** / **COLD** |
+| Fonte viva principal | `README.md` na zona LIVE — "Mapa do Produto" |
+| Sequência de execução | Classificação → aprovação Márcio → Onda 1 → Onda 2 |
+| Responsável por classificar | Claude — arquivo-a-arquivo, com justificativa |
+| Responsável por executar | Copilot — após mapa aprovado, em 2 ondas |
+| Responsável por auditar | Claude — pós-execução de cada onda |
+| Entregável obrigatório | `index.json` (mapa de zonas para agentes) + `README.md` na zona LIVE |
+
+**Próximo passo após aprovação do Márcio:**
+1. Claude produz o mapa de classificação arquivo → zona (próxima sessão)
+2. Márcio aprova o mapa via The Gate
+3. Copilot executa Onda 1 (classificação física + índice)
+4. Claude audita Onda 1
+5. Copilot executa Onda 2 (movimentação + links)
+6. Claude audita Onda 2 e fecha TOS-017
+
+### Análise Financeira (DIR-080)
+
+| Dimensão | Valor |
+|---|---|
+| Custo desta consolidação | R$ 0,20 estimado |
+| Custo estimado da execução completa | R$ 1,50–2,00 (2 ondas + auditorias) |
+| Confiança | Alta |
+| Valor gerado | Elimina ruído documental em todas as sessões futuras do TenantOS |
+| Payback | 2–3 sessões — redução de tokens em leitura de contexto errado |
+| Custo de não fazer | Agentes continuam lendo processo como produto; risco de decisão sobre base histórica |
 
 ---
 

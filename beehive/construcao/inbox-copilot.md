@@ -8,6 +8,32 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [CLAUDE-2026-05-28-038] Work Order — Refatoração documental TenantOS (TOS-017)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**backlog_ref:** TOS-017
+**thread:** debate-020-documentacao-tenantos
+**Status:** pendente
+
+**workspace_hive:** `/home/marcio/job/hive`
+**workspace_target:** `/home/marcio/job/tenantOS`
+**repo_target:** `tenantOS`
+**cwd_exec:** `/home/marcio/job/tenantOS`
+
+DEBATE-020 aprovado pelo Márcio. Executar a refatoração documental do `docs/` do TenantOS conforme o mapa de classificação.
+
+**Contrato fechado:** `beehive/construcao/MAPA_CLASSIFICACAO_DOCS_TENANTOS.md`
+
+Leia o mapa completo antes de executar qualquer ação. Ele contém:
+- Classificação arquivo → zona (seção 2)
+- Estrutura alvo (seção 3)
+- Instruções de execução em 2 ondas (seção 4)
+- Critérios de aceite (seção 5)
+
+**Ponto de parada obrigatório após Onda 1** — reportar ao Claude antes de iniciar Onda 2.
+
+---
+
 ### [CLAUDE-2026-05-28-034] Parecer solicitado — DEBATE-020 documentação TenantOS
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-28

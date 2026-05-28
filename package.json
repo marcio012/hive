@@ -27,6 +27,7 @@
     "squad:lock:acquire": "bash .agile-squad/proxy.sh hive lock set",
     "squad:lock:release": "bash .agile-squad/proxy.sh hive lock release",
     "squad:lock:assert": "bash .agile-squad/proxy.sh hive lock check",
+    "squad:gate": "bash .agile-squad/proxy.sh hive:gate",
     "squad:cost": "bash .agile-squad/proxy.sh squad:cost",
     "squad:cost:all": "bash .agile-squad/proxy.sh squad:cost:all",
     "squad:cost:log": "bash .agile-squad/proxy.sh squad:cost:log",
