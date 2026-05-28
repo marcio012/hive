@@ -1177,6 +1177,9 @@ Conforme aprovado pelo Márcio, a fila de execução foi reordenada para prioriz
 **Backlog ref:** CORE-001
 **Debate/Blueprint de origem:** `beehive/construcao/blueprints/BLUEPRINT_INTEROP_CORE.md`
 **Status do debate:** Consolidado e aprovado pelo Márcio
+**Status:** pendente
+**Spec canônica:** `beehive/construcao/work_orders/CORE-FOUNDATION/CORE-001-AUTH.md`
+**Aprovado por:** Márcio (2026-05-28)
 
 ---
 
