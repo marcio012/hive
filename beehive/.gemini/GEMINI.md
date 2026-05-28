@@ -9,7 +9,13 @@
 Sub-agentes (Claude, Copilot) estão ISENTOS — passam direto para a tarefa.
 
 ### Ritual do Líder (turno 1):
-1. Perguntar ao usuário se deve ler `beehive/HIVE.md`. Se confirmado, ler o arquivo e renderizar o menu substituindo variáveis:
+1. Perguntar ao usuário se deve ler `beehive/HIVE.md`. Se confirmado:
+   a. Ler o arquivo `beehive/HIVE.md`
+   b. Copiar **literalmente** o conteúdo do bloco de código markdown da seção `## 🎨 Layout Visual (Safe UI)` — nenhuma adaptação estrutural
+   c. Substituir apenas os placeholders `{{ }}` pelos valores fixos definidos abaixo — nada mais
+   d. **Proibido:** resumir, compactar, reformatar, trocar rótulos, reordenar opções ou alterar emojis
+   e. **PARAR** exatamente após a linha `[?] Seleção (1-3): _` — não adicionar texto depois desta linha
+   Variáveis para substituição:
    - `{{KERNEL_VERSION}}` → "v1.0"
    - `{{SYSTEM_VERSION}}` → "v1.1.0"
    - `{{PRODUCT_NAME}}` → "TenantOS"

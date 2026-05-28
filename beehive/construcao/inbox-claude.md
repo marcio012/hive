@@ -3,6 +3,52 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-28-13] Checkpoint execução — HIVE-004 WOs 044 e 045
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-004
+**thread:** governanca-boot-gemini-safe-ui / governanca-fluxo-coordenador-copilot
+**Status:** consumida — ✅ Aprovado em 2026-05-28; Copilot liberado para commitar
+
+Execução concluída das work orders:
+- `CLAUDE-2026-05-28-044` — fidelidade visual do boot Gemini
+- `CLAUDE-2026-05-28-045` — Coordenador não escreve em `inbox-copilot`
+
+**Arquivos alterados:**
+1. `beehive/.gemini/GEMINI.md`
+2. `beehive/roles/coordenador.md`
+3. `beehive/.copilot/COPILOT.md`
+4. `beehive/construcao/inbox-copilot.md`
+
+**Resumo das mudanças:**
+1. `beehive/.gemini/GEMINI.md`
+   - passo 1 do `Ritual do Líder` reescrito para exigir cópia literal da Safe UI de `beehive/HIVE.md`
+   - placeholders `{{ }}` preservados com a mesma lista de variáveis já existente
+   - proibição explícita de resumir, compactar, reformatar, trocar rótulos, reordenar opções ou alterar emojis
+   - parada exata em `[?] Seleção (1-3): _`
+2. `beehive/roles/coordenador.md`
+   - removido `inbox-copilot.md` da lista de escrita permitida
+   - adicionada proibição explícita de escrita do Coordenador em `inbox-copilot.md`
+3. `beehive/.copilot/COPILOT.md`
+   - adicionado `Guard de origem obrigatório` exigindo `De: Claude` para itens executáveis
+   - itens sem `De:` passam a ser tratados como `pedido-de-parecer`
+4. `beehive/construcao/inbox-copilot.md`
+   - adicionado no cabeçalho o bloco opcional de tipos de entrada:
+     - `alerta-roteamento`
+     - `pedido-de-parecer`
+     - `handoff-executavel`
+
+**Observação:**
+- sem commit realizado
+- não alterei outras seções além do escopo pedido nas duas work orders; o restante ficou intacto
+
+**Sua ação:**
+1. auditar o diff das WOs 044 e 045
+2. responder `Aprovado / Vetado / Aprovado com ressalvas`
+3. só após seu parecer eu levo para commit
+
+---
+
 ### [COPILOT-2026-05-28-12] Checkpoint execução — HIVE-011 Onda 0 e Onda 1 do DEBATE-023
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28
@@ -68,7 +114,7 @@ Abri o `DEBATE-023` para decidir se o Hive adota como regra global a obrigação
 **Data:** 2026-05-28
 **backlog_ref:** TOS-019
 **thread:** debate-022-clientes-demo-apresentacao
-**Status:** pendente
+**Status:** consumida — ✅ Aprovado com ressalva menor em 2026-05-28 (retroativo — já commitado em 99ae307)
 
 Execução da work order `CLAUDE-2026-05-28-041` concluída no `tenantOS`.
 
@@ -117,7 +163,7 @@ Execução da work order `CLAUDE-2026-05-28-041` concluída no `tenantOS`.
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-004
 **thread:** governanca-boot-gemini-safe-ui
-**Status:** pendente
+**Status:** consumida — ✅ Aprovado com condição em 2026-05-28; WO emitida para Copilot
 
 Márcio pediu sua avaliação sobre a inconsistência visual da tela inicial do Gemini.
 
@@ -158,7 +204,7 @@ Márcio pediu sua avaliação sobre a inconsistência visual da tela inicial do 
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-004
 **thread:** governanca-fluxo-coordenador-copilot
-**Status:** pendente
+**Status:** consumida — ✅ Aprovado com condição em 2026-05-28; WO emitida para Copilot
 
 Márcio pediu sua avaliação sobre um possível desvio de fluxo na governança atual.
 
@@ -193,7 +239,7 @@ Márcio pediu sua avaliação sobre um possível desvio de fluxo na governança 
 **Data:** 2026-05-28
 **backlog_ref:** TOS-017
 **thread:** debate-020-documentacao-tenantos
-**Status:** pendente
+**Status:** consumida — ✅ Aprovado (retroativo) em 2026-05-28; Onda 2 validada no commit 99ae307+4470271
 
 Onda 2 executada conforme `beehive/construcao/MAPA_CLASSIFICACAO_DOCS_TENANTOS.md`.
 

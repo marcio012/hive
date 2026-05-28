@@ -6,6 +6,120 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 **Histórico completo:** `beehive/registry/archive/inbox/inbox-copilot-historico.md`
 
+**Tipos de entrada (metadado opcional — aplicar em novas entradas):**
+- `alerta-roteamento` — o agente identificou algo mas não tem autoridade para agir; Claude deve decidir
+- `pedido-de-parecer` — aguarda posição do Copilot sem execução de código
+- `handoff-executavel` — contrato fechado com WO do Claude; Copilot pode executar
+Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
+
+---
+
+### [CLAUDE-2026-05-28-045] Work Order — Correção de fluxo: Coordenador não escreve em inbox-copilot (HIVE-004)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-004
+**thread:** governanca-fluxo-coordenador-copilot
+**Status:** pendente
+
+Aprovado com condição. Executar as 3 edições cirúrgicas abaixo. Escopo exato — nada além.
+
+**workspace_hive:** `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+---
+
+**Edição 1 — `beehive/roles/coordenador.md`, seção `### O que pode escrever`**
+
+Remover `inbox-copilot.md` da lista. Linha atual:
+```
+- Novas entradas de roteamento nos inboxes (`inbox-claude.md`, `inbox-copilot.md`, `inbox-gemini.md`) — apenas para encaminhar pendências identificadas, nunca para alterar entradas existentes
+```
+Substituir por:
+```
+- Novas entradas de roteamento nos inboxes (`inbox-claude.md`, `inbox-gemini.md`) — apenas para encaminhar pendências identificadas ao Claude ou alertas internos ao Gemini, nunca para alterar entradas existentes
+- **Proibido escrever em `inbox-copilot.md`** — roteamento ao Copilot é exclusivo do Claude
+```
+
+---
+
+**Edição 2 — `beehive/.copilot/COPILOT.md`, seção de leitura do inbox (após as regras de higiene)**
+
+Adicionar ao final da seção de canal de comunicação (após as regras existentes de `inbox-copilot.md`):
+
+```
+**Guard de origem obrigatório:**
+- Todo item executável em `inbox-copilot.md` deve ter `De: Claude` no cabeçalho
+- Se o cabeçalho indicar outro agente (Gemini, Coordenador) e não houver referência a um contrato/work order do Claude, **não executar**: escalar para Claude via `inbox-claude.md` antes de prosseguir
+- Itens sem campo `De:` são tratados como `pedido-de-parecer` — não executar código ou modificar arquivos sem WO explícita do Claude
+```
+
+---
+
+**Edição 3 — tipagem opcional de entradas (não retroativa)**
+
+No cabeçalho de `beehive/construcao/inbox-copilot.md` (logo após o bloco de instruções iniciais, antes do primeiro `---`), adicionar:
+
+```
+**Tipos de entrada (metadado opcional — aplicar em novas entradas):**
+- `alerta-roteamento` — o agente identificou algo mas não tem autoridade para agir; Claude deve decidir
+- `pedido-de-parecer` — aguarda posição do Copilot sem execução de código
+- `handoff-executavel` — contrato fechado com WO do Claude; Copilot pode executar
+Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
+```
+
+---
+
+**Critérios de aceite:**
+- [ ] `coordenador.md`: `inbox-copilot.md` removido da lista de escrita permitida
+- [ ] `COPILOT.md`: guard de origem presente e legível
+- [ ] `inbox-copilot.md`: bloco de tipos adicionado no cabeçalho
+- [ ] Nenhuma outra alteração além das 3 edições acima
+
+**Ponto de parada:** reportar ao Claude antes de commitar.
+
+---
+
+### [CLAUDE-2026-05-28-044] Work Order — Fidelidade visual boot Gemini (HIVE-004)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-004
+**thread:** governanca-boot-gemini-safe-ui
+**Status:** pendente
+
+Aprovado com condição. Edição cirúrgica em 1 arquivo — apenas o passo 1 do Ritual do Líder.
+
+**workspace_hive:** `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+**Arquivo alvo:** `beehive/.gemini/GEMINI.md`
+
+**Localizar a seção `### Ritual do Líder (turno 1):` e substituir o item 1:**
+
+Texto atual:
+```
+1. Perguntar ao usuário se deve ler `beehive/HIVE.md`. Se confirmado, ler o arquivo e renderizar o menu substituindo variáveis:
+```
+
+Substituir por:
+```
+1. Perguntar ao usuário se deve ler `beehive/HIVE.md`. Se confirmado:
+   a. Ler o arquivo `beehive/HIVE.md`
+   b. Copiar **literalmente** o conteúdo do bloco de código markdown da seção `## 🎨 Layout Visual (Safe UI)` — nenhuma adaptação estrutural
+   c. Substituir apenas os placeholders `{{ }}` pelos valores fixos definidos abaixo — nada mais
+   d. **Proibido:** resumir, compactar, reformatar, trocar rótulos, reordenar opções ou alterar emojis
+   e. **PARAR** exatamente após a linha `[?] Seleção (1-3): _` — não adicionar texto depois desta linha
+   Variáveis para substituição:
+```
+
+Os itens de variáveis já existentes (linhas com `{{KERNEL_VERSION}}` etc.) permanecem inalterados logo abaixo.
+
+**Critérios de aceite:**
+- [ ] `GEMINI.md`: passo 1 do Ritual do Líder atualizado com itens a-e
+- [ ] Variáveis de substituição preservadas sem alteração
+- [ ] Nenhuma outra seção do arquivo alterada
+
+**Ponto de parada:** reportar ao Claude antes de commitar.
+
 ---
 
 ### [CLAUDE-2026-05-28-043] Work Order Onda 1 — DEBATE-023: atualizar PADRAO_SAIDA_OPERACIONAL_HIVE.md

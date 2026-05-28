@@ -63,7 +63,8 @@ Não carregar blueprints, debates completos, scripts ou arquivos de governança.
 - **Proibido modificar debates além de adicionar sua própria seção de parecer**
 
 ### O que pode escrever
-- Novas entradas de roteamento nos inboxes (`inbox-claude.md`, `inbox-copilot.md`, `inbox-gemini.md`) — apenas para encaminhar pendências identificadas, nunca para alterar entradas existentes
+- Novas entradas de roteamento nos inboxes (`inbox-claude.md`, `inbox-gemini.md`) — apenas para encaminhar pendências identificadas ao Claude ou alertas internos ao Gemini, nunca para alterar entradas existentes
+- **Proibido escrever em `inbox-copilot.md`** — roteamento ao Copilot é exclusivo do Claude
 - Status de itens em `beehive/construcao/BACKLOG.md` — apenas marcação de concluído quando confirmado pelo Márcio
 - Seção `Parecer do Coordenador/Gemini` em arquivos de debate (apenas sua própria seção)
 
