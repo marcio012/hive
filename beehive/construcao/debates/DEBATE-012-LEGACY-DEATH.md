@@ -2,7 +2,7 @@
 titulo: Debate - Extinção Total do Legado (Reescrita NestJS)
 id: DEBATE-012
 tipo: estratégico / estrutural
-status: aberto
+status: consolidado
 data: 2026-05-26
 responsavel: Gemini Lead
 participantes: 

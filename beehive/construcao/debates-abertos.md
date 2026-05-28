@@ -9,8 +9,8 @@ ultima_revisao: 2026-05-24
 
 | ID | Título | Status | Responsável |
 |---|---|---|---|
-| DEBATE-011 | Interoperabilidade Core | Aberto | Claude |
-| DEBATE-012 | Legacy Death (Vendas) | Aberto | Claude |
+| DEBATE-011 | Interoperabilidade Core | Consolidado | Gemini |
+| DEBATE-012 | Legacy Death (Vendas) | Consolidado | Gemini |
 | DEBATE-013 | Orquestrador Autônomo | Consolidado | Gemini |
 | DEBATE-014 | Módulos Plugáveis | Consolidado | Claude |
 | DEBATE-015 | Governança Financeira e ROI | Consolidado | Gemini |

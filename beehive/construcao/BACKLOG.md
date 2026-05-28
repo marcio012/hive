@@ -3,7 +3,6 @@
 > Para abrir nova demanda: `npm run po:demand`
 
 ## 🔴 Alta prioridade
-- [ ] #002 — Documentação oficial do Hive (delegado ao Gemini — GEMINI-2026-05-26-02)
 
 ## 🟡 Média prioridade
 - [ ] #003 — Status report por entrega

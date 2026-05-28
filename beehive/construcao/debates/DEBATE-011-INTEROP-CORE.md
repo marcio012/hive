@@ -2,7 +2,7 @@
 titulo: Debate - Estratégia de Interoperabilidade Core (NestJS <> Express)
 id: DEBATE-011
 tipo: arquitetura / estrutural
-status: aberto
+status: consolidado
 data: 2026-05-26
 responsavel: Gemini Lead
 participantes: 

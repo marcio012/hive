@@ -191,6 +191,18 @@ Como este manual é injetado em cada requisição de contexto, as seguintes regr
 - **Destino Operacional:** Todo handoff multi-repo deve declarar `workspace_hive`, `workspace_target`, `repo_target` e `cwd_exec`.
 - **Auditoria de Higiene:** Claude deve vetar handoffs ou artefatos que não sigam o DIR-071.
 
+#### Anchor Set (obrigatório em todo Task Pack)
+Arquivos sentinela que acompanham qualquer Task Pack para evitar cegueira de dependências cruzadas. São pequenos, estáveis e transversais a qualquer tarefa.
+
+| Arquivo | Por quê é sentinela |
+|---|---|
+| `beehive/construcao/BACKLOG.md` | Evita implementar item descartado ou fora de prioridade |
+| `beehive/construcao/debates-abertos.md` | Evita decisão arquitetural que ignore debate ativo sobre o mesmo tema |
+| `beehive/roles/roles.yaml` | Evita roteamento para agente errado |
+| `beehive/config.env` | Evita valor hardcoded que conflite com configuração vigente |
+
+Estes arquivos não fazem parte do Core Pack (não são injetados automaticamente no boot) — devem ser incluídos explicitamente em cada handoff ou Task Pack montado pelo Claude.
+
 ### 2. Protocolo de Telemetria (Logs de Custo)
 Toda vez que uma transação (leitura ou escrita) for efetuada pelo squad, o script orquestrador deve interceptar o objeto `usage` da API e registrar.
 
