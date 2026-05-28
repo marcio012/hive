@@ -31,6 +31,12 @@ carregar o cartucho correspondente sem exibir o menu:
 - Projetista → `beehive/roles/projetista.md`
 - Coordenador → `beehive/roles/coordenador.md`
 
+**Boundary de sessão (obrigatório):**
+- **1 sessão Gemini = 1 cartucho**
+- Para trocar de cartucho ou modo, **fechar a CLI atual** e encerrar a sessão com `npm run squad:session:end:gemini`
+- Só depois iniciar o novo cartucho (`gemini:po`, `gemini:projetista`, `gemini:coordenador` ou `squad:session:gemini`)
+- Reabrir o mesmo cartucho na mesma sessão é permitido; trocar para outro cartucho/modo sem encerrar deve ser bloqueado
+
 > **Nota:** O cartucho Tech Lead foi dissolvido em 2026-05-26.
 > Auditoria de código/spec → Claude (Auditor Técnico). Coordenação → Coordenador.
 
@@ -84,6 +90,8 @@ antes de responder. Isso garante que apenas as regras necessárias estejam ativa
 
 ## Atualização de sessão
 - Rodar `npm run squad:session:gemini` ao iniciar no terminal
+- Se a sessão usar cartucho específico, iniciar direto com `gemini:po`, `gemini:projetista` ou `gemini:coordenador`
+- Antes de mudar de cartucho/modo: fechar a CLI atual + `npm run squad:session:end:gemini`
 - Verificar `beehive/construcao/inbox-gemini.md` para tarefas pendentes
 - Se regras operacionais mudaram → recarregar contexto antes de prosseguir
 - Em roteamentos multi-repo, sempre informar `workspace_hive`, `workspace_target`, `repo_target` e `cwd_exec`

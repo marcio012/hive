@@ -18,6 +18,7 @@
     "hive:session:gemini": "npm run hive -- session-start gemini",
     "hive:session:claude": "npm run hive -- session-start claude",
     "hive:session:copilot": "npm run hive -- session-start copilot",
+    "hive:session:end:gemini": "npm run hive -- session-end gemini",
     "hive:session:state": "npm run hive -- session-update",
     "gemini:po": "npm run hive -- session-start gemini --role po",
     "gemini:po:auditoria": "npm run hive -- session-start gemini --role po --mode auditoria",

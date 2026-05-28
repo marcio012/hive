@@ -19,6 +19,7 @@ O Hive é um framework **portável**. O repositório inteiro funciona como um Si
 
 Utilize os scripts do `package.json` na raiz:
 - `npm run squad:inbox -- copilot`: Leitura rápida do inbox operacional.
-- `npm run squad:session:gemini`: Início de sessão para o Tech Lead.
+- `npm run squad:session:gemini`: Início de sessão base do Gemini.
+- `npm run squad:session:end:gemini`: Encerra a sessão/cartucho ativo do Gemini antes de trocar de papel.
 - `npm run squad:bridge -- copilot`: Inicializa a ponte operacional do agente.
 - `npm run squad:gate`: Roda o Gate técnico antes do commit final.

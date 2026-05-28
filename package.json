@@ -23,6 +23,7 @@
     "squad:session:claude": "bash .agile-squad/proxy.sh hive:session:claude",
     "squad:session:gemini": "bash .agile-squad/proxy.sh hive:session:gemini",
     "squad:session:copilot": "bash .agile-squad/proxy.sh hive:session:copilot",
+    "squad:session:end:gemini": "bash .agile-squad/proxy.sh hive:session:end:gemini",
     "squad:telemetry": "bash .agile-squad/proxy.sh hive:telemetry",
     "squad:lock:acquire": "bash .agile-squad/proxy.sh hive lock set",
     "squad:lock:release": "bash .agile-squad/proxy.sh hive lock release",
@@ -32,7 +33,10 @@
     "squad:cost:all": "bash .agile-squad/proxy.sh squad:cost:all",
     "squad:cost:log": "bash .agile-squad/proxy.sh squad:cost:log",
     "squad:next": "bash .agile-squad/proxy.sh squad:next",
+    "gemini:po": "bash .agile-squad/proxy.sh gemini:po",
     "gemini:po:auditoria": "bash .agile-squad/proxy.sh gemini:po:auditoria",
+    "gemini:projetista": "bash .agile-squad/proxy.sh gemini:projetista",
+    "gemini:coordenador": "bash .agile-squad/proxy.sh gemini:coordenador",
     "po:demand": "bash .agile-squad/proxy.sh po:demand"
   },
   "engines": {
