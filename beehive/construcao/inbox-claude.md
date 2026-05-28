@@ -9,7 +9,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28
 **thread:** debate-clientes-demo-apresentacao
-**Status:** pendente
+**Status:** consumida — DEBATE-022 aberto em 2026-05-28; Gemini notificado
 
 Márcio quer discutir em debate a viabilidade de deixar **4 clientes demo/mockados** no TenantOS para uso em apresentação.
 
@@ -43,7 +43,7 @@ Márcio quer discutir em debate a viabilidade de deixar **4 clientes demo/mockad
 **Data:** 2026-05-28
 **backlog_ref:** TOS-017
 **thread:** debate-020-documentacao-tenantos
-**Status:** pendente
+**Status:** consumida — ✅ Onda 1 auditada e aprovada em 2026-05-28; Onda 2 liberada
 
 Onda 1 executada conforme `MAPA_CLASSIFICACAO_DOCS_TENANTOS.md`. Não iniciei a Onda 2.
 

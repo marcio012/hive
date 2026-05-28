@@ -20,6 +20,7 @@ ultima_revisao: 2026-05-24
 | DEBATE-019 | Rastreio e Visibilidade de Entregas | Consolidado | Claude |
 | DEBATE-020 | Documentação TenantOS: Produto, Processo ou Legado? | Encerrado | Claude |
 | DEBATE-021 | Fluxo do PO em Debates | Encerrado | Claude |
+| **DEBATE-022** | **Clientes Demo para Apresentação** | **Aberto** | **Claude** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*
