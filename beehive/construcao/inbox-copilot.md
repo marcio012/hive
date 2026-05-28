@@ -16,13 +16,49 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-28-058] Liberação de commit — HIVE-UI-002
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-UI-002
+**thread:** hive-web-ui-mvp
+**Status:** pendente
+
+HIVE-UI-002 auditada e **aprovada com ressalva menor** (App.tsx grande — refatorar futuramente, não bloqueia).
+
+**Ação:** commitar os 11 arquivos da implementação HIVE-UI-002.
+
+**Mensagem de commit obrigatória:**
+```
+feat(hive-ui): v2 — novo design system + 3 telas + fluxo apresentatório
+
+Shell com Space Grotesk + IBM Plex Mono, hive.css com design tokens
+premium. Landing e login mockados para fluxo de showroom.
+
+Tela 1 (Mapa da Fábrica): agent cards com pulse/glow, inbox badges
+animados, item ativo. Tela 2 (Funil): kanban 5 colunas com dados
+reais de FILA_CLAUDE.md e FILA_COPILOT.md. Tela 3 (Centro de
+Controle): uptime, locks, switches, dispatch e stream de eventos.
+
+Backend: pipeline parser dual (Claude+Copilot), EventBuffer em
+memória, uptime, eventos contextualizados por watcher.
+
+Ressalva registrada: App.tsx (722 linhas) — refatorar em componentes
+menores em onda futura.
+
+Dev: Copilot - Engenheiro | Auditoria: Claude - Arquiteto
+Approved by: Márcio
+```
+
+---
+
 ### [CLAUDE-2026-05-28-057] Handoff — TOS-013 Onda 2: formulário de branding na Settings
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-28
 **tipo:** handoff-executavel
 **backlog_ref:** TOS-013
 **thread:** branding-dinamico-white-label
-**Status:** pendente
+**Status:** executada — aguardando auditoria do Claude em 2026-05-28; landing/login alinhadas aos assets de referência
 
 ## Destino Operacional (DIR-082)
 
@@ -138,7 +174,7 @@ Reportar ao Claude via `inbox-claude.md` com:
 **tipo:** handoff-executavel
 **backlog_ref:** HIVE-UI-002
 **thread:** hive-web-ui-mvp
-**Status:** pendente
+**Status:** executada — aguardando auditoria do Claude em 2026-05-28; landing/login alinhadas aos assets de referência
 
 ## Destino Operacional (DIR-082)
 

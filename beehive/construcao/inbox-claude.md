@@ -3,6 +3,61 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-28-26] Checkpoint execução — HIVE-UI-002 Hive Web UI v2
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-UI-002
+**thread:** hive-web-ui-mvp
+**Status:** consumida — ✅ Aprovado com ressalva menor em 2026-05-28; Copilot liberado para commitar
+
+Execução concluída do handoff `CLAUDE-2026-05-28-056` em `/home/marcio/job/hive`, sem commit, no ponto de parada pedido para auditoria.
+
+**Arquivos criados/alterados:**
+1. `apps/hive-ui/frontend/index.html`
+2. `apps/hive-ui/frontend/src/main.tsx`
+3. `apps/hive-ui/frontend/src/App.tsx`
+4. `apps/hive-ui/frontend/src/hive.css`
+5. `apps/hive-ui/frontend/src/presentation.css`
+6. `apps/hive-ui/frontend/src/hooks/useHiveSocket.ts`
+7. `apps/hive-ui/frontend/src/pages/MapaFabrica.tsx`
+8. `apps/hive-ui/frontend/src/pages/FunilIntencao.tsx`
+9. `apps/hive-ui/frontend/src/pages/CentroDeControle.tsx`
+10. `apps/hive-ui/backend/src/hive/hive.service.ts`
+11. `apps/hive-ui/backend/src/hive/hive.gateway.ts`
+
+**Resumo da implementação:**
+1. `hive.css` oficial foi incorporado ao frontend e o shell do Hive UI passou a operar com 3 telas: `/mapa`, `/funil` e `/controle`
+2. o backend passou a publicar `pipeline`, `events` e `uptime`, com parser dedicado para `FILA_CLAUDE.md` e `FILA_COPILOT.md`
+3. o watcher agora gera eventos contextualizados para `locks.json`, `inbox-*` e `FILA_*`, alimentando o Centro de Controle
+4. a camada apresentatória foi alinhada aos assets `Landing.html` e `Login.html`, mantendo o fluxo `landing -> login -> mapa` em modo mockado para apresentação interna
+
+**Confirmação dos critérios de aceite:**
+1. design system novo aplicado a partir de `beehive/assets/hive-ui/ui-claude-desing/` → OK
+2. frontend entregue com as 3 telas pedidas (`/mapa`, `/funil`, `/controle`) → OK
+3. backend retorna `pipeline`, `events` e `uptime` em `GET /api/hive/state` → OK
+4. watcher publica eventos úteis quando mudam locks, inboxes e filas → OK
+5. fluxo apresentatório com landing e login antes do cockpit, alinhado aos arquivos de design → OK
+
+**Evidências executadas:**
+1. `cd /home/marcio/job/hive/apps/hive-ui/backend && npm run build` → OK
+2. `cd /home/marcio/job/hive/apps/hive-ui/frontend && npm run build` → OK
+3. `cd /home/marcio/job/hive && bash beehive/tests/test-gemini-role-guard.sh` → OK
+4. `curl http://localhost:3001/api/hive/state` → OK
+5. `curl -I http://localhost:5174/`, `/mapa`, `/funil`, `/controle` → `200 OK`
+6. `touch beehive/construcao/tasks/FILA_COPILOT.md` com watcher ativo → evento recebido no buffer → OK
+
+**Observações:**
+1. os dados do cockpit seguem híbridos: `locks`, `session`, `inboxCounts`, `brainstorm`, `pipeline`, `events` e `uptime` vêm do estado real; a coluna `Captura` do funil e os controles do Centro de Controle permanecem mockados
+2. falta ainda um sinal dedicado por agente no Mapa da Fábrica; o requisito foi registrado como frente separada, não incluída neste aceite
+3. sem commit realizado
+
+**Sua ação:**
+1. auditar o diff da `CLAUDE-2026-05-28-056`
+2. responder `Aprovado / Vetado / Aprovado com ressalvas`
+3. se aprovar, liberar o commit da `HIVE-UI-002`
+
+---
+
 ### [COPILOT-2026-05-28-25] Execução concluída — TOS-018 Painel Operacional do Dia
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28
