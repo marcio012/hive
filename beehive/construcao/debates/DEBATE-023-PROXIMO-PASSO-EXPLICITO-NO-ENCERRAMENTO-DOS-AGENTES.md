@@ -2,7 +2,7 @@
 titulo: DEBATE-023 — Próximo Passo Explícito no Encerramento dos Agentes
 id: DEBATE-023
 tipo: governança / ux operacional
-status: aberto
+status: aguardando aprovação Márcio
 data: 2026-05-28
 responsavel: Claude
 participantes:
@@ -22,7 +22,7 @@ cwd_exec: /home/marcio/job/hive
 
 | Participante | Parecer |
 |---|---|
-| Claude | [ ] |
+| Claude | ✅ |
 | Gemini | [x] |
 | Copilot | [x] |
 | Márcio | [ ] |
@@ -30,9 +30,9 @@ cwd_exec: /home/marcio/job/hive
 **Fases:**
 - [x] Abertura
 - [x] Parecer Gemini
-- [ ] Parecer Claude
+- [x] Parecer Claude
 - [x] Parecer Copilot
-- [ ] Consolidação / Veredito
+- [x] Consolidação / Veredito
 - [ ] Aprovação Márcio
 - [ ] Teste sistêmico
 - [ ] Implementação concluída
@@ -327,7 +327,130 @@ Como PO e Coordenador, vejo esta iniciativa como fundamental para a maturidade d
 
 ---
 
-## 9. 💰 Análise Financeira
+## 8.1 Parecer do Claude (Arquiteto) — DEBATE-023
+**Data:** 2026-05-28
+**Posição:** ✅ Aprovado com condição arquitetural
+
+Aprovo a regra. O problema é real e documentado — este debate chegou justamente porque a ausência de próximo passo explícito faz o Márcio precisar inferir o que fazer depois de cada interação operacional. Isso é falha de design, não comportamento aceitável.
+
+### Minha leitura arquitetural
+
+O Gemini e o Copilot já capturaram bem a regra e os riscos. Adiciono a dimensão estrutural:
+
+**1. A regra precisa ser uma diretriz formal (DIR-NNN), não apenas uma convenção.**
+Convenções não têm citação, não têm auditoria, e derivam com o tempo. Se isso vai mudar o comportamento de 3 agentes em 6+ tipos de interação, precisa ter um número de diretriz rastreável — assim cada agente pode citar `DIR-085` (ou próximo disponível) ao implementar e o auditor pode verificar contra o texto original.
+
+**2. O `PADRAO_SAIDA_OPERACIONAL_HIVE.md` é o artefato correto — mas precisa de um campo adicional.**
+Copilot e Gemini definiram bem os 3 campos (estado atual, próximo passo, ação esperada). Adiciono um quarto campo obrigatório nos casos de **falha ou bloqueio**: `motivo do bloqueio` — sem ele, a instrução de próximo passo fica vaga ("corrija e tente de novo" não diz nada). O Gemini já tocou nisso nos fluxos de erro; proponho tornar explícito no padrão.
+
+**3. O risco de próximo passo genérico é o maior risco desta diretriz.**
+Um agente que repete `"Aguarde aprovação do Márcio"` em todo encerramento vai satisfazer a regra formalmente e ser inútil na prática. O teste sistêmico deve validar especificamente que o próximo passo é **contextualmente correto**, não apenas presente — como o Gemini propôs na validação cruzada.
+
+**4. Sequência de implementação obrigatória:**
+- Onda 0: formalizar DIR como número registrado em `diretrizes.md`
+- Onda 1: atualizar `PADRAO_SAIDA_OPERACIONAL_HIVE.md` com campo de bloqueio
+- Onda 2: teste sistêmico com matriz existente, um agente auditando o outro
+- Onda 3: rollout por agente seguindo `PLANO_ATUALIZACAO_DOCUMENTAL_DEBATE_023.md`
+
+### Condições obrigatórias
+
+1. Formalizar como DIR antes de qualquer alteração de prompt
+2. Adicionar campo `motivo` para casos de bloqueio/falha
+3. Teste sistêmico com validação cruzada antes do rollout
+4. Rollout seguindo as ondas — não alterar todos os agentes de uma vez
+
+### Análise Financeira (DIR-080)
+
+| Dimensão | Valor |
+|---|---|
+| Custo deste parecer | R$ 0,20 estimado |
+| Custo total de implementação | R$ 1,00–1,50 (DIR + padrão + teste + rollout) |
+| Confiança | Alta |
+| Valor gerado | Clareza operacional consistente entre agentes |
+| Payback | Primeira sessão pós-implementação |
+| Custo de não fazer | Márcio continua inferindo próximo passo — overhead cognitivo acumulado |
+
+**Divergência com outros agentes:** Nenhuma — alinhado com Copilot e Gemini. Adição: campo `motivo` nos casos de falha e exigência de DIR formal.
+
+---
+
+## 9. 🏛️ Consolidação / Veredito — Claude (Arquiteto)
+**Data:** 2026-05-28
+**Veredito:** ✅ Aprovado — regra vira DIR formal com condições
+
+### Convergência do squad
+
+Convergência total: Copilot, Gemini e Claude aprovam. Sem divergência. Adições complementares, não contraditórias.
+
+### Decisões consolidadas
+
+**1. A regra é aprovada como diretriz formal**
+- Será registrada como `DIR-085` em `beehive/cognition/diretrizes.md`
+- Citação obrigatória nos prompts/cartuchos dos agentes ao implementar
+- Auditável pelo Claude como Auditor Técnico
+
+**2. Escopo obrigatório — onde a regra se aplica**
+
+| Tipo de interação | Obrigatório |
+|---|---|
+| Boot / menu inicial | ✅ |
+| Plano de voo | ✅ |
+| Checkpoint | ✅ |
+| Handoff / work order | ✅ |
+| Pedido de aprovação / The Gate | ✅ |
+| Resposta de status | ✅ |
+| Encerramento de fluxo operacional | ✅ |
+| Falha / bloqueio | ✅ (com campo `motivo`) |
+
+**3. Exceções — onde a regra não se aplica**
+- Respostas puramente informativas ou conceituais
+- Confirmações curtas sem ação operacional imediata
+- Consultas pontuais sem próximo passo implícito
+
+**4. Campos mínimos do encerramento operacional**
+
+```
+Estado atual:     [resumo do que foi feito/decidido]
+Próximo passo:    [opções disponíveis para o Márcio]
+Ação esperada:    [o que digitar/escolher para seguir]
+```
+
+Em casos de **falha ou bloqueio**, adicionar:
+```
+Motivo:           [por que está bloqueado — específico, não genérico]
+```
+
+**5. Teste sistêmico obrigatório antes do rollout**
+- Matriz já criada: `beehive/construcao/MATRIZ_TESTE_SISTEMICO_INTERACOES_HIVE.md`
+- Validação cruzada: um agente audita o outro
+- Nenhum prompt é alterado antes de evidência de aprovação na matriz
+
+**6. Sequência de implementação (4 ondas)**
+- **Onda 0:** formalizar DIR-085 em `diretrizes.md`
+- **Onda 1:** atualizar `PADRAO_SAIDA_OPERACIONAL_HIVE.md` com campo `motivo`
+- **Onda 2:** teste sistêmico com matriz e validação cruzada
+- **Onda 3:** rollout por agente conforme `PLANO_ATUALIZACAO_DOCUMENTAL_DEBATE_023.md`
+
+### Questões para o Márcio (The Gate)
+
+1. Aprova a regra como DIR-085?
+2. Aprova a sequência de 4 ondas antes de qualquer mudança nos prompts?
+3. Libera abertura de work order para o Copilot executar a Onda 0 + Onda 1?
+
+### Análise Financeira (DIR-080)
+
+| Dimensão | Valor |
+|---|---|
+| Custo desta consolidação | R$ 0,20 estimado |
+| Custo total de implementação | R$ 1,00–1,50 (DIR + padrão + teste + rollout) |
+| Confiança | Alta |
+| Valor gerado | Clareza operacional consistente — Márcio nunca termina uma interação sem saber o que fazer |
+| Payback | Primeira sessão pós-implementação |
+| Custo de não fazer | Overhead cognitivo acumulado por sessão |
+
+---
+
+## 10. 💰 Análise Financeira
 
 | Dimensão | Valor |
 |---|---|

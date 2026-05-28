@@ -8,7 +8,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-011
 **thread:** debate-023-proximo-passo-explicito
-**Status:** pendente
+**Status:** consumida — parecer registrado no DEBATE-023 em 2026-05-28
 
 Abri o `DEBATE-023` para decidir se o Hive adota como regra global a obrigação de explicitar o próximo passo esperado do Márcio ao final de interações operacionais.
 
