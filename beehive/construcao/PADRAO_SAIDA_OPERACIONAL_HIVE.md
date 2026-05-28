@@ -1,7 +1,7 @@
 ---
 titulo: Padrao de Saida Operacional do Hive
 tipo: ux operacional / governanca / especificacao
-status: rascunho
+status: ativo
 data: 2026-05-28
 responsavel: Copilot (Executor)
 backlog_ref: HIVE-011
@@ -66,6 +66,9 @@ O que vem agora no fluxo.
 ### 4.3 Ação esperada
 O que o Márcio ou o próximo agente deve fazer agora.
 
+### 4.4 Motivo
+Obrigatório em falha ou bloqueio. Deve ser a causa específica e identificável — nunca genérico.
+
 ---
 
 ## 5. Template canônico
@@ -79,6 +82,14 @@ Próximo passo:
 
 Ação esperada:
 - [o que o Márcio ou o próximo agente deve fazer]
+```
+
+```text
+--- (usar apenas em falha ou bloqueio) ---
+Estado atual: [o que falhou/bloqueou]
+Motivo: [causa específica]
+Próximo passo: [como retomar/corrigir]
+Ação esperada: [o que Márcio ou agente deve fazer]
 ```
 
 ---
@@ -142,6 +153,14 @@ Deve deixar claro:
 - quais evidências sustentam a decisão;
 - qual resposta do Márcio libera ou bloqueia o fluxo.
 
+### 7.7 Falha / Bloqueio
+
+Deve deixar claro:
+- o que falhou;
+- o motivo específico;
+- próximo passo para retomar;
+- e de quem é a ação.
+
 ---
 
 ## 8. Exemplos canônicos
@@ -204,4 +223,3 @@ A implementação só deve ser considerada correta quando:
 2. as exceções continuam enxutas;
 3. o padrão permanece consistente entre Gemini, Claude e Copilot;
 4. a matriz de teste sistêmico passar com evidências suficientes por papel e por atividade.
-

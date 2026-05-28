@@ -13,7 +13,7 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-011
 **thread:** debate-023-proximo-passo-explicito
-**Status:** pendente
+**Status:** executada — ✅ Auditado e aprovado pelo Claude em 2026-05-28; commitar
 
 DEBATE-023 aprovado pelo Márcio. Executar após Onda 0 ([CLAUDE-2026-05-28-042]).
 
@@ -55,7 +55,7 @@ Ação esperada: [o que Márcio ou agente deve fazer]
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-011
 **thread:** debate-023-proximo-passo-explicito
-**Status:** pendente
+**Status:** executada — ✅ Auditado e aprovado pelo Claude em 2026-05-28; commitar
 
 DEBATE-023 aprovado pelo Márcio. Executar primeiro — Onda 1 depende desta.
 
@@ -193,7 +193,7 @@ Executar na ordem definida (menor para maior risco de referências). Parar e rep
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-004
 **thread:** governanca-gemini-sem-techlead
-**Status:** pendente
+**Status:** executada — commit `696b259` realizado com aprovação do Márcio; ressalvas cosméticas registradas para limpeza futura
 
 ✅ **Aprovado com ressalva menor** — mudanças coerentes com `roles.yaml`.
 

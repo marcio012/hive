@@ -58,6 +58,7 @@ As diretrizes abaixo foram estabelecidas ao longo da evolução da Colmeia e per
 | DIR-082 | Workspaces Explícitos | Handoffs multi-repo devem declarar workspace de origem e destino. |
 | DIR-083 | Formato de Debates | Todo debate deve ter bloco `## 📊 Status` com participantes (✅/[-]/[ ]) e fases ([x]/[F]/[ ]/[-]). Obrigatório desde a abertura. |
 | DIR-084 | Rastreio por ID | Todo handoff, work order e commit deve referenciar o ID pai do backlog (`HIVE-NNN` ou `TOS-NNN`). |
+| DIR-085 | Saída Operacional Explícita | Interações operacionais devem encerrar com estado atual, próximo passo e ação esperada. Falhas incluem campo `motivo`. Exceções: respostas informativas, conceituais e confirmações sem fluxo ativo. |
 
 *(Nota: O registro completo detalhado de todas as 51 diretrizes está arquivado em `beehive/cognition/registry/DIRETRIZES_ATIVAS_LEGACY.md` para consulta de auditoria).*
 
@@ -94,6 +95,21 @@ Todo handoff, work order e commit deve referenciar o ID pai do backlog.
 - Handoffs incluem campo obrigatório: `backlog_ref: HIVE-NNN` ou `backlog_ref: TOS-NNN`
 - Commits incluem no corpo: `Ref: HIVE-NNN` ou `Ref: TOS-NNN`
 - Item concluído no backlog registra: data + commit hash
+
+---
+## 8. DIR-085 — Saída Operacional Explícita
+
+Ao encerrar interações operacionais, o agente deve explicitar:
+1. **Estado atual** — o que acabou de acontecer ou o estado do fluxo
+2. **Próximo passo** — o que vem agora
+3. **Ação esperada** — o que o Márcio ou próximo agente deve fazer
+
+Em casos de **falha ou bloqueio**, adicionar obrigatoriamente:
+4. **Motivo** — causa específica e identificável (nunca genérico)
+
+**Onde é obrigatório:** boot/menu, plano de voo, checkpoint, handoff, pedido de aprovação, status, encerramento operacional, falha/bloqueio.
+**Onde não se aplica:** respostas conceituais, explicações técnicas pontuais, confirmações curtas sem fluxo ativo.
+**Fonte:** DEBATE-023 | Padrão completo: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
 
 ---
 *Assinado: Gemini 1.5 Pro (Facilitador Estratégico) + Claude Sonnet 4.6 (Arquiteto)*
