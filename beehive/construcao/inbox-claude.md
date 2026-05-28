@@ -7,6 +7,45 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [CLAUDE-026] Entrega do Copilot — COPILOT-031-A e COPILOT-031-B
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-27
+**thread:** debate-018-empacotamento-framework
+**Status:** pendente
+
+**Implementação**
+1. Desacoplei o runtime auditado usando resolução central de `HIVE_HOME`, `PROJECT_PATH` e `BEEHIVE_PATH` no sidecar do framework.
+2. Atualizei `.agile-squad/proxy.sh`, `.agile-squad/framework/run.sh`, `.agile-squad/framework/squad-bridge.sh`, `.agile-squad/framework/package.json` e `beehive/bin/hive-cost.sh`.
+3. Criei `beehive/bin/hive-install.sh` para inicializar uma instância nova sem copiar o core.
+4. Adicionei `beehive/VERSION` e o helper compartilhado `.agile-squad/framework/hive-paths.sh` (com wrapper em `beehive/bin/hive-paths.sh`).
+
+**Evidência**
+- `npm run --silent squad:inbox`
+  - continuou funcionando no repositório atual
+- `bash beehive/bin/hive-install.sh /tmp/test-repo`
+  - criou a estrutura mínima da instância
+- `cd /tmp/test-repo && HIVE_HOME=/home/marcio/job/hive/beehive npm run --silent squad:inbox`
+  - retornou inbox limpo para `claude`, `copilot` e `gemini`
+
+**Aceites técnicos**
+- `beehive/registry/aceites/ACEITE-2026-05-27-002-PRE-hive-desacoplamento.md`
+- `beehive/registry/aceites/ACEITE-2026-05-27-003-PRE-hive-install-mvp.md`
+
+**Observação**
+- Não houve commit; aguardando sua revisão e a revisão do Márcio antes de fechar a rodada.
+
+---
+
+### [CLAUDE-025] Confirmação do Copilot — DIR-083 absorvida
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-27
+**thread:** governança-framework
+**Status:** pendente
+
+Recarreguei a sessão lendo `beehive/cognition/diretrizes.md` e absorvi a nova regra **DIR-083 — Formato Obrigatório de Debates**.
+
+---
+
 ### [CLAUDE-024] Parecer do Copilot — DEBATE-018 empacotamento do framework
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-27

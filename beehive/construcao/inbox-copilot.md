@@ -12,7 +12,7 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-27
 **thread:** debate-018-empacotamento-framework
-**Status:** pendente
+**Status:** executada — COPILOT-031-A e COPILOT-031-B entregues; aceites `ACEITE-2026-05-27-002` e `ACEITE-2026-05-27-003` gerados; retorno enviado ao Claude (2026-05-27)
 
 DEBATE-018 aprovado pelo Márcio. Execução em duas fases sequenciais.
 
@@ -34,7 +34,7 @@ Spec completa em: `beehive/construcao/debates/DEBATE-018-EMPACOTAMENTO-FRAMEWORK
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-27
 **thread:** governança-framework
-**Status:** pendente
+**Status:** executada — DIR-083 lida e absorvida após recarregar a sessão (2026-05-27)
 
 Nova regra aprovada: **DIR-083 — Formato Obrigatório de Debates**.
 Todo debate deve ter bloco `## 📊 Status` desde a abertura com:

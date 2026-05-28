@@ -5,6 +5,22 @@ set -euo pipefail
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 FRAMEWORK_DIR="$ROOT_DIR/.agile-squad/framework"
 NODE_MAJOR=""
+HIVE_PATHS_SCRIPT="$FRAMEWORK_DIR/hive-paths.sh"
+
+if [[ -n "${HIVE_HOME:-}" && -f "${HIVE_HOME%/}/.agile-squad/framework/hive-paths.sh" ]]; then
+  HIVE_PATHS_SCRIPT="${HIVE_HOME%/}/.agile-squad/framework/hive-paths.sh"
+elif [[ -n "${HIVE_HOME:-}" && -f "$(dirname "${HIVE_HOME%/}")/.agile-squad/framework/hive-paths.sh" ]]; then
+  HIVE_PATHS_SCRIPT="$(dirname "${HIVE_HOME%/}")/.agile-squad/framework/hive-paths.sh"
+fi
+
+if [[ ! -f "$HIVE_PATHS_SCRIPT" ]]; then
+  echo "Erro: helper de paths do Hive não encontrado em $HIVE_PATHS_SCRIPT"
+  exit 1
+fi
+
+# shellcheck disable=SC1090
+source "$HIVE_PATHS_SCRIPT"
+resolve_hive_paths "$ROOT_DIR"
 
 ensure_node24() {
   if ! command -v node >/dev/null 2>&1; then
@@ -39,10 +55,6 @@ fi
 shift
 
 ensure_node24
-
-export HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
-export PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
-export HIVE_ROLES="${HIVE_ROLES:-$ROOT_DIR/beehive/roles/roles.yaml}"
 
 cd "$FRAMEWORK_DIR"
 exec npm run --silent "$SCRIPT_NAME" -- "$@"
