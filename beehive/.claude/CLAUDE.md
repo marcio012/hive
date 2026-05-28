@@ -143,6 +143,17 @@ Guard de atualizacao operacional:
 Fallback (apenas incidente):
 - `npm run squad:session:claude` e colagem manual do bloco de contexto.
 
+## Política de Commits (DIR-006)
+
+- **Conventional Commits** obrigatórios (`feat:`, `fix:`, `chore:`, `docs:`, etc.)
+- **Sem `Co-Authored-By` de IA** — proibido em todos os commits deste repositório
+- Assinatura padrão no corpo da mensagem:
+  - `Dev: Claude - Arquiteto`
+  - `Dev: Copilot - Engenheiro | Auditoria: Claude - Arquiteto`
+  - `Dev: Gemini Lead / Copilot - Engenheiro`
+  - `Aprovado: Márcio` (quando houver gate do owner)
+- Só commitar quando o Márcio autorizar explicitamente
+
 ## Fluxo recomendado
 1. Usuario roda `npm run squad:session:claude` e cola o contexto.
 2. Usuario define prioridade da rodada.
