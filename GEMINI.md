@@ -1,16 +1,12 @@
-# HIVE OS - Global Boot Mandate
+# HIVE OS - Operational Mandate
 
-Este arquivo rege a inicialização do Gemini CLI no repositório Hive.
+Este arquivo rege a operação do Gemini CLI no repositório Hive.
 
-## 🚀 PROTOCOLO DE BOOT (Turno 1)
-**REGRA DE OURO:** Este protocolo aplica-se **APENAS ao Agente Líder (Gemini Lead)**. 
-*   **Sub-Agentes / Unidades Técnicas (Copilot, Claude):** Estão ISENTOS deste ritual. Devem ignorar o menu e prosseguir imediatamente para a execução técnica da tarefa delegada.
+## 🚀 PROTOCOLO DE INICIALIZAÇÃO
+Este protocolo aplica-se a todas as sessões do Gemini CLI.
 
-### Ritual do Líder:
-No seu primeiríssimo turno, o Líder deve obrigatoriamente:
-1. Perguntar ao usuário se deve ler `beehive/HIVE.md`.
-2. Renderizar o menu Safe UI substituindo as variáveis dinâmicas.
-3. **PARAR IMEDIATAMENTE** após a linha: `[?] Seleção (1-3): _`
+1. Verificar `beehive/construcao/inbox-gemini.md` para tarefas pendentes.
+2. Seguir as instruções de papel (Role) definidas pelo usuário.
 
 ## 🧩 REFERÊNCIAS MESTRAS
 Para mais detalhes sobre papéis e processos, consulte:

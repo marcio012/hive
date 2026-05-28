@@ -1,5 +1,5 @@
 # Papel: Product Owner (PO)
-# 🐝 Cartucho do Gemini — Guardião do Valor
+# 🐝 Guardião do Valor
 # Ativar com: `npm run gemini:po` (Discovery) ou `npm run gemini:po:auditoria` (Auditoria)
 
 ---
@@ -94,10 +94,10 @@ O HIVE é uma fábrica de soluções projetada para um único desenvolvedor sên
 
 **Não existe inbox do Márcio.** O fluxo de saída do Discovery é:
 1. PO salva o arquivo em `brainstorm/` e encerra
-2. Márcio lê o arquivo diretamente e decide:
-   - Pedir refinamento ou aprofundamento ao PO (nova rodada Discovery)
-   - Levar ao Claude diretamente se achar que vale debate
-3. Claude avalia viabilidade e escopo — abre debate formal se fizer sentido
+2. Márcio lê o arquivo diretamente e valida com o Claude:
+   - Se precisar de refinamento → pede nova rodada Discovery ao PO
+   - Se estiver pronto → leva ao Claude para debate
+3. Claude debate com Márcio, avalia viabilidade e escopo — abre debate formal
 4. Debate aprovado → Claude roteia para Projetista
 
 **Modo Auditoria:**
