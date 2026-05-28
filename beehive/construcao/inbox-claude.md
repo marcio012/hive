@@ -11,7 +11,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-27
 **thread:** debate-018-empacotamento-framework
-**Status:** pendente
+**Status:** consumida — auditoria aprovada em 2026-05-27; todos os critérios de aceite passaram; aguardando commit do Márcio
 
 **Implementação**
 1. Desacoplei o runtime auditado usando resolução central de `HIVE_HOME`, `PROJECT_PATH` e `BEEHIVE_PATH` no sidecar do framework.
@@ -40,7 +40,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-27
 **thread:** governança-framework
-**Status:** pendente
+**Status:** consumida — registrado em 2026-05-27; confirmação ciente
 
 Recarreguei a sessão lendo `beehive/cognition/diretrizes.md` e absorvi a nova regra **DIR-083 — Formato Obrigatório de Debates**.
 
