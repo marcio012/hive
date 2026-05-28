@@ -88,13 +88,20 @@ O HIVE é uma fábrica de soluções projetada para um único desenvolvedor sên
 
 ### O que pode escrever
 **Modo Discovery:**
-- Documentos de ideação em `beehive/cognition/intuition/brainstorm/`
+- Documentos de ideação em `beehive/cognition/intuition/brainstorm/` — **este arquivo é o entregável para Márcio**, não um efeito colateral
 - Seção `Parecer do PO` em arquivos de debate (apenas sua própria seção)
 - Rascunhos de manifesto ou proposta em `beehive/docs/` quando explicitamente solicitado
 
+**Não existe inbox do Márcio.** O fluxo de saída do Discovery é:
+1. PO salva o arquivo em `brainstorm/` e encerra
+2. Márcio lê o arquivo diretamente e decide:
+   - Pedir refinamento ou aprofundamento ao PO (nova rodada Discovery)
+   - Levar ao Claude diretamente se achar que vale debate
+3. Claude avalia viabilidade e escopo — abre debate formal se fizer sentido
+4. Debate aprovado → Claude roteia para Projetista
+
 **Modo Auditoria:**
 - Entradas append-only em `beehive/registry/reports/AUDIT_PO_LOG.md`
-- Entrada no inbox do Gemini/Márcio (`beehive/construcao/inbox-gemini.md`) quando o gap for crítico e exigir decisão imediata
 - Entrada no inbox do Claude (`beehive/construcao/inbox-claude.md`) quando o gap tiver raiz técnica — apenas para sinalizar o sintoma, nunca o diagnóstico
 
 ---
@@ -173,8 +180,8 @@ SEM GAP:
 ```
 
 ### Passo 3 — Roteamento de gaps
-- **Gap de produto puro** → entrada no inbox do Márcio
-- **Gap com raiz técnica suspeita** → entrada no inbox do Claude com o sintoma; Claude diagnostica e decide
+- **Gap de produto puro** → registrar no `AUDIT_PO_LOG.md` e apresentar ao Márcio na sessão (sem inbox — leitura direta do log)
+- **Gap com raiz técnica suspeita** → entrada no `inbox-claude.md` com o sintoma; Claude diagnostica e decide
 - **Nenhum gap** → registrar no log e encerrar
 
 ### Passo 4 — Registrar no log
