@@ -16,6 +16,213 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-28-054] Handoff — CORE-003 Schema Hardening & Consistency
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**tipo:** handoff-executavel
+**backlog_ref:** CORE-003
+**thread:** core-schema-management
+**Status:** pendente
+
+## Destino Operacional (DIR-082)
+
+```yaml
+workspace_hive:   /home/marcio/job/hive
+workspace_target: /home/marcio/job/tenantOS
+repo_target:      tenantOS
+cwd_exec:         /home/marcio/job/tenantOS/backend
+```
+
+## Contexto
+
+**Leia antes de executar:** `beehive/construcao/blueprints/BLUEPRINT_CORE_003_SCHEMA.md`
+
+O schema já tem Tenant.ativo, TenantModulo, Usuario.role e FKs em todos os modelos — o CORE-003 original está 85% feito. Esta WO entrega o hardening restante: 5 ajustes cirúrgicos em `schema.prisma` + 1 migration. Tudo additive — sem DROP, sem rename de coluna.
+
+## Edições em `backend/prisma/schema.prisma`
+
+### 1. TenantModulo — cascade + index + map
+
+Substituir o bloco atual:
+```prisma
+model TenantModulo {
+  id String @id @default(cuid())
+  tenantId String
+  moduloSlug String
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  @@unique([tenantId, moduloSlug])
+}
+```
+
+Por:
+```prisma
+model TenantModulo {
+  id         String @id @default(cuid())
+  tenantId   String
+  moduloSlug String
+  tenant     Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, moduloSlug])
+  @@index([tenantId])
+  @@map("tenant_modulos")
+}
+```
+
+### 2. Lead — index em tenant_id
+
+Adicionar `@@index([tenant_id])` antes do `@@map("leads")` existente:
+```prisma
+  @@index([tenant_id])
+  @@map("leads")
+```
+
+### 3. MovimentoEstoque — @@map
+
+Adicionar ao final do model, antes do fechamento `}`:
+```prisma
+  @@map("movimentos_estoque")
+```
+
+### 4. Agendamento — index adicional
+
+Adicionar após o `@@index([tenant_id, profissional_id])` existente:
+```prisma
+  @@index([tenant_id, cliente_id])
+```
+
+### 5. ObservacaoSessao — index adicional
+
+Adicionar após o `@@index([tenant_id])` existente:
+```prisma
+  @@index([tenant_id, cliente_id])
+```
+
+## Geração da Migration
+
+```bash
+npx prisma migrate dev --name core-003-schema-hardening
+```
+
+**Antes de aplicar:** revisar o SQL gerado em `prisma/migrations/*/migration.sql`.
+Confirmar que não há `DROP TABLE`, `DROP COLUMN` nem `ALTER TABLE ... RENAME COLUMN`.
+O rename de `TenantModulo` → `tenant_modulos` aparecerá como `ALTER TABLE "TenantModulo" RENAME TO "tenant_modulos"` — isso é esperado e seguro.
+
+## Restrições
+
+- **NÃO** renomear `Usuario.tenantId` para `tenant_id` — risco de migration, documentado como DT-002
+- **NÃO** criar novos modelos
+- **NÃO** alterar seeds existentes
+- Apenas os 5 ajustes descritos acima + a migration
+
+## Critérios de Aceite
+
+- [ ] `npx prisma generate` → OK
+- [ ] `npx prisma migrate dev` → OK sem DROP
+- [ ] SQL da migration revisado manualmente — sem DROP TABLE / DROP COLUMN
+- [ ] `npm run check:types` → OK
+- [ ] `npm test -- --runInBand` → todos os testes passam
+
+## Ponto de Parada
+
+Reportar ao Claude via `inbox-claude.md` com:
+- SQL da migration (colado ou resumido)
+- Resultado dos testes
+- Commit hash
+
+---
+
+### [CLAUDE-2026-05-28-053] Handoff — CORE-002 delta final: testes do ModuleGuard
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**tipo:** handoff-executavel
+**backlog_ref:** CORE-002
+**thread:** core-tenant-guard
+**Status:** executada — commit realizado em 2026-05-28 (`600d597`)
+
+## Destino Operacional (DIR-082)
+
+```yaml
+workspace_hive:   /home/marcio/job/hive
+workspace_target: /home/marcio/job/tenantOS
+repo_target:      tenantOS
+cwd_exec:         /home/marcio/job/tenantOS/backend
+```
+
+## Contexto
+
+CORE-002 está funcionalmente completo:
+- `TenantGuard` — implementado + testado (commit 378f3d6)
+- `ModuleGuard` — implementado em `src/modules/module.guard.ts` (commit 086d9bc), registrado como `APP_GUARD` no `TenantModule`
+- `@Modulo()` decorator — existe em `src/modules/module.decorator.ts`
+- `TenantModulo` model — existe no schema
+
+**Único gap:** `src/modules/module.guard.spec.ts` não existe. Sem testes, CORE-002 não pode ser fechado.
+
+## O que implementar
+
+**Criar:** `backend/src/modules/module.guard.spec.ts`
+
+Leia `src/modules/module.guard.ts` antes de escrever. Os 4 casos obrigatórios:
+
+1. **Sem `@Modulo()` na rota** → guard passa (`canActivate` retorna `true`)
+2. **`@Modulo('vendas')` + tenant tem o módulo ativo no DB** → guard passa
+3. **`@Modulo('vendas')` + tenant NÃO tem o módulo no DB** → lança `ForbiddenException("Modulo 'vendas' nao ativo para este tenant")`
+4. **`@Modulo('vendas')` + sem tenantId no contexto** → guard passa (safety net — TenantGuard já teria bloqueado antes)
+
+Use o padrão de mock do `tenant.guard.spec.ts` como referência de estilo (mock de `PrismaService`, `Reflector`, `TenantContext`).
+
+## Restrições
+
+- **NÃO** modificar `module.guard.ts`, `module.decorator.ts` nem nenhum outro arquivo
+- Apenas criar `module.guard.spec.ts`
+
+## Critérios de aceite
+
+- [ ] `npm run check:types` → OK
+- [ ] `npm test -- --runInBand` → todos os testes passam (incluindo os 4 novos)
+- [ ] Os 4 casos acima cobertos
+
+## Ponto de parada
+
+Reportar ao Claude via `inbox-claude.md` com resultado dos testes e hash do commit antes de fechar CORE-002.
+
+---
+
+### [CLAUDE-2026-05-28-052] Liberação de commit — HIVE-UI-001 Hive Web UI MVP
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-UI-001
+**thread:** hive-web-ui-mvp
+**Status:** executada — commit realizado em 2026-05-28 (`fefb20c`)
+
+HIVE-UI-001 auditada e **aprovada com ressalva menor** (ver parecer no inbox-claude.md — `COPILOT-2026-05-28-21`).
+
+**Ação:** commitar os 25 arquivos criados/alterados da implementação HIVE-UI-001 conforme lista do checkpoint anterior.
+
+**Mensagem de commit obrigatória:**
+```
+feat(hive-ui): MVP do painel web operacional do Hive
+
+Backend NestJS (porta 3001): GET /api/hive/state agrega locks,
+session, inboxCounts e brainstorm; WebSocket /hive emite hive:update
+com debounce 300ms via chokidar sobre beehive/ e .hive-agent/.
+
+Frontend React/Vite (porta 5174): tabs /mapa e /funil, indicador
+WebSocket, componentes AgentStatus, InboxBadge, ActiveItem e
+BrainstormCard. Scripts raiz: hive:ui, hive:ui:back, hive:ui:front.
+
+Parsers adaptados ao formato real do repositório: locks.json flat,
+contagem inbox por bloco ### com Status: pendente, brainstorm
+tolerante a acentos e variações de campo.
+
+Dev: Copilot - Engenheiro | Auditoria: Claude - Arquiteto
+Aprovado: Márcio
+```
+
+**Ressalva registrada (não bloqueia — evolução futura):** StrictMode + socket lifecycle no `useHiveSocket.ts` — socket criado em `useMemo` é fechado no cleanup do primeiro effect em dev; sem impacto em produção.
+
+---
+
 ### [CLAUDE-2026-05-28-051] Work Order — DIR-085 Onda 4: docs de usuário
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-28
@@ -503,7 +710,7 @@ Após concluir, retornar ao Claude via `inbox-claude.md` com:
 **Debate ref:** DEBATE-024
 **Spec canônica:** `beehive/construcao/work_orders/HIVE-UI/HIVE-UI-001-MVP.md`
 **Blueprint:** `beehive/construcao/blueprints/BLUEPRINT_HIVE_WEB_UI.md`
-**Status:** pendente
+**Status:** executada — aguardando auditoria do Claude em 2026-05-28
 **Tipo:** handoff-executavel
 
 ---
