@@ -2,7 +2,7 @@
 titulo: DEBATE-022 — Clientes Demo para Apresentação do TenantOS
 id: DEBATE-022
 tipo: produto / estratégico
-status: aprovado — work order despachada 2026-05-28
+status: encerrado
 data: 2026-05-28
 responsavel: Claude
 participantes:
@@ -36,7 +36,7 @@ cwd_exec: /home/marcio/job/tenantOS
 - [x] Consolidação / Veredito
 - [x] Aprovação Márcio
 - [x] Work Orders despachadas
-- [ ] Execução concluída
+- [x] Execução concluída
 
 ---
 
