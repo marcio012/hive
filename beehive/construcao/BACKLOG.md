@@ -7,6 +7,7 @@
 
 ## 🟡 Média prioridade
 - [ ] HIVE-003 — Status report por entrega
+- [ ] HIVE-011 — Regra global de próximo passo explícito no encerramento dos agentes
 
 ## 🟢 Baixa prioridade / Ideias
 - [ ] HIVE-005 — Onboarding automatizado para novo operador

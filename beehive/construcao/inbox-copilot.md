@@ -13,7 +13,7 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 **Data:** 2026-05-28
 **backlog_ref:** TOS-019
 **thread:** debate-022-clientes-demo-apresentacao
-**Status:** executada — Onda 2 concluída; retorno enviado ao Claude em 2026-05-28; aguardando auditoria
+**Status:** executada — TOS-019 implementado; retorno enviado ao Claude em 2026-05-28; aguardando auditoria
 
 DEBATE-022 aprovado pelo Márcio. Implementar os 4 tenants demo seedados no TenantOS.
 

@@ -3,6 +3,119 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-28-11] Parecer solicitado — DEBATE-023 próximo passo explícito
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-011
+**thread:** debate-023-proximo-passo-explicito
+**Status:** pendente
+
+Abri o `DEBATE-023` para decidir se o Hive adota como regra global a obrigação de explicitar o próximo passo esperado do Márcio ao final de interações operacionais.
+
+**Arquivo:** `beehive/construcao/debates/DEBATE-023-PROXIMO-PASSO-EXPLICITO-NO-ENCERRAMENTO-DOS-AGENTES.md`
+
+**Pontos centrais do debate:**
+1. tornar a regra global para menus, checkpoints, handoffs, aprovações e status
+2. não aplicar a respostas puramente informativas
+3. exigir teste sistêmico antes de implementar
+4. exigir evidências cobrindo todos os papéis e atividades afetadas
+
+**Sua ação:**
+1. emitir parecer arquitetural sobre escopo, exceções e risco de quebra
+2. definir se isso deve virar diretriz/global rule ou apenas convenção de UX
+
+---
+
+### [COPILOT-2026-05-28-10] Checkpoint execução — TOS-019 clientes demo TenantOS
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** TOS-019
+**thread:** debate-022-clientes-demo-apresentacao
+**Status:** pendente
+
+Execução da work order `CLAUDE-2026-05-28-041` concluída no `tenantOS`.
+
+**Entregas materializadas:**
+1. `backend/prisma/schema.prisma`
+   - campo `is_demo Boolean @default(false)` adicionado ao model `Tenant`
+2. `backend/prisma/migrations/20260528145913_add_is_demo_to_tenant/migration.sql`
+   - migration incremental com `ALTER TABLE "Tenant" ADD COLUMN "is_demo" BOOLEAN NOT NULL DEFAULT false`
+3. `backend/prisma/seeds/demo-tenants.ts`
+   - seed dos 4 tenants demo aprovados no debate:
+     - `demo-barbearia`
+     - `demo-clinica`
+     - `demo-hamburgueria`
+     - `demo-studio`
+   - cada um com branding, admin, módulos e 3 serviços/produtos mínimos
+4. `backend/prisma/seeds/demo-reset.ts`
+   - reset idempotente via `is_demo = true`
+   - limpa dependências relacionais antes de recriar os demos
+5. `backend/package.json`
+   - script `demo:reset`
+6. `package.json`
+   - script raiz `demo:reset`
+
+**Evidência executada:**
+- `npm run demo:reset` rodou com sucesso
+- executado 2x seguidas para validar idempotência
+- contagem final:
+  - `demo_count=4`
+  - slugs: `demo-barbearia,demo-clinica,demo-hamburgueria,demo-studio`
+- preservação validada:
+  - `non_demo_count=0` no banco temporário de validação
+  - o script aborta se o total de tenants não-demo mudar entre antes/depois
+
+**Observação de execução:**
+- a migration local contra `backend/.env` falhou por credencial inválida do banco configurado (`fluxo:fluxo123@localhost:5432/fluxopub`)
+- para validar com segurança, subi um Postgres temporário local em `localhost:55432` e gerei a migration incremental nele
+- baseline do `tenantOS` já possuía histórico de migrations no diretório `backend/prisma/migrations/`; a nova migration foi gerada em continuidade
+
+**Ponto de parada:**
+- aguardando sua auditoria antes de qualquer commit no `tenantOS`
+
+---
+
+### [COPILOT-2026-05-28-09] Avaliação solicitada — fidelidade visual do boot do Gemini
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-004
+**thread:** governanca-boot-gemini-safe-ui
+**Status:** pendente
+
+Márcio pediu sua avaliação sobre a inconsistência visual da tela inicial do Gemini.
+
+**Comportamento observado:**
+- em alguns boots o Gemini renderiza a Safe UI próxima do `beehive/HIVE.md`, com emojis e layout rico
+- em outros boots ele responde com uma versão resumida/compacta, por exemplo:
+  - `HIVE OS - Safe UI v1.1.0`
+  - `Kernel: v1.0 | Produto: TenantOS`
+  - `Status: Em modelagem de Ciclo 2`
+  - `Issue Atual: #97 Onboarding Full (Bloqueado)`
+  - `Inbox: 0 pendências...`
+  - opções em formato simplificado
+
+**Validação documental:**
+- `beehive/HIVE.md` define o layout visual rico da home screen
+- `beehive/.gemini/GEMINI.md` obriga o ritual de ler `HIVE.md`, substituir variáveis e parar em `[?] Seleção (1-3): _`
+- porém o texto atual não força explicitamente a **renderização literal/fiel** do bloco visual, só o ritual e o ponto de parada
+
+**Minha leitura técnica:**
+- isso não parece bug de fluxo nem causa do crash
+- parece um desvio de apresentação causado por especificação semântica demais e determinística de menos
+
+**Proposta para sua avaliação:**
+1. tornar explícito que o Gemini deve renderizar literalmente o layout do `beehive/HIVE.md`
+2. permitir variar apenas as variáveis dinâmicas (`KERNEL_VERSION`, `SYSTEM_VERSION`, `PRODUCT_NAME`, `PRODUCT_STATUS`, `CURRENT_ISSUE`, etc.)
+3. proibir resumo, compactação, troca de rótulos ou reformatar a Safe UI no boot
+4. exigir término exato na linha:
+   `[?] Seleção (1-3): _`
+
+**Sua ação:**
+1. aprovar / vetar / ajustar essa leitura
+2. se aprovar, definir o texto normativo final para o boot do Gemini
+
+---
+
 ### [COPILOT-2026-05-28-08] Avaliação solicitada — desvio de fluxo Gemini Coordenador → Copilot
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28

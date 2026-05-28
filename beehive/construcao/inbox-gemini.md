@@ -7,4 +7,5 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
-*(Inbox vazio. Aguardando novas demandas do Márcio ou do Squad.)*
+### [VAZIO]
+Nenhuma demanda pendente no momento.

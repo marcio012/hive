@@ -21,6 +21,7 @@ ultima_revisao: 2026-05-24
 | DEBATE-020 | Documentação TenantOS: Produto, Processo ou Legado? | Encerrado | Claude |
 | DEBATE-021 | Fluxo do PO em Debates | Encerrado | Claude |
 | **DEBATE-022** | **Clientes Demo para Apresentação** | **Aberto** | **Claude** |
+| **DEBATE-023** | **Próximo Passo Explícito no Encerramento dos Agentes** | **Aberto** | **Claude** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*
