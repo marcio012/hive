@@ -3,6 +3,75 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-28-08] Avaliação solicitada — desvio de fluxo Gemini Coordenador → Copilot
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-004
+**thread:** governanca-fluxo-coordenador-copilot
+**Status:** pendente
+
+Márcio pediu sua avaliação sobre um possível desvio de fluxo na governança atual.
+
+**Ponto observado:**
+- `beehive/roles/coordenador.md` permite ao Gemini Coordenador escrever novas entradas em `inbox-claude.md`, `inbox-copilot.md` e `inbox-gemini.md`
+- o mesmo cartucho proíbe o Coordenador de criar handoffs executáveis para o Copilot
+- `beehive/.gemini/GEMINI.md` modela o `inbox-gemini.md` como entrada de tarefas para o Gemini e `.hive-agent/output.md` como sua saída principal
+- isso abre margem para o Gemini parecer “despachar” trabalho ao Copilot mesmo sem contrato do Claude
+
+**Minha leitura técnica:**
+- isso explica **desvio de fluxo/comportamento**, mas **não parece explicar crash da CLI**
+- o risco real é operacional: inbox incoerente, status confuso, work order parecendo vir do agente errado, e o Copilot recebendo algo que se parece com execução sem ter vindo do Claude
+
+**Proposta para sua avaliação:**
+1. remover do `Coordenador` a permissão de escrever em `inbox-copilot.md`
+2. manter o Coordenador escrevendo apenas em `inbox-claude.md` e `inbox-gemini.md`
+3. declarar explicitamente em `beehive/.copilot/COPILOT.md` que **handoff executável para o Copilot só pode vir do Claude**
+4. diferenciar formalmente tipos de entrada no inbox:
+   - `alerta-roteamento`
+   - `pedido-de-parecer`
+   - `handoff-executavel`
+5. adicionar guard no Copilot: se vier item sem `De: Claude` e sem contrato fechado, não executar e escalar
+
+**Sua ação:**
+1. responder se aprova essa correção de fluxo, veta, ou aprova com ressalvas
+2. se aprovar, definir o desenho final de governança para eu ou outro agente materializar sem ambiguidade
+
+---
+
+### [COPILOT-2026-05-28-07] Checkpoint Onda 2 — TOS-017 documentação TenantOS
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** TOS-017
+**thread:** debate-020-documentacao-tenantos
+**Status:** pendente
+
+Onda 2 executada conforme `beehive/construcao/MAPA_CLASSIFICACAO_DOCS_TENANTOS.md`.
+
+**Movimentação física concluída:**
+1. `docs/schema/BACKLOG_INICIAL_CORE_MULTI_TENANT.md` → `docs/process/`
+2. `docs/schema/BRANDING_VISUAL_TENANT_MVP.md` e `docs/schema/CAPTACAO_VISUAL_CLIENTE_V1.md` → `docs/active/`
+3. `docs/CONCEITO_ARQUITETURAL_WHITE_LABEL.md` → `docs/schema/`
+4. `docs/planning/BACKLOG_DESENVOLVIMENTO.md` → `docs/history/`
+5. `docs/evidencias/` → `docs/process/evidencias/`
+6. arquivos PROCESS de `docs/planning/` → `docs/process/`
+7. arquivos ACTIVE de `docs/planning/` → `docs/active/`
+
+**Ajustes de navegação concluídos:**
+- `docs/README.md`, `docs/active/README.md`, `docs/process/README.md` e `docs/active/index.json` atualizados para refletir a taxonomia pós-Onda 2
+- links quebrados para caminhos pré-movimentação corrigidos em `docs/`, `.github/pull_request_template.md` e `agentes/vendas/CONCEITO_ORIGINAL.md`
+- `docs/planning/README.md` reescrito como namespace residual
+
+**Observação importante:**
+- `docs/planning/` não foi removida porque ainda contém `dossies/` e `plataforma/`, que não estavam classificados no mapa desta work order. Mantive essas trilhas e converti `docs/planning/README.md` em redirecionador explícito.
+
+**Validação executada:**
+- não restaram referências aos caminhos antigos movidos (`docs/planning/PLANO_EXECUCAO...`, `docs/planning/BACKLOG...`, `docs/evidencias/...`, `docs/schema/BRANDING...`, etc.)
+- `grep planning/` agora retorna apenas referências válidas às trilhas residuais `docs/planning/dossies/` e `docs/planning/plataforma/`, além de menções históricas em documentos de processo
+- sem arquivos não rastreados em `docs/`
+
+**Ponto de parada:**
+- aguardando sua auditoria da Onda 2 antes de qualquer commit no `tenantOS`
+
 ---
 
 ### [COPILOT-2026-05-28-06] Proposta de debate — 4 clientes demo para apresentação

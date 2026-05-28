@@ -8,6 +8,76 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [CLAUDE-2026-05-28-041] Work Order — Clientes Demo para Apresentação (TOS-019)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**backlog_ref:** TOS-019
+**thread:** debate-022-clientes-demo-apresentacao
+**Status:** executada — Onda 2 concluída; retorno enviado ao Claude em 2026-05-28; aguardando auditoria
+
+DEBATE-022 aprovado pelo Márcio. Implementar os 4 tenants demo seedados no TenantOS.
+
+**workspace_hive:** `/home/marcio/job/hive`
+**workspace_target:** `/home/marcio/job/tenantOS`
+**repo_target:** `tenantOS`
+**cwd_exec:** `/home/marcio/job/tenantOS`
+
+---
+
+**Entrega 1 — Migration `is_demo` no schema Prisma**
+
+Adicionar ao model `Tenant` em `prisma/schema.prisma`:
+```prisma
+is_demo Boolean @default(false)
+```
+
+Gerar e aplicar migration: `npx prisma migrate dev --name add_is_demo_to_tenant`
+
+---
+
+**Entrega 2 — Fixtures de seed (4 tenants)**
+
+Criar `prisma/seeds/demo-tenants.ts` com os 4 tenants abaixo. Cada tenant deve ter:
+- `is_demo: true`
+- slug prefixado `demo-*`
+- `name` fictício
+- 1 usuário admin (email + senha hash bcrypt)
+- 2–3 serviços cadastrados (se o model existir)
+- branding: `primaryColor` e `logoUrl` (campos existentes via TOS-013, ou placeholder se não existir ainda)
+
+| Slug | Nome | Nicho | PrimaryColor |
+|---|---|---|---|
+| `demo-barbearia` | The Barber Shop | Barbearia/Salão | `#1a1a2e` |
+| `demo-clinica` | Health Hub | Clínica/Consultório | `#0077b6` |
+| `demo-hamburgueria` | Burger Flow | Alimentação | `#e63946` |
+| `demo-studio` | Mind & Body | Personal/Studio | `#2d6a4f` |
+
+---
+
+**Entrega 3 — Script de reset idempotente**
+
+Criar `prisma/seeds/demo-reset.ts`:
+1. `DELETE FROM tenant WHERE is_demo = true` (via Prisma: `prisma.tenant.deleteMany({ where: { is_demo: true } })`)
+2. Re-executa os fixtures da Entrega 2
+
+Registrar no `package.json` do tenantOS:
+```json
+"demo:reset": "ts-node prisma/seeds/demo-reset.ts"
+```
+
+---
+
+**Critérios de aceite:**
+- [ ] `npx prisma migrate dev` aplica sem erro
+- [ ] `npm run demo:reset` executa do zero (idempotente — rodar 2x não duplica)
+- [ ] 4 tenants aparecem no banco com `is_demo = true`
+- [ ] `DELETE WHERE is_demo = true` remove apenas os demo tenants
+- [ ] Nenhum tenant existente com `is_demo = false` é afetado
+
+**Ponto de parada:** reportar ao Claude com evidência (`npm run demo:reset` executado + contagem de tenants demo no banco) antes de commitar.
+
+---
+
 ### [CLAUDE-2026-05-28-040] Auditoria Onda 1 aprovada — liberar Onda 2 TOS-017
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-28
@@ -50,7 +120,7 @@ Levar ao Márcio para autorização de commit. Ressalva pode ir como nota no cor
 **Data:** 2026-05-28
 **backlog_ref:** TOS-017
 **thread:** debate-020-documentacao-tenantos
-**Status:** pendente — Onda 1 concluída; aguardando retorno do Claude antes da Onda 2
+**Status:** executada — Onda 1 e Onda 2 concluídas; aguardando auditoria final do Claude (2026-05-28)
 
 **workspace_hive:** `/home/marcio/job/hive`
 **workspace_target:** `/home/marcio/job/tenantOS`

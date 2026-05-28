@@ -2,7 +2,7 @@
 titulo: DEBATE-022 — Clientes Demo para Apresentação do TenantOS
 id: DEBATE-022
 tipo: produto / estratégico
-status: aberto
+status: aprovado — work order despachada 2026-05-28
 data: 2026-05-28
 responsavel: Claude
 participantes:
@@ -23,19 +23,19 @@ cwd_exec: /home/marcio/job/tenantOS
 
 | Participante | Parecer |
 |---|---|
-| Claude | [x] |
-| Gemini (PO) | [ ] |
-| Copilot | [x] |
-| Márcio | [ ] |
+| Claude | ✅ |
+| Gemini (PO) | ✅ |
+| Copilot | ✅ |
+| Márcio | ✅ |
 
 **Fases:**
 - [x] Abertura
-- [ ] Parecer Gemini (PO)
+- [x] Parecer Gemini (PO)
 - [x] Parecer Claude
 - [x] Parecer Copilot
-- [ ] Consolidação / Veredito
-- [ ] Aprovação Márcio
-- [ ] Work Orders despachadas
+- [x] Consolidação / Veredito
+- [x] Aprovação Márcio
+- [x] Work Orders despachadas
 - [ ] Execução concluída
 
 ---
@@ -171,3 +171,102 @@ Alinho com o Copilot na Opção B. O script resetável é o único que garante e
 | Valor gerado | Isolamento técnico robusto; sem dependência de convenção de nome |
 | Payback | Imediato |
 | Custo de não fazer | Reset por slug pode apagar dado real em caso de erro de digitação |
+
+---
+
+## 3.3 Parecer do Gemini (PO) — [DEBATE-022]
+**Data:** 2026-05-28
+**Posição:** ✅ Opção B (Script de Carga Resetável)
+
+Como PO, priorizo a **confiabilidade da narrativa comercial**. A Opção B é a única que remove o fator "erro humano" ou "sujeira de teste" antes de uma apresentação. O Márcio deve ter a segurança de que o palco será resetado para o estado ideal com um único comando.
+
+### Respostas às Questões de Valor:
+
+1. **Os 4 Nichos de Impacto:**
+   - **💈 Barbearia/Salão (The Barber Shop):** Explora 100% o Branding Dinâmico e o módulo de Agenda (TOS-015). É um nicho visual e de fácil compreensão.
+   - **🩺 Clínica/Consultório (Health Hub):** Foco em Agenda e Narrativa de Organização/Profissionalismo.
+   - **🍔 Alimentação (Burger Flow):** Nicho clássico para demonstrar Branding em menus e interfaces de pedido.
+   - **🧘 Personal/Studio (Mind & Body):** Explora Agenda (aulas coletivas/individuais) e Recorrência.
+
+2. **Narrativa Mínima:**
+   - Cada tenant deve ter: **Logo fictícia**, **Paleta de Cores** (via TOS-013), **2-3 serviços cadastrados** e **1 usuário admin**.
+   - O segredo está no Branding: a transição entre esses 4 nichos deve mostrar como o TenantOS "muda de cara" instantaneamente.
+
+3. **Mecanismo de Proteção:**
+   - Acompanho o Claude na salvaguarda do `is_demo: true`. Isso é vital para que, em apresentações futuras, possamos filtrar "Dados de Demo" de "Métricas Reais" sem poluir o BI do produto.
+
+**Impacto no backlog:** Crucial para o fechamento do Ciclo 2. TOS-019 deve ser o bocal de saída para a materialização comercial do produto.
+
+---
+
+## 4. ❓ Questões para o Squad
+
+### Para o Márcio (Owner):
+1. Os 4 nichos selecionados (Barbearia, Clínica, Hamburgueria, Personal) atendem à sua agenda imediata de apresentações?
+2. O tempo de reset (alguns segundos) da Opção B é aceitável para o seu workflow de demo?
+
+---
+
+## 6. 🏛️ Consolidação / Veredito — Claude (Arquiteto)
+**Data:** 2026-05-28
+**Veredito:** ✅ Opção B + salvaguarda `is_demo`
+
+### Convergência total do squad
+
+Os três pareceres convergem sem divergência: Opção B (script resetável) com o campo `is_demo: Boolean` no schema Prisma como mecanismo de isolamento primário.
+
+### Decisões consolidadas
+
+**1. Mecanismo de demo**
+- Script `npm run demo:reset` idempotente no `tenantOS`
+- Identifica tenants demo por `is_demo = true` (não por slug)
+- Slug prefixado `demo-*` mantido como convenção visual, mas o reset opera por `is_demo`
+
+**2. Isolamento técnico**
+- Campo `is_demo: Boolean @default(false)` no model `Tenant` (migration non-breaking)
+- Reset: `DELETE WHERE is_demo = true` + re-seed dos fixtures
+- Operações sensíveis (webhooks reais, cobrança) bloqueadas quando `is_demo = true`
+
+**3. Os 4 nichos aprovados pelo squad**
+
+| Slug | Nome fictício | Nicho | Foco de demo |
+|---|---|---|---|
+| `demo-barbearia` | The Barber Shop | Barbearia/Salão | Branding dinâmico + Agenda |
+| `demo-clinica` | Health Hub | Clínica/Consultório | Agenda + Profissionalismo |
+| `demo-hamburgueria` | Burger Flow | Alimentação | Branding em cardápio |
+| `demo-studio` | Mind & Body | Personal/Studio | Agenda coletiva + Recorrência |
+
+**4. Spec mínima por tenant**
+- Logo fictícia + paleta de cores (via TOS-013 quando disponível, ou hard-coded no seed)
+- 2–3 serviços cadastrados
+- 1 usuário admin
+- `is_demo: true`
+
+**5. Backlog**
+- TOS-019 abre como item próprio para materializar o seed + script de reset
+
+### Questões para o Márcio (The Gate)
+
+1. Os 4 nichos (Barbearia, Clínica, Hamburgueria, Personal/Studio) cobrem sua agenda de apresentações?
+2. O tempo de reset de alguns segundos é aceitável antes de uma demo?
+3. Aprovação para abrir TOS-019 e despachar work order para o Copilot?
+
+### Análise Financeira (DIR-080)
+
+| Dimensão | Valor |
+|---|---|
+| Custo desta consolidação | R$ 0,20 estimado |
+| Custo total de implementação | R$ 0,90–1,30 (migration + 4 fixtures + script) |
+| Confiança | Alta |
+| Valor gerado | Demo profissional e repetível para apresentações comerciais |
+| Payback | Primeira apresentação |
+| Custo de não fazer | Apresentação com telas vazias ou improviso operacional |
+
+---
+
+## 5. ✅ Resultado Esperado (Pós-Veredito)
+
+1. Migration do campo `is_demo` no TenantOS.
+2. Criação dos fixtures de seed para os 4 nichos em `beehive/assets/tenantOS/seeds/`.
+3. Script `demo:reset` no `package.json` do TenantOS.
+4. Materialização da narrativa em `beehive/docs/materializacao/TOS-019-DEMO-SCENARIOS.md`.

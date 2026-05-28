@@ -5,7 +5,7 @@
 ## 🔴 Alta prioridade
 - [/] TOS-013 — Branding Dinâmico (Onda 1 concluída)
 - [ ] TOS-015 — Gestão de Agenda (Módulo Serviços)
-- [ ] TOS-019 — Clientes Demo para Apresentação (DEBATE-022 aberto)
+- [/] TOS-019 — Clientes Demo para Apresentação (DEBATE-022 aprovado — WO despachada)
 
 ## 🟡 Média prioridade
 - [ ] TOS-012 — Módulo de Usuários e Permissões (Roles)
