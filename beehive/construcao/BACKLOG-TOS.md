@@ -3,9 +3,9 @@
 > Para itens do Hive Framework: `beehive/construcao/BACKLOG.md`
 
 ## 🔴 Alta prioridade
-- [/] TOS-013 — Branding Dinâmico (Onda 1 concluída)
+- [/] TOS-013 — Branding Dinâmico (Onda 1 concluída — commit b151437; Onda 2 pendente)
 - [ ] TOS-015 — Gestão de Agenda (Módulo Serviços)
-- [/] TOS-019 — Clientes Demo para Apresentação (DEBATE-022 aprovado — WO despachada)
+- [x] TOS-019 — Clientes Demo para Apresentação (DEBATE-022 aprovado — Entregue em 2026-05-28 via commit 99ae307)
 
 ## 🟡 Média prioridade
 - [ ] TOS-012 — Módulo de Usuários e Permissões (Roles)

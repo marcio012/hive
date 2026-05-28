@@ -278,7 +278,7 @@ Registrar no `package.json` do tenantOS:
 - [ ] `DELETE WHERE is_demo = true` remove apenas os demo tenants
 - [ ] Nenhum tenant existente com `is_demo = false` é afetado
 
-**Ponto de parada:** reportar ao Claude com evidência (`npm run demo:reset` executado + contagem de tenants demo no banco) antes de commitar.
+**Ponto de parada:** retornar ao Claude com evidência de `npm run demo:reset` executado + contagem de tenants demo no banco) antes de commitar.
 
 ---
 
@@ -1155,7 +1155,7 @@ Conforme DEBATE-012 e BLUEPRINT_LEGACY_DEATH_AUTH.md, precisamos migrar os usuá
 **Data:** 2026-05-28
 **backlog_ref:** CORE-001, CORE-002, CORE-003
 **thread:** reordenacao-fila-core
-**Status:** pendente
+**Status:** consumida — fila lida; guard aplicado; escalado ao Claude aguardando WO oficial
 
 **Tipo:** alerta-roteamento
 
@@ -1166,3 +1166,111 @@ Conforme aprovado pelo Márcio, a fila de execução foi reordenada para prioriz
 1. Ler a nova fila em `beehive/construcao/tasks/FILA_COPILOT.md`.
 2. Aguardar o Work Order oficial do Claude para a tarefa `CORE-001` (Auth Identity Service) antes de iniciar a execução.
 3. Se o WO já existir ou quando for emitido, proceder com a reserva de lock (`npm run squad:lock:acquire`).
+
+---
+
+### [CLAUDE-2026-05-28-046] Handoff Executável — Auth Identity Service (CORE-001)
+
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**Thread:** core-auth-identity-service
+**Backlog ref:** CORE-001
+**Debate/Blueprint de origem:** `beehive/construcao/blueprints/BLUEPRINT_INTEROP_CORE.md`
+**Status do debate:** Consolidado e aprovado pelo Márcio
+
+---
+
+## Destino Operacional (DIR-082 — obrigatório em handoffs multi-repo)
+
+```yaml
+workspace_hive:   /home/marcio/job/hive
+workspace_target: /home/marcio/job/tenantOS
+repo_target:      tenantOS
+cwd_exec:         /home/marcio/job/tenantOS/backend
+```
+
+> ⚠️ Handoff sem este bloco está incompleto e não deve ser executado pelo Copilot.
+
+---
+
+## Contexto
+
+Implementar o AuthModule central no novo Core NestJS. Este módulo será a base da identidade do sistema, utilizando Passport-JWT para autenticação e BcryptService para segurança de credenciais.
+
+---
+
+## Sequência de implementação (obrigatória — nesta ordem)
+
+### Etapa 1 — Criação de Módulo e Serviços
+- Criar `AuthModule`, `AuthService` e `BcryptService`.
+- Implementar lógica de validação de usuário e geração de token JWT.
+
+### Etapa 2 — Configuração de Estratégia JWT
+- Configurar `JwtStrategy` e `JwtAuthGuard`.
+- Registrar segredo e tempo de expiração via variáveis de ambiente.
+
+### Etapa 3 — Decoradores de Segurança
+- Criar decorator `@Public` para rotas que não exigem autenticação.
+- Criar decorator `@Roles` para controle de acesso baseado em papéis.
+
+### Etapa 4 — Validação final
+- Validar que rotas protegidas retornam 401 sem token.
+- Validar que rotas `@Public` são acessíveis livremente.
+
+---
+
+## Análise Financeira (DIR-080 — obrigatório)
+
+| Dimensão | Valor |
+|----------|-------|
+| Custo estimado | R$ 15,00 (tokens estimados + horas Copilot) |
+| Confiança da estimativa | Alta |
+| Valor gerado | Fundação de segurança robusta para todo o sistema Core. |
+| Payback | Imediato (pré-requisito para todas as rotas protegidas) |
+| Custo de não fazer | Risco de segurança e impossibilidade de avançar no Core. |
+
+---
+
+## Condições obrigatórias (C1–CN)
+
+| # | Regra | Verificação |
+|---|-------|-------------|
+| C1 | Uso de BCrypt para senhas | Verificar injeção do BcryptService |
+| C2 | Estratégia JWT Passport | Verificar herança de PassportStrategy |
+
+---
+
+## Restrições
+
+- **NÃO** tocar no código legado, apenas no novo Core NestJS.
+- Parar e retornar ao Claude se encontrar divergências no schema de usuário.
+
+### 🔒 Checklist de governança (verificar antes do commit)
+
+Se qualquer arquivo abaixo aparecer no diff deste handoff, **não commitar sem parecer explícito do Claude**:
+
+- [ ] `AGENTS.md` / `GEMINI.md` / `beehive/.gemini/GEMINI.md`
+- [ ] `beehive/.claude/CLAUDE.md` / `beehive/.copilot/COPILOT.md`
+- [ ] `beehive/cognition/diretrizes.md` / `beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md`
+- [ ] `beehive/roles/*.md`
+- [ ] `beehive/bin/*.sh`
+
+Se algum estiver marcado: abrir entrada em `inbox-claude.md` com o diff antes de prosseguir.
+
+---
+
+## Critérios de aceite
+
+- [ ] AuthModule registrado no AppModule
+- [ ] Login gerando JWT válido
+- [ ] Guard global protegendo rotas não-públicas
+
+---
+
+## Ponto de parada
+
+Após concluir, retornar ao Claude com:
+- Resultado do login via Insomnia/Curl
+- Estrutura de arquivos criada
+- Qualquer exceção encontrada nas condições C1–CN
+

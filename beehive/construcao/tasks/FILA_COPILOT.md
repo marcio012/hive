@@ -1,34 +1,34 @@
 ---
 gerado_em: 2026-05-23T02:32:14Z
-atualizado_em: 2026-05-23T19:58:00Z
-gerado_por: claude
+atualizado_em: 2026-05-28T16:30:00Z
+gerado_por: Gemini (Coordenador)
 ---
 
 # Fila de Execução — Copilot
 
-Total estimado: **1 issue** de execução imediata.
+Total estimado: **4 issues** prontas para execução.
 
 > Ao iniciar cada issue: `npm run squad:lock:acquire -- copilot "<título curto>"`
 > Ao finalizar: fechar a issue no GitHub + `npm run squad:lock:release -- copilot`
 
 ## Fila ordenada
 
-| Ordem | # | Título | Dependência |
+| Ordem | ID | Título | Dependência |
 |-------|---|--------|-------------|
-| 1 | #78 | Pipeline V2 — Kanban de leads do Agente de Vendas | #88 validado em HML |
+| 1 | CORE-001 | Auth Identity Service (NestJS) | - |
+| 2 | CORE-002 | Global Module Guard | CORE-001 |
+| 3 | CORE-003 | Centralized Schema Management | CORE-002 |
+| 4 | #78 | Pipeline V2 — Kanban de leads do Agente de Vendas | #88 validado em HML |
 
 ## Próximo passo imediato
 
-**#91 já foi entregue** — issue fechada com `status:done`.
-
-**Próxima issue executável da fila:** `#78`, ainda bloqueada por validação da `#88` em HML.
+**Iniciar CORE-001** — Implementação do motor de autenticação central no NestJS para substituir o Auth legado.
 
 Escopo resumido:
-- Kanban de leads
-- Cards
-- Modal de detalhe
-- Movimentação de gate
-Ver body completo: `gh issue view 78`
+- Modulo: `AuthModule`
+- Serviços: `AuthService`, `BcryptService`
+- Estratégia: Passport-JWT
+Ver especificação completa: `beehive/construcao/work_orders/CORE-FOUNDATION/CORE-001-AUTH.md`
 
 ## Issues do Claude (não tocar)
 
@@ -50,8 +50,6 @@ Ver body completo: `gh issue view 78`
 |---|---------|
 | #88 | Milestone HML v1 — validação completa do Agente de Vendas (aguarda Márcio) |
 
-## Nota sobre #78
+## Nota sobre CORE-FOUNDATION
 
-Issue estava tagueada `agent:claude` — reatribuída ao Copilot por decisão do Márcio em 2026-05-23.
-Escopo fechado: kanban de leads, cards, modal de detalhe, movimentação de gate.
-Iniciar somente após #88 validado (depende do Agente de Vendas rodando em HML).
+As tarefas de infraestrutura do Core (CORE-001 a CORE-003) foram priorizadas para destravar o desenvolvimento do backend enquanto a Issue #78 aguarda a validação manual da Issue #88 pelo Márcio.
