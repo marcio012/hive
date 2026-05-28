@@ -6,7 +6,7 @@
 
 ## 🟡 Média prioridade
 - [ ] #003 — Status report por entrega
-- [ ] #004 — Empacotar framework para outros repositórios
+- [ ] #004 — Empacotar framework para outros repositórios (DEBATE-018)
 
 ## 🟢 Baixa prioridade / Ideias
 - [ ] #005 — Onboarding automatizado para novo operador

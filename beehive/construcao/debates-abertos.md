@@ -16,6 +16,7 @@ ultima_revisao: 2026-05-24
 | DEBATE-015 | Governança Financeira e ROI | Consolidado | Gemini |
 | DEBATE-016 | Agente PO Auditor Proativo | Consolidado | Claude |
 | **DEBATE-017** | **Telemetria em Tela + Previsão Financeira** | **Consolidado** | **Gemini** |
+| **DEBATE-018** | **Empacotamento do Hive para Outros Repositórios** | **Aberto** | **Claude** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*
