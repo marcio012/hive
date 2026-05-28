@@ -1,5 +1,5 @@
 # 🛡️ Cano: The Gate (Afirmação Final)
-**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
+**Vínculo:** `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`
 
 ## 📥 [IN] Entrada (Válvula)
 - Parecer Aprovado do Cano: Auditoria.

@@ -1,5 +1,5 @@
 # 🔄 Cano: Especialização (Switch de Papel)
-**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
+**Vínculo:** `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`
 
 ## 📥 [IN] Entrada (Válvula)
 - Comando `switch:<role>` ou seleção no menu `HIVE.md`.

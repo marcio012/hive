@@ -1,5 +1,5 @@
 # 🛡️ Cano: Auditoria & Code Review
-**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
+**Vínculo:** `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`
 
 ## 📥 [IN] Entrada (Válvula)
 - Código gerado (Git Diff / File Content).

@@ -1,5 +1,5 @@
 # 🌐 Cano: Conectividade (External Bridge)
-**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
+**Vínculo:** `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`
 
 ## 📥 [IN] Entrada (Válvula)
 - Manifestos ou requisitos vindos de IAs externas ou clientes (comando `client:connect`).

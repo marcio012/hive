@@ -1,5 +1,5 @@
 # 📡 Cano: Captura de Insights
-**Vínculo:** `beehive/docs/HIVE_PROCESS_TOPOLOGY.md`
+**Vínculo:** `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`
 
 ## 📥 [IN] Entrada (Válvula)
 - Pensamentos soltos ou observações (comando `insight:`).
