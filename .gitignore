@@ -16,7 +16,9 @@ ops/environments/**/*-ref.txt
 .agile-squad/session-state.env
 .agile-squad/session-state.env.bak.*
 .claude/last-session.txt
+.claude/telemetry-state.json
 deploy/data/
+globals.txt
 
 .hive-agent/
 ai/construcao/*.lock
