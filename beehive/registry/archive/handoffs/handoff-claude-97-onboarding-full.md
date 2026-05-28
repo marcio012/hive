@@ -1,216 +1,137 @@
-# Handoff — #97: Onboarding Full (Lead → Tenant)
+# Handoff — #97: Onboarding Full (Lead -> Tenant)
 
-**De:** Claude (Arquiteto)
-**Para:** Copilot (Executor)
-**Data:** 2026-05-24
-**Thread:** brainstorming-platform-admin
-**Issue:** #97
+**De:** Claude (Arquiteto)  
+**Para:** Copilot (Executor)  
+**Data:** 2026-05-24  
+**Thread:** brainstorming-platform-admin  
+**Issue:** #97  
+**Status:** arquivo saneado para leitura estável em CLI
 
 ---
 
 ## Contexto
 
-Design arquitetural aprovado pelo Márcio. Copilot implementa a Fase 2 sem decisões de design pendentes — contrato fechado.
+Design arquitetural aprovado pelo Márcio. O objetivo desta fase era implementar o onboarding completo de Lead para Tenant, sem decisões abertas de design.
 
-Referência: `ai/construcao/CONTRATO_ONBOARDING_FULL.md`
-
----
-
-## Arquivos a criar
-
-### 1. `apps/core/src/platform/blueprints.config.ts`
-
-```typescript
-export const BLUEPRINTS = {
-  SERVICOS: ['modulo-agenda', 'modulo-clientes', 'modulo-servicos', 'modulo-vendas'],
-  VAREJO:   ['modulo-pdv', 'modulo-estoque', 'modulo-pedidos', 'modulo-vendas'],
-} as const;
-
-export type BlueprintKey = keyof typeof BLUEPRINTS;
-```
+Este arquivo foi **simplificado** para reduzir risco de crash em leitura de CLI:
+- removidos blocos longos de TypeScript
+- removidos paths legados do tipo `ai/construcao/...`
+- mantido apenas o contrato operacional
 
 ---
 
-### 2. `apps/core/src/platform/dto/convert-lead-to-tenant-full.dto.ts`
+## Escopo original da entrega
 
-```typescript
-import { Type } from 'class-transformer';
-import { IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { BlueprintKey } from '../blueprints.config';
-
-export class ConvertLeadAdminDto {
-  @IsString() @IsNotEmpty() nome: string;
-  @IsEmail() email: string;
-}
-
-export class ConvertLeadBrandingDto {
-  @IsOptional() @IsString() corPrimaria?: string;
-  @IsOptional() @IsString() logoUrl?: string;
-}
-
-export class ConvertLeadToTenantFullDto {
-  @IsString() @IsNotEmpty() leadId: string;
-  @IsString() @IsNotEmpty() slug: string;
-  @IsIn(['SERVICOS', 'VAREJO']) blueprint: BlueprintKey;
-  @ValidateNested() @Type(() => ConvertLeadAdminDto) admin: ConvertLeadAdminDto;
-  @IsOptional() @ValidateNested() @Type(() => ConvertLeadBrandingDto) branding?: ConvertLeadBrandingDto;
-}
-```
+Implementar o fluxo completo de conversão:
+1. receber um `leadId`
+2. criar o `tenant`
+3. aplicar módulos do blueprint escolhido
+4. criar o usuário admin
+5. marcar o lead como convertido
 
 ---
 
-### 3. `apps/core/src/platform/onboarding.service.ts`
+## Arquivos-alvo (layout atual)
 
-```typescript
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { randomBytes } from 'crypto';
-import { AuthService } from '../auth/auth.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { BLUEPRINTS, BlueprintKey } from './blueprints.config';
-import { ConvertLeadToTenantFullDto } from './dto/convert-lead-to-tenant-full.dto';
-
-export interface OnboardingResultAdmin {
-  id: string;
-  email: string;
-  senhaTemporaria: string;
-}
-
-export interface OnboardingResult {
-  tenantId: string;
-  slug: string;
-  admin: OnboardingResultAdmin;
-}
-
-@Injectable()
-export class OnboardingService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly authService: AuthService,
-  ) {}
-
-  async convertLead(dto: ConvertLeadToTenantFullDto): Promise<OnboardingResult> {
-    // Guards fora da TX — reads baratos, não precisam ser atômicos com os writes
-    const lead = await this.prisma.lead.findUnique({ where: { id: dto.leadId }, select: { id: true, estado: true } });
-    if (!lead) throw new NotFoundException('Lead não encontrado');
-    if (lead.estado === 'CONVERTIDO') throw new ConflictException('Lead já foi convertido');
-
-    // Hash antes da TX para manter a transação curta (bcrypt é CPU-intensivo)
-    const senhaTemporaria = this.generateTemporaryPassword();
-    const senhaHash = await this.authService.hashPassword(senhaTemporaria);
-
-    try {
-      const result = await this.prisma.$transaction(async (tx) => {
-        // 1. Criar Tenant — conflito de slug surfaceado como P2002 → capturado abaixo
-        const tenant = await tx.tenant.create({
-          data: {
-            slug: dto.slug.trim(),
-            nome: dto.slug.trim(),
-            branding_cor_primaria: dto.branding?.corPrimaria ?? null,
-            branding_logo_url: dto.branding?.logoUrl ?? null,
-          },
-          select: { id: true, slug: true },
-        });
-
-        // 2. Inserir módulos do blueprint
-        await tx.tenantModulo.createMany({
-          data: BLUEPRINTS[dto.blueprint].map((modulo) => ({
-            tenant_id: tenant.id,
-            modulo,
-          })),
-        });
-
-        // 3. Criar usuário admin
-        const usuario = await tx.usuario.create({
-          data: {
-            tenant_id: tenant.id,
-            nome: dto.admin.nome.trim(),
-            email: dto.admin.email.toLowerCase().trim(),
-            senha_hash: senhaHash,
-            tipo: 'admin',
-          },
-          select: { id: true, email: true },
-        });
-
-        // 4. Encerrar Lead
-        await tx.lead.update({
-          where: { id: dto.leadId },
-          data: {
-            tenant_id: tenant.id,
-            estado: 'CONVERTIDO',
-            gate: 'closed_won',
-          },
-        });
-
-        return { tenant, usuario };
-      });
-
-      return {
-        tenantId: result.tenant.id,
-        slug: result.tenant.slug,
-        admin: { id: result.usuario.id, email: result.usuario.email, senhaTemporaria },
-      };
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002' &&
-        Array.isArray(error.meta?.target) &&
-        (error.meta.target as string[]).includes('slug')
-      ) {
-        throw new ConflictException('Slug de tenant já cadastrado');
-      }
-      throw error;
-    }
-  }
-
-  private generateTemporaryPassword(): string {
-    return randomBytes(8).toString('base64').replace(/[^a-zA-Z0-9]/g, '').slice(0, 10);
-  }
-}
-```
+- `backend/src/platform/blueprints.config.ts`
+- `backend/src/platform/dto/convert-lead-to-tenant-full.dto.ts`
+- `backend/src/platform/onboarding.service.ts`
+- `backend/src/platform/platform.module.ts`
+- `backend/src/platform/platform-tenant.controller.ts`
 
 ---
 
-## Arquivos a modificar
+## Contrato funcional
 
-### 4. Registrar no `PlatformModule`
+### 1. Blueprints
 
-No arquivo `apps/core/src/platform/platform.module.ts`:
-- Importar e adicionar `OnboardingService` em `providers`
+Criar configuração com dois blueprints:
+- `SERVICOS`
+- `VAREJO`
 
-### 5. Adicionar endpoint no `PlatformTenantController`
+Cada blueprint materializa uma lista fixa de módulos a serem inseridos em `TenantModulo`.
 
-```typescript
-@Post('convert-lead')
-async convertLead(@Body() dto: ConvertLeadToTenantFullDto): Promise<OnboardingResult> {
-  return this.onboardingService.convertLead(dto);
-}
-```
+### 2. DTO de conversão
 
-- Rota final: `POST /platform/tenants/convert-lead`
-- Injetar `OnboardingService` no construtor do controller
+Criar DTO com os campos:
+- `leadId`
+- `slug`
+- `blueprint`
+- `admin.nome`
+- `admin.email`
+- `branding.corPrimaria` (opcional)
+- `branding.logoUrl` (opcional)
+
+### 3. Serviço de onboarding
+
+O serviço deve:
+1. buscar o lead
+2. falhar se o lead não existir
+3. falhar se o lead já estiver convertido
+4. gerar senha temporária para o admin
+5. fazer a escrita principal dentro de transação
+
+Dentro da transação:
+1. criar o tenant
+2. inserir os módulos do blueprint em `TenantModulo`
+3. criar o usuário admin
+4. atualizar o lead para estado `CONVERTIDO`
+
+### 4. Tratamento de conflito
+
+Se houver conflito de slug (`P2002`), retornar erro de conflito com mensagem clara.
+
+### 5. Endpoint
+
+Adicionar endpoint:
+
+- `POST /platform/tenants/convert-lead`
+
+Esse endpoint deve delegar ao `OnboardingService`.
 
 ---
 
-## Teste de integração obrigatório
+## Resultado esperado
 
-Cobrir em `onboarding.service.spec.ts` ou no arquivo de integração da plataforma:
+Resposta com:
+- `tenantId`
+- `slug`
+- `admin.id`
+- `admin.email`
+- `admin.senhaTemporaria`
 
-1. **Happy path SERVICOS**: lead válido → tenant criado com 4 módulos, usuário admin com senha temporária, lead com estado CONVERTIDO.
-2. **Happy path VAREJO**: idem com 4 módulos diferentes.
-3. **Rollback — slug duplicado**: slug já existente → ConflictException, nenhuma escrita persistida.
-4. **Lead não encontrado**: NotFoundException.
-5. **Lead já convertido**: ConflictException antes da TX.
+---
+
+## Testes obrigatórios
+
+Cobrir pelo menos:
+1. happy path para `SERVICOS`
+2. happy path para `VAREJO`
+3. rollback em slug duplicado
+4. lead inexistente
+5. lead já convertido
 
 ---
 
 ## Restrições
 
-- Não criar novo NestJS module — adicionar ao `PlatformModule` existente.
-- Não fazer read prévio de slug — deixar o P2002 surfaçar.
-- Não mover o `generateTemporaryPassword` para um helper compartilhado — duplicação intencional por ora.
-- Não alterar o schema Prisma nesta task (Lead sem FK para Tenant é dívida pré-existente).
+- não criar novo module NestJS
+- adicionar ao `PlatformModule` existente
+- não fazer leitura prévia de slug só para validar duplicidade
+- deixar o erro do banco surfacar e tratar como conflito
+- não alterar schema Prisma nesta task
+
+---
 
 ## Ponto de parada
 
-Parar antes de fazer push e aguardar OK do Márcio após: typecheck OK + testes passando + teste de integração implementado.
+Parar antes de push e aguardar OK do Márcio após:
+- typecheck OK
+- testes OK
+- integração implementada
+
+---
+
+## Observação
+
+Se for necessário o conteúdo histórico detalhado, o ideal é consultar os próprios arquivos do backend em vez desta versão arquivada do handoff.
