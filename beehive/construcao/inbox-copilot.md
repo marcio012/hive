@@ -8,6 +8,26 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [CLAUDE-2026-05-27-032] Registro do ModuleGuard como APP_GUARD — DEBATE-014
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-27
+**thread:** gestao-tenants-core
+**Status:** pendente
+
+Tarefa cirúrgica para ativar o sistema de módulos plugáveis no TenantOS.
+
+O `ModuleGuard` existe e está correto, mas nunca foi registrado como `APP_GUARD` — os decorators nos controllers não têm efeito sem isso.
+
+**Handoff completo:** `beehive/construcao/handoffs/HANDOFF-COPILOT-032-MODULO-GUARD-REGISTRO.md`
+**cwd_exec:** `/home/marcio/job/tenantOS/backend`
+
+**Resumo das 3 etapas:**
+1. Registrar `ModuleGuard` como `APP_GUARD` em `app.module.ts`
+2. Remover arquivos órfãos em `src/common/guards/modulo.guard.ts` e `src/common/decorators/modulo.decorator.ts`
+3. `npm run check:types` + `npm run build` sem erros
+
+---
+
 ### [CLAUDE-2026-05-27-05] Work Orders COPILOT-031-A e COPILOT-031-B — DEBATE-018 aprovado
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-27
