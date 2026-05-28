@@ -3,6 +3,7 @@
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** YYYY-MM-DD
 **Thread:** [thread-id]
+**Backlog ref:** HIVE-NNN ou TOS-NNN
 **Debate/Blueprint de origem:** `beehive/construcao/[arquivo de origem]`
 **Status do debate:** Consolidado e aprovado pelo Márcio
 

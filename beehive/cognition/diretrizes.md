@@ -2,7 +2,7 @@
 titulo: Diretrizes Globais da Colmeia (SSoT)
 tipo: governanca
 status: ativo
-ultima_revisao: 2026-05-26
+ultima_revisao: 2026-05-28
 responsavel: Márcio (Owner) | Gemini (Tech Lead)
 ---
 
@@ -57,6 +57,7 @@ As diretrizes abaixo foram estabelecidas ao longo da evolução da Colmeia e per
 | DIR-081 | Aceite Técnico | Copilot gera aceite técnico automático antes de execução/commit. |
 | DIR-082 | Workspaces Explícitos | Handoffs multi-repo devem declarar workspace de origem e destino. |
 | DIR-083 | Formato de Debates | Todo debate deve ter bloco `## 📊 Status` com participantes (✅/[-]/[ ]) e fases ([x]/[F]/[ ]/[-]). Obrigatório desde a abertura. |
+| DIR-084 | Rastreio por ID | Todo handoff, work order e commit deve referenciar o ID pai do backlog (`HIVE-NNN` ou `TOS-NNN`). |
 
 *(Nota: O registro completo detalhado de todas as 51 diretrizes está arquivado em `beehive/cognition/registry/DIRETRIZES_ATIVAS_LEGACY.md` para consulta de auditoria).*
 
@@ -83,6 +84,16 @@ Para garantir a modularidade e a escalabilidade do HIVE, as regras de atuação 
 - Toda nova diretriz recebe um ID sequencial (`DIR-NNN`).
 - Nunca deletar uma entrada — apenas marcar como revogada no histórico.
 - O Tech Lead é o responsável por manter este documento sincronizado com as decisões do Márcio.
+
+---
+## 7. DIR-084 — Protocolo de Rastreio por ID
+
+Todo handoff, work order e commit deve referenciar o ID pai do backlog.
+- Itens do Hive: `HIVE-NNN` (ex: `HIVE-004`)
+- Itens do TenantOS: `TOS-NNN` (ex: `TOS-011`)
+- Handoffs incluem campo obrigatório: `backlog_ref: HIVE-NNN` ou `backlog_ref: TOS-NNN`
+- Commits incluem no corpo: `Ref: HIVE-NNN` ou `Ref: TOS-NNN`
+- Item concluído no backlog registra: data + commit hash
 
 ---
 *Assinado: Gemini 1.5 Pro (Hive Tech Lead)*
