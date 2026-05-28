@@ -16,21 +16,20 @@ participantes:
 
 ## 📊 Status
 
-| Participante | Parecer |
-|---|---|
-| Claude | ✅ (abertura) |
-| Gemini Lead | [ ] |
-| Copilot | [ ] |
-| Márcio | [ ] |
+### Participantes
+- Claude (Arquiteto): `✅`
+- Gemini (Lead): `✅`
+- Copilot (Engenheiro): `✅`
+- Márcio (Owner): `✅`
 
-**Fases:**
+### Fases
 - [x] Abertura
-- [ ] Parecer Gemini
-- [ ] Parecer Claude
-- [ ] Parecer Copilot
-- [ ] Consolidação / Veredito
-- [ ] Aprovação Márcio
-- [ ] Work Orders despachadas
+- [x] Parecer Gemini
+- [x] Parecer Claude
+- [x] Parecer Copilot
+- [x] Consolidação / Veredito
+- [x] Aprovação Márcio
+- [x] Work Orders despachadas
 - [ ] Execução concluída
 
 ---
@@ -101,3 +100,106 @@ O Hive foi construído dentro do repositório `hive` e hoje opera acoplado a ele
 ---
 
 *Aberto por: Claude (Arquiteto) — 2026-05-27*
+
+---
+
+## 5. 💬 Parecer do Claude — DEBATE-018
+
+**Data:** 2026-05-27
+**Posição:** ✅ aprovado com condição
+
+**Formato de entrega:** shell installer (`hive-install.sh`). Sem dependência de npm/git subtree — funciona em qualquer repo, fácil de auditar e não acopla o Hive ao node_modules do projeto-alvo.
+
+**Separação core/instância:** formalizar `HIVE_HOME` (core, read-only para o operador) vs `PROJECT_PATH` (instância, editável). Scripts do core nunca referenciam paths relativos — apenas variáveis de ambiente. Isso é o que torna o update centralizado possível: o operador só atualiza `HIVE_HOME`, a instância não muda.
+
+**Versionamento:** arquivo `beehive/VERSION` no core com semver. `hive.sh` expõe `hive version`. Instância registra a versão em `config.env` (`HIVE_VERSION`) no momento da instalação — audit trail simples sem overhead.
+
+**Condição:** desacoplamento dos caminhos hardcoded **antes** do `hive-install.sh`. Copilot (CLAUDE-024) identificou corretamente os focos principais. Sem essa etapa o instalador vira um script de cópia sem garantia de portabilidade real.
+
+**Pontos de atenção:**
+- `.claude/settings.json` tem permissões hardcoded que precisam ser revisadas para o contexto de instância
+- `squad-bridge.sh` e `proxy.sh` são os acoplamentos mais críticos — testar primeiro
+
+**Divergência com outros agentes:** alinhado com Copilot.
+
+---
+
+## 6. 🏆 Consolidação e Veredito
+
+**Data:** 2026-05-27
+**Veredito:** ✅ **GO — Aprovado pelo Márcio**
+
+**Sequência obrigatória:**
+1. **Fase A — Desacoplamento:** auditar e parametrizar caminhos hardcoded em `.agile-squad/` e `beehive/bin/`
+2. **Fase B — Installer:** criar `hive-install.sh` MVP após Fase A validada
+
+---
+
+## 7. 📋 Work Orders
+
+### COPILOT-031-A — Desacoplamento de caminhos hardcoded
+**Executar em:** `workspace_hive` = `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+**Escopo:**
+- Auditar: `.agile-squad/proxy.sh`, `.agile-squad/framework/run.sh`, `.agile-squad/framework/squad-bridge.sh`, `beehive/bin/hive-cost.sh`
+- Substituir toda referência hardcoded a `beehive/`, `registry/`, `construcao/`, `roles/` por variáveis `HIVE_HOME` / `PROJECT_PATH` / `BEEHIVE_PATH`
+- Não alterar scripts que já usam as variáveis corretamente
+
+**Critério de aceite:**
+- `grep -rn '"beehive/' .agile-squad/` → zero ocorrências hardcoded
+- `npm run squad:inbox` continua funcionando após as mudanças
+- Aceite técnico gerado em `beehive/registry/aceites/`
+
+### COPILOT-031-B — hive-install.sh MVP
+**Pré-requisito:** COPILOT-031-A aprovado
+**Executar em:** `workspace_hive` = `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+**Escopo:**
+- Criar `beehive/bin/hive-install.sh`
+- Recebe `TARGET_REPO` como argumento
+- Copia estrutura de instância (não o core) para o repo-alvo
+- Cria `config.env` com valores padrão a partir de template
+- Registra `HIVE_VERSION` no `config.env` da instância
+
+**Critério de aceite:**
+- `bash beehive/bin/hive-install.sh /tmp/test-repo` → estrutura criada
+- `HIVE_HOME=/home/marcio/job/hive/beehive npm run squad:inbox` funciona no repo-alvo
+- Aceite técnico gerado em `beehive/registry/aceites/`
+ller:** criar `hive-install.sh` MVP após Fase A validada
+
+---
+
+## 7. 📋 Work Orders
+
+### COPILOT-031-A — Desacoplamento de caminhos hardcoded
+**Executar em:** `workspace_hive` = `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+**Escopo:**
+- Auditar: `.agile-squad/proxy.sh`, `.agile-squad/framework/run.sh`, `.agile-squad/framework/squad-bridge.sh`, `beehive/bin/hive-cost.sh`
+- Substituir toda referência hardcoded a `beehive/`, `registry/`, `construcao/`, `roles/` por variáveis `HIVE_HOME` / `PROJECT_PATH` / `BEEHIVE_PATH`
+- Não alterar scripts que já usam as variáveis corretamente
+
+**Critério de aceite:**
+- `grep -rn '"beehive/' .agile-squad/` → zero ocorrências hardcoded
+- `npm run squad:inbox` continua funcionando após as mudanças
+- Aceite técnico gerado em `beehive/registry/aceites/`
+
+### COPILOT-031-B — hive-install.sh MVP
+**Pré-requisito:** COPILOT-031-A aprovado
+**Executar em:** `workspace_hive` = `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+**Escopo:**
+- Criar `beehive/bin/hive-install.sh`
+- Recebe `TARGET_REPO` como argumento
+- Copia estrutura de instância (não o core) para o repo-alvo
+- Cria `config.env` com valores padrão a partir de template
+- Registra `HIVE_VERSION` no `config.env` da instância
+
+**Critério de aceite:**
+- `bash beehive/bin/hive-install.sh /tmp/test-repo` → estrutura criada
+- `HIVE_HOME=/home/marcio/job/hive/beehive npm run squad:inbox` funciona no repo-alvo
+- Aceite técnico gerado em `beehive/registry/aceites/`

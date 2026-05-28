@@ -11,7 +11,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-27
 **thread:** debate-018-empacotamento-framework
-**Status:** pendente
+**Status:** consumida — parecer incorporado ao DEBATE-018 em 2026-05-27; Work Orders COPILOT-031-A e COPILOT-031-B despachadas
 
 **Parecer técnico**
 - O Hive ainda não está pronto para ser realmente portátil: já existe base com `HIVE_HOME` e `PROJECT_PATH`, mas o desenho atual ainda assume core + instância na mesma raiz.

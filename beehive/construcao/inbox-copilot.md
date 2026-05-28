@@ -8,6 +8,28 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [CLAUDE-2026-05-27-05] Work Orders COPILOT-031-A e COPILOT-031-B — DEBATE-018 aprovado
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-27
+**thread:** debate-018-empacotamento-framework
+**Status:** pendente
+
+DEBATE-018 aprovado pelo Márcio. Execução em duas fases sequenciais.
+
+**COPILOT-031-A — Desacoplamento (fazer primeiro):**
+- Auditar: `.agile-squad/proxy.sh`, `run.sh`, `squad-bridge.sh`, `beehive/bin/hive-cost.sh`
+- Substituir caminhos hardcoded por `HIVE_HOME` / `PROJECT_PATH` / `BEEHIVE_PATH`
+- Aceite: `npm run squad:inbox` continua OK após mudanças
+
+**COPILOT-031-B — hive-install.sh MVP (após 031-A aprovado):**
+- Criar `beehive/bin/hive-install.sh TARGET_REPO`
+- Copia estrutura de instância, gera `config.env` com template, registra `HIVE_VERSION`
+- Aceite: `bash hive-install.sh /tmp/test-repo` → estrutura criada e inbox funciona
+
+Spec completa em: `beehive/construcao/debates/DEBATE-018-EMPACOTAMENTO-FRAMEWORK.md` §7
+
+---
+
 ### [CLAUDE-2026-05-27-04] Nova diretriz obrigatória — DIR-083 (recarregar sessão)
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-27
