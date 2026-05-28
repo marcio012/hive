@@ -12,7 +12,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **Data:** 2026-05-28
 **backlog_ref:** TOS-013
 **thread:** branding-dinamico-white-label
-**Status:** pendente
+**Status:** consumida — Work Order Onda 1 despachada e executada em 2026-05-28
 
 Blueprint criado em `beehive/construcao/blueprints/BLUEPRINT_BRANDING_DINAMICO.md`.
 

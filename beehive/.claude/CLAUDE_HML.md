@@ -80,7 +80,17 @@ Gerenciados por `docker-compose.hml.yml`:
 2. Atualizar webhook no console do Twilio (manual — API não permite)
    - Console: campo "When a message comes in" → `<nova URL>/webhook/whatsapp`
 
-**URL atual:** desconhecida — confirmar com `npm run hml:tunnel:url`
+**URL atual:** `https://scholars-garbage-recovered-tiffany.trycloudflare.com` (2026-05-28)
+
+**Após qualquer reboot do servidor — rodar um único comando:**
+```bash
+npm run ops:restart:hml   # recria stack + inicia tunnel + salva URL
+```
+
+**Para consultar a URL salva:**
+```bash
+npm run ops:tunnel:url:hml
+```
 
 ---
 
@@ -104,6 +114,7 @@ Gerenciados por `docker-compose.hml.yml`:
 | 2026-05-28 | Deploy completo do NestJS core (MVP2) via GitHub Actions | ✅ `/api/health` OK — produto no ar |
 | 2026-05-28 | Copilot: `fix: materialize HML deploy operations` (`2870673`) | ✅ operações de deploy materializadas |
 | 2026-05-28 | Copilot: `fix: alinhar CI com estrutura atual` (`85c4cd6`) — `ci.yml` apontava para `apps/*` inexistente | ✅ CI corrigido; frontend e backend CI passando |
+| 2026-05-28 | Stack caiu (rootlessport preso nas portas 3000/5173 após down/up manual) — resolvido com force-recreate | ✅ todos os containers up |
 
 ---
 
