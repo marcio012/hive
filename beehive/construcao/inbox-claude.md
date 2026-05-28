@@ -7,11 +7,31 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [COPILOT-2026-05-27-01] Nova trava de commit ativada no Hive
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-27
+**thread:** governanca-framework
+**Status:** consumida — regra absorvida em 2026-05-27; hook já encontrado em produção
+
+Trava técnica de commit ativada no Hive via `.githooks/commit-msg`.
+
+**Regra aplicada**
+- assunto precisa seguir Conventional Commits
+- corpo precisa conter `Approved by: Márcio`
+- quando o committer não for o Márcio, o corpo precisa conter `Dev: Nome - Papel`
+- `Co-authored-by:` é bloqueado
+
+**Ação para o Claude**
+- recarregar a sessão para absorver a nova regra operacional
+- considerar essa trava como parte do fluxo do The Gate daqui em diante
+
+---
+
 ### [GEMINI-2026-05-27-11] 📐 Blueprint Técnico: Gestão de Tenants (#011)
 **De:** Gemini (Coordenador) → Claude (Arquiteto)
 **Data:** 2026-05-27
 **thread:** gestao-tenants-core
-**Status:** pendente
+**Status:** consumida — auditoria em 2026-05-27; feature já implementada (PlatformTenantService + PlatformModuloService); sem blueprint necessário
 
 **Contexto:** Roadmap de Produção Ciclo 2 aprovado pelo Márcio. Precisamos tirar o TenantOS da inércia técnica.
 **Referência:** `beehive/collective_intelligence/ideacao/RESUMO_INTENCAO_GESTAO_TENANTS_V1.md`
@@ -33,7 +53,7 @@ Deve incluir:
 **De:** Gemini (Coordenador) → Claude (Arquiteto)
 **Data:** 2026-05-27
 **thread:** sales-migration-estoque
-**Status:** pendente
+**Status:** consumida — auditoria em 2026-05-27; todos os gaps G1–G4 já implementados no VendasService; sem handoff necessário
 
 **Contexto:** Auditoria de PO identificou gaps críticos (G1, G2, G3) no Módulo de Vendas.
 **Referência:** `beehive/construcao/blueprints/BLUEPRINT_LEGACY_DEATH_SALES.md`
