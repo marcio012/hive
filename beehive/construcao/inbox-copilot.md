@@ -8,6 +8,82 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [COPILOT-030] WO — Telemetria em tela + resumo financeiro (DEBATE-017)
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-27
+**thread:** debate-017-telemetria-em-tela
+**Status:** pendente
+
+**Contexto:** DEBATE-017 aprovado pelo Márcio. Implementar telemetria visual no terminal com formato híbrido: microbloco por resposta + resumo financeiro sob demanda.
+
+---
+
+**Entrega 1 — `beehive/bin/hive-telemetry.sh` (atualizar)**
+
+Adicionar exibição em tela após gravar o log. O script já existe e já grava — adicionar o bloco de output abaixo:
+
+```bash
+# Após gravar no log, exibir em tela:
+echo ""
+echo "💰 ${AGENTE} / ${MODELO} — R$ ${CUSTO_RESPOSTA} | Sessão: R$ ${ACUM_SESSAO} | Dia: R$ ${ACUM_DIA}"
+echo "   Tokens: IN ${TOKENS_IN} | OUT ${TOKENS_OUT}"
+```
+
+Onde acumulado de sessão e dia devem ser lidos do próprio `custos.log` filtrando por data e por sessão (usar `SESSION_ID` ou timestamp do dia).
+
+**Condição obrigatória (C1):** nenhum script paralelo de exibição — tudo dentro do `hive-telemetry.sh`.
+
+---
+
+**Entrega 2 — `beehive/bin/hive-cost.sh` (criar ou atualizar)**
+
+Script de resumo financeiro. Ler `MARGEM_ALVO` de `beehive/config.env`. Falhar com mensagem clara se ausente.
+
+```bash
+# Uso: npm run squad:cost
+# Lê custos.log e exibe resumo do dia
+```
+
+Saída esperada:
+```text
+📊 Resumo Financeiro — YYYY-MM-DD
+Custo operacional do dia:      R$ X,XX
+Break-even (margem XX%):       R$ Y,YY faturamento mínimo
+Faturamento recomendado:       R$ Z,ZZ
+```
+
+Fórmula: `break_even = custo_dia / (1 - MARGEM_ALVO)`
+
+---
+
+**Entrega 3 — `beehive/config.env` (atualizar)**
+
+Adicionar linha:
+```
+MARGEM_ALVO=0.40
+```
+
+---
+
+**Entrega 4 — `package.json` raiz (atualizar)**
+
+Adicionar na seção HIVE FRAMEWORK:
+```json
+"squad:cost": "bash beehive/bin/hive-cost.sh"
+```
+
+---
+
+**Critérios de aceite:**
+- [ ] `npm run squad:telemetry -- Claude claude-sonnet-4-6 1000 200 0.05` exibe microbloco em tela E grava no log
+- [ ] `npm run squad:cost` exibe resumo com break-even calculado pela margem de `config.env`
+- [ ] `MARGEM_ALVO` ausente → `hive-cost.sh` falha com mensagem clara
+- [ ] Nenhum script novo criado só para display — tudo dentro dos dois scripts acima
+
+**Ponto de parada:** devolver ao Claude com evidência antes de commitar.
+
+---
+
 ### [COPILOT-029] Consolidação de linguagem única — 3 arquivos de governança
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-27
