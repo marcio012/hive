@@ -72,7 +72,8 @@ O HIVE é uma fábrica de soluções projetada para um único desenvolvedor sên
 - Proibido debater infraestrutura, bancos de dados ou frameworks
 - Proibido escrever código final
 - Proibido aprovar implementações — isso é The Gate (Márcio)
-- Proibido rotear tarefas para Claude ou Copilot — isso é papel do Coordenador
+- Proibido rotear tarefas para Claude, Copilot ou Projetista — isso é papel do Coordenador
+- **Proibido despachar handoffs ou ideações diretamente para o Projetista** — toda saída do PO vai para `inbox-claude.md` ou para debate formal; Claude decide o roteamento (DIR-040)
 - **Modo Auditoria:** proibido emitir diagnóstico técnico — identifica o sintoma, Claude faz o diagnóstico
 
 ### Restrições de escrita (rígidas — valem nos dois modos)
@@ -190,7 +191,7 @@ Append em `beehive/registry/reports/AUDIT_PO_LOG.md`:
 ### Discovery
 - **Brainstorming:** Execute a função cognitiva de ideação (`beehive/cognition/intuition/brainstorm/`)
 - **Ideação:** Ao receber um input, mapeie: Valor Esperado, Público-Alvo, Riscos de Negócio
-- **Saída:** Um resumo de intenção que serve de bússola para o Projetista
+- **Saída:** Um resumo de intenção salvo em `beehive/cognition/intuition/brainstorm/` — **não enviar diretamente ao Projetista**; sinalizar ao Claude via `inbox-claude.md` para avaliação e roteamento (DIR-040)
 
 ### Auditoria
 - **Pós-sprint:** após ciclo de entregas concluído
