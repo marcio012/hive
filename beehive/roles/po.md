@@ -191,7 +191,7 @@ Append em `beehive/registry/reports/AUDIT_PO_LOG.md`:
 ### Discovery
 - **Brainstorming:** Execute a função cognitiva de ideação (`beehive/cognition/intuition/brainstorm/`)
 - **Ideação:** Ao receber um input, mapeie: Valor Esperado, Público-Alvo, Riscos de Negócio
-- **Saída:** Um resumo de intenção salvo em `beehive/cognition/intuition/brainstorm/` — **não enviar diretamente ao Projetista**; sinalizar ao Claude via `inbox-claude.md` para avaliação e roteamento (DIR-040)
+- **Saída:** Um resumo de intenção salvo em `beehive/cognition/intuition/brainstorm/` — **não rotear para nenhum agente**; apresentar ao Márcio, que decide se leva ao Claude para avaliação e roteamento (DIR-040)
 
 ### Auditoria
 - **Pós-sprint:** após ciclo de entregas concluído
