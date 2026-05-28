@@ -16,6 +16,254 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-28-056] Handoff — Hive Web UI v2: novo design system + 3 telas
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-UI-002
+**thread:** hive-web-ui-mvp
+**Status:** pendente
+
+## Destino Operacional (DIR-082)
+
+```yaml
+workspace_hive:   /home/marcio/job/hive
+workspace_target: /home/marcio/job/hive
+repo_target:      hive
+cwd_exec:         /home/marcio/job/hive/apps/hive-ui
+```
+
+## Contexto
+
+O Claude.ai Design gerou o design system completo do Hive Web UI v2 em:
+`beehive/assets/hive-ui/ui-claude-desing/`
+
+Arquivos de referência obrigatória (ler antes de implementar):
+- `Hive OS.html` — HTML completo das 3 telas com dados de exemplo
+- `hive.css` — sistema visual completo (CSS variables, componentes)
+- `app.js` — lógica de tabs, clock, animações
+
+A implementação React existente em `apps/hive-ui/frontend/` será substituída pelo novo design.
+
+---
+
+## PARTE 1 — Design System
+
+### 1.1 Copiar `hive.css`
+
+Copiar `beehive/assets/hive-ui/ui-claude-desing/hive.css` para:
+`apps/hive-ui/frontend/src/hive.css`
+
+Sem modificações — usar o CSS tal como está.
+
+### 1.2 Adicionar fontes em `index.html`
+
+Adicionar no `<head>` do `apps/hive-ui/frontend/index.html`:
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+```
+
+### 1.3 Importar CSS em `main.tsx`
+
+```typescript
+import './hive.css';
+```
+
+---
+
+## PARTE 2 — Backend: novos dados
+
+### 2.1 Adicionar ao `HiveState` em `hive.service.ts`
+
+```typescript
+export interface HiveState {
+  locks: ...        // já existe
+  session: ...      // já existe
+  inboxCounts: ...  // já existe
+  brainstorm: ...   // já existe
+  pipeline: PipelineItem[];   // NOVO
+  events: HiveEvent[];        // NOVO
+  uptime: number;             // NOVO — segundos desde start do servidor
+}
+
+export interface PipelineItem {
+  id: string;
+  title: string;
+  stage: 'triagem' | 'execucao' | 'revisao' | 'concluido';
+  agent: 'claude' | 'copilot' | 'gemini' | 'marcio';
+  priority: 'hi' | 'md' | 'lo';
+  updatedAt: string; // ISO
+}
+
+export interface HiveEvent {
+  ts: string;       // HH:mm:ss
+  level: 'ok' | 'info' | 'warn' | 'err' | 'lock';
+  msg: string;
+}
+```
+
+### 2.2 `readPipeline()` em `HiveService`
+
+Ler `FILA_COPILOT.md` e `FILA_CLAUDE.md` de `beehive/construcao/tasks/`.
+Extrair itens das tabelas markdown com regex: `| ID | ... | Status |`
+
+Mapear status para stage:
+- `pendente` → `triagem`
+- `em andamento` / `em execucao` → `execucao`
+- `em revisao` / `aguarda` → `revisao`
+- `✅` / `concluido` → `concluido` (incluir só os 3 mais recentes)
+
+### 2.3 `readEvents()` em `HiveService`
+
+Manter ring buffer em memória de até 20 eventos (classe `EventBuffer` no service).
+Iniciar com 1 evento: `{ ts: agora, level: 'info', msg: 'Hive UI conectado' }`.
+
+Expor método `addEvent(level, msg)` — chamado internamente quando:
+- Lock muda (detectado pelo watcher)
+- Inbox muda (detectado pelo watcher)
+
+### 2.4 `uptime`
+
+```typescript
+private readonly startedAt = Date.now();
+getUptime(): number { return Math.floor((Date.now() - this.startedAt) / 1000); }
+```
+
+---
+
+## PARTE 3 — Frontend: componentes e telas
+
+A abordagem é usar as classes CSS do `hive.css` via `className` no JSX.
+Não usar `style={{}}` inline — usar as classes do design system.
+
+### 3.1 Reescrever `App.tsx` — Shell
+
+```tsx
+// Header com: brand, nav-tabs (3 tabs), ws-status (clock + pill + operador)
+// Tab ativa recebe className "nav-tab active"
+// Relógio: setInterval a cada segundo formatando new Date() como HH:mm:ss
+// Rotas: estado local com useState<'/mapa'|'/funil'|'/controle'>
+```
+
+SVGs das tabs: copiar exatamente do `Hive OS.html` (grid icon, funil icon, sliders icon).
+Logo: hexagon SVG + `<b>HIVE</b><span>OS</span>`.
+
+### 3.2 Reescrever `MapaFabrica.tsx` — Tela 1
+
+Estrutura de seções:
+```
+<div className="page">
+  <div className="page-head">...</div>
+  <div className="section-label">01 AGENTES</div>
+  <div className="grid-3">
+    <AgentCard agent="claude" ... />
+    <AgentCard agent="copilot" ... />
+    <AgentCard agent="gemini" ... />
+  </div>
+  <div className="section-label">02 INBOX · PENDÊNCIAS</div>
+  <div className="grid-3">
+    <InboxCard agent="claude" count={...} />
+    ...
+  </div>
+  <ActiveItem ... />
+</div>
+```
+
+**AgentCard** — classes:
+- Container: `agent-card active` ou `agent-card free`
+- Ícone: `agent-ico`
+- Badge: `badge green` ou `badge gray`
+- Activity bar: `act-bar` com `<i>` interno (animação CSS)
+- Pulse corner: `dot green pulse agent-corner`
+
+**InboxCard** — classes:
+- Container: `inbox-card pending glow-border-pulse` (se count > 0) ou `inbox-card`
+- Ícone: `inbox-ico`
+- Contagem: `inbox-count`
+
+**ActiveItem** — classes: `active-item`, `ai-head`, `ai-grid`, `ai-col`
+
+### 3.3 Reescrever `FunilIntencao.tsx` — Tela 2 (pipeline kanban)
+
+5 colunas: Captura | Triagem | Execução | Revisão | Mergeado
+
+Fonte de dados: `state.pipeline` (do WebSocket).
+
+```tsx
+// funnel-strip: 5 cards com contagem por stage
+// board: 5 colunas .col com .col-stack de .intent cards
+// intent.active se stage === 'execucao'
+// prio: .prio.hi/.md/.lo
+// mini-av: .av-claude/.av-copilot/.av-gemini/.av-human
+```
+
+Captura e Mergeado podem exibir dados mock estáticos por enquanto
+(sem fonte de dados real para essas etapas neste momento).
+
+### 3.4 Criar `CentroDeControle.tsx` — Tela 3 (nova)
+
+```
+<div className="page">
+  <div className="page-head">...</div>
+
+  {/* Stats: uptime, locks ativos, comandos (mock 0), taxa sucesso (mock 100%) */}
+  <div className="cc-stats">
+    <div className="stat good">Uptime</div>
+    <div className="stat gold">Locks ativos</div>
+    <div className="stat">Comandos (—)</div>
+    <div className="stat good">Status</div>
+  </div>
+
+  <div className="cc-grid">
+    {/* Coluna esquerda */}
+    <div>
+      {/* Panel: Locks Ativos */}
+      {/* Panel: Controles (toggles visuais, sem backend por ora) */}
+      {/* Panel: Despachar (botões visuais, sem backend por ora) */}
+    </div>
+
+    {/* Coluna direita: Stream de Eventos */}
+    <div className="panel">
+      {/* .stream com .log entries de state.events */}
+    </div>
+  </div>
+</div>
+```
+
+**Uptime**: formatar `state.uptime` como `HH:mm:ss`.
+**Locks ativos**: contar agentes com lock != null em `state.locks`.
+**Stream**: renderizar `state.events` como `.log` entries (ts, lv, msg).
+**Toggles e botões de despacho**: apenas visuais nesta versão — sem ação real.
+**Locks panel**: mostrar locks ativos com botão "Forçar liberação" (visual, sem ação nesta versão).
+
+### 3.5 Atualizar `routes.tsx` equivalente em `App.tsx`
+
+Adicionar `/controle` como terceira tab e renderizar `<CentroDeControle>`.
+
+---
+
+## Critérios de Aceite
+
+- [ ] Fontes Space Grotesk e IBM Plex Mono carregando
+- [ ] Header com logo hexagon, 3 tabs funcionais, relógio ao vivo, pill WebSocket
+- [ ] Tela 1: agentes com cards ativos/livres + animação pulse + inbox badges + item ativo
+- [ ] Tela 2: kanban pipeline 5 colunas com dados de `state.pipeline`
+- [ ] Tela 3: stats, locks, stream de eventos ao vivo
+- [ ] WebSocket emite `hive:update` com `pipeline` e `events` incluídos
+- [ ] `npm run hive:ui` sobe e carrega sem erros de console
+- [ ] `npm run build` (frontend) → OK sem erros de tipo
+
+## Ponto de Parada
+
+Reportar ao Claude via `inbox-claude.md` com:
+- Confirmação dos critérios
+- Screenshot ou curl se possível
+- Commit hash
+
+---
+
 ### [CLAUDE-2026-05-28-055] Handoff — TOS-018 Painel Operacional do Dia
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-28
@@ -159,7 +407,7 @@ Reportar ao Claude via `inbox-claude.md` com:
 **tipo:** handoff-executavel
 **backlog_ref:** CORE-003
 **thread:** core-schema-management
-**Status:** pendente
+**Status:** executada — commit realizado em 2026-05-28 (`ef61001`)
 
 ## Destino Operacional (DIR-082)
 
