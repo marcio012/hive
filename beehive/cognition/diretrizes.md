@@ -56,6 +56,7 @@ As diretrizes abaixo foram estabelecidas ao longo da evolução da Colmeia e per
 | DIR-080 | Análise Financeira | Pareceres e blueprints do Claude exigem seção financeira obrigatória. |
 | DIR-081 | Aceite Técnico | Copilot gera aceite técnico automático antes de execução/commit. |
 | DIR-082 | Workspaces Explícitos | Handoffs multi-repo devem declarar workspace de origem e destino. |
+| DIR-083 | Formato de Debates | Todo debate deve ter bloco `## 📊 Status` com participantes (✅/[-]/[ ]) e fases ([x]/[F]/[ ]/[-]). Obrigatório desde a abertura. |
 
 *(Nota: O registro completo detalhado de todas as 51 diretrizes está arquivado em `beehive/cognition/registry/DIRETRIZES_ATIVAS_LEGACY.md` para consulta de auditoria).*
 

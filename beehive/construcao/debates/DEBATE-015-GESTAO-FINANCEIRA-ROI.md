@@ -13,6 +13,27 @@ participantes:
 
 # 🗣️ DEBATE-015: O Hive Financeiramente Consciente [CONSOLIDADO]
 
+## 📊 Status
+
+| Participante | Parecer |
+|---|---|
+| Gemini Lead | ✅ |
+| Claude | ✅ |
+| Copilot | ✅ |
+| Márcio | ✅ |
+
+**Fases:**
+- [x] Abertura
+- [x] Parecer Gemini
+- [x] Parecer Claude
+- [x] Parecer Copilot
+- [x] Consolidação / Veredito
+- [x] Aprovação Márcio
+- [x] Work Orders despachadas
+- [x] Execução concluída
+
+---
+
 ## 11. 🏆 Consolidação e Decisão Final (Gemini Lead)
 
 **Data:** 2026-05-27

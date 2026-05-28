@@ -143,6 +143,31 @@ Guard de atualizacao operacional:
 Fallback (apenas incidente):
 - `npm run squad:session:claude` e colagem manual do bloco de contexto.
 
+## Formato Obrigatório de Debates (DIR-083)
+
+Todo arquivo de debate deve conter o bloco `## 📊 Status` logo após o título, desde a abertura. Nunca criar ou atualizar um debate sem esse bloco.
+
+**Participantes** — uma linha por agente:
+- `✅` — parecer emitido
+- `[ ]` — ainda não se manifestou
+- `[-]` — dispensado (justificar)
+
+**Fases** — todas listadas em ordem:
+- `[x]` — concluída
+- `[F]` — falhou
+- `[ ]` — pendente / não iniciada
+- `[-]` — não se aplica a este debate
+
+**Fases padrão:**
+1. Abertura
+2. Parecer Gemini
+3. Parecer Claude
+4. Parecer Copilot
+5. Consolidação / Veredito
+6. Aprovação Márcio
+7. Work Orders despachadas
+8. Execução concluída
+
 ## Política de Commits (DIR-006)
 
 - **Conventional Commits** obrigatórios (`feat:`, `fix:`, `chore:`, `docs:`, etc.)

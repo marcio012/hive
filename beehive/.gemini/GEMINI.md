@@ -34,6 +34,7 @@ carregar o cartucho correspondente sem exibir o menu:
 - `beehive/dna/manifesto.md`
 - `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`
 - `beehive/MAPA_DA_COLMEIA.md`
+- `beehive/cognition/diretrizes.md`
 
 ---
 

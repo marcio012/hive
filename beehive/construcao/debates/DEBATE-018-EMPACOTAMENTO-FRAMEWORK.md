@@ -14,6 +14,27 @@ participantes:
 
 # 🗣️ DEBATE-018: Hive como Framework Portável
 
+## 📊 Status
+
+| Participante | Parecer |
+|---|---|
+| Claude | ✅ (abertura) |
+| Gemini Lead | [ ] |
+| Copilot | [ ] |
+| Márcio | [ ] |
+
+**Fases:**
+- [x] Abertura
+- [ ] Parecer Gemini
+- [ ] Parecer Claude
+- [ ] Parecer Copilot
+- [ ] Consolidação / Veredito
+- [ ] Aprovação Márcio
+- [ ] Work Orders despachadas
+- [ ] Execução concluída
+
+---
+
 ## 1. 🎯 A Intenção (Márcio)
 
 O Hive foi construído dentro do repositório `hive` e hoje opera acoplado a ele. A intenção é tornar o framework instalável em outros repositórios — novos projetos ou produtos existentes — sem que o squad precise copiar arquivos manualmente nem perder a capacidade de receber atualizações do core.

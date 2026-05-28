@@ -13,6 +13,27 @@ participantes:
 
 # 🗣️ DEBATE-017: Telemetria que fecha a conta
 
+## 📊 Status
+
+| Participante | Parecer |
+|---|---|
+| Gemini Lead | ✅ |
+| Claude | ✅ |
+| Copilot | ✅ |
+| Márcio | ✅ |
+
+**Fases:**
+- [x] Abertura
+- [x] Parecer Gemini
+- [x] Parecer Claude
+- [x] Parecer Copilot
+- [x] Consolidação / Veredito
+- [x] Aprovação Márcio
+- [x] Work Orders despachadas
+- [x] Execução concluída
+
+---
+
 ## 1. 🎯 A Intenção (Márcio)
 
 O Márcio quer que a telemetria do Hive não fique apenas em log. Além do registro persistente, ele quer **visibilidade imediata em tela** com os números da rodada e uma leitura financeira simples que ajude a estimar custo operacional, break-even e previsão de faturamento.

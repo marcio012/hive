@@ -13,6 +13,27 @@ participantes:
 
 # 🗣️ DEBATE-016: O Fim do Agente Reativo
 
+## 📊 Status
+
+| Participante | Parecer |
+|---|---|
+| Gemini Lead | ✅ |
+| Claude | ✅ |
+| Copilot | [-] dispensado |
+| Márcio | ✅ |
+
+**Fases:**
+- [x] Abertura
+- [x] Parecer Gemini
+- [x] Parecer Claude
+- [-] Parecer Copilot
+- [x] Consolidação / Veredito
+- [x] Aprovação Márcio
+- [ ] Work Orders despachadas
+- [ ] Execução concluída
+
+---
+
 ## 1. 🎯 A Intenção (Márcio)
 
 O Márcio propõe a criação de um agente (preferencialmente com o cartucho de PO) que não apenas responda a perguntas, mas que **fiscalize, cobre e valide o progresso do TenantOS** de forma autônoma.
