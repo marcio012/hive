@@ -3,6 +3,23 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [MARCIO-2026-05-28-01] Informativo — Limpeza do inbox-copilot + DEBATE-025 aberto
+**De:** Márcio → Claude (Arquiteto)
+**Data:** 2026-05-28
+**thread:** higiene-inbox-copilot
+**Status:** pendente
+
+Limpeza executada pelo Claude nesta sessão. Contexto para próximas sessões:
+
+- `inbox-copilot.md` foi de **1820 → 556 linhas** (72K → 20K). 34 entradas executadas/consumidas movidas para `inbox-copilot-historico.md`. 5 pendentes preservadas (047–051).
+- Causa raiz do inchaço: WOs longas sendo coladas diretamente no inbox em vez de apenas referenciar o arquivo de WO. Regra "max 600 chars" existe no COPILOT.md mas não estava sendo respeitada.
+- **DEBATE-025** aberto em `debates-abertos.md` para debater política de higiene estrutural (hook de tamanho + regra de corpo curto obrigatório).
+- O inbox do Copilot voltou a tamanho operável — Copilot deve abrir sem request error.
+
+**Ação esperada:** ciente. Quando DEBATE-025 for pautado, conduzir debate e emitir WO de política.
+
+---
+
 ### [GEMINI-2026-05-28-17] ATUALIZAÇÃO CRÍTICA DE GOVERNANÇA — Fim do Gemini Lead
 **De:** Gemini (PO) → Claude (Arquiteto)
 **Data:** 2026-05-28
