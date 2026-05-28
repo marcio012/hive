@@ -8,11 +8,83 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [CLAUDE-2026-05-28-033] Work Orders DEBATE-019 — Rastreio por ID
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**thread:** debate-019-rastreio-visibilidade
+**Status:** pendente
+
+DEBATE-019 aprovado pelo Márcio. Implementar protocolo de rastreio por IDs formais.
+
+**workspace_hive:** `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+---
+
+**Etapa 1 — Criar `beehive/construcao/BACKLOG-TOS.md`**
+
+Separar os itens de produto do `BACKLOG.md` atual. Mover para o novo arquivo:
+- #011 — Gestão de Tenants (✅ concluído 2026-05-28)
+- #016 — Controle de Estoque Transacional (✅ concluído 2026-05-28)
+- #013 — Branding Dinâmico
+- #015 — Gestão de Agenda
+- #012 — Módulo de Usuários e Permissões
+- #014 — Frente de Vendas (PDV) Lite
+- #018 — Painel Operacional do Dia
+
+Renomear IDs para `TOS-NNN` (ex: #011 → TOS-011). Formato igual ao BACKLOG.md.
+
+---
+
+**Etapa 2 — Limpar `BACKLOG.md` (só itens do Hive Framework)**
+
+Remover os itens de produto migrados. Renomear IDs restantes para `HIVE-NNN`:
+- #001 → HIVE-001, #002 → HIVE-002 … #010 → HIVE-010
+- #003 → HIVE-003, #004 → HIVE-004 (marcar como ✅ concluído 2026-05-28), #005 → HIVE-005
+
+Adicionar no cabeçalho: `> Para itens do TenantOS: beehive/construcao/BACKLOG-TOS.md`
+
+---
+
+**Etapa 3 — Criar diretriz DIR-084 em `beehive/cognition/diretrizes.md`**
+
+Adicionar nova diretriz ao final do arquivo:
+
+```
+DIR-084 — Protocolo de Rastreio por ID
+Todo handoff, work order e commit deve referenciar o ID pai do backlog.
+- Itens do Hive: HIVE-NNN (ex: HIVE-004)
+- Itens do TenantOS: TOS-NNN (ex: TOS-011)
+- Handoffs incluem campo obrigatório: backlog_ref: HIVE-NNN ou TOS-NNN
+- Commits incluem no corpo: Ref: HIVE-NNN ou Ref: TOS-NNN
+- Item concluído no backlog registra: data + commit hash
+```
+
+---
+
+**Etapa 4 — Atualizar `beehive/construcao/templates/HANDOFF_EXECUTAVEL_TEMPLATE.md`**
+
+Adicionar campo `backlog_ref` no cabeçalho do template, após `Thread:`:
+```
+**Backlog ref:** HIVE-NNN ou TOS-NNN
+```
+
+---
+
+**Critérios de aceite:**
+- [ ] `BACKLOG-TOS.md` criado com itens TOS-NNN
+- [ ] `BACKLOG.md` contém só itens HIVE-NNN
+- [ ] DIR-084 em `diretrizes.md`
+- [ ] Template atualizado com `backlog_ref`
+- Aceite técnico em `beehive/registry/aceites/`
+
+---
+
 ### [CLAUDE-2026-05-27-032] Registro do ModuleGuard como APP_GUARD — DEBATE-014
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-27
 **thread:** gestao-tenants-core
-**Status:** pendente
+**Status:** executada — arquivos órfãos removidos, `ModuleGuard` confirmado como `APP_GUARD` em `tenant.module.ts`, checks OK, retorno enviado ao Claude (2026-05-27)
 
 Tarefa cirúrgica para ativar o sistema de módulos plugáveis no TenantOS.
 

@@ -20,7 +20,7 @@ participantes:
 | Claude | ✅ |
 | Gemini | ✅ |
 | Copilot | ✅ |
-| Márcio | [ ] |
+| Márcio | ✅ |
 
 **Fases:**
 - [x] Abertura
@@ -28,8 +28,8 @@ participantes:
 - [x] Parecer Claude
 - [x] Parecer Copilot
 - [x] Consolidação / Veredito
-- [ ] Aprovação Márcio
-- [ ] Work Orders despachadas
+- [x] Aprovação Márcio
+- [x] Work Orders despachadas
 - [ ] Execução concluída
 
 ---
