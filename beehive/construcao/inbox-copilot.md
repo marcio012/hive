@@ -8,6 +8,96 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [CLAUDE-2026-05-28-043] Work Order Onda 1 — DEBATE-023: atualizar PADRAO_SAIDA_OPERACIONAL_HIVE.md
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-011
+**thread:** debate-023-proximo-passo-explicito
+**Status:** pendente
+
+DEBATE-023 aprovado pelo Márcio. Executar após Onda 0 ([CLAUDE-2026-05-28-042]).
+
+**workspace_hive:** `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+**Arquivo alvo:** `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
+**Etapa 1 — Status `rascunho` → `ativo`** no frontmatter.
+
+**Etapa 2 — Adicionar seção `### 4.4 Motivo`** após `### 4.3 Ação esperada`:
+> Obrigatório em falha ou bloqueio. Deve ser a causa específica e identificável — nunca genérico.
+
+**Etapa 3 — Atualizar template canônico (seção 5)** adicionando variante para falha/bloqueio logo abaixo do template principal:
+```text
+--- (usar apenas em falha ou bloqueio) ---
+Estado atual: [o que falhou/bloqueou]
+Motivo: [causa específica]
+Próximo passo: [como retomar/corrigir]
+Ação esperada: [o que Márcio ou agente deve fazer]
+```
+
+**Etapa 4 — Adicionar `### 7.7 Falha / Bloqueio`** após `### 7.6 Aprovação / The Gate`:
+> Deve deixar claro: o que falhou, o motivo específico, próximo passo para retomar, e de quem é a ação.
+
+**Critérios de aceite:**
+- [ ] Frontmatter: `status: ativo`
+- [ ] Seção 4.4 criada com regra do `motivo`
+- [ ] Template de falha adicionado na seção 5
+- [ ] Seção 7.7 criada
+- [ ] Nenhuma seção existente alterada além do especificado
+
+**Ponto de parada:** reportar ao Claude antes de commitar.
+
+---
+
+### [CLAUDE-2026-05-28-042] Work Order Onda 0 — DEBATE-023: formalizar DIR-085 em diretrizes.md
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-011
+**thread:** debate-023-proximo-passo-explicito
+**Status:** pendente
+
+DEBATE-023 aprovado pelo Márcio. Executar primeiro — Onda 1 depende desta.
+
+**workspace_hive:** `/home/marcio/job/hive`
+**cwd_exec:** `/home/marcio/job/hive`
+
+**Arquivo alvo:** `beehive/cognition/diretrizes.md`
+
+**Etapa 1 — Adicionar DIR-085 na tabela de índice** (após linha DIR-084):
+```
+| DIR-085 | Saída Operacional Explícita | Interações operacionais devem encerrar com estado atual, próximo passo e ação esperada. Falhas incluem campo `motivo`. Exceções: respostas informativas, conceituais e confirmações sem fluxo ativo. |
+```
+
+**Etapa 2 — Adicionar seção `## 8. DIR-085`** após `## 7. DIR-084` e antes de `*Assinado:`:
+```markdown
+## 8. DIR-085 — Saída Operacional Explícita
+
+Ao encerrar interações operacionais, o agente deve explicitar:
+1. **Estado atual** — o que acabou de acontecer ou o estado do fluxo
+2. **Próximo passo** — o que vem agora
+3. **Ação esperada** — o que o Márcio ou próximo agente deve fazer
+
+Em casos de **falha ou bloqueio**, adicionar obrigatoriamente:
+4. **Motivo** — causa específica e identificável (nunca genérico)
+
+**Onde é obrigatório:** boot/menu, plano de voo, checkpoint, handoff, pedido de aprovação, status, encerramento operacional, falha/bloqueio.
+**Onde não se aplica:** respostas conceituais, explicações técnicas pontuais, confirmações curtas sem fluxo ativo.
+**Fonte:** DEBATE-023 | Padrão completo: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+```
+
+**Etapa 3 — Atualizar `ultima_revisao: 2026-05-28`** no frontmatter.
+
+**Critérios de aceite:**
+- [ ] DIR-085 na tabela com descrição correta
+- [ ] Seção `## 8. DIR-085` criada
+- [ ] `ultima_revisao` atualizado
+- [ ] Nenhuma diretriz existente alterada
+
+**Ponto de parada:** reportar ao Claude com diff antes de commitar.
+
+---
+
 ### [CLAUDE-2026-05-28-041] Work Order — Clientes Demo para Apresentação (TOS-019)
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-28

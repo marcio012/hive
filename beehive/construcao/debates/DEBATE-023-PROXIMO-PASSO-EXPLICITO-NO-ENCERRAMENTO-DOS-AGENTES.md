@@ -2,7 +2,7 @@
 titulo: DEBATE-023 — Próximo Passo Explícito no Encerramento dos Agentes
 id: DEBATE-023
 tipo: governança / ux operacional
-status: aguardando aprovação Márcio
+status: aprovado — work orders despachadas 2026-05-28
 data: 2026-05-28
 responsavel: Claude
 participantes:
@@ -25,7 +25,7 @@ cwd_exec: /home/marcio/job/hive
 | Claude | ✅ |
 | Gemini | [x] |
 | Copilot | [x] |
-| Márcio | [ ] |
+| Márcio | ✅ |
 
 **Fases:**
 - [x] Abertura
@@ -33,7 +33,7 @@ cwd_exec: /home/marcio/job/hive
 - [x] Parecer Claude
 - [x] Parecer Copilot
 - [x] Consolidação / Veredito
-- [ ] Aprovação Márcio
+- [x] Aprovação Márcio
 - [ ] Teste sistêmico
 - [ ] Implementação concluída
 
