@@ -40,9 +40,9 @@ Gerenciados por `docker-compose.hml.yml`:
 
 | Container | Imagem | Porta | Estado |
 |---|---|---|---|
-| `wl-postgres` | postgres:16-alpine | 5432 (interno) | ✅ Up (healthy) — confirmado 2026-05-24 |
-| `wl-core` | wl-core:latest (build local) | 3000 (interno) | ✅ Up 3h — confirmado 2026-05-24 |
-| `wl-frontend` | wl-frontend:latest (build local) | 5173 | ✅ Up 13h — confirmado 2026-05-24 |
+| `wl-postgres` | postgres:16-alpine | 5432 (interno) | ✅ Up (healthy) — confirmado 2026-05-28 |
+| `wl-core` | wl-core:latest (build local) | 3000 (interno) | ✅ Up — `/api/health` OK — confirmado 2026-05-28 |
+| `wl-frontend` | wl-frontend:latest (build local) | 80 | ✅ Up — confirmado 2026-05-28 |
 
 > Containers do projeto legado (`fluxo-postgres-service`, `fluxo-backend-service`, `fluxo-frontend-service`) são gerenciados por compose separado — não interferir.
 
@@ -100,7 +100,8 @@ Gerenciados por `docker-compose.hml.yml`:
 | 2026-05-24 | Restart do `fluxo-pub-mvp` (compose legado) | ✅ containers legado rodando — erro de rota, não era o wl |
 | 2026-05-24 | Alterou `GEMINI_MODEL` para `gemini-1.5-flash`; recriou `wl-core` | ✅ confirmado via `printenv` dentro do container |
 | 2026-05-24 | Adicionou `JWT_REFRESH_SECRET` ao HML; sincronizou local `.env` com HML | ✅ container recriado, secret confirmado |
-| 2026-05-28 | Reconfigurou runner de `marcio012/white-label-mvp` → `marcio012/tenantos` | ✅ serviço ativo — deploy pendente push |
+| 2026-05-28 | Reconfigurou runner de `marcio012/white-label-mvp` → `marcio012/tenantos` | ✅ serviço ativo |
+| 2026-05-28 | Deploy completo do NestJS core (MVP2) via GitHub Actions | ✅ `/api/health` OK — produto no ar |
 
 ---
 
@@ -108,8 +109,8 @@ Gerenciados por `docker-compose.hml.yml`:
 
 - [x] Confirmar runner GitHub Actions ativo — ✅ reconfigurado para `marcio012/tenantos` (2026-05-28)
 - [x] Confirmar URL atual do tunnel — `https://vessel-barn-funk-canvas.trycloudflare.com` (2026-05-28)
-- [ ] Push dos commits locais do tenantOS para `origin/main`
-- [ ] Acompanhar pipeline no GitHub Actions após push
-- [ ] Validar containers `wl-*` rodando pós-deploy
+- [x] Push dos commits locais do tenantOS para `origin/main` — 2026-05-28
+- [x] Pipeline GitHub Actions verde — 2026-05-28
+- [x] Validar containers `wl-*` rodando pós-deploy — 2026-05-28
 - [ ] Testar fluxo de onboarding: criar tenant → Blueprint → login → `/session/me`
 - [ ] Testar webhook WhatsApp → `wl-core` (requer atualizar `APP_URL` no Twilio após restart do tunnel)
