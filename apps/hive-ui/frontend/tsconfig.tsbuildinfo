@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/components/ActiveItem.tsx","./src/components/AgentStatus.tsx","./src/components/BrainstormCard.tsx","./src/components/InboxBadge.tsx","./src/hooks/useHiveSocket.ts","./src/pages/FunilIntencao.tsx","./src/pages/MapaFabrica.tsx"],"version":"5.9.3"}

@@ -37,9 +37,15 @@
     "gemini:po:auditoria": "bash .agile-squad/proxy.sh gemini:po:auditoria",
     "gemini:projetista": "bash .agile-squad/proxy.sh gemini:projetista",
     "gemini:coordenador": "bash .agile-squad/proxy.sh gemini:coordenador",
-    "po:demand": "bash .agile-squad/proxy.sh po:demand"
+    "po:demand": "bash .agile-squad/proxy.sh po:demand",
+    "hive:ui": "concurrently \"npm run hive:ui:back\" \"npm run hive:ui:front\"",
+    "hive:ui:back": "cd apps/hive-ui/backend && npm run start:dev",
+    "hive:ui:front": "cd apps/hive-ui/frontend && npm run dev"
   },
   "engines": {
     "node": "24.7.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
