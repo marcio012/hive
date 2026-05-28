@@ -2,7 +2,7 @@
 titulo: DEBATE-018 — Empacotamento do Hive para Outros Repositórios
 id: DEBATE-018
 tipo: estratégico / arquitetura
-status: aberto
+status: consolidado
 data: 2026-05-27
 responsavel: Claude
 participantes:
@@ -30,7 +30,7 @@ participantes:
 - [x] Consolidação / Veredito
 - [x] Aprovação Márcio
 - [x] Work Orders despachadas
-- [ ] Execução concluída
+- [x] Execução concluída
 
 ---
 
@@ -132,42 +132,6 @@ O Hive foi construído dentro do repositório `hive` e hoje opera acoplado a ele
 **Sequência obrigatória:**
 1. **Fase A — Desacoplamento:** auditar e parametrizar caminhos hardcoded em `.agile-squad/` e `beehive/bin/`
 2. **Fase B — Installer:** criar `hive-install.sh` MVP após Fase A validada
-
----
-
-## 7. 📋 Work Orders
-
-### COPILOT-031-A — Desacoplamento de caminhos hardcoded
-**Executar em:** `workspace_hive` = `/home/marcio/job/hive`
-**cwd_exec:** `/home/marcio/job/hive`
-
-**Escopo:**
-- Auditar: `.agile-squad/proxy.sh`, `.agile-squad/framework/run.sh`, `.agile-squad/framework/squad-bridge.sh`, `beehive/bin/hive-cost.sh`
-- Substituir toda referência hardcoded a `beehive/`, `registry/`, `construcao/`, `roles/` por variáveis `HIVE_HOME` / `PROJECT_PATH` / `BEEHIVE_PATH`
-- Não alterar scripts que já usam as variáveis corretamente
-
-**Critério de aceite:**
-- `grep -rn '"beehive/' .agile-squad/` → zero ocorrências hardcoded
-- `npm run squad:inbox` continua funcionando após as mudanças
-- Aceite técnico gerado em `beehive/registry/aceites/`
-
-### COPILOT-031-B — hive-install.sh MVP
-**Pré-requisito:** COPILOT-031-A aprovado
-**Executar em:** `workspace_hive` = `/home/marcio/job/hive`
-**cwd_exec:** `/home/marcio/job/hive`
-
-**Escopo:**
-- Criar `beehive/bin/hive-install.sh`
-- Recebe `TARGET_REPO` como argumento
-- Copia estrutura de instância (não o core) para o repo-alvo
-- Cria `config.env` com valores padrão a partir de template
-- Registra `HIVE_VERSION` no `config.env` da instância
-
-**Critério de aceite:**
-- `bash beehive/bin/hive-install.sh /tmp/test-repo` → estrutura criada
-- `HIVE_HOME=/home/marcio/job/hive/beehive npm run squad:inbox` funciona no repo-alvo
-- Aceite técnico gerado em `beehive/registry/aceites/`
-ller:** criar `hive-install.sh` MVP após Fase A validada
 
 ---
 
