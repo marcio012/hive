@@ -152,6 +152,14 @@ O Copilot gera um Aceite Técnico automaticamente nos seguintes triggers:
 - Preencher a seção `Análise Financeira` com os dados do parecer do Claude que originou a tarefa.
 - Se os dados financeiros não estiverem no handoff, escalas para Claude antes de gerar o Aceite.
 
+## Limpeza obrigatória ao encerrar tarefa (DIR-087)
+
+Antes de reportar conclusão de qualquer tarefa que tenha iniciado processos em execução:
+- Encerrar dev servers, watchers ou listeners iniciados durante a tarefa
+- Confirmar que nenhuma porta ficou ocupada: `lsof -i :<porta>` ou `ss -tlnp`
+- Encerrar containers ou serviços temporários criados para testes
+- **Não aplicar** em tarefas puramente documentais ou de leitura
+
 ## Runtime de containers
 - Priorizar Podman em comandos e exemplos.
 - Evitar Docker, exceto quando solicitado.

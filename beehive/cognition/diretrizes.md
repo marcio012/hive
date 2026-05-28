@@ -60,6 +60,7 @@ As diretrizes abaixo foram estabelecidas ao longo da evolução da Colmeia e per
 | DIR-084 | Rastreio por ID | Todo handoff, work order e commit deve referenciar o ID pai do backlog (`HIVE-NNN` ou `TOS-NNN`). |
 | DIR-085 | Saída Operacional Explícita | Interações operacionais devem encerrar com estado atual, próximo passo e ação esperada. Falhas incluem campo `motivo`. Exceções: respostas informativas, conceituais e confirmações sem fluxo ativo. |
 | DIR-086 | Status Report por Entrega | Ao fechar qualquer item de backlog (`HIVE-NNN` ou `TOS-NNN`), o Copilot gera um `SR-NNN` usando `SR_ENTREGA_TEMPLATE.md`. O SR é o gate narrativo para afirmação do Owner — distinto do ACEITE (recibo técnico). |
+| DIR-087 | Limpeza de Processos ao Encerrar | Claude e Copilot devem verificar e encerrar processos, servidores e portas abertas antes de reportar conclusão de qualquer tarefa com execução. |
 
 *(Nota: O registro completo detalhado de todas as 51 diretrizes está arquivado em `beehive/cognition/registry/DIRETRIZES_ATIVAS_LEGACY.md` para consulta de auditoria).*
 
@@ -129,6 +130,21 @@ Ao fechar qualquer item de backlog (`HIVE-NNN` ou `TOS-NNN`), o Copilot deve ger
 **Quando não é necessário:** itens encerrados retroativamente sem entrega nova (fechamentos arquivísticos).
 
 **Fonte:** HIVE-003 | Template: `beehive/construcao/templates/SR_ENTREGA_TEMPLATE.md`
+
+## 10. DIR-087 — Limpeza de Processos e Portas ao Encerrar
+
+Ao finalizar qualquer tarefa de desenvolvimento ou validação que tenha iniciado servidores, processos em background ou listeners de porta, **Claude e Copilot devem verificar e encerrar esses processos antes de reportar conclusão**.
+
+**Checklist obrigatório ao encerrar tarefa com execução:**
+- [ ] Nenhum processo de dev server rodando em background (`pkill`, `kill`, `Ctrl+C` conforme o caso)
+- [ ] Nenhuma porta ocupada deixada aberta (verificar com `lsof -i :<porta>` ou `ss -tlnp`)
+- [ ] Containers ou serviços temporários iniciados para teste encerrados
+
+**Quando se aplica:** sempre que o agente rodou `npm run dev`, `npm start`, `node`, `python`, servidores de teste, migrações com servidor em background, ou qualquer comando que bifurca processo.
+
+**Quando não se aplica:** tarefas puramente documentais, edições de arquivo, leituras.
+
+**Responsabilidade:** Claude e Copilot. PO e Coordenador não executam — não se aplica a eles.
 
 ---
 *Assinado: Gemini 1.5 Pro (Facilitador Estratégico) + Claude Sonnet 4.6 (Arquiteto)*

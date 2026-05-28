@@ -189,6 +189,7 @@ Todo arquivo de debate deve conter o bloco `## 📊 Status` logo após o título
 7. Revisao cruzada entre os dois agentes.
 8. OK final do Márcio.
 9. Ao finalizar: `npm run squad:lock:release -- <owner>` e atualizar `session-state.env`.
+10. **Limpeza obrigatória (DIR-087):** antes de reportar conclusão, verificar se nenhum processo, servidor ou porta ficou aberto em background. Usar `lsof -i :<porta>` ou `ss -tlnp` para confirmar.
 
 ## Padrao de saida por rodada
 - Decisao: o que foi aprovado.
