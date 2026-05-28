@@ -16,6 +16,143 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-28-055] Handoff — TOS-018 Painel Operacional do Dia
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**tipo:** handoff-executavel
+**backlog_ref:** TOS-018
+**thread:** tos-018-painel-dia
+**Status:** pendente
+
+## Destino Operacional (DIR-082)
+
+```yaml
+workspace_hive:   /home/marcio/job/hive
+workspace_target: /home/marcio/job/tenantOS
+repo_target:      tenantOS
+cwd_exec:         /home/marcio/job/tenantOS
+```
+
+## Contexto
+
+**Leia antes de executar:** `beehive/construcao/blueprints/BLUEPRINT_TOS_018_DASHBOARD.md`
+
+`Dashboard.tsx` já existe no frontend mas está sem rota e chama endpoint legacy deprecated.
+Esta WO cria o backend correto e reconecta o frontend. Sem migration — todos os dados
+já existem no schema atual.
+
+Execute backend e frontend em sequência.
+
+---
+
+## PARTE 1 — Backend (`cwd: backend/`)
+
+### Criar `src/dashboard/dashboard.service.ts`
+
+Injeta `PrismaService` e `TenantContext`. Método público `getDia()` retorna `DashboardDiaDto`.
+
+Lógica (ver blueprint para queries completas):
+- `totalVendasHoje` / `quantidadeVendasHoje` / `ticketMedioHoje`: `Venda` onde `data >= hoje 00:00` e `status != 'cancelada'`
+- `ticketMedioOntem`: mesma query para janela de ontem
+- `proximosAgendamentos`: `Agendamento` onde `data_hora >= agora`, `data_hora < amanha`, `status = 'agendado'`, `orderBy data_hora asc`, `take 10` — incluir `cliente.nome`, `servico.nome`, `profissional.nome`
+- `estoqueCritico`: todos os `Produto` do tenant, filtrar em memória onde `quantidade <= quantidade_minima`
+
+**Atenção ao timezone:** usar `new Date()` com `setHours(0,0,0,0)` para início do dia local.
+
+### Criar `src/dashboard/dashboard.controller.ts`
+
+```typescript
+@Controller('dashboard')
+export class DashboardController {
+  @Get('dia')
+  getDia(): Promise<DashboardDiaDto> {
+    return this.service.getDia();
+  }
+}
+```
+
+### Criar `src/dashboard/dashboard.module.ts`
+
+Importar `PrismaModule`. Registrar controller e service.
+
+### Registrar em `src/app.module.ts`
+
+Adicionar `DashboardModule` ao array `imports`.
+
+---
+
+## PARTE 2 — Frontend (`cwd: frontend/`)
+
+### Atualizar `src/app/api.ts`
+
+Adicionar os tipos `ProximoAgendamento`, `ItemEstoqueCritico`, `DashboardDiaResponse`
+e o método `getDashboardDia: () => request<DashboardDiaResponse>('/dashboard/dia', 'GET')`.
+**Não remover** o `DashboardResponse` e `getDashboard` legados — apenas adicionar os novos.
+
+### Reescrever `src/app/components/pages/Dashboard.tsx`
+
+Layout: **cards KPI no topo + lista de agendamentos + estoque crítico**.
+
+4 KPI cards:
+1. "Vendas do Dia" → `totalVendasHoje` em R$ + ícone DollarSign
+2. "Nº de Vendas" → `quantidadeVendasHoje` + ícone ShoppingCart
+3. "Ticket Médio Hoje" → `ticketMedioHoje` em R$ + ícone TrendingUp
+4. "Ticket Médio Ontem" → `ticketMedioOntem` em R$ + delta % vs hoje (↑ verde / ↓ vermelho)
+
+Delta:
+```typescript
+const delta = ticketMedioOntem > 0
+  ? ((ticketMedioHoje - ticketMedioOntem) / ticketMedioOntem) * 100
+  : null;
+```
+
+Próximos Agendamentos:
+- Seção com título + lista vertical
+- Cada linha: horário `HH:mm` + cliente + serviço + profissional (se houver) + duração
+- Estado vazio: "Nenhum agendamento para hoje"
+
+Estoque Crítico:
+- Renderizar **somente se** `estoqueCritico.length > 0`
+- Lista com badge laranja por item: nome + `qtd atual / mínimo`
+
+Usar `useTenantBranding` para a cor primária nos ícones dos cards.
+Remover imports de `recharts`, `BarChart`, `LineChart`, etc. — esta versão não usa gráficos.
+
+### Atualizar `src/app/routes.tsx`
+
+```typescript
+import Dashboard from "./components/pages/Dashboard";
+
+// Alterar redirect:
+function AppHomeRedirect() {
+  return <Navigate to="/app/dashboard" replace />;
+}
+
+// Adicionar ao children de /app:
+{ path: "dashboard", Component: Dashboard },
+```
+
+---
+
+## Critérios de Aceite
+
+- [ ] `GET /dashboard/dia` retorna JSON com 4 KPIs + agendamentos + estoque
+- [ ] Frontend em `/app/dashboard` exibe cards com dados reais
+- [ ] Home `/app` redireciona para `/app/dashboard`
+- [ ] Estado vazio funciona: sem vendas hoje → KPIs zerados; sem agendamentos → mensagem
+- [ ] `npm run check:types` (backend) → OK
+- [ ] `npm run check:types` (frontend) → OK
+- [ ] `npm test -- --runInBand` (backend) → sem regressão
+
+## Ponto de Parada
+
+Reportar ao Claude via `inbox-claude.md` com:
+- Resultado dos critérios
+- Commit hash
+- Se possível: screenshot ou curl do endpoint
+
+---
+
 ### [CLAUDE-2026-05-28-054] Handoff — CORE-003 Schema Hardening & Consistency
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-28
