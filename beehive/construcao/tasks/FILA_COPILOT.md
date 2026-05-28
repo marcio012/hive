@@ -1,28 +1,28 @@
 ---
 gerado_em: 2026-05-23T02:32:14Z
-atualizado_em: 2026-05-28T16:30:00Z
-gerado_por: Gemini (Coordenador)
+atualizado_em: 2026-05-28T18:00:00Z
+gerado_por: Gemini (Coordenador) | atualizado_por: Claude (Arquiteto)
 ---
 
 # Fila de Execução — Copilot
 
-Total estimado: **4 issues** prontas para execução.
+Total estimado: **3 issues** prontas para execução.
 
 > Ao iniciar cada issue: `npm run squad:lock:acquire -- copilot "<título curto>"`
 > Ao finalizar: fechar a issue no GitHub + `npm run squad:lock:release -- copilot`
 
 ## Fila ordenada
 
-| Ordem | ID | Título | Dependência |
-|-------|---|--------|-------------|
-| 1 | CORE-001 | Auth Identity Service (NestJS) | - |
-| 2 | CORE-002 | Global Module Guard | CORE-001 |
-| 3 | CORE-003 | Centralized Schema Management | CORE-002 |
-| 4 | #78 | Pipeline V2 — Kanban de leads do Agente de Vendas | #88 validado em HML |
+| Ordem | ID | Título | Dependência | Status |
+|-------|---|--------|-------------|--------|
+| — | CORE-001 | Auth Identity Service (NestJS) | - | ✅ commit ae61cb8 |
+| 1 | CORE-002 | Global Module Guard | CORE-001 | pendente |
+| 2 | CORE-003 | Centralized Schema Management | CORE-002 | pendente |
+| 3 | #78 | Pipeline V2 — Kanban de leads do Agente de Vendas | #88 validado em HML | bloqueado |
 
 ## Próximo passo imediato
 
-**Iniciar CORE-001** — Implementação do motor de autenticação central no NestJS para substituir o Auth legado.
+**Iniciar CORE-002** — Global Module Guard. Depende do CORE-001 entregue (ae61cb8).
 
 Escopo resumido:
 - Modulo: `AuthModule`

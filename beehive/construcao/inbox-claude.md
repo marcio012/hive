@@ -3,6 +3,81 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-28-16] Checkpoint execução — CORE-001 Auth Identity Service
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** CORE-001
+**thread:** core-auth-identity-service
+**Status:** consumida — ✅ Aprovado com ressalva menor em 2026-05-28; CORE-001 fechado
+
+Execução concluída da WO `CLAUDE-2026-05-28-046` em `/home/marcio/job/tenantOS/backend`.
+
+**Arquivos alterados:**
+1. `backend/src/auth/auth.module.ts`
+2. `backend/src/auth/auth.service.ts`
+3. `backend/src/auth/bcrypt.service.ts`
+4. `backend/src/auth/jwt-payload.interface.ts`
+5. `backend/src/auth/jwt.strategy.ts`
+6. `backend/src/auth/guards/jwt-auth.guard.ts`
+7. `backend/src/auth/guards/roles.guard.ts`
+8. `backend/src/auth/auth.service.spec.ts`
+9. `backend/src/auth/guards/jwt-auth.guard.spec.ts`
+10. `backend/src/config/configuration.ts`
+11. `backend/.env.example`
+12. `backend/jest.config.ts`
+13. `backend/src/test-env.ts`
+14. `backend/package.json`
+15. `backend/package-lock.json`
+
+**Resumo das mudanças:**
+1. `AuthModule`
+   - migrou de validação JWT manual para stack `Passport-JWT`
+   - registrou `PassportModule`, `JwtModule`, `JwtStrategy` e `BcryptService`
+2. `AuthService`
+   - passou a usar `JwtService` para access/refresh tokens
+   - passou a ler `JWT_SECRET`, `JWT_EXPIRES_IN`, `JWT_REFRESH_SECRET` e `JWT_REFRESH_EXPIRES_IN` via configuração
+   - centralizou validação de usuário e normalização de papel (`role` + compatibilidade com `tipo`)
+3. `JwtAuthGuard`
+   - virou guard global baseado em `AuthGuard('jwt')`
+   - manteve bypass para `@Public()` e `@PlatformAdmin()`
+   - continua retornando `401` em rotas protegidas sem bearer token
+4. `BcryptService`
+   - isolou hash/compare com bcrypt em serviço próprio para atender a condição C1
+5. Testes/configuração
+   - adicionados testes unitários para login, refresh e guard
+   - `jest.config.ts` passou a carregar `src/test-env.ts`
+   - `.env.example` documenta as ENV novas do Core Auth
+
+**Evidências de validação:**
+1. `npm run check:types` → OK
+2. `npm run build` → OK
+3. `npm test -- --runInBand` → 12 suites, 40 testes, tudo OK
+4. Prova por curl com backend local:
+   - `GET /api/health` → `200 OK`
+   - `GET /api/session/me` sem token → `401 Unauthorized`
+   - `POST /api/auth/login` com credencial demo → request chegou ao módulo novo, mas falhou por ausência do tenant demo no banco local
+
+**Estrutura criada:**
+1. `src/auth/bcrypt.service.ts`
+2. `src/auth/jwt-payload.interface.ts`
+3. `src/auth/jwt.strategy.ts`
+4. `src/auth/auth.service.spec.ts`
+5. `src/test-env.ts`
+
+**Exceção / ressalva:**
+1. A validação funcional completa do login demo não fechou no banco atual porque o ambiente local consultado tinha apenas o tenant `default`; o seed esperado (`mesa-viva`) não estava presente.
+2. O Márcio optou por não insistir na validação visual local agora e pediu para seguir o fluxo com o Claude.
+
+**Commit realizado:**
+1. `ae61cb8` — `feat(auth): implement core JWT auth`
+
+**Sua ação:**
+1. auditar o commit `ae61cb8` no `tenantOS`
+2. responder `Aprovado / Vetado / Aprovado com ressalvas`
+3. se aprovar, consolidar o fechamento da WO `CLAUDE-2026-05-28-046 / CORE-001`
+
+---
+
 ### [COPILOT-2026-05-28-15] Checkpoint execução — hard boundary de cartucho Gemini
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28
