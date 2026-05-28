@@ -7,11 +7,30 @@
 
 ## Narrativa
 
-O TenantOS era multi-tenant mas comercialmente neutro. Um salão e uma mercearia viam a mesma tela, com as mesmas features, sem nenhuma opinião sobre o que cada negócio precisava. O reseller tinha que configurar manualmente cada tenant, módulo por módulo. Isso não escalava.
+O TenantOS era multi-tenant, mas comercialmente neutro.
+Um salão e uma mercearia viam a mesma tela, com as mesmas features,
+sem nenhuma opinião sobre o que cada negócio precisava.
+O reseller tinha que configurar manualmente cada tenant, módulo por módulo.
+Isso não escalava.
 
-O DEBATE-014 nasceu de uma frase do Márcio: *"quero algo fácil e plugável para vender."* A revisão da documentação legada revelou que a visão já estava escrita — 5 nichos piloto com nomes reais, dois Blueprints definidos, o fluxo comercial desenhado. Faltava apenas conectar isso à implementação.
+O DEBATE-014 nasceu de uma frase do Márcio:
+*"quero algo fácil e plugável para vender."*
+A revisão da documentação legada revelou que a visão já estava escrita:
+5 nichos piloto com nomes reais, dois Blueprints definidos
+e o fluxo comercial desenhado.
+Faltava apenas conectar isso à implementação.
 
-O debate consolidou uma arquitetura em dois níveis: **Blueprint** (o que o reseller vende — tipo de negócio) e **Módulo** (o que o dev controla — feature flag no banco). O Copilot confirmou que o `TenantModulo` existente é suficiente, que o guard deve ser um decorator semântico por endpoint, e que módulos ativos pertencem ao `/session/me`, nunca ao JWT. O Gemini aprovou o vocabulário "Blueprint" como superior a "Perfil" ou "Plano" para a conversa comercial, e nomeou o Blueprint Pro como "O Funcionário que Nunca Dorme".
+O debate consolidou uma arquitetura em dois níveis:
+**Blueprint** (o que o reseller vende — tipo de negócio)
+e **Módulo** (o que o dev controla — feature flag no banco).
+
+O Copilot confirmou que o `TenantModulo` existente é suficiente,
+que o guard deve ser um decorator semântico por endpoint,
+e que módulos ativos pertencem ao `/session/me`, nunca ao JWT.
+
+O Gemini aprovou o vocabulário "Blueprint" como superior a "Perfil"
+ou "Plano" para a conversa comercial,
+e nomeou o Blueprint Pro como "O Funcionário que Nunca Dorme".
 
 ---
 
@@ -47,18 +66,18 @@ Frontend chama /session/me
 
 ```mermaid
 flowchart TD
-    R[Reseller] -->|Escolhe Blueprint: varejo| OS[OnboardingService]
+    R[Reseller] -->|Escolhe blueprint| OS[OnboardingService]
 
     subgraph "Transação Única $transaction"
         OS --> T[Tenant.create]
-        OS --> M[TenantModulo.createMany<br/>pdv, estoque, clientes]
+        OS --> M[TenantModulo.createMany<br/>pdv<br/>estoque<br/>clientes]
         OS --> U[Usuario.create admin]
     end
 
     T & M & U -->|Commit| DB[(Banco)]
 
     Cliente[Cliente faz login] --> SE[GET /session/me]
-    SE --> MA["{ modulosAtivos: ['pdv','estoque','clientes'] }"]
+    SE --> MA["modulosAtivos<br/>pdv<br/>estoque<br/>clientes"]
     MA --> FE[Frontend exibe<br/>só seções ativas]
 
     Cliente -->|POST /vendas| MG{ModuloGuard<br/>@Modulo pdv}
@@ -70,35 +89,57 @@ flowchart TD
 
 ## Blueprints aprovados
 
-| Blueprint | Módulos | Nichos | Proposta |
-|---|---|---|---|
-| 🛒 Varejo | pdv + estoque + clientes | Boa Praça, farmácia, pet shop | *"Caixa e estoque sem planilha"* |
-| ✂️ Serviços | agenda + clientes | Bella Corte, Movimento, Crescer Bem | *"Agenda no celular, cliente nunca esquecido"* |
-| 🍽️ Restaurante | pdv + estoque + clientes + mesas + cozinha | Mesa Viva, bares | *"Do pedido à cozinha sem erro"* |
-| 🤖 Pro | base + whatsapp + agente-ia | Qualquer nicho | *"O Funcionário que Nunca Dorme"* |
-| 🚌 Transporte *(roadmap)* | agenda + clientes + rotas | Vanzeiros | *"Rota recalculada quando o aluno cancela"* |
+- **Varejo**
+  - Modulos: `pdv`, `estoque`, `clientes`
+  - Nichos: Boa Praca, farmacia, pet shop
+  - Proposta: *"Caixa e estoque sem planilha"*
+- **Servicos**
+  - Modulos: `agenda`, `clientes`
+  - Nichos: Bella Corte, Movimento, Crescer Bem
+  - Proposta: *"Agenda no celular, cliente nunca esquecido"*
+- **Restaurante**
+  - Modulos: `pdv`, `estoque`, `clientes`, `mesas`, `cozinha`
+  - Nichos: Mesa Viva, bares
+  - Proposta: *"Do pedido a cozinha sem erro"*
+- **Pro**
+  - Modulos: blueprint base, `whatsapp`, `agente-ia`
+  - Nichos: qualquer nicho
+  - Proposta: *"O Funcionario que Nunca Dorme"*
+- **Transporte** *(roadmap)*
+  - Modulos: `agenda`, `clientes`, `rotas`
+  - Nichos: vanzeiros
+  - Proposta: *"Rota recalculada quando o aluno cancela"*
 
 ---
 
 ## Decisões técnicas registradas
 
-| Decisão | Alternativa rejeitada | Motivo |
-|---|---|---|
-| Blueprint como constante em código | Tabela `Blueprint` no banco | Zero migration, Blueprint muda sem afetar tenants existentes |
-| Guard via decorator `@Modulo()` | Middleware global | Semântico, explícito, visível no controller |
-| OnboardingService = transação única | Fluxo em etapas | Tenant parcial = lixo operacional |
-| Módulos ativos no `/session/me` | Flags no JWT | JWT não deve carregar estado mutável; staleness é risco real |
-| Blueprints fixos (sem customização) | Presets livres pelo reseller | Proteção de suporte + simplicidade de venda |
+- **Blueprint como constante em codigo**
+  - Alternativa rejeitada: tabela `Blueprint` no banco
+  - Motivo: zero migration e liberdade para evoluir presets
+- **Guard via decorator `@Modulo()`**
+  - Alternativa rejeitada: middleware global
+  - Motivo: regra mais semantica e visivel no controller
+- **OnboardingService em transacao unica**
+  - Alternativa rejeitada: fluxo em etapas
+  - Motivo: evitar tenant parcial e lixo operacional
+- **Modulos ativos no `/session/me`**
+  - Alternativa rejeitada: flags no JWT
+  - Motivo: JWT nao deve carregar estado mutavel
+- **Blueprints fixos, sem customizacao**
+  - Alternativa rejeitada: presets livres pelo reseller
+  - Motivo: proteger suporte e simplificar venda
 
 ---
 
 ## Artefatos produzidos
 
-| Artefato | Tipo | Localização |
-|---|---|---|
-| Consolidação do DEBATE-014 | Decisão arquitetural | `beehive/construcao/debates/DEBATE-014-MODULOS-PLUGAVEIS.md` |
-| Work Order implementação | Handoff Copilot (COPILOT-020) | `beehive/construcao/inbox-copilot.md` |
-| Este documento | Materialização | `beehive/docs/materializacao/DEBATE-014-MODULOS-PLUGAVEIS/` |
+- `beehive/construcao/debates/DEBATE-014-MODULOS-PLUGAVEIS.md`
+  - Tipo: decisao arquitetural
+- `beehive/construcao/inbox-copilot.md`
+  - Tipo: Work Order de implementacao (COPILOT-020)
+- `beehive/docs/materializacao/DEBATE-014-MODULOS-PLUGAVEIS/`
+  - Tipo: materializacao deste debate
 
 ---
 

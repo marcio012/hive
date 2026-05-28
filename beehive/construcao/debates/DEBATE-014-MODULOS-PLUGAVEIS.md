@@ -22,9 +22,15 @@ referencias:
 **O que o Márcio quer:**
 > *"Algo fácil e plugável para vender."*
 
-**O que a documentação legada já havia definido** (e estava esquecido):
+**O que a documentacao legada ja havia definido**
+(e estava esquecido):
 
-O documento `CONCEITO_ARQUITETURAL_WHITE_LABEL.md` (2026-05-21) já havia mapeado os **5 nichos piloto reais**, dois **Blueprints** e o fluxo comercial completo. Esse debate não inventa nada — **resgata e conecta** o que já estava pensado à implementação atual.
+O documento `CONCEITO_ARQUITETURAL_WHITE_LABEL.md` (2026-05-21)
+ja havia mapeado os **5 nichos piloto reais**,
+dois **Blueprints** e o fluxo comercial completo.
+Esse debate nao inventa nada:
+**resgata e conecta** o que ja estava pensado
+a implementacao atual.
 
 ---
 
@@ -95,9 +101,17 @@ ENTREGA
 
 ## 3. 🏗️ O Problema Central (por que isso importa agora)
 
-O sistema hoje tem **dois** Blueprints definidos conceptualmente mas **zero** implementados como presets técnicos. O `TenantModulo` existe no schema mas nenhum processo automático o preenche com base no Blueprint escolhido.
+O sistema hoje tem **dois** Blueprints definidos conceitualmente,
+mas **zero** implementados como presets tecnicos.
+O `TenantModulo` existe no schema,
+mas nenhum processo automatico o preenche
+com base no Blueprint escolhido.
 
-Resultado: cada tenant novo é configurado manualmente, módulo por módulo. Isso não escala e impossibilita o sonho de *"[APROVAR] → sistema pronto"*.
+Resultado:
+cada tenant novo e configurado manualmente,
+modulo por modulo.
+Isso nao escala
+e impossibilita o sonho de *"[APROVAR] -> sistema pronto"*.
 
 **O que falta para fechar o ciclo:**
 
@@ -119,37 +133,54 @@ Tenant operacional (manual)       OnboardingService popula TenantModulo
 
 ### Duas camadas — vocabulário oficial
 
-| Camada | Nome | O que é | Quem vê |
-|---|---|---|---|
-| **1** | **Blueprint** | Tipo de negócio com módulos pré-definidos | Reseller (comercial) |
-| **2** | **Módulo** | Feature flag no `TenantModulo` | Dev (técnico) |
+- **Camada 1 — Blueprint**
+  - O que e: tipo de negocio com modulos pre-definidos
+  - Quem ve: reseller
+- **Camada 2 — Modulo**
+  - O que e: feature flag no `TenantModulo`
+  - Quem ve: dev
 
 ### Os dois Blueprints existentes + dois novos
 
-| Blueprint | Nichos cobertos | Módulos habilitados | Proposta de valor |
-|---|---|---|---|
-| 🛒 **Varejo** | Mercearia, pet shop, farmácia, restaurante | `pdv` + `estoque` + `clientes` | *"Controle caixa e estoque sem planilha"* |
-| ✂️ **Serviços** | Salão, barbearia, clínica, personal | `agenda` + `clientes` | *"Sua agenda no celular, cliente nunca esquecido"* |
-| 🍽️ **Restaurante** | Restaurante, lanchonete, bar | `pdv` + `estoque` + `mesas` + `cozinha` | *"Do pedido à cozinha sem grito e sem erro"* |
-| 🤖 **Pro** | Qualquer Blueprint + IA | Blueprint base + `whatsapp` + `agente-ia` | *"Atendimento 24h sem contratar ninguém"* |
+- **Varejo**
+  - Nichos: mercearia, pet shop, farmacia, restaurante
+  - Modulos: `pdv`, `estoque`, `clientes`
+  - Valor: *"Controle caixa e estoque sem planilha"*
+- **Servicos**
+  - Nichos: salao, barbearia, clinica, personal
+  - Modulos: `agenda`, `clientes`
+  - Valor: *"Sua agenda no celular, cliente nunca esquecido"*
+- **Restaurante**
+  - Nichos: restaurante, lanchonete, bar
+  - Modulos: `pdv`, `estoque`, `mesas`, `cozinha`
+  - Valor: *"Do pedido a cozinha sem grito e sem erro"*
+- **Pro**
+  - Nichos: qualquer blueprint com IA
+  - Modulos: blueprint base, `whatsapp`, `agente-ia`
+  - Valor: *"Atendimento 24h sem contratar ninguem"*
 
-> **Nota:** "Restaurante" é um sub-blueprint de Varejo — herda todos os módulos de Varejo e adiciona `mesas` e `cozinha`. Não é um quarto Blueprint independente; é uma especialização.
+> **Nota:** "Restaurante" e um sub-blueprint de Varejo.
+> Herda todos os modulos de Varejo
+> e adiciona `mesas` e `cozinha`.
+> Nao e um quarto Blueprint independente;
+> e uma especializacao.
 
 ### Mapa completo de módulos técnicos
 
-| Slug | NestJS Module | Descrição funcional | Core obrigatório? |
-|---|---|---|---|
-| *(implícito)* | `AuthModule` | Login, JWT, sessão | ✅ Sempre |
-| *(implícito)* | `TenantModule` | Isolamento, branding | ✅ Sempre |
-| *(implícito)* | `UsersModule` | CRUD de usuários | ✅ Sempre |
-| `pdv` | `VendasModule` | Registro de vendas, meio de pagamento | ❌ Blueprint |
-| `estoque` | `ProdutosModule` + MovimentoEstoque | Controle de quantidade, alertas | ❌ Blueprint |
-| `clientes` | `ClientesModule` | Cadastro, histórico | ❌ Blueprint |
-| `agenda` | `AgendamentosModule` | Horários, confirmação | ❌ Blueprint |
-| `mesas` | `VendasModule` (sub-feature) | Mesa aberta, status pedido | ❌ Blueprint |
-| `cozinha` | `VendasModule` (sub-feature) | Fila de produção | ❌ Blueprint |
-| `whatsapp` | `WhatsappModule` | Canal de notificação | ❌ Blueprint Pro |
-| `agente-ia` | `AgenteVendasModule` | Atendimento autônomo | ❌ Blueprint Pro |
+- **Core obrigatorio**
+  - `AuthModule`: login, JWT, sessao
+  - `TenantModule`: isolamento e branding
+  - `UsersModule`: CRUD de usuarios
+- **Modulos de blueprint**
+  - `pdv` -> `VendasModule`: registro de vendas e meio de pagamento
+  - `estoque` -> `ProdutosModule` + MovimentoEstoque:
+    controle de quantidade e alertas
+  - `clientes` -> `ClientesModule`: cadastro e historico
+  - `agenda` -> `AgendamentosModule`: horarios e confirmacao
+  - `mesas` -> `VendasModule` (sub-feature): mesa aberta e status do pedido
+  - `cozinha` -> `VendasModule` (sub-feature): fila de producao
+  - `whatsapp` -> `WhatsappModule`: canal de notificacao
+  - `agente-ia` -> `AgenteVendasModule`: atendimento autonomo
 
 ### Presets por Blueprint (o que o OnboardingService popula)
 
@@ -171,41 +202,60 @@ sequenceDiagram
     participant OS as OnboardingService
     participant DB as TenantModulo
 
-    R->>P: Preenche Dossiê de Nicho
-    P->>P: Qualificação (5 perguntas)
-    P->>OS: [APROVAR] blueprint=varejo, slug=boa-praca
+    R->>P: Preenche dossie
+    P->>P: Qualificacao
+    P->>OS: Aprovar varejo
     OS->>DB: Cria Tenant
-    OS->>DB: Para cada módulo do preset: INSERT TenantModulo
-    OS->>R: Senha do primeiro acesso
-    Note over DB: boa-praca tem: pdv, estoque, clientes
+    OS->>DB: Insere modulos do preset
+    OS->>R: Envia primeiro acesso
+    Note over DB: boa-praca = pdv, estoque, clientes
 ```
 
 ---
 
 ## 5. 🚌 Caso Real: Transporte Escolar — O Teste Ácido da Arquitetura
 
-O `agente-vendas.MANIFESTO.md` já tinha o Transporte Escolar como 4º nicho comercial ativo, com a dor documentada:
+O `agente-vendas.MANIFESTO.md` ja tinha
+o Transporte Escolar como 4o nicho comercial ativo,
+com a dor documentada:
 
 > *"Quanto combustível você gasta buscando criança que avisou que não ia?"*  
 > Solução: *"Rota recalculada automaticamente via app."*
 
 **Por que isso importa para o debate:**
 
-Transporte Escolar é o **primeiro nicho que não cabe em nenhum Blueprint existente**. Ele precisaria de:
+Transporte Escolar e o **primeiro nicho
+que nao cabe em nenhum Blueprint existente**.
+Ele precisaria de:
 
-| Necessidade | Módulo | Existe? |
-|---|---|---|
-| Cadastro de alunos + responsáveis | `clientes` (adaptado) | ⚠️ Parcial |
-| Agenda recorrente (rota diária) | `agenda` (adaptado) | ⚠️ Parcial |
-| **Rotas dinâmicas** | `rotas` | ❌ Não existe |
-| Notificação de cancelamento | `whatsapp` | ⚠️ Parcial |
-| Cobrança mensal por aluno | `financeiro` | ❌ Não existe |
+- Cadastro de alunos + responsaveis
+  - Modulo: `clientes` (adaptado)
+  - Status: parcial
+- Agenda recorrente (rota diaria)
+  - Modulo: `agenda` (adaptado)
+  - Status: parcial
+- Rotas dinamicas
+  - Modulo: `rotas`
+  - Status: nao existe
+- Notificacao de cancelamento
+  - Modulo: `whatsapp`
+  - Status: parcial
+- Cobranca mensal por aluno
+  - Modulo: `financeiro`
+  - Status: nao existe
 
 **Conclusão desta análise:**
 
-1. **Valida a arquitetura plugável** — para atender Transporte Escolar, basta criar o módulo `rotas` e um novo Blueprint `Transporte`, sem tocar no Core ou nos Blueprints existentes.
-2. **Define o Blueprint "Transporte" como roadmap futuro** — não entra no MVP, mas a arquitetura tem que suportá-lo sem refactor.
-3. **Sinaliza que alguns nichos exigem módulos totalmente novos** — o Blueprint não é só combinação dos módulos atuais.
+1. **Valida a arquitetura plugavel**:
+   basta criar o modulo `rotas`
+   e um novo Blueprint `Transporte`,
+   sem tocar no Core nem nos Blueprints existentes.
+2. **Define o Blueprint "Transporte" como roadmap futuro**:
+   nao entra no MVP,
+   mas a arquitetura precisa suportar isso sem refactor.
+3. **Sinaliza um limite importante**:
+   alguns nichos exigem modulos totalmente novos;
+   o Blueprint nao e so combinacao do que ja existe.
 
 ```
 Blueprint Transporte (futuro)
@@ -220,21 +270,37 @@ Blueprint Transporte (futuro)
 ## 6. ❓ Questões em Aberto
 
 ### Para o Gemini (Coordenador / PO):
-1. Os 4 Blueprints propostos (Varejo, Serviços, Restaurante, Pro) cobrem os 5 nichos piloto originais sem deixar nenhum de fora?
-2. O vocabulário "Blueprint" (em vez de "Perfil" ou "Plano") está alinhado com o que você usaria na conversa comercial com o reseller?
-3. O fluxo Dossiê → [APROVAR] → OnboardingService automático é o modelo certo para o estágio atual, ou ainda é manual demais / automatizado demais?
-4. Os Gates de validação pós Go-live (≥60% usando semanalmente, ≥30% usando IA) do documento original ainda fazem sentido? Devemos mantê-los?
+1. Os 4 Blueprints propostos
+   (Varejo, Servicos, Restaurante, Pro)
+   cobrem os 5 nichos piloto originais?
+2. O vocabulario "Blueprint"
+   esta alinhado com a conversa comercial do reseller?
+3. O fluxo Dossie -> Aprovar -> OnboardingService automatico
+   e o modelo certo para o estagio atual?
+4. Os gates de validacao pos go-live
+   (>=60% uso semanal, >=30% uso de IA)
+   ainda fazem sentido?
 
 ### Para o Copilot (Engenheiro):
-1. O `TenantModulo` atual (com `tenantId` e `moduloSlug`) tem estrutura suficiente para os presets, ou precisamos de uma tabela `Blueprint` separada para rastrear qual Blueprint o tenant usa?
-2. Qual a melhor forma de implementar o guard de módulo no NestJS — `@UseGuards(ModuloGuard)` por endpoint, middleware global ou interceptor?
-3. O `OnboardingService` deveria ser uma transaction única (cria tenant + popula módulos + cria admin) ou um fluxo em etapas (para poder rollback parcial)?
-4. Como o frontend lê os módulos ativos de forma eficiente — endpoint `/session/me` retorna os módulos? Ou inclui no JWT?
+1. O `TenantModulo` atual,
+   com `tenantId` e `moduloSlug`,
+   e suficiente para os presets
+   ou precisamos de tabela `Blueprint` separada?
+2. Qual a melhor forma de implementar o guard de modulo no NestJS:
+   `@UseGuards(ModuloGuard)` por endpoint,
+   middleware global ou interceptor?
+3. O `OnboardingService` deve ser transacao unica
+   ou fluxo em etapas com rollback parcial?
+4. Como o frontend le os modulos ativos:
+   `/session/me` ou JWT?
 
 ### Para o Márcio (Owner):
-1. Algum dos 5 nichos piloto originais (Bella Corte, Boa Praça, Mesa Viva, Movimento, Crescer Bem) deixa de ser coberto com os 4 Blueprints propostos?
-2. O reseller deveria poder montar Blueprints customizados (combinando módulos livremente), ou apenas escolher entre os presets?
-3. O fluxo de [APROVAR] automático é o modelo certo agora, ou você ainda quer configurar cada tenant manualmente nesta fase inicial?
+1. Algum dos 5 nichos piloto originais
+   deixa de ser coberto pelos 4 Blueprints propostos?
+2. O reseller deve poder montar Blueprints customizados
+   ou apenas escolher entre presets?
+3. O fluxo de aprovacao automatica e o modelo certo agora
+   ou ainda faz sentido configurar tenant manualmente?
 
 ---
 
@@ -245,38 +311,66 @@ Blueprint Transporte (futuro)
 
 **Justificativa:**
 
-O `CONCEITO_ARQUITETURAL_WHITE_LABEL.md` de 2026-05-21 já havia chegado à mesma conclusão de forma independente: dois Blueprints (Varejo e Serviços), com o restaurante como variação do Varejo. O debate de hoje apenas formaliza isso como arquitetura técnica executável.
+O `CONCEITO_ARQUITETURAL_WHITE_LABEL.md` de 2026-05-21
+ja havia chegado a mesma conclusao de forma independente:
+dois Blueprints (Varejo e Servicos),
+com restaurante como variacao de Varejo.
+O debate de hoje apenas formaliza isso
+como arquitetura tecnica executavel.
 
 **Decisão técnica principal — Blueprint como preset, não como tabela:**
 
-Não precisamos de uma tabela `Blueprint` no banco. O Blueprint é um **preset em código** (`BLUEPRINT_PRESETS`) que o `OnboardingService` usa para popular o `TenantModulo`. Vantagens:
+Nao precisamos de uma tabela `Blueprint` no banco.
+O Blueprint e um **preset em codigo** (`BLUEPRINT_PRESETS`)
+que o `OnboardingService` usa para popular o `TenantModulo`.
+Vantagens:
 - Zero migration nova para implementar
 - Blueprint pode mudar sem afetar tenants já criados
 - Adicionar um Blueprint novo = uma linha de código
 
 **Módulos Core vs Blueprint — a fronteira importa:**
 
-`Auth`, `Tenant`, `Users` são sempre core — jamais controláveis por flag. Isso é inegociável: um tenant sem auth ou sem isolamento não é um tenant funcional, é um bug de segurança.
+`Auth`, `Tenant` e `Users` sao sempre core
+e jamais controlaveis por flag.
+Isso e inegociavel:
+um tenant sem auth ou sem isolamento
+nao e um tenant funcional, e um bug de seguranca.
 
 **O guard de módulo é o pré-requisito absoluto:**
 
-Antes de qualquer Blueprint ser "vendável", o `ModuloGuard` precisa existir. Hoje os endpoints não bloqueiam nada — um tenant sem `pdv` consegue bater em `POST /vendas`. O guard fecha essa brecha e torna os presets funcionais, não decorativos.
+Antes de qualquer Blueprint ser "vendavel",
+o `ModuloGuard` precisa existir.
+Hoje os endpoints nao bloqueiam nada:
+um tenant sem `pdv` consegue bater em `POST /vendas`.
+O guard fecha essa brecha
+e torna os presets funcionais, nao decorativos.
 
 **Sequência de implementação recomendada:**
-1. `ModuloGuard` no NestJS (valida `TenantModulo` antes de cada rota de Blueprint)
+1. `ModuloGuard` no NestJS
+   (valida `TenantModulo` antes de cada rota de Blueprint)
 2. `BLUEPRINT_PRESETS` em código (constante, não banco)
 3. `OnboardingService` popula `TenantModulo` a partir do preset
-4. Aplicar `@ModuloGuard('pdv')`, `@ModuloGuard('agenda')` etc. nos controllers
+4. Aplicar `@Modulo('pdv')`,
+   `@Modulo('agenda')` e afins nos controllers
 5. Frontend lê módulos ativos via `/session/me` e esconde/mostra seções
 
 **Sobre os Blueprints customizados:**
 
-Não agora. Blueprints customizados = complexidade de suporte + scope creep de vendas. A regra é: máximo 4 Blueprints fixos. Cliente que precisa de algo diferente → negociação manual, não self-service.
+Nao agora.
+Blueprints customizados significam
+mais complexidade de suporte
+e scope creep de vendas.
+A regra e: maximo de 4 Blueprints fixos.
+Cliente que precisa de algo diferente
+vai para negociacao manual, nao self-service.
 
 **Pontos de atenção:**
-- O `ClientesModule` ainda não está completamente implementado — o Blueprint "Serviços" depende dele
-- O `AgendamentosModule` existe mas precisa de validação de feature parity para o nicho de salão
-- O Blueprint "Pro" (`agente-ia`) só pode ser vendido quando o módulo de IA estiver estável
+- O `ClientesModule` ainda nao esta completamente implementado;
+  o Blueprint "Servicos" depende dele
+- O `AgendamentosModule` existe,
+  mas precisa de validacao de feature parity para o nicho de salao
+- O Blueprint "Pro" (`agente-ia`)
+  so pode ser vendido quando o modulo de IA estiver estavel
 
 **Divergência com outros agentes:** Aguardando Gemini e Copilot.
 
@@ -285,31 +379,67 @@ Não agora. Blueprints customizados = complexidade de suporte + scope creep de v
 ### Parecer do Gemini (Coordenador / PO) — 2026-05-26
 **Posição:** ✅ Aprovado — Visão de Produto Alinhada e Comercializável
 
-Como PO e Coordenador, minha análise foca no **Valor de Negócio** e na **Facilidade de Escala**. A proposta do Claude não apenas resolve um débito técnico, mas cria o **Catálogo de Vendas** do TenantOS.
+Como PO e Coordenador,
+minha analise foca no **Valor de Negocio**
+e na **Facilidade de Escala**.
+A proposta do Claude nao apenas resolve
+um debito tecnico,
+mas cria o **Catalogo de Vendas** do TenantOS.
 
 **1. Respostas às questões direcionadas:**
 
-*   **Cobertura de Nichos:** Sim, os 4 Blueprints (Varejo, Serviços, Restaurante, Pro) cobrem perfeitamente os 5 nichos piloto originais. 
+*   **Cobertura de Nichos:** Sim.
+    Os 4 Blueprints (Varejo, Servicos, Restaurante, Pro)
+    cobrem perfeitamente os 5 nichos piloto originais.
     *   *Bella Corte / Movimento / Crescer Bem* → **Serviços**.
     *   *Boa Praça* → **Varejo**.
     *   *Mesa Viva* → **Restaurante**.
-*   **Vocabulário "Blueprint":** Aprovo 100%. "Blueprint" soa como algo premium, profissional e estruturado, ideal para a conversa com resellers. "Perfil" soa como configuração de rede social; "Plano" soa como assinatura simples. "Blueprint" vende a ideia de uma **solução de engenharia para o negócio**.
-*   **Fluxo Dossiê → [APROVAR]:** É o modelo ideal para o estágio atual. O Dossiê garante que não estamos vendendo no escuro; o botão [APROVAR] automático no `OnboardingService` é o que transforma o Márcio de um "suporte técnico" em um "CEO de Plataforma". É a transição da artesania para a escala.
-*   **Gates de Validação:** Sim, mantê-los é vital. O Hive não deve apenas "entregar software", deve garantir **sucesso do cliente**. Se um tenant tem <60% de uso semanal, ele é um churn em potencial. O Blueprint Pro com <30% de uso de IA significa que o cliente está pagando por algo que não entende. Precisamos desses dados no dashboard do Reseller futuramente.
+*   **Vocabulário "Blueprint":** Aprovo 100%.
+    "Blueprint" soa premium, profissional e estruturado.
+    "Perfil" parece configuracao de rede social;
+    "Plano" parece assinatura simples.
+    "Blueprint" vende a ideia de
+    uma **solucao de engenharia para o negocio**.
+*   **Fluxo Dossie -> Aprovar:** E o modelo ideal para agora.
+    O dossie impede venda no escuro.
+    O botao [APROVAR] no `OnboardingService`
+    transforma o Marcio de "suporte tecnico"
+    em "CEO de Plataforma".
+*   **Gates de Validacao:** Sim, mante-los e vital.
+    O Hive nao deve apenas entregar software;
+    deve garantir **sucesso do cliente**.
+    Se um tenant tem <60% de uso semanal,
+    ele e churn em potencial.
+    Se o Blueprint Pro tem <30% de uso de IA,
+    o cliente esta pagando por algo que nao entende.
 
 **2. Análise de Valor (PO Mode):**
 
-*   **A Força do Blueprint PRO:** Este é o nosso maior diferencial competitivo e margem. Ao transformar a IA em um módulo (`agente-ia`), deixamos de vender "software" e passamos a vender "tempo". O Blueprint Pro deve ser posicionado como o **Funcionário que nunca dorme**.
-*   **Simplificação Comercial:** O reseller não precisa entender de bancos de dados ou módulos NestJS. Ele só precisa de 2 perguntas: "Seu negócio é de balcão ou de agenda?" e "Você quer automação por IA?". Pronto, o Blueprint está escolhido.
+*   **A Forca do Blueprint PRO:** Este e o maior diferencial.
+    Ao transformar a IA em um modulo (`agente-ia`),
+    deixamos de vender "software"
+    e passamos a vender "tempo".
+    O Blueprint Pro deve ser posicionado como
+    o **Funcionario que nunca dorme**.
+*   **Simplificacao Comercial:** O reseller nao precisa entender
+    de banco de dados nem de modulo NestJS.
+    Ele so precisa de duas perguntas:
+    "Seu negocio e de balcao ou de agenda?"
+    e "Voce quer automacao por IA?".
 
 **3. Visão de Coordenação:**
 
 Para a Squad, esta arquitetura limpa a fila de tarefas:
 - **Claude:** Foca em desenhar o `ModuloGuard`.
 - **Copilot:** Foca em implementar o `OnboardingService` e os presets.
-- **Gemini (Eu):** Foco em monitorar o sucesso desses primeiros 5 nichos piloto através da telemetria que está sendo construída.
+- **Gemini (Eu):** Foco em monitorar o sucesso
+  desses primeiros 5 nichos piloto
+  por meio da telemetria em construcao.
 
-**Veredito:** O debate deve avançar para a fase de implementação imediata do `OnboardingService`. A inclusão do "Transporte Escolar" no roadmap futuro prova que a arquitetura é resiliente.
+**Veredito:** O debate deve avancar
+para a implementacao imediata do `OnboardingService`.
+A inclusao do "Transporte Escolar" no roadmap futuro
+prova que a arquitetura e resiliente.
 
 ---
 
@@ -318,27 +448,66 @@ Para a Squad, esta arquitetura limpa a fila de tarefas:
 
 **1. O `TenantModulo` atual suporta presets ou precisa de tabela `Blueprint` separada?**
 
-O `TenantModulo` atual já suporta bem os presets neste estágio. A estrutura `tenantId + moduloSlug` é suficiente para materializar o blueprint escolhido no onboarding sem criar acoplamento desnecessário entre regra comercial e persistência.
+O `TenantModulo` atual ja suporta bem os presets neste estagio.
+A estrutura `tenantId + moduloSlug` e suficiente
+para materializar o blueprint escolhido no onboarding
+sem criar acoplamento desnecessario
+entre regra comercial e persistencia.
 
-Eu só criaria uma tabela `Blueprint` separada se houver necessidade real de auditar qual preset foi vendido, versionar presets ao longo do tempo ou permitir override controlado por tenant sem perder a origem. Para o MVP, preset em código + persistência apenas dos módulos ativos é a melhor relação custo/benefício.
+Eu so criaria uma tabela `Blueprint` separada
+se houver necessidade real de:
+- auditar qual preset foi vendido
+- versionar presets ao longo do tempo
+- permitir override controlado por tenant
+
+Para o MVP,
+preset em codigo + persistencia apenas dos modulos ativos
+e a melhor relacao custo/beneficio.
 
 **2. Melhor forma de implementar guard de módulo no NestJS?**
 
-A melhor forma é **decorator + guard**. Em prática: `@Modulo('pdv')` no controller/endpoint e `ModuleGuard` lendo o metadata e consultando `TenantModulo`.
+A melhor forma e **decorator + guard**.
+Na pratica:
+`@Modulo('pdv')` no controller ou endpoint,
+e `ModuleGuard` lendo metadata
+e consultando `TenantModulo`.
 
-Isso é melhor que middleware ou interceptor porque a regra é semântica de rota, fica explícita no controller, e evita uma camada global opaca. Middleware é amplo demais; interceptor não é o lugar natural para autorização por feature flag.
+Isso e melhor que middleware ou interceptor
+porque a regra e semantica de rota,
+fica explicita no controller
+e evita uma camada global opaca.
+Middleware e amplo demais;
+interceptor nao e o lugar natural
+para autorizacao por feature flag.
 
 **3. O `OnboardingService` deveria ser uma transaction única ou fluxo em etapas?**
 
-**Transação única.** Criar tenant, popular módulos e criar admin precisam nascer juntos ou não nascerem. Tenant parcialmente criado é pior do que falha total porque deixa lixo operacional e abre espaço para inconsistência de suporte.
+**Transacao unica.**
+Criar tenant, popular modulos
+e criar admin precisam nascer juntos ou nao nascer.
+Tenant parcialmente criado e pior do que falha total
+porque deixa lixo operacional
+e abre espaco para inconsistencias de suporte.
 
-Para o estágio atual, rollback parcial não traz ganho real. O desenho certo é: `tenant.create` + `tenantModulo.createMany/upsert` + `usuario.create` em um único commit.
+Para o estagio atual,
+rollback parcial nao traz ganho real.
+O desenho certo e:
+`tenant.create` + `tenantModulo.createMany/upsert` + `usuario.create`
+em um unico commit.
 
 **4. Como o frontend lê os módulos ativos de forma eficiente — `/session/me` ou JWT?**
 
-Minha recomendação é **`/session/me` (ou endpoint de bootstrap de sessão)**, não JWT.
+Minha recomendacao e **`/session/me`**
+(ou endpoint de bootstrap de sessao),
+nao JWT.
 
-Módulo ativo é estado operacional mutável. JWT deve carregar identidade e autorização base; colocar flags de módulo no token cria staleness: se o tenant ativa ou desativa um módulo, o frontend continua com o estado antigo até refresh de token.
+Modulo ativo e estado operacional mutavel.
+JWT deve carregar identidade
+e autorizacao base.
+Colocar flags de modulo no token cria staleness:
+se o tenant ativa ou desativa um modulo,
+o frontend continua com estado antigo
+ate refresh de token.
 
 O melhor desenho é:
 - login devolve token normal;
@@ -347,11 +516,23 @@ O melhor desenho é:
 
 **Risco de performance: flags por request vs. cache no token**
 
-Não recomendo cache no JWT. Isso otimiza leitura, mas piora consistência justamente no ponto mais sensível: entitlement de feature.
+Nao recomendo cache no JWT.
+Isso otimiza leitura,
+mas piora consistencia no ponto mais sensivel:
+entitlement de feature.
 
-Para agora, lookup por request em `TenantModulo` é aceitável. Se virar gargalo, o próximo passo correto é cache curto no backend por `tenantId`, com invalidação ao alterar módulos. Ou seja: **consistência primeiro, cache depois**.
+Para agora,
+lookup por request em `TenantModulo` e aceitavel.
+Se virar gargalo,
+o proximo passo correto e cache curto no backend por `tenantId`,
+com invalidacao ao alterar modulos.
+Ou seja: **consistencia primeiro, cache depois**.
 
-**Divergência com outros agentes:** Alinhado com Claude na direção geral. Minha ênfase adicional é operacional: guardar módulos no JWT parece tentador, mas gera drift de autorização e UX inconsistente quando os flags mudam em tempo real.
+**Divergencia com outros agentes:** Alinhado com Claude.
+Minha enfase adicional e operacional:
+guardar modulos no JWT parece tentador,
+mas gera drift de autorizacao
+e UX inconsistente quando os flags mudam em tempo real.
 
 ---
 
@@ -365,29 +546,49 @@ Para agora, lookup por request em `TenantModulo` é aceitável. Se virar gargalo
 
 ### Decisões fechadas (squad unânime)
 
-| # | Decisão | Fonte |
-|---|---|---|
-| D1 | Blueprint = preset em código (`BLUEPRINT_PRESETS`), não tabela no banco | Claude + Copilot |
-| D2 | `TenantModulo` atual (tenantId + moduloSlug) é suficiente para o MVP | Copilot |
-| D3 | Guard via `@Modulo('slug')` decorator + `ModuloGuard` — não middleware, não interceptor | Copilot |
-| D4 | `OnboardingService` = transação única: tenant + módulos + admin em commit único | Copilot |
-| D5 | Módulos ativos via `/session/me` — nunca no JWT (evita staleness) | Copilot |
-| D6 | Vocabulário "Blueprint" aprovado para uso comercial com resellers | Gemini |
-| D7 | Gates de validação pós Go-live mantidos: ≥60% uso semanal, ≥30% uso IA | Gemini |
-| D8 | Blueprints customizados = fora do escopo MVP | Claude |
-| D9 | Blueprint Pro posicionado como "O Funcionário que Nunca Dorme" | Gemini |
+- **D1** Blueprint = preset em codigo (`BLUEPRINT_PRESETS`), nao tabela no banco
+  - Fonte: Claude + Copilot
+- **D2** `TenantModulo` atual
+  - Fonte: Copilot
+  - Registro: suficiente para o MVP
+- **D3** Guard via `@Modulo('slug')` + `ModuloGuard`
+  - Fonte: Copilot
+  - Registro: nao usar middleware nem interceptor
+- **D4** `OnboardingService` em transacao unica
+  - Fonte: Copilot
+  - Registro: tenant + modulos + admin no mesmo commit
+- **D5** Modulos ativos via `/session/me`
+  - Fonte: Copilot
+  - Registro: nunca no JWT
+- **D6** Vocabulario "Blueprint" aprovado para uso comercial
+  - Fonte: Gemini
+- **D7** Gates de validacao pos go-live mantidos
+  - Fonte: Gemini
+  - Registro: >=60% uso semanal, >=30% uso de IA
+- **D8** Blueprints customizados fora do escopo MVP
+  - Fonte: Claude
+- **D9** Blueprint Pro = "O Funcionario que Nunca Dorme"
+  - Fonte: Gemini
 
 ---
 
 ### Blueprints aprovados
 
-| Blueprint | Presets de módulos | Nichos cobertos |
-|---|---|---|
-| 🛒 **Varejo** | `pdv` + `estoque` + `clientes` | Boa Praça, pet shop, farmácia |
-| ✂️ **Serviços** | `agenda` + `clientes` | Bella Corte, Movimento, Crescer Bem |
-| 🍽️ **Restaurante** | `pdv` + `estoque` + `clientes` + `mesas` + `cozinha` | Mesa Viva, lanchonetes |
-| 🤖 **Pro** | Blueprint base + `whatsapp` + `agente-ia` | Qualquer nicho com IA |
-| 🚌 **Transporte** *(roadmap)* | `agenda` + `clientes` + `rotas` | Vanzeiros, escolares |
+- **Varejo**
+  - Preset: `pdv`, `estoque`, `clientes`
+  - Nichos: Boa Praca, pet shop, farmacia
+- **Servicos**
+  - Preset: `agenda`, `clientes`
+  - Nichos: Bella Corte, Movimento, Crescer Bem
+- **Restaurante**
+  - Preset: `pdv`, `estoque`, `clientes`, `mesas`, `cozinha`
+  - Nichos: Mesa Viva, lanchonetes
+- **Pro**
+  - Preset: blueprint base, `whatsapp`, `agente-ia`
+  - Nichos: qualquer nicho com IA
+- **Transporte** *(roadmap)*
+  - Preset: `agenda`, `clientes`, `rotas`
+  - Nichos: vanzeiros, escolares
 
 ---
 
@@ -397,7 +598,8 @@ Para agora, lookup por request em `TenantModulo` é aceitável. Se virar gargalo
 2. Constante `BLUEPRINT_PRESETS` em código
 3. `OnboardingService` — transação única (tenant + módulos + admin)
 4. `/session/me` passa a retornar `modulosAtivos: string[]`
-5. Aplicar `@Modulo()` nos controllers existentes (`VendasController`, `AgendamentosController`, etc.)
+5. Aplicar `@Modulo()` nos controllers existentes
+   (`VendasController`, `AgendamentosController` e afins)
 6. Frontend consome `modulosAtivos` para mostrar/ocultar seções
 
 ---
@@ -406,20 +608,37 @@ Para agora, lookup por request em `TenantModulo` é aceitável. Se virar gargalo
 
 ## 8. 💰 Análise de Custo e ROI (Contabilidade da Thread)
 
-| Fase | Agente | Tokens (In/Out) | Custo (BRL) |
-|---|---|---|---|
-| Mapeamento Legado | Gemini Lead | 18k / 3k | R$ 1,12 |
-| Parecer Arquitetural | Claude | 42k / 4k | R$ 5,80 |
-| Parecer Produto/PO | Gemini PO | 12k / 2.5k | R$ 0,95 |
-| Parecer Engenharia | Copilot | 15k / 3k | R$ 1,20 |
-| **TOTAL ACUMULADO** | — | **87k / 12.5k** | **R$ 9,07** |
+- **Mapeamento Legado**
+  - Agente: Gemini Lead
+  - Tokens: 18k / 3k
+  - Custo: R$ 1,12
+- **Parecer Arquitetural**
+  - Agente: Claude
+  - Tokens: 42k / 4k
+  - Custo: R$ 5,80
+- **Parecer Produto/PO**
+  - Agente: Gemini PO
+  - Tokens: 12k / 2.5k
+  - Custo: R$ 0,95
+- **Parecer Engenharia**
+  - Agente: Copilot
+  - Tokens: 15k / 3k
+  - Custo: R$ 1,20
+- **Total acumulado**
+  - Tokens: 87k / 12.5k
+  - Custo: R$ 9,07
 
 ### 🚀 Validação de ROI (Retorno sobre Investimento)
-*   **Ganho Estimado:** Automação total do Onboarding (redução de 45 min de trabalho manual por novo cliente).
-*   **Escalabilidade:** Permite ao Reseller vender e ativar o sistema sem intervenção da equipe técnica.
-*   **Valor de Venda:** O Blueprint "Pro" aumenta o Ticket Médio (ARPU) em estimativos 40% via IA.
-*   **Payback (Recuperação):** A primeira venda do Blueprint Pro cobre 10x o custo deste debate (R$ 9,07).
-*   **Veredito Financeiro:** **ROI EXPLOSIVO.** O debate viabiliza o modelo de escala do TenantOS.
+*   **Ganho Estimado:** Automacao total do onboarding,
+    com reducao de 45 min de trabalho manual por cliente.
+*   **Escalabilidade:** Permite ao reseller vender e ativar o sistema
+    sem intervencao da equipe tecnica.
+*   **Valor de Venda:** O Blueprint "Pro" aumenta o ticket medio
+    em estimados 40% via IA.
+*   **Payback:** A primeira venda do Blueprint Pro
+    cobre 10x o custo deste debate (R$ 9,07).
+*   **Veredito Financeiro:** **ROI EXPLOSIVO.**
+    O debate viabiliza o modelo de escala do TenantOS.
 
 ---
 *Atualizado em: 2026-05-27 | Responsável: Gemini Lead*
