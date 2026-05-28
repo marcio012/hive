@@ -1,44 +1,20 @@
 # Operacao do Gemini neste repositorio (HIVE OS - Kernel)
-# Ultima revisao: 2026-05-27 | Refatorado para boot enxuto + modos sob demanda
+# Ultima revisao: 2026-05-28 | Simplificado
 
 ---
 
-## BOOT MANDATE (Protocolo de Inicialização)
+## PROTOCOLO DE INICIALIZAÇÃO
 
-**REGRA:** Este protocolo aplica-se APENAS ao Agente Líder (Gemini Lead).
-Sub-agentes (Claude, Copilot) estão ISENTOS — passam direto para a tarefa.
+### Fluxo de Boot:
+1. Verificar `beehive/construcao/inbox-gemini.md` — listar entradas `pendente`.
+2. Carregar o cartucho correspondente à tarefa:
+   - PO → `beehive/roles/po.md`
+   - Projetista → `beehive/roles/projetista.md`
+   - Coordenador → `beehive/roles/coordenador.md`
 
-### Ritual do Líder (turno 1):
-1. Perguntar ao usuário se deve ler `beehive/HIVE.md`. Se confirmado:
-   a. Ler o arquivo `beehive/HIVE.md`
-   b. Copiar **literalmente** o conteúdo do bloco de código markdown da seção `## 🎨 Layout Visual (Safe UI)` — nenhuma adaptação estrutural
-   c. Substituir apenas os placeholders `{{ }}` pelos valores fixos definidos abaixo — nada mais
-   d. **Proibido:** resumir, compactar, reformatar, trocar rótulos, reordenar opções ou alterar emojis
-   e. **PARAR** exatamente após a linha `[?] Seleção (1-3): _` — não adicionar texto depois desta linha
-   Variáveis para substituição:
-   - `{{KERNEL_VERSION}}` → "v1.0"
-   - `{{SYSTEM_VERSION}}` → "v1.1.0"
-   - `{{PRODUCT_NAME}}` → "TenantOS"
-   - `{{PRODUCT_STATUS}}` → "Em modelagem de Ciclo 2"
-   - `{{CURRENT_ISSUE}}` → "#97 Onboarding Full (Bloqueado)"
-2. Verificar `beehive/construcao/inbox-gemini.md` — listar entradas `pendente`
-3. **PARAR** após a linha `[?] Seleção (1-3): _` e aguardar o Márcio
-
-### Boot direto (sem menu):
-Se o Márcio rodar `npm run gemini:po`, `gemini:projetista` ou `gemini:coordenador`,
-carregar o cartucho correspondente sem exibir o menu:
-- PO → `beehive/roles/po.md`
-- Projetista → `beehive/roles/projetista.md`
-- Coordenador → `beehive/roles/coordenador.md`
-
-**Boundary de sessão (obrigatório):**
-- **1 sessão Gemini = 1 cartucho**
-- Para trocar de cartucho ou modo, **fechar a CLI atual** e encerrar a sessão com `npm run squad:session:end:gemini`
-- Só depois iniciar o novo cartucho (`gemini:po`, `gemini:projetista`, `gemini:coordenador` ou `squad:session:gemini`)
-- Reabrir o mesmo cartucho na mesma sessão é permitido; trocar para outro cartucho/modo sem encerrar deve ser bloqueado
-
-> **Nota:** O cartucho Tech Lead foi dissolvido em 2026-05-26.
-> Auditoria de código/spec → Claude (Auditor Técnico). Coordenação → Coordenador.
+**Boundary de sessão:**
+- **1 sessão Gemini = 1 cartucho**.
+- Para trocar de cartucho ou modo, encerrar a sessão atual e iniciar o novo cartucho.
 
 ---
 
@@ -98,6 +74,22 @@ antes de responder. Isso garante que apenas as regras necessárias estejam ativa
 
 ---
 
+## Padrão de Saída Operacional (DIR-085)
+
+Toda interação operacional deve encerrar com:
+
+```
+Estado atual:    [o que foi concluido / o que esta em aberto]
+Proximo passo:   [o que vem agora]
+Acao esperada:   [o que o Marcio deve fazer]
+```
+
+Aplica-se a: boot/menu, plano de voo, encerramento de cartucho, checkpoint, pedido de aprovacao.
+Nao aplica-se a: perguntas informativas, confirmacoes curtas, analises conceituais.
+Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
+---
+
 ## Gestão de Tokens e Higiene (DIR-071)
 
 - **Proibido Prolixidade:** Documentos de contexto em tópicos diretos.
@@ -115,19 +107,11 @@ bash beehive/bin/hive-telemetry.sh "Gemini [MODO]" "[MODELO]" [TOKENS_IN] [TOKEN
 ```
 
 **Onde:**
-- `[MODO]` = cartucho ativo: `Lead`, `PO`, `Projetista` ou `Coordenador`
+- `[MODO]` = cartucho ativo: `PO`, `Projetista` ou `Coordenador`
 - `[MODELO]` = modelo usado nessa resposta (ex: `gemini-1.5-pro`)
 - `[TOKENS_IN]` = tokens de entrada da interação (disponível via `/stats` no CLI)
 - `[TOKENS_OUT]` = tokens de saída gerados
 - `[CUSTO_BRL]` = estimativa em BRL (gemini-1.5-pro: input R$0.0000375/token, output R$0.00015/token)
 
-**Exemplo após uma resposta com ~2.000 tokens in / 500 tokens out:**
-```bash
-bash beehive/bin/hive-telemetry.sh "Gemini Lead" "gemini-1.5-pro" 2000 500 0.1500
-```
-
-> Se os tokens exatos não estiverem disponíveis, usar `/stats` no CLI para obter o delta
-> desde a última interação registrada. Em último caso, estimar com base no tamanho da resposta.
-
 ---
-*Refatorado em 2026-05-26 — modos extraídos para `beehive/.gemini/modes/`*
+*Refatorado em 2026-05-28 — Remoção de hierarquia Lead*

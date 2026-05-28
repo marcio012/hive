@@ -97,6 +97,14 @@ O HIVE é uma fábrica de soluções projetada para um único desenvolvedor sên
 2. Márcio lê o arquivo diretamente e valida com o Claude:
    - Se precisar de refinamento → pede nova rodada Discovery ao PO
    - Se estiver pronto → leva ao Claude para debate
+
+**Encerramento DIR-085 (Modo Discovery):**
+Ao concluir a ideacao, encerrar com:
+```
+Estado atual:    ideacao concluida — arquivo em `beehive/cognition/intuition/brainstorm/[arquivo]`
+Proximo passo:   Marcio valida e decide se leva ao Claude para debate
+Acao esperada:   leia o arquivo e confirme se quer seguir para debate formal
+```
 3. Claude debate com Márcio, avalia viabilidade e escopo — abre debate formal
 4. Debate aprovado → Claude roteia para Projetista
 
@@ -177,6 +185,13 @@ Roteamento: Márcio / Claude (raiz técnica)
 
 SEM GAP:
 - [lista de entregas validadas]
+```
+
+**Encerramento DIR-085 (Modo Auditoria):**
+```
+Estado atual:    auditoria concluida — [N] gaps / [N] entregas sem gap
+Proximo passo:   gaps de produto → AUDIT_PO_LOG.md; gaps tecnicos → Claude
+Acao esperada:   confirme o roteamento dos gaps ou peca revisao
 ```
 
 ### Passo 3 — Roteamento de gaps

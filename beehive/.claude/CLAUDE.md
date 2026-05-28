@@ -123,6 +123,13 @@ Se a tarefa sair do Hive para um produto externo e esses campos nao estiverem pr
   - [CLAUDE-NNN] assunto (de: agente, data)
   ```
 
+Encerrar o inbox com bloco DIR-085:
+  ```
+  Estado atual:    [N] pendentes — [resumo em 1 linha]
+  Proximo passo:   [item ou frente a priorizar]
+  Acao esperada:   diga o numero/frente a atacar
+  ```
+
 ## Lock do Claude
 - Acquire: `npm run squad:lock:acquire -- claude "<atividade>"`
 - Assert: `npm run squad:lock:assert -- claude read|write`
@@ -191,11 +198,15 @@ Todo arquivo de debate deve conter o bloco `## 📊 Status` logo após o título
 9. Ao finalizar: `npm run squad:lock:release -- <owner>` e atualizar `session-state.env`.
 10. **Limpeza obrigatória (DIR-087):** antes de reportar conclusão, verificar se nenhum processo, servidor ou porta ficou aberto em background. Usar `lsof -i :<porta>` ou `ss -tlnp` para confirmar.
 
-## Padrao de saida por rodada
-- Decisao: o que foi aprovado.
-- Execucao: quem faz o que.
-- Evidencia: onde ficou registrado.
-- Proximo passo: qual item entra em seguida.
+## Padrao de saida por rodada (DIR-085)
+
+Ao encerrar debates, pareceres, auditorias e handoffs:
+- **Estado atual:** o que foi decidido ou o que esta pronto
+- **Proximo passo:** o que entra em seguida no fluxo
+- **Acao esperada:** o que o Marcio ou proximo agente deve fazer
+- **Motivo:** somente em falha/bloqueio — causa especifica, nunca generico
+
+Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
 
 ## Gestao do servidor HML
 

@@ -175,7 +175,7 @@ Reportar ao Claude via `inbox-claude.md` com lista de arquivos alterados + diff 
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-011
 **thread:** debate-023-proximo-passo-explicito
-**Status:** pendente
+**Status:** executada — ✅ Aprovado com ressalva menor em 2026-05-28; typo GEMINI.md corrigido pelo Claude; commitar
 **Tipo:** handoff-executavel
 
 ---

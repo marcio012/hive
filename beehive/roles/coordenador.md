@@ -94,9 +94,9 @@ Detectei [N] pendências. Ordem sugerida:
 2. [AGENTE] → [TAREFA]
 3. [AGENTE] → [TAREFA]
 
-Para iniciar: diga o número do item ou "ok" para o item 1.
-Para reordenar: diga a nova ordem.
-Para pular: diga "skip <número>".
+Estado atual:    [N] pendencias detectadas.
+Proximo passo:   item 1 sugerido — [AGENTE] → [TAREFA]
+Acao esperada:   diga o numero do item, "ok" para o item 1, ou reordene.
 ```
 
 > O bloco de workspace (DIR-082) só aparece no Plano de Voo quando algum item envolve tarefa em repositório externo. Não incluir por padrão.

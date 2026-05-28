@@ -81,6 +81,20 @@ O Copilot reconhece os seguintes comandos diretamente no chat:
 | `status` | Mostra a issue ativa no board, estado do lock e próximo passo |
 | `checkpoint` | Resume o ponto de parada técnico da última tarefa executada |
 
+## Padrao de Saida Operacional (DIR-085)
+
+Ao encerrar `status`, `checkpoint` ou entrega para auditoria, incluir:
+
+```
+Estado atual:    [o que foi feito / o que falhou]
+Proximo passo:   [o que vem agora no fluxo]
+Acao esperada:   [o que o Marcio ou Claude deve fazer]
+```
+
+Em falha ou bloqueio, adicionar campo `Motivo` com causa especifica.
+Nao aplicar em confirmacoes curtas ou respostas informativas.
+Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
 ## Inicio de sessao (obrigatorio)
 Modo principal:
 - Operar o Copilot por CLI/terminal neste repositorio.
