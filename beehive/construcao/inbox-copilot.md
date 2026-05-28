@@ -405,7 +405,7 @@ Reportar ao Claude via `inbox-claude.md` com diff de cada arquivo antes de commi
 **Thread:** core-tenant-guard
 **Backlog ref:** CORE-002
 **Spec canônica:** `beehive/construcao/work_orders/CORE-FOUNDATION/CORE-002-GUARD.md`
-**Status:** pendente
+**Status:** executada — ✅ Aprovado em 2026-05-28; commit 378f3d6 no tenantOS. CORE-002 delta fechado.
 
 ---
 

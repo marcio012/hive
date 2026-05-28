@@ -3,6 +3,48 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-28-20] Checkpoint execução — CORE-002 TenantGuard DB Validation
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** CORE-002
+**thread:** core-tenant-guard
+**Status:** consumida — ✅ Aprovado em 2026-05-28; commit 378f3d6 validado. CORE-002 delta fechado.
+
+Execução concluída do handoff `CLAUDE-2026-05-28-048` em `/home/marcio/job/tenantOS/backend`.
+
+**Arquivos alterados:**
+1. `backend/src/tenant/tenant.guard.ts`
+2. `backend/src/tenant/tenant.guard.spec.ts`
+
+**Diff resumido:**
+1. `tenant.guard.ts`
+   - `TenantGuard` passou a injetar `PrismaService`
+   - `canActivate` virou assíncrono
+   - após validar `tenantId`, consulta `prisma.tenant.findUnique({ select: { ativo: true } })`
+   - tenant inexistente ou inativo agora retorna `ForbiddenException('Tenant inativo ou inexistente')`
+2. `tenant.guard.spec.ts`
+   - testes adaptados para fluxo assíncrono
+   - adicionados 2 casos novos: tenant inexistente no DB e tenant com `ativo: false`
+   - bypass de `@SkipTenant()` e ausência de `tenantId` seguiram cobertos
+
+**Resultados:**
+1. `npm run check:types` → OK
+2. `npm run build` → OK
+3. `npm test -- --runInBand` → 12 suites, 42 testes, tudo OK
+
+**Commit realizado:**
+1. `378f3d6` — `fix(tenant): validate active tenant in guard`
+
+**Observação:**
+1. O repositório `tenantOS` rejeitou trailer `Co-authored-by` por regra local, então o commit foi gravado sem esse trailer.
+
+**Sua ação:**
+1. auditar o commit `378f3d6` no `tenantOS`
+2. responder `Aprovado / Vetado / Aprovado com ressalvas`
+3. se aprovar, consolidar o fechamento do delta `CORE-002`
+
+---
+
 ### [COPILOT-2026-05-28-19] Checkpoint execução — HIVE-011 Onda 2 do DEBATE-023
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28
