@@ -29,8 +29,8 @@
 4. Roda migrations (`scripts/ci/prisma-migrate.sh`)
 5. `docker compose -f docker-compose.hml.yml up -d --remove-orphans`
 
-**Estado do runner:** ✅ ativo — `Runner.Listener` rodando como serviço (PID 2728, confirmado 2026-05-24)
-Último job executado: 2026-05-23 20:38Z
+**Estado do runner:** ✅ ativo — serviço `actions.runner.marcio012-tenantos.hml-jenkins` rodando (reconfigurado 2026-05-28)
+Último job executado: 2026-05-23 20:38Z (deploy pendente — aguardando push do tenantOS)
 
 ---
 
@@ -100,14 +100,16 @@ Gerenciados por `docker-compose.hml.yml`:
 | 2026-05-24 | Restart do `fluxo-pub-mvp` (compose legado) | ✅ containers legado rodando — erro de rota, não era o wl |
 | 2026-05-24 | Alterou `GEMINI_MODEL` para `gemini-1.5-flash`; recriou `wl-core` | ✅ confirmado via `printenv` dentro do container |
 | 2026-05-24 | Adicionou `JWT_REFRESH_SECRET` ao HML; sincronizou local `.env` com HML | ✅ container recriado, secret confirmado |
+| 2026-05-28 | Reconfigurou runner de `marcio012/white-label-mvp` → `marcio012/tenantos` | ✅ serviço ativo — deploy pendente push |
 
 ---
 
 ## Checklist antes do próximo deploy
 
-- [ ] Confirmar runner GitHub Actions ativo (`systemctl status`)
-- [ ] Confirmar URL atual do tunnel (`npm run hml:tunnel:url`)
-- [ ] Push dos commits locais (11 commits ahead, incluindo `IaMarketingService`)
+- [x] Confirmar runner GitHub Actions ativo — ✅ reconfigurado para `marcio012/tenantos` (2026-05-28)
+- [x] Confirmar URL atual do tunnel — `https://vessel-barn-funk-canvas.trycloudflare.com` (2026-05-28)
+- [ ] Push dos commits locais do tenantOS para `origin/main`
 - [ ] Acompanhar pipeline no GitHub Actions após push
 - [ ] Validar containers `wl-*` rodando pós-deploy
-- [ ] Testar webhook WhatsApp → `wl-core`
+- [ ] Testar fluxo de onboarding: criar tenant → Blueprint → login → `/session/me`
+- [ ] Testar webhook WhatsApp → `wl-core` (requer atualizar `APP_URL` no Twilio após restart do tunnel)
