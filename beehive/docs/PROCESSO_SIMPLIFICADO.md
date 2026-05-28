@@ -102,6 +102,8 @@ Isso não é burocracia — é a única proteção real contra erros irreversív
 O Gate no nível 1 é simples: "Fiz X. Commit?" → OK → commit.
 O Gate no nível 3 é formal: relatório completo + veredito.
 
+> A saída de cada etapa operacional segue o padrão DIR-085: Estado atual → Próximo passo → Ação esperada.
+
 ---
 
 ## O que foi eliminado vs o que foi preservado

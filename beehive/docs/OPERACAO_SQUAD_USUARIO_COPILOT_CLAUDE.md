@@ -22,11 +22,35 @@ Este documento define como operar o projeto com tres papeis complementares.
 - Implementa, testa, atualiza docs e evidencia.
 - Mantem board e rastreabilidade operacional.
 
+**Exemplo canonico de encerramento operacional (DIR-085):**
+```text
+Estado atual:
+- Implementacao concluida e evidencias registradas para auditoria.
+
+Proximo passo:
+- Claude revisar a entrega e emitir parecer.
+
+Acao esperada:
+- Marcio aguardar a auditoria ou pedir revisao em lote agora.
+```
+
 ### Claude
 - Apoio estrategico e analitico.
 - Revisa arquitetura, riscos, trade-offs e clareza de requisitos.
 - Ajuda com checklists de aceite e qualidade.
 - Quando o tema envolver entidades do sistema, deve apoiar a conversa com desenho e diagramas alem da explicacao textual.
+
+**Exemplo canonico de encerramento operacional (DIR-085):**
+```text
+Estado atual:
+- Implementacao concluida com evidencias anexadas.
+
+Proximo passo:
+- Decisao do The Gate sobre aprovacao final.
+
+Acao esperada:
+- Marcio responder "aprovado", "vetado" ou "aprovado com condicao".
+```
 
 ## Acordo de trabalho
 - Nao existe competicao entre agentes; existe especializacao.

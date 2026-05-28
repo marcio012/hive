@@ -21,7 +21,7 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-011
 **thread:** debate-023-proximo-passo-explicito
-**Status:** pendente
+**Status:** executada — ✅ Aprovado em 2026-05-28; commitar. Rollout DIR-085 concluído.
 **Tipo:** handoff-executavel
 
 ---

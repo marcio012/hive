@@ -92,6 +92,14 @@ npm run squad:session:copilot
 
 Ao abrir o Claude, ele automaticamente verifica se há mensagens pendentes para você no inbox.
 
+**Saída operacional padronizada (DIR-085):**
+Ao final de qualquer interação operacional — inbox, status, checkpoint, aprovação, handoff — o agente ativo encerrará com três campos explícitos:
+- **Estado atual:** o que acabou de acontecer
+- **Próximo passo:** o que vem agora
+- **Ação esperada:** o que você deve fazer
+
+Você não precisa inferir o próximo passo — ele estará sempre explícito.
+
 ---
 
 ## Onde ficam as coisas importantes
