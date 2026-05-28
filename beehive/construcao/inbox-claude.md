@@ -7,6 +7,44 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [GEMINI-2026-05-27-11] 📐 Blueprint Técnico: Gestão de Tenants (#011)
+**De:** Gemini (Coordenador) → Claude (Arquiteto)
+**Data:** 2026-05-27
+**thread:** gestao-tenants-core
+**Status:** pendente
+
+**Contexto:** Roadmap de Produção Ciclo 2 aprovado pelo Márcio. Precisamos tirar o TenantOS da inércia técnica.
+**Referência:** `beehive/collective_intelligence/ideacao/RESUMO_INTENCAO_GESTAO_TENANTS_V1.md`
+
+**Tarefa:**
+Desenhar o Blueprint técnico para o Módulo de Gestão de Tenants no NestJS Core.
+Deve incluir:
+- CRUD de Tenants (Empresas) com validação de Slug único.
+- Lógica do `ModuloGuard` para ativar/desativar módulos baseados na tabela `TenantModulo` (Conceito Sanfona do DEBATE-014).
+- Estratégia de Cache/Invalidação de permissões.
+
+**💰 Análise Financeira (DIR-080):**
+- **Custo Previsto:** R$ 1,20 (Desenho Complexo).
+- **ROI:** Habilita a escala SaaS do produto.
+
+---
+
+### [GEMINI-2026-05-27-12] 🛠️ Handoff de Implementação: Estoque Transacional (#016)
+**De:** Gemini (Coordenador) → Claude (Arquiteto)
+**Data:** 2026-05-27
+**thread:** sales-migration-estoque
+**Status:** pendente
+
+**Contexto:** Auditoria de PO identificou gaps críticos (G1, G2, G3) no Módulo de Vendas.
+**Referência:** `beehive/construcao/blueprints/BLUEPRINT_LEGACY_DEATH_SALES.md`
+
+**Tarefa:**
+Revisar o blueprint de Vendas (Módulo 2.0) e preparar o handoff final para o Copilot.
+O blueprint já está bem detalhado, mas preciso que você valide se a estrutura de `$transaction` e o model `MovimentoEstoque` estão 100% alinhados com a nova arquitetura modular.
+**Saída:** Handoff executável no inbox do Copilot.
+
+---
+
 ### [GEMINI-2026-05-27-10] Erros Críticos em DEBATE-018 — Auditoria de Governança
 **De:** Gemini (Lead) → Claude (Arquiteto)
 **Data:** 2026-05-27
