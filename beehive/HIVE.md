@@ -26,9 +26,9 @@
     *   Uso: Brainstorming ativo, desenho de fluxos, Blueprints.
     *   Gatilho: `brainstorm:ativa`, `design:fluxo`.
 
-3.  **🛡️ TECH LEAD (Auditor Clínico)**
-    *   Uso: Code Review, The Gate, Auditoria, Infraestrutura.
-    *   Gatilho: `squad:review`, `squad:gate`.
+3.  **🗂️ COORDENADOR (Guardião do Fluxo)**
+    *   Uso: Planejamento, desbloqueio, handoffs, orquestração.
+    *   Gatilho: `npm run gemini:coordenador`, `squad:next`.
 
 0.  **🚪 SAIR**
 

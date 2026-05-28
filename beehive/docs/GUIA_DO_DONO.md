@@ -117,7 +117,7 @@ O Gemini muda de "personalidade" dependendo do que você precisa:
 |-------|-----------|----------|
 | **PO (Guardião do Valor)** | `npm run gemini:po` | Validar se uma ideia gera valor real |
 | **Projetista** | `npm run gemini:projetista` | Desenhar fluxos, modelar soluções |
-| **Tech Lead** | `npm run gemini:techlead` | Revisar decisões, auditar código |
+| **Coordenador** | `npm run gemini:coordenador` | Planejar fluxo, destravar e orquestrar handoffs |
 
 Você também pode usar **prefixos no chat** sem trocar de papel:
 - `brainstorm: [sua ideia]` → Gemini organiza o pensamento

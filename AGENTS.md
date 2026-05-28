@@ -11,7 +11,7 @@ Toda a definição de papéis, permissões e hierarquia de escalada agora reside
 
 - **Hive - Owner**: Proprietário da Colmeia, decisão final e direção do produto.
 - **Kernel (DNA)**: Núcleo de orquestração e interface de sistema. Inicia em estado de espera.
-- **Cartuchos (Roles)**: Identidades dinâmicas (PO, Tech Lead, Projetista) carregadas sob demanda.
+- **Cartuchos (Roles)**: Identidades dinâmicas (PO, Projetista, Coordenador) carregadas sob demanda.
 
 ## Instruções de Inicialização
 

@@ -3,19 +3,19 @@ titulo: Diretrizes Globais da Colmeia (SSoT)
 tipo: governanca
 status: ativo
 ultima_revisao: 2026-05-28
-responsavel: Márcio (Owner) | Gemini (Tech Lead)
+responsavel: Márcio (Owner) | Gemini (Facilitador Estratégico) | Claude (Arquiteto)
 ---
 
 # 📜 Diretrizes Globais — Hive Framework
 
-Este documento é a **Fonte Única de Verdade (Single Source of Truth)** para o desenvolvimento e orquestração. Qualquer violação destas regras deve ser barrada pelo Hive Tech Lead.
+Este documento é a **Fonte Única de Verdade (Single Source of Truth)** para o desenvolvimento e orquestração. Qualquer violação destas regras deve ser barrada pelo Claude (Arquiteto + Auditor Técnico).
 
 ---
 
 ## 1. Regras de Ouro da Colmeia
 1.  **Independência de Contexto:** IAs de execução (Copilot/Claude) nunca recebem o diretório `hive/` ao atuar em produtos (ex: TenantOS). Elas operam apenas sobre o código da obra alvo.
-2.  **Contratos Obrigatórios:** Nenhuma funcionalidade complexa inicia sem um arquivo de contrato técnico (ex: `CONTRATO_ONBOARDING.md`) validado pelo Tech Lead.
-3.  **Veto do Lead:** Se a implementação de qualquer agente divergir do contrato ou dos blueprints, o Tech Lead **DEVE** bloquear a tarefa e reportar ao Márcio.
+2.  **Contratos Obrigatórios:** Nenhuma funcionalidade complexa inicia sem um arquivo de contrato técnico (ex: `CONTRATO_ONBOARDING.md`) validado pelo Claude (Arquiteto).
+3.  **Veto do Arquiteto:** Se a implementação de qualquer agente divergir do contrato ou dos blueprints, o Claude **DEVE** bloquear a tarefa e reportar ao Márcio.
 4.  **Autoridade da Raiz:** O Framework é o repositório inteiro. A pasta `beehive/` é o diretório de ativos.
 
 ## 2. Padrões Técnicos Universais
@@ -83,7 +83,7 @@ Para garantir a modularidade e a escalabilidade do HIVE, as regras de atuação 
 ## 6. Manutenção de Diretrizes
 - Toda nova diretriz recebe um ID sequencial (`DIR-NNN`).
 - Nunca deletar uma entrada — apenas marcar como revogada no histórico.
-- O Tech Lead é o responsável por manter este documento sincronizado com as decisões do Márcio.
+- O Claude (Arquiteto + Auditor Técnico) é o responsável por manter este documento sincronizado com as decisões do Márcio.
 
 ---
 ## 7. DIR-084 — Protocolo de Rastreio por ID
@@ -96,4 +96,4 @@ Todo handoff, work order e commit deve referenciar o ID pai do backlog.
 - Item concluído no backlog registra: data + commit hash
 
 ---
-*Assinado: Gemini 1.5 Pro (Hive Tech Lead)*
+*Assinado: Gemini 1.5 Pro (Facilitador Estratégico) + Claude Sonnet 4.6 (Arquiteto)*

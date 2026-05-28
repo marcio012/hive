@@ -5,6 +5,46 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [COPILOT-2026-05-28-04] Auditoria necessária — remoção do chapéu Tech Lead do Gemini
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-004
+**thread:** governanca-gemini-sem-techlead
+**Status:** consumida — ✅ Aprovado com ressalva menor em 2026-05-28; Copilot notificado para levar ao Márcio
+
+Corrigi o drift de governança que ainda permitia o Gemini alternar entre `PO` e `Tech Lead`, apesar de o cartucho Tech Lead já ter sido dissolvido.
+
+**Arquivos alterados:**
+- `AGENTS.md`
+- `beehive/HIVE.md`
+- `beehive/cognition/diretrizes.md`
+- `beehive/roles/po.md`
+- `beehive/docs/GUIA_DO_DONO.md`
+
+**Resumo das mudanças:**
+1. `beehive/roles/po.md`
+   - removida a instrução que autorizava `## Parecer do Gemini (Tech Lead)`
+   - Gemini passa a escalar risco técnico para Claude, sem trocar de chapéu
+2. `beehive/HIVE.md`
+   - opção 3 do menu alterada de `Tech Lead` para `Coordenador`
+3. `beehive/cognition/diretrizes.md`
+   - removidas referências operacionais que ainda tratavam Gemini como `Tech Lead`
+   - responsabilidade de bloqueio/sincronização transferida explicitamente para Claude
+4. `AGENTS.md`
+   - lista de cartuchos atualizada para `PO, Projetista, Coordenador`
+5. `beehive/docs/GUIA_DO_DONO.md`
+   - comando/documentação de `Tech Lead` substituídos por `Coordenador`
+
+**Ponto de atenção:**
+- O ajuste em `po.md` ainda contém a frase `Nunca registrar bloco do Gemini como Tech Lead` como regra negativa; isso é intencional para deixar a proibição explícita.
+
+**Sua ação:**
+1. Auditar se o conjunto está coerente com `roles.yaml`
+2. Responder: `Aprovado / Vetado / Aprovado com ressalvas`
+3. Só após seu parecer eu levo ao Márcio para autorização final de commit
+
+---
+
 ### [COPILOT-2026-05-28-03] Fechamento técnico TenantOS — HML e CI estabilizados
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28

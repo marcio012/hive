@@ -116,8 +116,8 @@ Responder **apenas** às questões direcionadas ao PO. Não emitir diagnóstico 
 
 **Regra de rotulagem obrigatória:** o título da seção deve declarar explicitamente qual papel está falando:
 - `## Parecer do Gemini (PO) — [DEBATE-NNN]` — quando responder como Product Owner
-- `## Parecer do Gemini (Tech Lead) — [DEBATE-NNN]` — quando responder sobre risco técnico/sistêmico
-- Registrar dois blocos sequenciais se ambos os papéis forem relevantes — nunca misturar num único bloco sem rótulo
+- Quando surgir risco técnico/sistêmico, o Gemini **não assume chapéu técnico**: deve registrar a implicação de produto e escalar a análise técnica para o Claude
+- Nunca registrar bloco do Gemini como `Tech Lead`
 
 Formato de saída obrigatório:
 ```
