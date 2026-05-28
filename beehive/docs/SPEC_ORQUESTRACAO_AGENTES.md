@@ -57,6 +57,8 @@ esperado: ...
 status: pendente | executada | consumida
 ```
 
+> **DIR-085:** quando a mensagem representar um handoff, status ou retomada operacional, a resposta associada deve explicitar **Estado atual**, **Próximo passo** e **Ação esperada**. Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
 **Por que isso importa:**
 É o modelo de mensageria assíncrona do squad. A ferramenta futura substitui os arquivos por um bus de mensagens real, mantendo o mesmo contrato.
 
@@ -97,6 +99,8 @@ Márcio decide
         ↓
 Claude fecha debate + gera handoff de implementação
 ```
+
+> **DIR-085:** a consolidação do debate, o handoff emitido pelo Claude e os status intermediários entre agentes devem usar o encerramento com **Estado atual**, **Próximo passo** e **Ação esperada**. Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
 
 **Por que isso importa:**
 É o ciclo de tomada de decisão do squad. A ferramenta futura automatiza o disparo (envia `opiniao:` para cada agente), monitora quem respondeu, notifica Márcio quando todos têm parecer e apresenta a consolidação.

@@ -62,6 +62,8 @@ sequenceDiagram
     G->>U: Status: Tarefa Concluída
 ```
 
+> **DIR-085:** bootstrap, handoff e status de encerramento deste ciclo são interações operacionais e devem explicitar **Estado atual**, **Próximo passo** e **Ação esperada**. Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
 1.  **Bootstrap (`session-start`):**
     - O agente é iniciado.
     - O script detecta o diretório do projeto.

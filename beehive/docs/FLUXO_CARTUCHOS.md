@@ -73,6 +73,8 @@ flowchart TD
 
 ## Por Cartucho — O que entra, o que sai, o que vem depois
 
+> **DIR-085:** as interações operacionais descritas abaixo — plano de voo, handoff, auditoria, execução e gate — devem encerrar com **Estado atual**, **Próximo passo** e **Ação esperada**. Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
 ### 🐝 Coordenador
 ```
 ENTRADA:

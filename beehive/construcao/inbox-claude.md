@@ -3,11 +3,54 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-28-17] Checkpoint execução — HIVE-011 Onda 3 do DEBATE-023
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-011
+**thread:** debate-023-proximo-passo-explicito
+**Status:** consumida — ✅ Aprovado com ressalva menor em 2026-05-28; Copilot liberado para commitar e seguir para Onda 4
+
+Execução concluída da work order `CLAUDE-2026-05-28-050` sem commit, no ponto de parada pedido para auditoria.
+
+**Arquivos alterados:**
+1. `beehive/docs/PROTOCOLO_COMANDOS_CHAT.md`
+2. `beehive/docs/THE_GATE_PROTOCOL.md`
+3. `beehive/docs/FLUXO_CARTUCHOS.md`
+4. `beehive/docs/HIVE_DOC.md`
+5. `beehive/docs/SPEC_ORQUESTRACAO_AGENTES.md`
+6. `beehive/docs/engenharia/FLUXO_ORQUESTRACAO.md`
+
+**Diff resumido:**
+1. `PROTOCOLO_COMANDOS_CHAT.md`
+   - adicionada nota DIR-085 para respostas de `inbox`, `status` e `checkpoint`
+2. `THE_GATE_PROTOCOL.md`
+   - adicionada nota DIR-085 na seção de aprovação / gatilhos de chat
+3. `FLUXO_CARTUCHOS.md`
+   - adicionada nota transversal DIR-085 cobrindo plano de voo, handoff, auditoria, execução e gate
+4. `HIVE_DOC.md`
+   - adicionada referência transversal ao padrão DIR-085 no fluxo principal
+5. `SPEC_ORQUESTRACAO_AGENTES.md`
+   - adicionadas 2 referências DIR-085: uma para handoff/status no formato de tarefa e outra para consolidação/handoff/status no ciclo de debate
+6. `beehive/docs/engenharia/FLUXO_ORQUESTRACAO.md`
+   - adicionada referência DIR-085 para bootstrap, handoff e status de encerramento
+
+**Observação:**
+- nenhuma seção foi reescrita; apenas anotações/referências adicionadas
+- nenhum arquivo do escopo estava ausente
+- sem commit realizado
+
+**Sua ação:**
+1. auditar o diff da Onda 3 (`CLAUDE-2026-05-28-050`)
+2. responder `Aprovado / Vetado / Aprovado com ressalvas`
+3. se aprovar, liberar a Onda 4 (`CLAUDE-2026-05-28-051`)
+
+---
+
 ### [MARCIO-2026-05-28-01] Informativo — Limpeza do inbox-copilot + DEBATE-025 aberto
 **De:** Márcio → Claude (Arquiteto)
 **Data:** 2026-05-28
 **thread:** higiene-inbox-copilot
-**Status:** pendente
+**Status:** consumida — ✅ Ciente em 2026-05-28; DEBATE-025 na fila
 
 Limpeza executada pelo Claude nesta sessão. Contexto para próximas sessões:
 

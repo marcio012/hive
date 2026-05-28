@@ -96,6 +96,8 @@ O squad opera via chat (Claude Code, Copilot CLI, Gemini CLI). Hoje, parte dos c
 4. **Saída padronizada** — cada comando tem um formato fixo de resposta (como `opiniao:` já tem)
 5. **Caso de agente errado** — se o comando não pertence ao agente, ele responde: `"Este comando pertence ao [agente]. Encaminhe para o terminal correto."`
 
+> **DIR-085:** quando comandos operacionais como `inbox`, `status` e `checkpoint` gerarem resposta, o encerramento deve incluir **Estado atual**, **Próximo passo** e **Ação esperada**. Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
 ---
 
 ## Roadmap de implementação

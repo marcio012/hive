@@ -50,6 +50,8 @@ Quando o trabalho técnico termina, o Gemini (Lead) apresentará o seguinte rela
 > 
 > **Deseja afirmar este commit? (Sim/Não)**
 
+> **DIR-085:** como esta é uma interação operacional de aprovação, a saída do Gate deve encerrar com **Estado atual**, **Próximo passo** e **Ação esperada**. Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
 ### 3. Atalhos do Framework
 - `npm run squad:gate`: Roda a validação técnica que prepara o portão.
 - `npm run squad:close`: (Em implementação) O comando que executa o commit final após sua afirmação.

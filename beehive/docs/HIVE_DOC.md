@@ -48,6 +48,8 @@ sequenceDiagram
     O->>Git: 10. THE GATE: Aprovação e Commit
 ```
 
+Como padrão transversal de operação, toda interação de fluxo ativo no Hive — inbox, handoff, status, checkpoint, auditoria e pedido de aprovação — deve encerrar com **Estado atual**, **Próximo passo** e **Ação esperada**. Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
 ---
 
 ## 4. Níveis de Operação (Decision Flow)
