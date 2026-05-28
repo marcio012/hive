@@ -210,10 +210,27 @@ Faturamento recomendado (margem alvo)
 
 ---
 
-## 9. ✅ Decisão Final
+## 9. 🏆 Consolidação e Decisão Final (Gemini Lead & Márcio)
+
 **Data:** 2026-05-27
-**Aprovado por:** Márcio (Owner)
-**Veredito:** ✅ Go — implementar telemetria em tela com formato híbrido
+**Veredito:** ✅ **GO (Aprovado pelo Márcio)** — Implementação da Telemetria v2 (Visibilidade em Tela).
+
+### 📝 Resumo do Acordo:
+1.  **Formato Híbrido:**
+    - **Microbloco Automático:** Exibido a cada resposta via `hive-telemetry.sh`. Contém Agente, Modelo, Custo da Resposta, Acumulado Sessão e Acumulado Dia.
+    - **Resumo Expandido:** Exibido sob demanda via `hive-cost.sh`. Contém Break-even e Faturamento Recomendado.
+2.  **Arquitetura Hook-Based:** O display automático deve ser disparado por hooks (como o `stop_hook`), garantindo zero acoplamento direto nos agentes (Claude/Copilot).
+3.  **Configurabilidade:** A margem-alvo para o cálculo de break-even deve ser definida em `config.env` (`MARGEM_ALVO`), permitindo ajuste sem alteração de código.
+4.  **Débito Técnico:** Registrar a necessidade de migrar o Copilot para o sistema de hooks de sessão para padronizar o disparo da telemetria.
+
+### 🚀 Próximos Passos:
+- **Copilot:** Atualizar `beehive/bin/hive-telemetry.sh` para suportar a saída em tela.
+- **Copilot:** Criar/Evoluir `beehive/bin/hive-cost.sh` com a lógica de projeção financeira (break-even).
+- **Claude:** Revisar a implementação final para garantir que o formato no terminal está limpo e legível.
+
+---
+*Assinado: Gemini Lead (Hive OS)*
+
 
 ### Contratos aprovados
 
@@ -248,7 +265,7 @@ Faturamento recomendado:       R$ Z,ZZ
 
 | Entrega | Responsável | Status |
 |---|---|---|
-| Atualizar `hive-telemetry.sh` com display em tela (Contrato A) | Copilot (COPILOT-030) | ⏳ Handoff criado |
-| Criar/atualizar `hive-cost.sh` com resumo financeiro (Contrato B) | Copilot (COPILOT-030) | ⏳ Handoff criado |
-| Adicionar `MARGEM_ALVO` em `beehive/config.env` | Copilot (COPILOT-030) | ⏳ Handoff criado |
-| Adicionar `squad:cost` no `package.json` | Copilot (COPILOT-030) | ⏳ Handoff criado |
+| Atualizar `hive-telemetry.sh` com display em tela (Contrato A) | Copilot (COPILOT-030) | ✅ Entregue e auditado |
+| Criar/atualizar `hive-cost.sh` com resumo financeiro (Contrato B) | Copilot (COPILOT-030) | ✅ Entregue e auditado |
+| Adicionar `MARGEM_ALVO` em `beehive/config.env` | Copilot (COPILOT-030) | ✅ Entregue e auditado |
+| Adicionar `squad:cost` no `package.json` | Copilot (COPILOT-030) | ✅ Entregue e auditado |

@@ -1,7 +1,7 @@
 ---
 titulo: DEBATE-015 — Governança Financeira, ROI e Higiene de Contexto v2
 tipo: estratégico / governança
-status: aberto
+status: consolidado
 data: 2026-05-27
 responsavel: Gemini Lead
 participantes:
@@ -11,7 +11,44 @@ participantes:
   - Márcio (Owner / The Gate)
 ---
 
-# 🗣️ DEBATE-015: O Hive Financeiramente Consciente
+# 🗣️ DEBATE-015: O Hive Financeiramente Consciente [CONSOLIDADO]
+
+## 11. 🏆 Consolidação e Decisão Final (Gemini Lead)
+
+**Data:** 2026-05-27
+**Veredito:** **GO** para Implementação do Protocolo de Governança Financeira v2.
+
+### 📝 Resumo do Acordo:
+1.  **DIR-071 (Higiene de Contexto v2):** Aprovado. Adotaremos a divisão em `Context Packs` (Core, Task, Raw). 
+    - **Anchor Set:** Claude definirá um conjunto mínimo de arquivos sentinela que acompanham todo Task Pack para evitar cegueira de dependências cruzadas.
+2.  **MCP Integration:** Aprovado como mecanismo de pull on-demand para complementar os Task Packs, reduzindo o custo de tokens de entrada.
+3.  **DIR-072 (Gestão Financeira e ROI):** Aprovado. Threads de debate e execução agora exigem estimativa de custo e registro de ROI.
+    - **Tabela de Custos:** Será manual em marcos relevantes (PoC no DEBATE-015 e DEBATE-017) enquanto a automação via telemetria (DEBATE-017) não for concluída.
+4.  **IA Híbrida (Ollama Offload):** Aprovado como ferramenta auxiliar.
+    - **Regra:** Apenas para subtarefas classificadas como "descartáveis ou revisáveis" (testes unitários, rascunho de docs, sanitização). A trilha oficial (Gemini/Claude/Copilot) mantém a autoridade sobre o código e arquitetura.
+
+### 🚀 Próximos Passos:
+- **Copilot:** Criar Blueprint para implementação do `ContextPackManager` (utilitário para montar os packs).
+- **Claude:** Definir o `Anchor Set` oficial do framework Hive.
+- **Gemini:** Manter o monitoramento de ROI nos debates ativos.
+
+---
+
+## 💰 Análise de Custo e ROI (Deste Debate)
+
+| Fase | Agente | Tokens (In/Out) | Custo (BRL) |
+|---|---|---|---|
+| Abertura | Gemini Lead | 15k / 1.5k | R$ 0,85 |
+| Parecer Claude | Claude | 18k / 2k | R$ 0,80 |
+| Parecer Copilot | Copilot | 12k / 1.5k | R$ 0,45 |
+| Consolidação | Gemini Lead | 25k / 2k | R$ 0,90 |
+| **TOTAL FINAL** | — | **70k / 7k** | **R$ 3,00** |
+
+**ROI Estimado:** Economia projetada de 40% no custo mensal de APIs do squad. Payback esperado em 1 semana de operação.
+
+---
+*Assinado: Gemini Lead (Hive OS)*
+
 
 ## 1. 🎯 A Intenção (Márcio & Gemini)
 

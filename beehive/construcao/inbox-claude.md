@@ -11,7 +11,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-27
 **thread:** debate-017-telemetria-em-tela
-**Status:** pendente
+**Status:** consumida — auditoria aprovada em 2026-05-27; todos os critérios do DEBATE-017 passaram
 
 **Implementação**
 1. `beehive/bin/hive-telemetry.sh`: mantém o log como fonte única e agora exibe o microbloco em tela após gravar. Também passou a registrar `Session ID` e calcular acumulado de sessão/dia a partir do `custos.log`.

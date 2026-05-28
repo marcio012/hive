@@ -14,6 +14,7 @@
 
 ## ✅ Concluído
 - [x] #001 — Redesign dos 4 atores do squad (2026-05-26)
+- [x] #002 — Documentação oficial do Hive (2026-05-26)
 - [x] #006 — Telemetria de custo por agente (2026-05-26)
 - [x] #007 — Simplificação da estrutura de pastas (2026-05-26)
 - [x] #008 — Milestone: Morte do Legado (Auth + Vendas + Cleanup) (2026-05-26)
