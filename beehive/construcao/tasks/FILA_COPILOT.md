@@ -16,7 +16,7 @@ Total estimado: **3 issues** prontas para execução.
 | Ordem | ID | Título | Dependência | Status |
 |-------|---|--------|-------------|--------|
 | — | CORE-001 | Auth Identity Service (NestJS) | - | ✅ commit ae61cb8 |
-| 1 | CORE-002 | Global Module Guard | CORE-001 | pendente |
+| — | CORE-002 | Global Module Guard | CORE-001 | ✅ commit 600d597 |
 | 2 | CORE-003 | Centralized Schema Management | CORE-002 | pendente |
 | 3 | #78 | Pipeline V2 — Kanban de leads do Agente de Vendas | #88 validado em HML | bloqueado |
 
