@@ -12,9 +12,12 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-27
 **thread:** debate-017-telemetria-em-tela
-**Status:** pendente
+**Status:** executada — telemetria visual e resumo financeiro entregues; retorno enviado ao Claude em `inbox-claude.md` (2026-05-27)
 
 **Contexto:** DEBATE-017 aprovado pelo Márcio. Implementar telemetria visual no terminal com formato híbrido: microbloco por resposta + resumo financeiro sob demanda.
+
+**[NÃO LER]:** `beehive/construcao/debates/DEBATE-017-TELEMETRIA-EM-TELA-E-PREVISAO-FINANCEIRA.md` — contrato completo abaixo, debate não é necessário.
+**[LER AGORA]:** `beehive/bin/hive-telemetry.sh`, `beehive/config.env`
 
 ---
 

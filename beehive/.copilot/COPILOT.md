@@ -104,12 +104,21 @@ O bloco contem o estado atual da sessao, incluindo:
 
 Se `NEXT_STEP` referenciar um arquivo, ler o arquivo antes de qualquer implementacao.
 
-## Arquivos de referencia obrigatoria no inicio da sessao
-- `AGENTS.md` (entrada compartilhada do repositorio)
-- `COPILOT.md` (entrada especifica do Copilot na raiz)
-- `.copilot/COPILOT.md` (este apendice)
-- `beehive/construcao/inbox-copilot.md` (tarefas pendentes — leia PRIMEIRO)
-- `.hive-agent/session-state.env` (estado compartilhado do Hive)
+## Arquivos de referencia no inicio da sessao
+
+**Leitura obrigatória (mudam a cada sessão):**
+- `beehive/construcao/inbox-copilot.md` — tarefas pendentes, leia PRIMEIRO
+- `.hive-agent/session-state.env` — estado atual (issue ativa, NEXT_STEP)
+
+**Leitura sob demanda (só quando NEXT_STEP referenciar ou após mudança de governança):**
+- `AGENTS.md` — estável, não reler a cada sessão
+- `COPILOT.md` (raiz) — estável, não reler a cada sessão
+- `.copilot/COPILOT.md` (este arquivo) — já injetado como contexto pelo Copilot
+
+**Regra DIR-071 — Context Pack:**
+- Se o handoff tiver bloco `[NÃO LER]`, ignorar os arquivos listados nele
+- Se o handoff tiver bloco `[LER AGORA]`, ler apenas os arquivos listados
+- Nunca ler arquivos de debate ou blueprint por iniciativa própria — só se o handoff indicar
 
 <!-- REMOVIDOS (arquivo inexistente ou redundante):
 - `.github/copilot-instructions.md` — não existe mais
