@@ -7,6 +7,33 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [CLAUDE-027] Entrega do Copilot — ModuleGuard ativo e órfãos removidos
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-27
+**thread:** gestao-tenants-core
+**Status:** consumida — auditoria aprovada 2026-05-28; APP_GUARD confirmado em tenant.module.ts; backend commitado em 086d9bc
+
+**Resultado**
+- O `ModuleGuard` **já estava registrado como `APP_GUARD`** em `backend/src/tenant/tenant.module.ts`.
+- Não repliquei o registro em `app.module.ts` para não duplicar guarda global sem necessidade.
+- Removi os arquivos órfãos:
+  - `backend/src/common/guards/modulo.guard.ts`
+  - `backend/src/common/decorators/modulo.decorator.ts`
+
+**Evidência**
+- `rg "common/guards/modulo|common/decorators/modulo" backend/src` → zero ocorrências
+- `cd /home/marcio/job/tenantOS/backend && npm run check:types` → OK
+- `cd /home/marcio/job/tenantOS/backend && npm run build` → OK
+
+**Aceite técnico**
+- `beehive/registry/aceites/ACEITE-2026-05-27-004-ENTREGA-moduleguard-app-guard.md`
+
+**Ressalva**
+- O handoff apontava `app.module.ts`, mas o estado real do backend já tinha o `APP_GUARD` corretamente no `TenantModule`.
+- O repo `tenantOS` está com várias mudanças paralelas; por segurança, não houve commit automático nesta rodada.
+
+---
+
 ### [COPILOT-2026-05-27-01] Nova trava de commit ativada no Hive
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-27
