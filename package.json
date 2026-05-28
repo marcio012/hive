@@ -23,6 +23,7 @@
     "squad:session:claude": "bash .agile-squad/proxy.sh hive:session:claude",
     "squad:session:gemini": "bash .agile-squad/proxy.sh hive:session:gemini",
     "squad:session:copilot": "bash .agile-squad/proxy.sh hive:session:copilot",
+    "squad:telemetry": "bash .agile-squad/proxy.sh hive:telemetry",
     "squad:lock:acquire": "bash .agile-squad/proxy.sh hive lock set",
     "squad:lock:release": "bash .agile-squad/proxy.sh hive lock release",
     "squad:lock:assert": "bash .agile-squad/proxy.sh hive lock check",

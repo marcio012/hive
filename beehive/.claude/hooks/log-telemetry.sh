@@ -77,7 +77,7 @@ IFS='|' read -r tokens_in tokens_out model new_line <<< "$RESULT"
 custo_raw=$(echo "scale=10; ($tokens_in * 0.000015) + ($tokens_out * 0.000075)" | bc 2>/dev/null || echo "0")
 custo=$(printf "%.4f" "$custo_raw" 2>/dev/null || echo "0.0000")
 
-bash "$TELEMETRY_SCRIPT" "Claude Arquiteto" "$model" "$tokens_in" "$tokens_out" "$custo" >/dev/null 2>&1
+SESSION_ID="$SESSION_ID" bash "$TELEMETRY_SCRIPT" "Claude Arquiteto" "$model" "$tokens_in" "$tokens_out" "$custo"
 
 # Atualiza checkpoint para a próxima rodada
 mkdir -p "$CLAUDE_DIR"

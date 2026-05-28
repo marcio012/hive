@@ -9,6 +9,8 @@ set -euo pipefail
 
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 LOG_FILE="$ROOT_DIR/beehive/registry/telemetria/custos.log"
+CONFIG_FILE="$ROOT_DIR/beehive/config.env"
+TELEMETRY_SCRIPT="$ROOT_DIR/beehive/bin/hive-telemetry.sh"
 TODAY=$(date '+%Y-%m-%d')
 MODE="${1:-}"
 
@@ -20,6 +22,69 @@ YELLOW="\033[33m"
 CYAN="\033[36m"
 RED="\033[31m"
 RESET="\033[0m"
+
+strip_quotes() {
+  local value="${1:-}"
+  value="${value%\"}"
+  value="${value#\"}"
+  printf '%s' "$value"
+}
+
+fmt_money() {
+  local value="${1:-0}"
+  local decimals="${2:-2}"
+  printf "%.${decimals}f" "$value" 2>/dev/null || printf "%s" "$value"
+}
+
+read_margin() {
+  [[ -f "$CONFIG_FILE" ]] || {
+    echo "ERRO: arquivo de configuração não encontrado em $CONFIG_FILE" >&2
+    exit 1
+  }
+
+  local raw
+  raw=$(grep -E '^MARGEM_ALVO=' "$CONFIG_FILE" | tail -n 1 | cut -d'=' -f2- || true)
+  raw=$(strip_quotes "$raw")
+
+  [[ -n "$raw" ]] || {
+    echo "ERRO: MARGEM_ALVO ausente em $CONFIG_FILE" >&2
+    exit 1
+  }
+
+  awk -v margin="$raw" 'BEGIN { exit !(margin > 0 && margin < 1) }' || {
+    echo "ERRO: MARGEM_ALVO deve ser um decimal entre 0 e 1 em $CONFIG_FILE" >&2
+    exit 1
+  }
+
+  printf '%s' "$raw"
+}
+
+sum_cost_for_day() {
+  local target_day="$1"
+
+  awk -v target_day="$target_day" '
+    /^Data\/Hora:/ {
+      day = substr($2, 1, 10)
+    }
+
+    /^Custo Estimado da Rodada:/ {
+      cost = $6 + 0
+    }
+
+    /^=+$/ {
+      if (day == target_day && cost != "") {
+        total += cost
+      }
+
+      day = ""
+      cost = ""
+    }
+
+    END {
+      printf "%.4f", total + 0
+    }
+  ' "$LOG_FILE"
+}
 
 # ── Modo: registrar custo manual do Claude ──────────────────────────────────
 if [[ "$MODE" == "--log" ]]; then
@@ -35,19 +100,7 @@ if [[ "$MODE" == "--log" ]]; then
   # Output: $15/1M = R$0.000075/token
   custo=$(echo "scale=4; ($tokens_in * 0.000015) + ($tokens_out * 0.000075)" | bc 2>/dev/null || echo "0.0000")
 
-  mkdir -p "$(dirname "$LOG_FILE")"
-  cat >> "$LOG_FILE" <<EOF
-==================================================
-📊 TELEMETRIA DE TOKENS — [Claude Arquiteto]
-Data/Hora: $(date '+%Y-%m-%d %H:%M:%S')
-Modelo Ativo: [$modelo]
---------------------------------------------------
-Tokens de Entrada (Prompt): $tokens_in
-Tokens de Saída (Completion): $tokens_out
-Custo Estimado da Rodada: R$ $custo BRL
-==================================================
-EOF
-  echo -e "${GREEN}[OK]${RESET} Custo registrado: R\$ $custo BRL"
+  bash "$TELEMETRY_SCRIPT" "Claude Arquiteto" "$modelo" "$tokens_in" "$tokens_out" "$custo"
   exit 0
 fi
 
@@ -57,6 +110,19 @@ if [[ ! -f "$LOG_FILE" ]]; then
   echo -e "   $LOG_FILE"
   echo ""
   echo -e "${DIM}O log é criado automaticamente quando os agentes registram uso.${RESET}"
+  exit 0
+fi
+
+if [[ -z "$MODE" ]]; then
+  MARGEM_ALVO=$(read_margin)
+  custo_dia=$(sum_cost_for_day "$TODAY")
+  break_even=$(awk -v cost="$custo_dia" -v margin="$MARGEM_ALVO" 'BEGIN { printf "%.4f", cost / (1 - margin) }')
+  margem_pct=$(awk -v margin="$MARGEM_ALVO" 'BEGIN { printf "%.0f", margin * 100 }')
+
+  echo "📊 Resumo Financeiro — $TODAY"
+  printf "Custo operacional do dia:      R$ %s\n" "$(fmt_money "$custo_dia" 2)"
+  printf "Break-even (margem %s%%):       R$ %s faturamento mínimo\n" "$margem_pct" "$(fmt_money "$break_even" 2)"
+  printf "Faturamento recomendado:       R$ %s\n" "$(fmt_money "$break_even" 2)"
   exit 0
 fi
 
@@ -122,13 +188,6 @@ for entrada in "${ENTRADAS[@]}"; do
   total_custo=$(echo "scale=4; $total_custo + $custo" | bc)
 done
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
-fmt_brl() {
-  local v="$1"
-  [[ "$v" == .* ]] && v="0$v"
-  printf "%.4f" "$v" 2>/dev/null || echo "$v"
-}
-
 # ── Exibe dashboard ───────────────────────────────────────────────────────────
 echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════╗${RESET}"
@@ -146,7 +205,7 @@ done | sort -t'|' -k1 -rn | cut -d'|' -f2-)
 
 while IFS= read -r agente; do
   [[ -z "$agente" ]] && continue
-  custo_fmt=$(fmt_brl "${agente_custo[$agente]}")
+  custo_fmt=$(fmt_money "${agente_custo[$agente]}" 4)
   printf "%-25s %8s %12s %12s %12s\n" \
     "$agente" \
     "${agente_rodadas[$agente]}" \
@@ -155,7 +214,7 @@ while IFS= read -r agente; do
     "R\$ $custo_fmt"
 done <<< "$sorted_agents"
 
-total_fmt=$(fmt_brl "$total_custo")
+total_fmt=$(fmt_money "$total_custo" 4)
 echo -e "${DIM}──────────────────────────────────────────────────────────────────${RESET}"
 echo -e "${BOLD}Total de rodadas: ${#ENTRADAS[@]}${RESET}"
 echo -e "${BOLD}${GREEN}Total estimado:   R\$ $total_fmt BRL${RESET}"
