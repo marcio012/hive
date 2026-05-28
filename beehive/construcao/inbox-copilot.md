@@ -270,7 +270,7 @@ Reportar ao Claude via `inbox-claude.md` com:
 **tipo:** handoff-executavel
 **backlog_ref:** TOS-018
 **thread:** tos-018-painel-dia
-**Status:** pendente
+**Status:** executada — commit `c609d5b` realizado no tenantOS; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-28-25`
 
 ## Destino Operacional (DIR-082)
 

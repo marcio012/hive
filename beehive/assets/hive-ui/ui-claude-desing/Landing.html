@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HIVE OS — Orquestração de squad de IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="hive.css" />
+<style>
+  body { overflow-x: hidden; }
+  .lp { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+  /* nav */
+  .lp-nav {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; align-items: center; gap: 28px;
+    height: 68px; max-width: 1180px; margin: 0 auto; padding: 0 28px;
+    background: rgba(8,8,8,0.7); backdrop-filter: blur(12px);
+  }
+  .lp-nav .links { margin-left: auto; display: flex; align-items: center; gap: 28px; }
+  .lp-nav .links a { font-size: 14px; color: var(--t2); transition: color .15s; }
+  .lp-nav .links a:hover { color: var(--t1); }
+  .cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    height: 42px; padding: 0 20px; border-radius: 11px;
+    font-family: var(--ui); font-size: 14px; font-weight: 700; cursor: pointer;
+    background: var(--gold); color: #0a0a0a; border: 1px solid var(--gold);
+    transition: box-shadow .2s, transform .1s;
+  }
+  .cta:hover { box-shadow: 0 0 30px -6px rgba(255,215,0,.55); }
+  .cta:active { transform: translateY(1px); }
+  .cta.ghost { background: transparent; color: var(--t1); border-color: var(--border-2); }
+  .cta.ghost:hover { box-shadow: none; border-color: var(--gold); color: var(--gold); }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 50px; align-items: center; padding: 70px 0 60px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--gold); background: var(--gold-tint); border: 1px solid var(--gold-line);
+    padding: 6px 13px; border-radius: 999px; margin-bottom: 26px;
+  }
+  .hero h1 {
+    margin: 0; font-size: 58px; line-height: 1.02; font-weight: 700; letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero .lede { margin: 24px 0 0; font-size: 18px; line-height: 1.6; color: var(--t2); max-width: 520px; }
+  .hero .lede b { color: var(--t1); font-weight: 500; }
+  .hero-cta { display: flex; gap: 14px; margin-top: 34px; }
+  .hero-meta { margin-top: 30px; display: flex; gap: 28px; font-family: var(--mono); font-size: 13px; color: var(--t3); }
+  .hero-meta b { color: var(--t1); font-weight: 600; display: block; font-size: 22px; margin-bottom: 3px; }
+
+  /* hero viz: colmeia hub-spoke */
+  .viz { position: relative; aspect-ratio: 1; max-width: 460px; margin: 0 auto; width: 100%; }
+  .viz svg { width: 100%; height: 100%; overflow: visible; }
+  .flow { stroke-dasharray: 4 8; animation: flow 1.6s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -24; } }
+  .node-label { font-family: var(--mono); font-size: 11px; fill: var(--t2); }
+  .pulse-ring { transform-origin: center; animation: ring 2.4s ease-out infinite; }
+  @keyframes ring { 0% { r: 7; opacity: .7; } 70%,100% { r: 24; opacity: 0; } }
+
+  /* sections */
+  .sec { padding: 56px 0; border-top: 1px solid var(--border); }
+  .sec-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--t3); }
+  .sec h2 { margin: 12px 0 0; font-size: 34px; font-weight: 700; letter-spacing: -0.01em; max-width: 640px; text-wrap: balance; }
+  .sec h2 + p { margin: 14px 0 0; color: var(--t2); font-size: 16px; max-width: 600px; line-height: 1.6; }
+
+  .feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 40px; }
+  .feat {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+    padding: 26px; transition: border-color .2s, transform .2s;
+  }
+  .feat:hover { border-color: var(--border-2); transform: translateY(-3px); }
+  .feat .fnum { font-family: var(--mono); font-size: 12px; color: var(--gold); }
+  .feat h3 { margin: 16px 0 0; font-size: 19px; font-weight: 600; }
+  .feat p { margin: 10px 0 0; color: var(--t2); font-size: 14px; line-height: 1.6; }
+  .feat .glyph { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; color: var(--gold); background: var(--gold-tint); border: 1px solid var(--gold-line); margin-bottom: 4px; }
+  .feat.g2 .glyph { color: var(--green); background: var(--green-tint); border-color: rgba(0,255,159,.3); }
+  .feat.g2 .fnum { color: var(--green); }
+
+  /* agents */
+  .agents-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 36px; }
+  .agent-chip {
+    display: flex; align-items: center; gap: 14px; flex: 1; min-width: 240px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 18px 20px;
+  }
+  .agent-chip .ac-ico { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-family: var(--mono); font-weight: 600; font-size: 17px; }
+  .agent-chip .ac-name { font-size: 16px; font-weight: 600; }
+  .agent-chip .ac-role { font-family: var(--mono); font-size: 11px; color: var(--t3); margin-top: 3px; }
+
+  /* steps */
+  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; margin-top: 40px; }
+  .step { padding: 0 26px; border-left: 1px solid var(--border); }
+  .step:first-child { padding-left: 0; border-left: none; }
+  .step .sn { font-family: var(--mono); font-size: 13px; color: var(--gold); }
+  .step h4 { margin: 12px 0 0; font-size: 17px; font-weight: 600; }
+  .step p { margin: 8px 0 0; color: var(--t2); font-size: 14px; line-height: 1.6; }
+
+  /* final cta */
+  .final {
+    text-align: center; padding: 80px 28px 90px; margin-top: 30px;
+    border-top: 1px solid var(--border);
+    background: radial-gradient(700px 300px at 50% 0%, rgba(255,215,0,0.06), transparent 70%);
+  }
+  .final h2 { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; margin: 0 auto; max-width: 620px; text-wrap: balance; }
+  .final p { color: var(--t2); font-size: 17px; margin: 18px auto 0; max-width: 520px; }
+  .final .hero-cta { justify-content: center; }
+
+  .lp-foot { max-width: 1180px; margin: 0 auto; padding: 26px 28px 50px; display: flex; align-items: center; gap: 16px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 12px; color: var(--t3); }
+  .lp-foot .dot { width: 7px; height: 7px; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 36px; }
+    .hero h1 { font-size: 44px; }
+    .feat-grid, .steps { grid-template-columns: 1fr; }
+    .step { border-left: none; padding: 0; border-top: 1px solid var(--border); padding-top: 22px; margin-top: 22px; }
+    .step:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="lp-nav">
+  <div class="brand">
+    <span class="hex"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.2 20.5 7v10L12 21.8 3.5 17V7L12 2.2Z" fill="#FFD700" opacity="0.14"/><path d="M12 2.2 20.5 7v10L12 21.8 3.5 17V7L12 2.2Z" stroke="#FFD700" stroke-width="1.4"/><path d="M12 7.5 16.3 10v4L12 16.5 7.7 14v-4L12 7.5Z" fill="#FFD700"/></svg></span>
+    <b>HIVE</b><span>OS</span>
+  </div>
+  <div class="links">
+    <a href="#produto">Produto</a>
+    <a href="#agentes">Agentes</a>
+    <a href="#fluxo">Como funciona</a>
+    <a class="cta" href="Login.html">Entrar no cockpit →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="lp">
+  <div class="hero">
+    <div>
+      <span class="eyebrow"><span class="dot gold"></span> Otimização de squads de IA</span>
+      <h1>Seu squad entrega o produto — e <em>continua mantendo</em>.</h1>
+      <p class="lede">O Hive orquestra <b>Claude, Copilot e Gemini</b> como um time de alta performance: prioriza o que importa, entrega um produto de verdade no final e <b>fica de plantão para manter, corrigir e evoluir</b> — com você no comando.</p>
+      <div class="hero-cta">
+        <a class="cta" href="Login.html">Entrar no cockpit →</a>
+        <a class="cta ghost" href="#produto">Como funciona</a>
+      </div>
+      <div class="hero-meta">
+        <div><b>3×</b>throughput do squad</div>
+        <div><b>1</b>produto em produção</div>
+        <div><b>24/7</b>manutenção contínua</div>
+      </div>
+    </div>
+
+    <!-- viz colmeia -->
+    <div class="viz">
+      <svg viewBox="0 0 400 400" fill="none">
+        <!-- spokes -->
+        <line class="flow" x1="200" y1="200" x2="200" y2="70"  stroke="#FFD700" stroke-width="1.5" opacity=".6"/>
+        <line class="flow" x1="200" y1="200" x2="320" y2="280" stroke="#00FF9F" stroke-width="1.5" opacity=".6"/>
+        <line class="flow" x1="200" y1="200" x2="80"  y2="280" stroke="#8fb0ff" stroke-width="1.5" opacity=".6"/>
+        <!-- hub -->
+        <path d="M200 150 248 177v54l-48 27-48-27v-54L200 150Z" fill="#FFD700" opacity=".1"/>
+        <path d="M200 150 248 177v54l-48 27-48-27v-54L200 150Z" stroke="#FFD700" stroke-width="1.6"/>
+        <path d="M200 174 224 188v26l-24 14-24-14v-26L200 174Z" fill="#FFD700"/>
+        <text x="200" y="298" text-anchor="middle" class="node-label" fill="#FFD700">HIVE OS</text>
+
+        <!-- node Claude (top) -->
+        <circle class="pulse-ring" cx="200" cy="60" r="7" fill="#FFD700"/>
+        <circle cx="200" cy="60" r="22" fill="#111" stroke="#FFD700" stroke-width="1.4"/>
+        <text x="200" y="65" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#FFD700">C</text>
+        <text x="200" y="34" text-anchor="middle" class="node-label">Claude</text>
+
+        <!-- node Copilot (right) -->
+        <circle class="pulse-ring" cx="330" cy="288" r="7" fill="#00FF9F" style="animation-delay:.8s"/>
+        <circle cx="330" cy="288" r="22" fill="#111" stroke="#00FF9F" stroke-width="1.4"/>
+        <text x="330" y="293" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#00FF9F">G</text>
+        <text x="330" y="328" text-anchor="middle" class="node-label">Copilot</text>
+
+        <!-- node Gemini (left) -->
+        <circle cx="70" cy="288" r="22" fill="#111" stroke="#8fb0ff" stroke-width="1.4"/>
+        <text x="70" y="293" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#8fb0ff">A</text>
+        <text x="70" y="328" text-anchor="middle" class="node-label">Gemini</text>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<!-- PRODUTO / FEATURES -->
+<section class="lp sec" id="produto">
+  <div class="sec-eyebrow">Como o Hive otimiza o squad</div>
+  <h2>Menos coordenação manual. Mais entrega.</h2>
+  <p>Três visões que tiram o atrito do time: todo mundo enxerga o mesmo estado, o trabalho flui sem colisão e a qualidade fica sob controle — do primeiro commit à manutenção.</p>
+
+  <div class="feat-grid">
+    <div class="feat">
+      <div class="glyph"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+      <div class="fnum">01 · Mapa da Fábrica</div>
+      <h3>Visibilidade total do squad</h3>
+      <p>Cada agente em um card vivo: lock, atividade e tempo. Zero trabalho duplicado, zero espera — o time para de perguntar "quem está mexendo nisso?".</p>
+    </div>
+    <div class="feat g2">
+      <div class="glyph"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18l-7 8v6l-4 2v-8L3 5Z"/></svg></div>
+      <div class="fnum">02 · Funil de Intenção</div>
+      <h3>Da intenção à entrega</h3>
+      <p>Cada ideia vira entrega medível, avançando por estágios até o merge. Throughput previsível e gargalos visíveis antes de virarem problema.</p>
+    </div>
+    <div class="feat">
+      <div class="glyph"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4"/></svg></div>
+      <div class="fnum">03 · Centro de Controle</div>
+      <h3>Qualidade sob seu comando</h3>
+      <p>Você ajusta prioridades, libera locks e mantém o padrão. O squad acelera, mas quem decide o rumo do produto é sempre você.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AGENTES -->
+<section class="lp sec" id="agentes">
+  <div class="sec-eyebrow">O squad</div>
+  <h2>Cada agente no papel certo.</h2>
+  <p>O Hive aloca a força de cada modelo onde ela rende mais e coordena os locks para o time nunca colidir nem retrabalhar — entrega e manutenção, lado a lado.</p>
+  <div class="agents-row">
+    <div class="agent-chip"><div class="ac-ico" style="background:var(--gold-tint);color:var(--gold)">C</div><div><div class="ac-name">Claude</div><div class="ac-role">claude-sonnet · auditoria & arquitetura</div></div></div>
+    <div class="agent-chip"><div class="ac-ico" style="background:var(--green-tint);color:var(--green)">G</div><div><div class="ac-name">Copilot</div><div class="ac-role">gpt-codex · implementação & testes</div></div></div>
+    <div class="agent-chip"><div class="ac-ico" style="background:rgba(120,160,255,0.16);color:#8fb0ff">A</div><div><div class="ac-name">Gemini</div><div class="ac-role">gemini-pro · pesquisa & apoio</div></div></div>
+  </div>
+</section>
+
+<!-- FLUXO -->
+<section class="lp sec" id="fluxo">
+  <div class="sec-eyebrow">Do MVP à manutenção</div>
+  <h2>Entrega o produto. E não abandona depois.</h2>
+  <p>O squad não se dissolve no lançamento. Ele entra em um ciclo contínuo — otimizar, entregar, manter — para o produto seguir vivo e evoluindo. <span style="color:var(--gold)">↻ em loop</span></p>
+  <div class="steps">
+    <div class="step"><div class="sn">01 · Otimizar</div><h4>Afina o squad</h4><p>O Hive prioriza intenções e distribui o trabalho entre os agentes certos. O time rende mais — sem virar caos.</p></div>
+    <div class="step"><div class="sn">02 · Entregar</div><h4>Lança o produto</h4><p>Da triagem ao merge, o squad converge para um produto real em produção, com qualidade revisada por você.</p></div>
+    <div class="step"><div class="sn">03 · Manter</div><h4>Mantém vivo</h4><p>Pós-launch o squad fica de plantão: corrige bugs, aplica melhorias e mantém o produto saudável — em loop.</p></div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <h2>Um squad que entrega — e fica para manter.</h2>
+  <p>Otimize seu time de agentes, lance o produto e mantenha tudo de pé. Com você no comando.</p>
+  <div class="hero-cta">
+    <a class="cta" href="Login.html">Entrar no cockpit →</a>
+  </div>
+</section>
+
+<footer class="lp-foot">
+  <span class="dot green pulse" style="display:inline-block"></span>
+  <span>HIVE OS</span>
+  <span style="margin-left:auto">ws://hive · conectado · operado por Márcio</span>
+</footer>
+
+</body>
+</html>

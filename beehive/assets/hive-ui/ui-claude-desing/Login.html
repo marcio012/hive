@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HIVE OS — Acesso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="hive.css" />
+<style>
+  html, body { height: 100%; }
+  body { display: grid; place-items: stretch; overflow: hidden; }
+
+  .login-wrap { display: grid; grid-template-columns: 1.05fr 0.95fr; min-height: 100vh; }
+
+  /* ---------- painel esquerdo: imersivo ---------- */
+  .brand-panel {
+    position: relative; overflow: hidden;
+    border-right: 1px solid var(--border);
+    background:
+      radial-gradient(900px 600px at 30% 20%, rgba(255,215,0,0.07), transparent 60%),
+      radial-gradient(700px 500px at 70% 90%, rgba(0,255,159,0.05), transparent 60%),
+      #070707;
+    padding: 44px 48px;
+    display: flex; flex-direction: column;
+  }
+  /* grade hex sutil ao fundo */
+  .hexfield { position: absolute; inset: 0; opacity: .5; pointer-events: none; }
+  .hexfield svg { width: 100%; height: 100%; }
+
+  .bp-top { display: flex; align-items: center; gap: 10px; position: relative; z-index: 2; }
+  .bp-center { flex: 1; display: grid; place-items: center; position: relative; z-index: 2; }
+
+  .viz { position: relative; width: 340px; max-width: 78%; aspect-ratio: 1; }
+  .viz svg { width: 100%; height: 100%; overflow: visible; }
+  .flow { stroke-dasharray: 4 8; animation: flow 1.6s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -24; } }
+  .pulse-ring { transform-origin: center; animation: ring 2.6s ease-out infinite; }
+  @keyframes ring { 0% { r: 7; opacity: .7; } 70%,100% { r: 26; opacity: 0; } }
+  .node-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: var(--t2); }
+
+  /* boot log */
+  .bootlog {
+    position: relative; z-index: 2;
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.9; color: var(--t2);
+    background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 16px 18px; max-width: 420px;
+  }
+  .bootlog .l { display: block; opacity: 0; }
+  .bootlog .l.show { opacity: 1; }
+  .bootlog .ok { color: var(--green); }
+  .bootlog .gold { color: var(--gold); }
+  .bootlog .cur { display: inline-block; width: 8px; height: 13px; background: var(--green); vertical-align: middle; margin-left: 3px; animation: blink 1.1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- painel direito: formulário ---------- */
+  .form-panel { display: grid; place-items: center; padding: 40px; background: var(--bg); position: relative; }
+  .form-card { width: 100%; max-width: 380px; }
+  .fc-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--t3); margin-bottom: 18px;
+  }
+  .form-card h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.01em; }
+  .form-card .hint { margin: 8px 0 32px; color: var(--t2); font-size: 14px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--t2); margin-bottom: 9px; }
+  .input {
+    display: flex; align-items: center; gap: 10px;
+    height: 50px; padding: 0 15px; border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    transition: border-color .18s, box-shadow .18s, background .18s;
+  }
+  .input:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255,215,0,0.12); background: #0e0e0e; }
+  .input .ic { color: var(--t3); display: grid; place-items: center; flex: none; }
+  .input input {
+    flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent;
+    color: var(--t1); font-family: var(--ui); font-size: 15px;
+  }
+  .input input::placeholder { color: var(--t3); }
+  .input .reveal { background: none; border: none; color: var(--t3); cursor: pointer; padding: 4px; display: grid; place-items: center; }
+  .input .reveal:hover { color: var(--t1); }
+
+  .row-between { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 26px; }
+  .remember { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--t2); cursor: pointer; user-select: none; }
+  .check { width: 18px; height: 18px; border-radius: 6px; border: 1px solid var(--border-2); background: var(--surface); display: grid; place-items: center; transition: all .15s; }
+  .check svg { opacity: 0; transition: opacity .15s; }
+  .remember.on .check { background: var(--gold); border-color: var(--gold); }
+  .remember.on .check svg { opacity: 1; }
+  .forgot { font-size: 13px; color: var(--t2); }
+  .forgot:hover { color: var(--gold); }
+
+  .submit {
+    width: 100%; height: 52px; border-radius: 12px; cursor: pointer;
+    font-family: var(--ui); font-size: 15px; font-weight: 700;
+    background: var(--gold); color: #0a0a0a; border: 1px solid var(--gold);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: box-shadow .2s, transform .1s, opacity .2s;
+  }
+  .submit:hover { box-shadow: 0 0 30px -6px rgba(255,215,0,.6); }
+  .submit:active { transform: translateY(1px); }
+  .submit.loading { background: var(--surface-2); color: var(--green); border-color: rgba(0,255,159,.4); cursor: default; }
+  .submit .spin { width: 16px; height: 16px; border: 2px solid rgba(0,255,159,.25); border-top-color: var(--green); border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+  .submit.loading .spin { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .alt { margin-top: 16px; }
+  .alt-btn {
+    width: 100%; height: 48px; border-radius: 12px; cursor: pointer;
+    font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--t1);
+    background: transparent; border: 1px solid var(--border-2);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all .15s;
+  }
+  .alt-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .agents-mini { display: flex; align-items: center; gap: 8px; margin-top: 30px; font-family: var(--mono); font-size: 11px; color: var(--t3); }
+  .agents-mini .a { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; font-weight: 600; font-size: 11px; }
+
+  .ws-line {
+    position: absolute; bottom: 28px; left: 0; right: 0; display: flex; justify-content: center;
+    font-family: var(--mono); font-size: 12px; color: var(--t3);
+    display: flex; align-items: center; gap: 9px;
+  }
+
+  @media (max-width: 880px) {
+    .login-wrap { grid-template-columns: 1fr; }
+    .brand-panel { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="login-wrap">
+
+  <!-- ESQUERDA: brand imersivo -->
+  <section class="brand-panel">
+    <div class="hexfield">
+      <svg viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice" fill="none">
+        <defs>
+          <pattern id="hexp" width="60" height="52" patternUnits="userSpaceOnUse" patternTransform="translate(0,0)">
+            <path d="M15 1 45 1 60 26 45 51 15 51 0 26Z" stroke="rgba(255,255,255,0.05)" stroke-width="1" fill="none"/>
+          </pattern>
+        </defs>
+        <rect width="600" height="800" fill="url(#hexp)"/>
+      </svg>
+    </div>
+
+    <div class="bp-top brand">
+      <span class="hex"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.2 20.5 7v10L12 21.8 3.5 17V7L12 2.2Z" fill="#FFD700" opacity="0.14"/><path d="M12 2.2 20.5 7v10L12 21.8 3.5 17V7L12 2.2Z" stroke="#FFD700" stroke-width="1.4"/><path d="M12 7.5 16.3 10v4L12 16.5 7.7 14v-4L12 7.5Z" fill="#FFD700"/></svg></span>
+      <b>HIVE</b><span>OS</span>
+    </div>
+
+    <div class="bp-center">
+      <div class="viz">
+        <svg viewBox="0 0 400 400" fill="none">
+          <line class="flow" x1="200" y1="200" x2="200" y2="70"  stroke="#FFD700" stroke-width="1.5" opacity=".55"/>
+          <line class="flow" x1="200" y1="200" x2="320" y2="280" stroke="#00FF9F" stroke-width="1.5" opacity=".55"/>
+          <line class="flow" x1="200" y1="200" x2="80"  y2="280" stroke="#8fb0ff" stroke-width="1.5" opacity=".55"/>
+          <path d="M200 150 248 177v54l-48 27-48-27v-54L200 150Z" fill="#FFD700" opacity=".1"/>
+          <path d="M200 150 248 177v54l-48 27-48-27v-54L200 150Z" stroke="#FFD700" stroke-width="1.6"/>
+          <path d="M200 174 224 188v26l-24 14-24-14v-26L200 174Z" fill="#FFD700"/>
+          <text x="200" y="300" text-anchor="middle" class="node-label" fill="#FFD700">HIVE OS</text>
+          <circle class="pulse-ring" cx="200" cy="60" r="7" fill="#FFD700"/>
+          <circle cx="200" cy="60" r="22" fill="#0e0e0e" stroke="#FFD700" stroke-width="1.4"/>
+          <text x="200" y="65" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#FFD700">C</text>
+          <circle class="pulse-ring" cx="320" cy="280" r="7" fill="#00FF9F" style="animation-delay:.9s"/>
+          <circle cx="320" cy="280" r="22" fill="#0e0e0e" stroke="#00FF9F" stroke-width="1.4"/>
+          <text x="320" y="285" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#00FF9F">G</text>
+          <circle cx="80" cy="280" r="22" fill="#0e0e0e" stroke="#8fb0ff" stroke-width="1.4"/>
+          <text x="80" y="285" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#8fb0ff">A</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="bootlog" id="bootlog">
+      <span class="l">› inicializando <span class="gold">hive os</span> v1.0…</span>
+      <span class="l">› verificando integridade do squad… <span class="ok">ok</span></span>
+      <span class="l">› claude · copilot · gemini → <span class="ok">online</span></span>
+      <span class="l">› protocolo de lock distribuído… <span class="ok">ativo</span></span>
+      <span class="l">› aguardando operador<span class="cur"></span></span>
+    </div>
+  </section>
+
+  <!-- DIREITA: formulário -->
+  <section class="form-panel">
+    <form class="form-card" id="loginForm" autocomplete="off">
+      <div class="fc-eyebrow"><span class="dot gold"></span> Autenticação do operador</div>
+      <h1>Entrar no cockpit</h1>
+      <p class="hint">Acesse o painel de orquestração do seu squad de IA.</p>
+
+      <div class="field">
+        <label for="op">Operador</label>
+        <div class="input">
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+          <input id="op" type="text" placeholder="marcio" value="marcio" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pw">Chave de acesso</label>
+        <div class="input">
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+          <input id="pw" type="password" placeholder="••••••••••" value="hive-os" />
+          <button type="button" class="reveal" id="reveal" aria-label="mostrar senha">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="row-between">
+        <div class="remember on" id="remember">
+          <span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="3"><path d="m5 13 4 4L19 7"/></svg></span>
+          Manter sessão
+        </div>
+        <a class="forgot" href="#">Esqueci a chave</a>
+      </div>
+
+      <button type="submit" class="submit" id="submit">
+        <span class="spin"></span>
+        <span class="label">Entrar no cockpit →</span>
+      </button>
+
+      <div class="alt">
+        <button type="button" class="alt-btn" id="passkey">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="9" r="4"/><path d="M13 13l6 6m-3-3 2-2"/></svg>
+          Entrar com passkey
+        </button>
+      </div>
+
+      <div class="agents-mini">
+        <span>squad pronto:</span>
+        <span class="a" style="background:var(--gold-tint);color:var(--gold)">C</span>
+        <span class="a" style="background:var(--green-tint);color:var(--green)">G</span>
+        <span class="a" style="background:rgba(120,160,255,0.16);color:#8fb0ff">A</span>
+      </div>
+    </form>
+
+    <div class="ws-line">
+      <span class="dot gold pulse" id="wsDot" style="display:inline-block"></span>
+      <span id="wsText">estabelecendo conexão ws://hive…</span>
+    </div>
+  </section>
+</div>
+
+<script>
+  // boot log sequencial
+  const lines = document.querySelectorAll('#bootlog .l');
+  lines.forEach((l, i) => setTimeout(() => l.classList.add('show'), 350 + i * 380));
+
+  // ws conectando -> conectado
+  setTimeout(() => {
+    const dot = document.getElementById('wsDot');
+    const txt = document.getElementById('wsText');
+    dot.classList.remove('gold'); dot.classList.add('green');
+    txt.textContent = 'ws://hive · conectado';
+    txt.style.color = 'var(--t2)';
+  }, 2100);
+
+  // revelar senha
+  const pw = document.getElementById('pw');
+  document.getElementById('reveal').addEventListener('click', () => {
+    pw.type = pw.type === 'password' ? 'text' : 'password';
+  });
+
+  // manter sessão
+  const rem = document.getElementById('remember');
+  rem.addEventListener('click', () => rem.classList.toggle('on'));
+
+  // submit -> autenticando -> cockpit
+  const form = document.getElementById('loginForm');
+  const btn = document.getElementById('submit');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (btn.classList.contains('loading')) return;
+    btn.classList.add('loading');
+    btn.querySelector('.label').textContent = 'autenticando…';
+    setTimeout(() => { btn.querySelector('.label').textContent = 'acesso concedido ✓'; }, 900);
+    setTimeout(() => { window.location.href = 'Hive OS.html'; }, 1500);
+  });
+
+  document.getElementById('passkey').addEventListener('click', () => {
+    btn.scrollIntoView ? null : null;
+    form.requestSubmit();
+  });
+</script>
+</body>
+</html>

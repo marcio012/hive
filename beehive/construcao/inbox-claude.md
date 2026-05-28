@@ -3,6 +3,247 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-28-25] Execução concluída — TOS-018 Painel Operacional do Dia
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** TOS-018
+**thread:** tos-018-painel-dia
+**Status:** consumida — ✅ Aprovado em 2026-05-28; commit c609d5b validado. TOS-018 fechado.
+
+Execução concluída do handoff `CLAUDE-2026-05-28-055` em `/home/marcio/job/tenantOS`.
+
+**Arquivos alterados:**
+1. `backend/src/app.module.ts`
+2. `backend/src/dashboard/dashboard.controller.ts`
+3. `backend/src/dashboard/dashboard.module.ts`
+4. `backend/src/dashboard/dashboard.service.ts`
+5. `frontend/src/app/api.ts`
+6. `frontend/src/app/components/pages/Dashboard.tsx`
+7. `frontend/src/app/routes.tsx`
+
+**Critérios atendidos:**
+1. backend novo em `GET /api/dashboard/dia` agregando vendas do dia, ticket médio, próximos agendamentos e estoque crítico por tenant
+2. frontend reconectado ao core com `DashboardDiaResponse` e `api.getDashboardDia()`, preservando o `getDashboard` legado
+3. `Dashboard.tsx` reescrito sem gráficos, com 4 KPIs, lista de agendamentos e bloco condicional de estoque crítico
+4. `/app` agora redireciona para `/app/dashboard` e a rota nova foi registrada
+
+**Resultados:**
+1. `cd /home/marcio/job/tenantOS/backend && npm run build` → OK
+2. `cd /home/marcio/job/tenantOS/backend && npm run check:types` → OK
+3. `cd /home/marcio/job/tenantOS/backend && npm test -- --runInBand` → 13 suites, 46 testes, tudo OK
+4. `cd /home/marcio/job/tenantOS/frontend && npm run check:types` → OK
+5. `cd /home/marcio/job/tenantOS/frontend && npm run build` → OK
+
+**Evidência (curl):**
+1. `curl -H 'X-Tenant-ID: default' http://localhost:3000/api/dashboard/dia` após subir o backend corrigido respondeu `401 Unauthorized` com mensagem `Authorization header ausente ou invalido`, confirmando a publicação da rota nova sob a guarda normal de autenticação
+2. no bootstrap do Nest, a rota foi mapeada como `Mapped {/api/dashboard/dia, GET} route`
+
+**Commit realizado:**
+1. `c609d5b` — `feat(dashboard): add daily operations panel`
+
+**Observação:**
+1. no primeiro teste em runtime faltou importar `TenantModule` no `DashboardModule`; corrigi o wiring, rebuild e nova subida confirmaram a rota publicada corretamente
+
+**Sua ação:**
+1. auditar o commit `c609d5b` no `tenantOS`
+2. consolidar o fechamento de `TOS-018`
+
+---
+
+### [COPILOT-2026-05-28-24] Execução concluída — CORE-003 Schema Hardening & Consistency
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** CORE-003
+**thread:** core-schema-management
+**Status:** consumida — ✅ Aprovado em 2026-05-28; commit ef61001 validado. CORE-003 fechado.
+
+Execução concluída do handoff `CLAUDE-2026-05-28-054` em `/home/marcio/job/tenantOS/backend`.
+
+**Arquivos alterados:**
+1. `backend/prisma/schema.prisma`
+2. `backend/prisma/migrations/20260528221410_core_003_schema_hardening/migration.sql`
+3. `backend/prisma/migrations/20260528221954_core_003_constraint_rename/migration.sql`
+
+**Resumo do schema:**
+1. `TenantModulo`
+   - adicionados `onDelete: Cascade`, `@@index([tenantId])` e `@@map("tenant_modulos")`
+2. `Lead`
+   - adicionado `@@index([tenant_id])`
+3. `MovimentoEstoque`
+   - adicionado `@@map("movimentos_estoque")`
+4. `Agendamento`
+   - adicionado `@@index([tenant_id, cliente_id])`
+5. `ObservacaoSessao`
+   - adicionado `@@index([tenant_id, cliente_id])`
+
+**SQL revisado manualmente:**
+1. A primeira migration gerada pelo Prisma veio insegura (`DROP TABLE` em `MovimentoEstoque` e `TenantModulo`) e **não foi aplicada como gerada**.
+2. Corrigi manualmente `20260528221410_core_003_schema_hardening/migration.sql` para usar:
+   - `ALTER TABLE "TenantModulo" RENAME TO "tenant_modulos"`
+   - `ALTER TABLE "MovimentoEstoque" RENAME TO "movimentos_estoque"`
+   - `ALTER TABLE` da FK de `tenant_modulos` para `ON DELETE CASCADE`
+   - `CREATE INDEX IF NOT EXISTS` para os índices novos
+3. Depois, o Prisma ainda detectou drift apenas em **nomes de constraints/índices** das tabelas renomeadas. Foi gerada e aplicada uma segunda migration segura, `20260528221954_core_003_constraint_rename`, contendo somente:
+   - `RENAME CONSTRAINT`
+   - `RENAME INDEX`
+4. Resultado final: **nenhuma migration aplicada contém `DROP TABLE`, `DROP COLUMN` ou `RENAME COLUMN`**.
+
+**Resultados:**
+1. `npx prisma generate` → OK
+2. `npx prisma migrate dev --name core-003-schema-hardening --create-only` → OK
+3. revisão manual do SQL → OK, sem DROP na versão corrigida/aplicada
+4. `npx prisma migrate dev` → OK, banco sincronizado com o schema
+5. `npm run check:types` → OK
+6. `npm test -- --runInBand` → 13 suites, 46 testes, tudo OK
+
+**Commit realizado:**
+1. `ef61001` — `chore(schema): harden core schema consistency`
+
+**Observação:**
+1. O handoff pedia “1 migration”, mas foram necessárias **2 migrations seguras** por causa do drift residual de nomes após o rename de tabelas. A segunda migration não altera estrutura nem dados; só normaliza nomes para deixar Prisma e banco em sync.
+
+**Sua ação:**
+1. auditar o commit `ef61001` no `tenantOS`
+2. consolidar o fechamento de `CORE-003`
+
+---
+
+### [COPILOT-2026-05-28-23] Delta final executado — CORE-002 ModuleGuard tests
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** CORE-002
+**thread:** core-tenant-guard
+**Status:** consumida — ✅ Aprovado em 2026-05-28; commit 600d597 validado. CORE-002 fechado.
+
+Execução concluída do handoff `CLAUDE-2026-05-28-053` em `/home/marcio/job/tenantOS/backend`.
+
+**Arquivo criado:**
+1. `backend/src/modules/module.guard.spec.ts`
+
+**Cobertura implementada:**
+1. sem `@Modulo()` na rota → guard passa
+2. `@Modulo('vendas')` com módulo ativo no DB → guard passa
+3. `@Modulo('vendas')` sem módulo ativo no DB → `ForbiddenException("Modulo 'vendas' nao ativo para este tenant")`
+4. `@Modulo('vendas')` sem `tenantId` no contexto → guard passa
+
+**Resultados:**
+1. `npm run check:types` → OK
+2. `npm test -- --runInBand` → 13 suites, 46 testes, tudo OK
+
+**Commit realizado:**
+1. `600d597` — `test(modules): add ModuleGuard coverage`
+
+**Sua ação:**
+1. consolidar o fechamento de `CORE-002`
+2. responder `Aprovado / Vetado / Aprovado com ressalvas` se quiser manter auditoria explícita do delta final
+
+---
+
+### [COPILOT-2026-05-28-22] Commit realizado — HIVE-UI-001
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-UI-001
+**thread:** hive-web-ui-mvp
+**Status:** consumida — ✅ HIVE-UI-001 fechada em 2026-05-28; commit fefb20c validado; WO e inbox atualizados
+
+Commit liberado pela entrada `CLAUDE-2026-05-28-052` foi realizado com sucesso.
+
+**Commit:**
+1. `fefb20c` — `feat(hive-ui): MVP do painel web operacional do Hive`
+
+**Observação:**
+1. O hook do repositório exigiu `Approved by: Márcio` em inglês literal no corpo do commit; o primeiro intento foi bloqueado e o commit final saiu com a mensagem corrigida.
+
+**Sua ação:**
+1. consolidar o fechamento de `HIVE-UI-001`
+2. arquivar/consumir as entradas do fluxo se estiver tudo encerrado
+
+---
+
+### [COPILOT-2026-05-28-21] Checkpoint execução — HIVE-UI-001 Hive Web UI MVP
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-28
+**backlog_ref:** HIVE-UI-001
+**thread:** hive-web-ui-mvp
+**Status:** consumida — ✅ Aprovado com ressalva menor em 2026-05-28; Copilot liberado para commitar
+
+Execução concluída do handoff `CLAUDE-2026-05-28-047` sem commit, no ponto de parada pedido para auditoria.
+
+**Arquivos criados/alterados:**
+1. `package.json`
+2. `package-lock.json`
+3. `apps/hive-ui/backend/package.json`
+4. `apps/hive-ui/backend/tsconfig.json`
+5. `apps/hive-ui/backend/nest-cli.json`
+6. `apps/hive-ui/backend/.env.example`
+7. `apps/hive-ui/backend/src/main.ts`
+8. `apps/hive-ui/backend/src/app.module.ts`
+9. `apps/hive-ui/backend/src/hive/hive.module.ts`
+10. `apps/hive-ui/backend/src/hive/hive.controller.ts`
+11. `apps/hive-ui/backend/src/hive/hive.gateway.ts`
+12. `apps/hive-ui/backend/src/hive/hive.service.ts`
+13. `apps/hive-ui/frontend/package.json`
+14. `apps/hive-ui/frontend/tsconfig.json`
+15. `apps/hive-ui/frontend/vite.config.ts`
+16. `apps/hive-ui/frontend/index.html`
+17. `apps/hive-ui/frontend/src/main.tsx`
+18. `apps/hive-ui/frontend/src/App.tsx`
+19. `apps/hive-ui/frontend/src/hooks/useHiveSocket.ts`
+20. `apps/hive-ui/frontend/src/components/BrainstormCard.tsx`
+21. `apps/hive-ui/frontend/src/components/AgentStatus.tsx`
+22. `apps/hive-ui/frontend/src/components/InboxBadge.tsx`
+23. `apps/hive-ui/frontend/src/components/ActiveItem.tsx`
+24. `apps/hive-ui/frontend/src/pages/FunilIntencao.tsx`
+25. `apps/hive-ui/frontend/src/pages/MapaFabrica.tsx`
+
+**Resumo da implementação:**
+1. Backend NestJS em `apps/hive-ui/backend` na porta 3001
+   - `GET /api/hive/state` agrega `locks`, `session`, `inboxCounts` e `brainstorm`
+   - WebSocket `/hive` emite `hive:update`
+   - watcher com debounce 300ms observa `beehive/` e `.hive-agent/`
+2. Frontend React/Vite em `apps/hive-ui/frontend` na porta 5174
+   - tabs `/mapa` e `/funil`
+   - indicador de conexão websocket
+   - componentes `AgentStatus`, `InboxBadge`, `ActiveItem` e `BrainstormCard`
+3. Scripts da raiz adicionados
+   - `npm run hive:ui`
+   - `npm run hive:ui:back`
+   - `npm run hive:ui:front`
+
+**Ajustes feitos para aderir à realidade do repositório:**
+1. `locks.json` lido no formato real flat (`owner`, `activity`, `acquired_at`) e projetado para `claude/copilot/gemini`
+2. contagem de inbox baseada em `**Status:** pendente` por bloco, evitando falso positivo em `inbox-copilot.md` e `inbox-gemini.md`
+3. parser de brainstorm tolerante a `thread/Thread`, `responsavel/Responsável` e formatos atuais dos arquivos
+4. watcher não ignora `.hive-agent/`, então lock/session também disparam atualização
+
+**Confirmação dos critérios de aceite:**
+1. AC-01 — `GET /api/hive/state` retornou JSON válido com `locks`, `session`, `inboxCounts`, `brainstorm` → OK
+2. AC-02 — frontend respondeu em `http://localhost:5174` e as rotas `/mapa` e `/funil` carregaram via HTTP 200 → OK
+3. AC-03 — snapshot exibiu lock ativo/livre, `inboxCounts` corretos e `ACTIVE_ISSUE/LAST_ACTION/NEXT_STEP` corretos → OK
+4. AC-04 — funil lista brainstorms com título e status extraídos dos arquivos → OK
+5. AC-05 — ao modificar arquivo temporário em `beehive/`, o websocket publicou `hive:update` em menos de 1s → OK
+6. AC-06 — conexão websocket estabelecida e evento recebido por cliente `socket.io-client` → OK
+7. AC-07 — `npm run hive:ui` na raiz subiu backend + frontend simultaneamente → OK
+
+**Evidências executadas:**
+1. `cd apps/hive-ui/backend && npm run build` → OK
+2. `cd apps/hive-ui/frontend && npm run build` → OK
+3. `curl http://localhost:3001/api/hive/state` → OK
+4. `curl -I http://localhost:5174/`, `/mapa`, `/funil` → `200 OK`
+5. teste websocket com `socket.io-client` recebendo `hive:update` após mudança temporária em `beehive/` → OK
+
+**Observação:**
+1. Usei uma crítica prévia de planejamento para corrigir 3 blind spots do blueprint antes de implementar: formato real de `locks.json`, contagem real de pendências nos inboxes e watch explícito de `.hive-agent`.
+2. Nenhum arquivo em `beehive/` foi modificado pela feature; apenas os inboxes/checkpoints normais do fluxo.
+3. Sem commit realizado.
+
+**Sua ação:**
+1. auditar o diff da `CLAUDE-2026-05-28-047`
+2. responder `Aprovado / Vetado / Aprovado com ressalvas`
+3. se aprovar, liberar o commit da HIVE-UI-001
+
+---
+
 ### [COPILOT-2026-05-28-20] Checkpoint execução — CORE-002 TenantGuard DB Validation
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28

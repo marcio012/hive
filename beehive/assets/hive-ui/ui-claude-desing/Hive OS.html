@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HIVE OS — Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="hive.css" />
+</head>
+<body>
+
+<!-- ============================ SHELL ============================ -->
+<header class="shell-header">
+  <div class="brand">
+    <span class="hex">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2.2 20.5 7v10L12 21.8 3.5 17V7L12 2.2Z" fill="#FFD700" opacity="0.14"/><path d="M12 2.2 20.5 7v10L12 21.8 3.5 17V7L12 2.2Z" stroke="#FFD700" stroke-width="1.4"/><path d="M12 7.5 16.3 10v4L12 16.5 7.7 14v-4L12 7.5Z" fill="#FFD700"/></svg>
+    </span>
+    <b>HIVE</b><span>OS</span>
+  </div>
+
+  <nav class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" data-screen="mapa">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Mapa da Fábrica
+    </button>
+    <button class="nav-tab" data-screen="funil">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18l-7 8v6l-4 2v-8L3 5Z"/></svg>
+      Funil de Intenção
+    </button>
+    <button class="nav-tab" data-screen="controle">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4" fill="#0a0a0a"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4" fill="#0a0a0a"/></svg>
+      Centro de Controle
+    </button>
+  </nav>
+
+  <div class="ws-status">
+    <div class="ws-clock" id="wsClock">--:--:--</div>
+    <div class="ws-pill">
+      <span class="dot green pulse"></span>
+      <span class="label">conectado</span>
+      <span style="color:var(--t3)">·</span>
+      <span>ws://hive</span>
+    </div>
+    <div class="operator">
+      <span>Márcio</span>
+      <span class="av">M</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ TELA 1 — MAPA DA FÁBRICA ============================ -->
+<main class="screen active" id="screen-mapa" data-screen-label="Mapa da Fábrica">
+  <div class="page">
+    <div class="page-head">
+      <h1>Mapa da Fábrica</h1>
+      <div class="sub"><span class="live-dot"></span> Estado operacional em tempo real</div>
+    </div>
+
+    <!-- Seção 1: Agentes -->
+    <div class="section-label"><span class="n">01</span> Agentes <span class="line"></span></div>
+    <div class="grid-3" style="margin-bottom:30px">
+
+      <!-- Claude — ativo -->
+      <div class="agent-card active">
+        <span class="dot green pulse agent-corner"></span>
+        <div class="agent-top">
+          <div class="agent-ico">C</div>
+          <div class="agent-meta">
+            <span class="badge green"><span class="dot green"></span> Em operação</span>
+            <div class="agent-name">Claude</div>
+            <div class="agent-model">claude-sonnet · lock adquirido</div>
+          </div>
+        </div>
+        <div class="agent-activity">
+          <div class="what"><span class="tag">▸</span> auditando <span style="font-family:var(--mono)">CORE-002</span> delta</div>
+          <div class="act-bar"><i></i></div>
+          <div class="when"><span class="dot green" style="width:6px;height:6px"></span> há <span class="ago" data-min="12">12</span>min · iniciou 09:48</div>
+        </div>
+      </div>
+
+      <!-- Copilot — ativo -->
+      <div class="agent-card active">
+        <span class="dot green pulse agent-corner"></span>
+        <div class="agent-top">
+          <div class="agent-ico" style="background:rgba(0,255,159,0.13);color:var(--green);border-color:rgba(0,255,159,0.3)">G</div>
+          <div class="agent-meta">
+            <span class="badge green"><span class="dot green"></span> Em operação</span>
+            <div class="agent-name">Copilot</div>
+            <div class="agent-model">gpt-codex · lock adquirido</div>
+          </div>
+        </div>
+        <div class="agent-activity">
+          <div class="what"><span class="tag">▸</span> implementando <span style="font-family:var(--mono)">module.guard.spec.ts</span></div>
+          <div class="act-bar"><i></i></div>
+          <div class="when"><span class="dot green" style="width:6px;height:6px"></span> há <span class="ago" data-min="4">4</span>min · iniciou 09:56</div>
+        </div>
+      </div>
+
+      <!-- Gemini — livre -->
+      <div class="agent-card free">
+        <div class="agent-top">
+          <div class="agent-ico">A</div>
+          <div class="agent-meta">
+            <span class="badge gray"><span class="dot gray"></span> Livre</span>
+            <div class="agent-name">Gemini</div>
+            <div class="agent-model">gemini-pro · aguardando despacho</div>
+          </div>
+        </div>
+        <div class="agent-activity idle">
+          <div class="what">Sem operação ativa — pronto para receber tarefa</div>
+          <div class="when"><span class="dot gray" style="width:6px;height:6px"></span> ocioso há <span class="ago" data-min="23">23</span>min</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção 2: Inbox Pendentes -->
+    <div class="section-label"><span class="n">02</span> Inbox · Pendências <span class="line"></span></div>
+    <div class="grid-3" style="margin-bottom:8px">
+      <div class="inbox-card pending glow-border-pulse">
+        <div class="inbox-ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        </div>
+        <div><div class="who">Claude</div><div class="desc">aprovações aguardando</div></div>
+        <div class="inbox-count">2</div>
+      </div>
+      <div class="inbox-card">
+        <div class="inbox-ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        </div>
+        <div><div class="who" style="color:var(--t2)">Copilot</div><div class="desc">inbox limpa</div></div>
+        <div class="inbox-count">0</div>
+      </div>
+      <div class="inbox-card pending glow-border-pulse">
+        <div class="inbox-ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        </div>
+        <div><div class="who">Gemini</div><div class="desc">aprovação aguardando</div></div>
+        <div class="inbox-count">1</div>
+      </div>
+    </div>
+
+    <!-- Seção 3: Item Ativo -->
+    <div class="active-item">
+      <div class="ai-head">
+        <span class="bolt"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span>
+        <h3>Item Ativo</h3>
+        <span class="pill">foco da fábrica</span>
+      </div>
+      <div class="ai-grid">
+        <div class="ai-col">
+          <div class="lab">Issue ativa</div>
+          <div class="issue">HIVE-UI-001</div>
+        </div>
+        <div class="ai-col">
+          <div class="lab">Última ação</div>
+          <div class="val">MVP do painel aprovado e commitado</div>
+        </div>
+        <div class="ai-col">
+          <div class="lab">Próximo passo</div>
+          <div class="next">Iniciar CORE-003 — Schema Management</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============================ TELA 2 — FUNIL DE INTENÇÃO ============================ -->
+<main class="screen" id="screen-funil" data-screen-label="Funil de Intenção">
+  <div class="page">
+    <div class="page-head">
+      <h1>Funil de Intenção</h1>
+      <div class="sub"><span class="live-dot"></span> Da intenção bruta ao código mergeado</div>
+    </div>
+
+    <!-- faixa do funil -->
+    <div class="funnel-strip">
+      <div class="funnel-step">
+        <div class="fs-top"><span class="fs-name">Captura</span></div>
+        <div class="fs-count">7</div>
+        <div class="fs-bar"><i class="gray" style="width:100%"></i></div>
+        <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="funnel-step">
+        <div class="fs-top"><span class="fs-name">Triagem</span></div>
+        <div class="fs-count">4</div>
+        <div class="fs-bar"><i class="gray" style="width:62%"></i></div>
+        <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="funnel-step exec">
+        <div class="fs-top"><span class="fs-name">Execução</span><span class="dot green pulse"></span></div>
+        <div class="fs-count">2</div>
+        <div class="fs-bar"><i style="width:40%"></i></div>
+        <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="funnel-step rev">
+        <div class="fs-top"><span class="fs-name">Revisão</span></div>
+        <div class="fs-count">3</div>
+        <div class="fs-bar"><i style="width:48%"></i></div>
+        <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></span>
+      </div>
+      <div class="funnel-step">
+        <div class="fs-top"><span class="fs-name">Mergeado</span></div>
+        <div class="fs-count" style="color:var(--t2)">18</div>
+        <div class="fs-bar"><i class="gray" style="width:100%"></i></div>
+      </div>
+    </div>
+
+    <!-- board -->
+    <div class="board">
+      <!-- Captura -->
+      <div class="col">
+        <div class="col-head">Captura <span class="ct">7</span></div>
+        <div class="col-stack">
+          <div class="intent"><div style="display:flex;justify-content:space-between"><span class="it-id">HIVE-091</span><span class="prio lo"></span></div><div class="it-title">Exportar relatório de squad em PDF</div><div class="it-foot"><span class="mini-av av-human">M</span><span class="t">há 2h</span></div></div>
+          <div class="intent"><div style="display:flex;justify-content:space-between"><span class="it-id">HIVE-090</span><span class="prio md"></span></div><div class="it-title">Webhook do GitHub para abrir intenção</div><div class="it-foot"><span class="mini-av av-human">M</span><span class="t">há 3h</span></div></div>
+          <div class="intent"><div style="display:flex;justify-content:space-between"><span class="it-id">HIVE-088</span><span class="prio lo"></span></div><div class="it-title">Tema claro opcional no cockpit</div><div class="it-foot"><span class="mini-av av-human">M</span><span class="t">há 5h</span></div></div>
+        </div>
+      </div>
+      <!-- Triagem -->
+      <div class="col">
+        <div class="col-head">Triagem <span class="ct">4</span></div>
+        <div class="col-stack">
+          <div class="intent"><div style="display:flex;justify-content:space-between"><span class="it-id">CORE-003</span><span class="prio hi"></span></div><div class="it-title">Schema Management — migrations versionadas</div><div class="it-foot"><span class="mini-av av-claude">C</span><span class="t">prioridade alta</span></div></div>
+          <div class="intent"><div style="display:flex;justify-content:space-between"><span class="it-id">CORE-005</span><span class="prio md"></span></div><div class="it-title">Rate limit por agente no orquestrador</div><div class="it-foot"><span class="mini-av av-gemini">A</span><span class="t">a estimar</span></div></div>
+        </div>
+      </div>
+      <!-- Execução -->
+      <div class="col">
+        <div class="col-head">Execução <span class="ct">2</span></div>
+        <div class="col-stack">
+          <div class="intent active"><div style="display:flex;justify-content:space-between"><span class="it-id">CORE-002</span><span class="prio hi"></span></div><div class="it-title">Auditoria de delta do core de locks</div><div class="it-foot"><span class="mini-av av-claude">C</span><span class="t">há <span class="ago" data-min="12">12</span>min</span></div></div>
+          <div class="intent active"><div style="display:flex;justify-content:space-between"><span class="it-id">TEST-014</span><span class="prio md"></span></div><div class="it-title">module.guard.spec.ts — cobertura de guard</div><div class="it-foot"><span class="mini-av av-copilot">G</span><span class="t">há <span class="ago" data-min="4">4</span>min</span></div></div>
+        </div>
+      </div>
+      <!-- Revisão -->
+      <div class="col">
+        <div class="col-head">Revisão <span class="ct">3</span></div>
+        <div class="col-stack">
+          <div class="intent"><div style="display:flex;justify-content:space-between"><span class="it-id">HIVE-UI-001</span><span class="prio hi"></span></div><div class="it-title">MVP do painel operacional — PR aberto</div><div class="it-foot"><span class="mini-av av-claude">C</span><span class="t">aguarda Márcio</span></div></div>
+          <div class="intent"><div style="display:flex;justify-content:space-between"><span class="it-id">API-022</span><span class="prio md"></span></div><div class="it-title">Endpoint /agents/heartbeat</div><div class="it-foot"><span class="mini-av av-gemini">A</span><span class="t">em review</span></div></div>
+          <div class="intent"><div style="display:flex;justify-content:space-between"><span class="it-id">DOC-007</span><span class="prio lo"></span></div><div class="it-title">README do protocolo de lock</div><div class="it-foot"><span class="mini-av av-copilot">G</span><span class="t">em review</span></div></div>
+        </div>
+      </div>
+      <!-- Mergeado -->
+      <div class="col">
+        <div class="col-head">Mergeado <span class="ct">18</span></div>
+        <div class="col-stack">
+          <div class="intent" style="opacity:.62"><div style="display:flex;justify-content:space-between"><span class="it-id" style="color:var(--green)">CORE-001</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="m5 13 4 4L19 7"/></svg></div><div class="it-title">Protocolo de lock distribuído</div><div class="it-foot"><span class="mini-av av-claude">C</span><span class="t">ontem</span></div></div>
+          <div class="intent" style="opacity:.62"><div style="display:flex;justify-content:space-between"><span class="it-id" style="color:var(--green)">UI-000</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4"><path d="m5 13 4 4L19 7"/></svg></div><div class="it-title">Scaffold do cockpit + shell</div><div class="it-foot"><span class="mini-av av-copilot">G</span><span class="t">ontem</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============================ TELA 3 — CENTRO DE CONTROLE ============================ -->
+<main class="screen" id="screen-controle" data-screen-label="Centro de Controle">
+  <div class="page">
+    <div class="page-head">
+      <h1>Centro de Controle</h1>
+      <div class="sub"><span class="live-dot"></span> Orquestração manual do squad</div>
+    </div>
+
+    <!-- stats -->
+    <div class="cc-stats">
+      <div class="stat good"><div class="k">Uptime do squad</div><div class="v" id="uptime">04:12:38</div></div>
+      <div class="stat gold"><div class="k">Locks ativos</div><div class="v">2<small> / 3 agentes</small></div></div>
+      <div class="stat"><div class="k">Comandos hoje</div><div class="v">147</div></div>
+      <div class="stat good"><div class="k">Taxa de sucesso</div><div class="v">98,6<small>%</small></div></div>
+    </div>
+
+    <div class="cc-grid">
+      <!-- coluna esquerda -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <!-- locks -->
+        <div class="panel">
+          <div class="ph">
+            <span class="ph-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+            <h3>Locks Ativos</h3>
+            <span class="ph-meta">2 detidos</span>
+          </div>
+          <div class="pb" style="padding-top:4px;padding-bottom:6px">
+            <div class="lock-row">
+              <div class="la" style="background:rgba(255,215,0,0.14);color:var(--gold)">C</div>
+              <div class="lmeta"><div class="res">CORE-002 <span class="by">· Claude</span></div><div class="since">detido há <span class="ago" data-min="12">12</span>min</div></div>
+              <button class="btn-ghost">Forçar liberação</button>
+            </div>
+            <div class="lock-row">
+              <div class="la" style="background:rgba(0,255,159,0.14);color:var(--green)">G</div>
+              <div class="lmeta"><div class="res">module.guard <span class="by">· Copilot</span></div><div class="since">detido há <span class="ago" data-min="4">4</span>min</div></div>
+              <button class="btn-ghost">Forçar liberação</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- controles -->
+        <div class="panel">
+          <div class="ph">
+            <span class="ph-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4"/></svg></span>
+            <h3>Controles do Squad</h3>
+          </div>
+          <div class="pb" style="padding-top:4px;padding-bottom:6px">
+            <div class="ctrl-row"><div class="cmeta"><div class="ct">Modo autônomo</div><div class="cd">agentes despacham sem confirmação</div></div><div class="switch on" data-toggle><i></i></div></div>
+            <div class="ctrl-row"><div class="cmeta"><div class="ct">Auto-merge em verde</div><div class="cd">merge se CI passar e review aprovado</div></div><div class="switch" data-toggle><i></i></div></div>
+            <div class="ctrl-row"><div class="cmeta"><div class="ct">Notificar Márcio</div><div class="cd">push em pendências e falhas</div></div><div class="switch on" data-toggle><i></i></div></div>
+          </div>
+        </div>
+
+        <!-- dispatch -->
+        <div class="panel">
+          <div class="ph">
+            <span class="ph-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 14-7-7 14-2-5-5-2Z"/></svg></span>
+            <h3>Despachar</h3>
+          </div>
+          <div class="pb">
+            <div class="dispatch">
+              <button class="disp-btn"><span class="d" style="background:var(--gold)"></span> Claude</button>
+              <button class="disp-btn"><span class="d" style="background:var(--green)"></span> Copilot</button>
+              <button class="disp-btn"><span class="d" style="background:#8fb0ff"></span> Gemini</button>
+              <button class="disp-btn primary">+ Nova intenção</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- coluna direita: stream -->
+      <div class="panel">
+        <div class="ph">
+          <span class="ph-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 7 5 5-5 5"/><line x1="12" y1="17" x2="20" y2="17"/></svg></span>
+          <h3>Stream de Eventos</h3>
+          <span class="ph-meta"><span class="dot green pulse" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>ao vivo</span>
+        </div>
+        <div class="pb" style="padding-top:8px">
+          <div class="stream" id="stream">
+            <div class="log"><span class="ts">09:48:02</span><span class="lv lock">LOCK</span><span class="msg"><b>Claude</b> adquiriu lock <span class="g">CORE-002</span></span></div>
+            <div class="log"><span class="ts">09:48:05</span><span class="lv info">INFO</span><span class="msg">auditoria de delta iniciada</span></div>
+            <div class="log"><span class="ts">09:51:19</span><span class="lv ok">OK</span><span class="msg">3 invariantes validadas</span></div>
+            <div class="log"><span class="ts">09:53:40</span><span class="lv warn">WARN</span><span class="msg">latência de heartbeat acima de 200ms</span></div>
+            <div class="log"><span class="ts">09:56:11</span><span class="lv lock">LOCK</span><span class="msg"><b>Copilot</b> adquiriu lock <span class="g">module.guard</span></span></div>
+            <div class="log"><span class="ts">09:56:48</span><span class="lv info">INFO</span><span class="msg">gerando module.guard.spec.ts</span></div>
+            <div class="log"><span class="ts">09:58:02</span><span class="lv ok">OK</span><span class="msg">inbox de Gemini: 1 aprovação enfileirada</span></div>
+            <div class="log"><span class="ts">10:00:27</span><span class="lv info">INFO</span><span class="msg">PR <b>HIVE-UI-001</b> aguardando review de Márcio</span></div>
+            <div class="log" id="streamTail"><span class="ts" id="tailTs">10:00:31</span><span class="lv info">INFO</span><span class="msg">aguardando próximo evento<span class="cursor"></span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- tweaks mount -->
+<div id="tweaks-root"></div>
+
+<script src="app.js"></script>
+
+<!-- Tweaks (sim speed) -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const HIVE_TWEAKS = /*EDITMODE-BEGIN*/{
+  "simSpeed": 1
+}/*EDITMODE-END*/;
+
+function HiveTweaks() {
+  const [t, setTweak] = useTweaks(HIVE_TWEAKS);
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--sim', String(t.simSpeed));
+    if (window.HIVE) window.HIVE.setSpeed(t.simSpeed);
+  }, [t.simSpeed]);
+  return (
+    <TweaksPanel title="Tweaks">
+      <TweakSection label="Simulação" />
+      <TweakSlider label="Velocidade" value={t.simSpeed} min={0.25} max={3} step={0.25} unit="×"
+        onChange={(v) => setTweak('simSpeed', v)} />
+    </TweaksPanel>
+  );
+}
+ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<HiveTweaks />);
+</script>
+</body>
+</html>

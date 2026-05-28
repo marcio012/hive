@@ -1,0 +1,170 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.wrap { padding: 1.5rem 0; }
+.search-row { display: flex; gap: 10px; margin-bottom: 1.25rem; align-items: center; }
+.search-row input { flex: 1; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.25rem; }
+.pill {
+  font-size: 12px; padding: 4px 12px; border-radius: 20px; cursor: pointer; border: 0.5px solid var(--color-border-secondary);
+  color: var(--color-text-secondary); background: var(--color-background-primary); transition: all 0.15s;
+}
+.pill.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-primary); font-weight: 500; }
+.cmd-list { display: flex; flex-direction: column; gap: 10px; }
+.cmd-card {
+  background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg); padding: 14px 16px; cursor: pointer; transition: border-color 0.15s;
+}
+.cmd-card:hover { border-color: var(--color-border-secondary); }
+.cmd-card.open { border-color: var(--color-border-primary); }
+.cmd-header { display: flex; align-items: center; gap: 10px; }
+.cmd-name { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.cmd-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+.cmd-desc { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; flex: 1; }
+.cmd-chevron { font-size: 14px; color: var(--color-text-tertiary); transition: transform 0.2s; margin-left: auto; }
+.cmd-card.open .cmd-chevron { transform: rotate(180deg); }
+.cmd-body { display: none; margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--color-border-tertiary); }
+.cmd-card.open .cmd-body { display: block; }
+.cmd-detail { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 10px; }
+.cmd-example { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; }
+.cmd-example-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.cmd-example code { font-family: var(--font-mono); font-size: 13px; color: var(--color-text-primary); }
+.no-results { text-align: center; padding: 2rem; color: var(--color-text-tertiary); font-size: 14px; }
+.count { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 10px; }
+
+.badge-sessao { background: #E6F1FB; color: #0C447C; }
+.badge-contexto { background: #E1F5EE; color: #085041; }
+.badge-config { background: #EEEDFE; color: #3C3489; }
+.badge-projeto { background: #FAEEDA; color: #633806; }
+.badge-integracao { background: #FAECE7; color: #712B13; }
+.badge-info { background: #EAF3DE; color: #27500A; }
+.badge-conta { background: #F1EFE8; color: #444441; }
+
+@media (prefers-color-scheme: dark) {
+  .badge-sessao { background: #0C447C; color: #B5D4F4; }
+  .badge-contexto { background: #085041; color: #9FE1CB; }
+  .badge-config { background: #3C3489; color: #CECBF6; }
+  .badge-projeto { background: #633806; color: #FAC775; }
+  .badge-integracao { background: #712B13; color: #F5C4B3; }
+  .badge-info { background: #27500A; color: #C0DD97; }
+  .badge-conta { background: #444441; color: #D3D1C7; }
+}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Referência de slash commands do Claude Code</h2>
+
+  <div class="search-row">
+    <input type="text" id="search" placeholder="Buscar comando..." oninput="render()" />
+  </div>
+
+  <div class="filters" id="filters"></div>
+  <div class="count" id="count"></div>
+  <div class="cmd-list" id="list"></div>
+</div>
+
+<script>
+const CATS = {
+  sessao: { label: "Sessão", badge: "badge-sessao" },
+  contexto: { label: "Contexto", badge: "badge-contexto" },
+  config: { label: "Configuração", badge: "badge-config" },
+  projeto: { label: "Projeto", badge: "badge-projeto" },
+  integracao: { label: "Integração", badge: "badge-integracao" },
+  info: { label: "Info & Debug", badge: "badge-info" },
+  conta: { label: "Conta", badge: "badge-conta" },
+};
+
+const CMDS = [
+  { name: "/clear", alias: "/reset, /new", cat: "sessao", desc: "Limpa todo o histórico e começa uma sessão nova do zero.", detail: "Use quando mudar para uma tarefa completamente diferente. Remove todas as mensagens, leituras de arquivo e histórico da tarefa anterior. Não é para economizar tokens no meio de uma tarefa.", example: "# Terminou de depurar o auth, agora vai trabalhar no banco\n/clear\n> Contexto zerado. Pronto para nova tarefa." },
+  { name: "/compact", alias: "", cat: "contexto", desc: "Comprime a conversa atual, mantendo o essencial e liberando espaço no contexto.", detail: "Diferente do /clear, não apaga tudo — resume o histórico para caber mais trabalho na janela de contexto. Aceita parâmetros para focar o resumo em um tema específico.", example: "# Comprimir focando nos arquivos de autenticação\n/compact focus on authentication changes\n> Conversa comprimida. Contexto disponível aumentou." },
+  { name: "/context", alias: "", cat: "contexto", desc: "Visualiza o uso do contexto atual como uma grade colorida com sugestões de otimização.", detail: "Mostra quanto da janela de 200K tokens já foi consumido, onde estão os gargalos e o que pode ser limpo para liberar espaço.", example: "# Ver quanto contexto já foi usado\n/context\n> [grade colorida mostrando ~60% usado + sugestões]" },
+  { name: "/init", alias: "", cat: "projeto", desc: "Escaneia o projeto atual e cria um arquivo CLAUDE.md com contexto e padrões do projeto.", detail: "O CLAUDE.md é a 'memória' do projeto — Claude lê ele automaticamente em toda sessão. Inclui padrões de código, arquitetura, convenções e instruções recorrentes.", example: "# Dentro da pasta do seu projeto\ncd ~/meu-projeto\nclaude\n/init\n> CLAUDE.md criado com contexto do projeto." },
+  { name: "/memory", alias: "", cat: "projeto", desc: "Edita os arquivos CLAUDE.md, habilita/desabilita memória automática e visualiza entradas salvas.", detail: "Gerencia a memória persistente entre sessões. Você pode editar manualmente o que o Claude deve lembrar sobre seu projeto e fluxo de trabalho.", example: "# Editar as instruções persistentes do projeto\n/memory\n> Abre o editor do CLAUDE.md" },
+  { name: "/model", alias: "", cat: "config", desc: "Troca o modelo de IA usado na sessão. Use setas para ajustar o nível de esforço.", detail: "Permite alternar entre modelos como Sonnet (balanceado), Opus (mais poderoso) e Haiku (rápido/econômico) sem reiniciar a sessão. A troca tem efeito imediato.", example: "# Trocar para Opus para uma tarefa complexa\n/model\n> [seletor de modelo aparece]\n> Modelo alterado para claude-opus-4-6" },
+  { name: "/effort", alias: "", cat: "config", desc: "Define o nível de esforço cognitivo: low, medium, high, xhigh, max ou auto.", detail: "Controla o quanto de 'pensamento estendido' o Claude usa. Níveis mais altos geram respostas melhores mas consomem mais tokens. low/medium/high persistem entre sessões; max é apenas para a sessão atual.", example: "# Máximo esforço para uma tarefa de refatoração complexa\n/effort high\n> Nível de esforço: high (persistente)" },
+  { name: "/config", alias: "/settings", cat: "config", desc: "Abre a interface de configurações: tema, modelo, estilo de saída e outras preferências.", detail: "Interface interativa para personalizar o comportamento do Claude Code sem precisar editar arquivos manualmente.", example: "/config\n> [menu de configurações abre]" },
+  { name: "/permissions", alias: "/allowed-tools", cat: "config", desc: "Visualiza ou atualiza quais ferramentas o Claude tem permissão de usar.", detail: "Controla o acesso a ferramentas como bash, leitura/escrita de arquivos, web search etc. Útil para restringir o que o Claude pode fazer em projetos sensíveis.", example: "# Ver e ajustar as permissões atuais\n/permissions\n> [lista de ferramentas com status ativo/inativo]" },
+  { name: "/plan", alias: "", cat: "sessao", desc: "Entra no modo de planejamento diretamente pelo prompt.", detail: "No modo plano, Claude descreve o que pretende fazer antes de executar, permitindo que você revise e ajuste antes que qualquer mudança seja feita no código.", example: "/plan refatorar o módulo de autenticação para usar JWT\n> Plano:\n> 1. Analisar auth.js atual\n> 2. Criar middleware JWT...\n> [aguardando aprovação]" },
+  { name: "/diff", alias: "", cat: "projeto", desc: "Visualizador interativo de diff para mudanças não commitadas. Navegue com as setas.", detail: "Mostra as alterações feitas pelo Claude no código de forma visual, separadas por turno de conversa. Facilita a revisão antes de fazer commit.", example: "# Revisar o que foi alterado nesta sessão\n/diff\n> [diff interativo com setas para navegar entre arquivos]" },
+  { name: "/fork", alias: "", cat: "sessao", desc: "Cria um fork da conversa atual a partir deste ponto.", detail: "Permite explorar uma direção diferente sem perder o caminho atual. Útil quando quer experimentar uma abordagem alternativa de solução.", example: "# Explorar uma abordagem diferente sem perder a atual\n/fork abordagem-alternativa\n> Fork criado: abordagem-alternativa" },
+  { name: "/btw", alias: "", cat: "sessao", desc: "Faz uma pergunta paralela sem adicionar ao histórico da conversa. Funciona mesmo enquanto Claude está processando.", detail: "Para dúvidas rápidas que não fazem parte da tarefa principal. A resposta não entra no contexto da conversa.", example: "# Perguntar algo rápido sem poluir o contexto\n/btw qual é a sintaxe do array destructuring em Python?\n> [resposta rápida sem afetar a conversa principal]" },
+  { name: "/cost", alias: "", cat: "info", desc: "Mostra estatísticas detalhadas de uso de tokens e custo da sessão.", detail: "Exibe quantos tokens de entrada/saída foram usados, custo estimado em dólares e distribuição por turno de conversa.", example: "/cost\n> Tokens entrada: 45.230\n> Tokens saída: 12.890\n> Custo estimado: $0.18" },
+  { name: "/export", alias: "", cat: "info", desc: "Exporta a conversa como texto simples. Com nome de arquivo, salva direto; sem nome, abre diálogo.", detail: "Útil para documentar o que foi feito numa sessão, compartilhar com colegas ou arquivar soluções encontradas.", example: "# Salvar a sessão em arquivo\n/export sessao-refatoracao.txt\n> Conversa salva em sessao-refatoracao.txt" },
+  { name: "/copy", alias: "", cat: "sessao", desc: "Copia a última resposta para a área de transferência. Com blocos de código, mostra seletor interativo.", detail: "Se a resposta contiver múltiplos blocos de código, você pode escolher copiar um bloco específico ou a resposta inteira.", example: "/copy\n> [seletor: bloco 1 (auth.js) | bloco 2 (middleware) | resposta completa]\n> Copiado!" },
+  { name: "/doctor", alias: "", cat: "info", desc: "Diagnostica e verifica a instalação do Claude Code.", detail: "Roda verificações de saúde na instalação: versão do Node.js, autenticação, conexão com API, permissões de arquivo etc.", example: "/doctor\n> ✓ Node.js 20.x\n> ✓ Autenticado\n> ✓ API acessível\n> ✓ Instalação saudável" },
+  { name: "/insights", alias: "", cat: "info", desc: "Gera um relatório de análise das suas sessões: padrões de uso, áreas do projeto, pontos de fricção.", detail: "Analisa o histórico de uso para dar um panorama de produtividade: o que você mais trabalha, onde gasta mais tempo, comandos mais usados.", example: "/insights\n> Relatório gerado:\n> Área mais trabalhada: /src/auth (42%)\n> Comandos mais usados: /clear, /compact..." },
+  { name: "/hooks", alias: "", cat: "config", desc: "Visualiza as configurações de hooks para eventos de ferramentas.", detail: "Hooks permitem executar scripts automaticamente em eventos como 'antes de editar arquivo', 'após rodar bash' etc. Útil para CI/CD e automações.", example: "/hooks\n> Hooks configurados:\n> pre-edit: prettier --write {file}\n> post-bash: echo 'Comando executado'" },
+  { name: "/mcp", alias: "", cat: "integracao", desc: "Gerencia conexões com servidores MCP e autenticação OAuth.", detail: "MCP (Model Context Protocol) conecta Claude a ferramentas externas: GitHub, Jira, bancos de dados, APIs etc. Este comando gerencia essas conexões.", example: "/mcp\n> Servidores conectados:\n> ✓ github (autenticado)\n> ✗ jira (não conectado)\n> [opção para conectar]" },
+  { name: "/ide", alias: "", cat: "integracao", desc: "Gerencia integrações com IDEs (VS Code, JetBrains) e mostra o status.", detail: "Conecta o Claude Code à sua IDE para sincronização de arquivos abertos, contexto do editor e navegação bidirecional.", example: "/ide\n> VS Code: conectado (porta 3000)\n> JetBrains: não detectado" },
+  { name: "/add-dir", alias: "", cat: "projeto", desc: "Adiciona diretórios de trabalho extras à sessão atual.", detail: "Por padrão, Claude trabalha na pasta onde foi iniciado. Este comando permite adicionar outros diretórios sem reiniciar a sessão.", example: "# Adicionar o diretório de testes ao contexto\n/add-dir ../tests\n> Diretório adicionado: /home/user/projeto/tests" },
+  { name: "/desktop", alias: "/app", cat: "integracao", desc: "Continua a sessão no app Claude Code Desktop. Apenas macOS e Windows.", detail: "Transfere a sessão atual para a interface gráfica do Claude Code sem perder o contexto.", example: "/desktop\n> Abrindo sessão no Claude Code Desktop..." },
+  { name: "/feedback", alias: "/bug", cat: "conta", desc: "Envia feedback para a equipe da Anthropic.", detail: "Canal direto para reportar bugs, sugerir melhorias ou comentar sobre comportamentos inesperados.", example: "/feedback o comando /diff não está funcionando com arquivos binários\n> Feedback enviado. Obrigado!" },
+  { name: "/login", alias: "", cat: "conta", desc: "Faz login na conta Anthropic.", example: "/login\n> Abrindo autenticação..." },
+  { name: "/logout", alias: "", cat: "conta", desc: "Faz logout da conta Anthropic.", example: "/logout\n> Sessão encerrada." },
+  { name: "/help", alias: "", cat: "info", desc: "Mostra todos os comandos disponíveis com descrições, incluindo comandos customizados.", example: "/help\n> [lista completa de slash commands]" },
+  { name: "/exit", alias: "/quit", cat: "sessao", desc: "Encerra o Claude Code CLI.", example: "/exit\n> Até logo!" },
+];
+
+let activecat = "all";
+
+function render() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const filtered = CMDS.filter(c => {
+    const matchCat = activecat === "all" || c.cat === activecat;
+    const matchQ = !q || c.name.includes(q) || c.desc.toLowerCase().includes(q) || (c.alias||"").toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  document.getElementById("count").textContent = `${filtered.length} comando${filtered.length !== 1 ? "s" : ""}`;
+
+  const list = document.getElementById("list");
+  if (!filtered.length) {
+    list.innerHTML = '<div class="no-results"><i class="ti ti-search" aria-hidden="true"></i><br>Nenhum comando encontrado</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((c, i) => {
+    const cat = CATS[c.cat];
+    return `<div class="cmd-card" onclick="toggle(this)">
+      <div class="cmd-header">
+        <span class="cmd-name">${c.name}</span>
+        <span class="cmd-badge ${cat.badge}">${cat.label}</span>
+        ${c.alias ? `<span style="font-size:11px;color:var(--color-text-tertiary);">${c.alias}</span>` : ""}
+        <i class="ti ti-chevron-down cmd-chevron" aria-hidden="true"></i>
+      </div>
+      <div class="cmd-desc">${c.desc}</div>
+      <div class="cmd-body">
+        ${c.detail ? `<p class="cmd-detail">${c.detail}</p>` : ""}
+        <div class="cmd-example">
+          <div class="cmd-example-label">Exemplo</div>
+          <code>${c.example.replace(/\n/g, "<br>")}</code>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function toggle(el) {
+  el.classList.toggle("open");
+}
+
+function buildFilters() {
+  const f = document.getElementById("filters");
+  const allPill = `<span class="pill active" onclick="setcat('all', this)">Todos</span>`;
+  const catPills = Object.entries(CATS).map(([k, v]) =>
+    `<span class="pill" onclick="setcat('${k}', this)">${v.label}</span>`
+  ).join("");
+  f.innerHTML = allPill + catPills;
+}
+
+function setcat(cat, el) {
+  activecat = cat;
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  el.classList.add("active");
+  render();
+}
+
+buildFilters();
+render();
+</script>
