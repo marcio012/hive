@@ -1,17 +1,35 @@
 import { useEffect, useMemo, useState } from 'react';
 import { io } from 'socket.io-client';
 
+export type AgentName = 'claude' | 'copilot' | 'gemini';
+
+export type PipelineStage = 'triagem' | 'execucao' | 'revisao' | 'concluido';
+
+export type PipelineAgent = AgentName | 'marcio';
+
+export interface PipelineItem {
+  id: string;
+  title: string;
+  stage: PipelineStage;
+  agent: PipelineAgent;
+  priority: 'hi' | 'md' | 'lo';
+  updatedAt: string;
+}
+
+export interface HiveEvent {
+  ts: string;
+  level: 'ok' | 'info' | 'warn' | 'err' | 'lock';
+  msg: string;
+}
+
 export interface HiveState {
-  locks: Record<
-    'claude' | 'copilot' | 'gemini',
-    { activity: string | null; acquiredAt: string | null } | null
-  >;
+  locks: Record<AgentName, { activity: string | null; acquiredAt: string | null } | null>;
   session: {
     activeIssue: string | null;
     lastAction: string | null;
     nextStep: string | null;
   };
-  inboxCounts: Record<'claude' | 'copilot' | 'gemini', number>;
+  inboxCounts: Record<AgentName, number>;
   brainstorm: Array<{
     filename: string;
     title: string;
@@ -20,6 +38,9 @@ export interface HiveState {
     date: string | null;
     responsible: string | null;
   }>;
+  pipeline: PipelineItem[];
+  events: HiveEvent[];
+  uptime: number;
 }
 
 export function useHiveSocket() {

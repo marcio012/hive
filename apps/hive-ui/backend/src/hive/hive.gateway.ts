@@ -6,6 +6,7 @@ import {
 } from '@nestjs/websockets';
 import * as chokidar from 'chokidar';
 import type { FSWatcher } from 'chokidar';
+import * as path from 'path';
 import { Server, Socket } from 'socket.io';
 import { HiveService } from './hive.service';
 
@@ -41,7 +42,18 @@ export class HiveGateway
       },
     });
 
-    this.watcher.on('all', () => {
+    this.watcher.on('all', (eventName, filePath) => {
+      const normalized = filePath.replace(/\\/g, '/');
+      const basename = path.basename(normalized);
+
+      if (basename === 'locks.json') {
+        this.hiveService.addEvent('lock', `lock atualizado (${eventName})`);
+      } else if (basename.startsWith('inbox-')) {
+        this.hiveService.addEvent('info', `${basename} atualizado (${eventName})`);
+      } else if (basename.startsWith('FILA_')) {
+        this.hiveService.addEvent('info', `${basename} atualizado (${eventName})`);
+      }
+
       if (this.debounceTimer) {
         clearTimeout(this.debounceTimer);
       }

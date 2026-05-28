@@ -3,6 +3,8 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 type AgentName = 'claude' | 'copilot' | 'gemini';
+type PipelineStage = 'triagem' | 'execucao' | 'revisao' | 'concluido';
+type PipelineAgent = AgentName | 'marcio';
 
 interface RawLock {
   owner?: string;
@@ -31,15 +33,35 @@ export interface HiveState {
     date: string | null;
     responsible: string | null;
   }>;
+  pipeline: PipelineItem[];
+  events: HiveEvent[];
+  uptime: number;
+}
+
+export interface PipelineItem {
+  id: string;
+  title: string;
+  stage: PipelineStage;
+  agent: PipelineAgent;
+  priority: 'hi' | 'md' | 'lo';
+  updatedAt: string;
+}
+
+export interface HiveEvent {
+  ts: string;
+  level: 'ok' | 'info' | 'warn' | 'err' | 'lock';
+  msg: string;
 }
 
 const AGENTS: AgentName[] = ['claude', 'copilot', 'gemini'];
 
 @Injectable()
 export class HiveService {
+  private readonly startedAt = Date.now();
   private readonly hiveRoot = path.resolve(
     process.env.HIVE_ROOT || path.resolve(process.cwd(), '../../..'),
   );
+  private readonly events: HiveEvent[] = [this.createEvent('info', 'Hive UI conectado')];
 
   getWatchPaths(): string[] {
     return [
@@ -49,11 +71,12 @@ export class HiveService {
   }
 
   async getState(): Promise<HiveState> {
-    const [locks, session, inboxCounts, brainstorm] = await Promise.all([
+    const [locks, session, inboxCounts, brainstorm, pipeline] = await Promise.all([
       this.readLocks(),
       this.readSession(),
       this.readInboxCounts(),
       this.readBrainstormFiles(),
+      this.readPipeline(),
     ]);
 
     return {
@@ -61,7 +84,21 @@ export class HiveService {
       session,
       inboxCounts,
       brainstorm,
+      pipeline,
+      events: [...this.events],
+      uptime: this.getUptime(),
     };
+  }
+
+  addEvent(level: HiveEvent['level'], msg: string): void {
+    this.events.unshift(this.createEvent(level, msg));
+    if (this.events.length > 20) {
+      this.events.length = 20;
+    }
+  }
+
+  getUptime(): number {
+    return Math.floor((Date.now() - this.startedAt) / 1000);
   }
 
   private async readLocks(): Promise<Record<AgentName, AgentLock | null>> {
@@ -201,6 +238,202 @@ export class HiveService {
     return items.sort((a, b) => a.filename.localeCompare(b.filename));
   }
 
+  private async readPipeline(): Promise<PipelineItem[]> {
+    const [claudeItems, copilotItems] = await Promise.all([
+      this.readClaudePipeline(),
+      this.readCopilotPipeline(),
+    ]);
+
+    const combined = [...claudeItems, ...copilotItems].sort((a, b) =>
+      b.updatedAt.localeCompare(a.updatedAt),
+    );
+    const concluded = combined
+      .filter((item) => item.stage === 'concluido')
+      .slice(0, 3)
+      .map((item) => item.id);
+
+    return combined.filter(
+      (item) => item.stage !== 'concluido' || concluded.includes(item.id),
+    );
+  }
+
+  private async readClaudePipeline(): Promise<PipelineItem[]> {
+    const filePath = path.join(
+      this.hiveRoot,
+      'beehive',
+      'construcao',
+      'tasks',
+      'FILA_CLAUDE.md',
+    );
+    const [content, stats] = await Promise.all([
+      this.readTextFile(filePath),
+      this.safeStat(filePath),
+    ]);
+
+    const sections = ['Em andamento', 'Pendente', 'Concluído'] as const;
+
+    return sections.flatMap((section, sectionIndex) => {
+      const rows = this.extractSectionRows(content, section);
+      const items: PipelineItem[] = [];
+
+      rows.forEach((cells, rowIndex) => {
+        const id = cells[0];
+        const title = cells[2];
+        if (!id || !title) {
+          return;
+        }
+
+        items.push({
+          id,
+          title,
+          stage: this.mapClaudeStage(section, cells[3] ?? null),
+          agent: 'claude',
+          priority: this.derivePriority(id, title),
+          updatedAt: new Date(
+            (stats?.mtimeMs ?? Date.now()) - (sectionIndex * 60 + rowIndex) * 1000,
+          ).toISOString(),
+        });
+      });
+
+      return items;
+    });
+  }
+
+  private async readCopilotPipeline(): Promise<PipelineItem[]> {
+    const filePath = path.join(
+      this.hiveRoot,
+      'beehive',
+      'construcao',
+      'tasks',
+      'FILA_COPILOT.md',
+    );
+    const [content, stats] = await Promise.all([
+      this.readTextFile(filePath),
+      this.safeStat(filePath),
+    ]);
+
+    const rows = this.extractSectionRows(content, 'Fila ordenada');
+
+    const items: PipelineItem[] = [];
+
+    rows.forEach((cells, rowIndex) => {
+      const id = cells[1];
+      const title = cells[2];
+      const rawStatus = cells[4] ?? '';
+
+      if (!id || !title) {
+        return;
+      }
+
+      const stage = this.mapCopilotStage(rawStatus);
+      if (!stage) {
+        return;
+      }
+
+      items.push({
+        id,
+        title,
+        stage,
+        agent: 'copilot',
+        priority: this.derivePriority(id, title),
+        updatedAt: new Date(((stats?.mtimeMs ?? Date.now()) - rowIndex * 1000)).toISOString(),
+      });
+    });
+
+    return items;
+  }
+
+  private extractSectionRows(content: string, sectionTitle: string): string[][] {
+    const lines = content.split('\n');
+    const startIndex = lines.findIndex(
+      (line) => line.trim().toLowerCase() === `## ${sectionTitle}`.toLowerCase(),
+    );
+
+    if (startIndex === -1) {
+      return [];
+    }
+
+    const sectionLines: string[] = [];
+    for (let index = startIndex + 1; index < lines.length; index += 1) {
+      const line = lines[index];
+      if (line.trim().startsWith('## ')) {
+        break;
+      }
+
+      sectionLines.push(line);
+    }
+
+    return sectionLines
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith('|'))
+      .map((line) => this.parseMarkdownTableRow(line))
+      .filter(
+        (cells, index) =>
+          index > 1 &&
+          cells.length > 0 &&
+          !cells.every((cell) => /^-+$/.test(cell)) &&
+          !/^id$/i.test(cells[0] ?? ''),
+      );
+  }
+
+  private parseMarkdownTableRow(line: string): string[] {
+    return line
+      .split('|')
+      .slice(1, -1)
+      .map((cell) => cell.trim());
+  }
+
+  private mapClaudeStage(
+    section: 'Em andamento' | 'Pendente' | 'Concluído',
+    status: string | null,
+  ): PipelineStage {
+    if (section === 'Concluído') {
+      return 'concluido';
+    }
+
+    if (section === 'Pendente') {
+      return 'triagem';
+    }
+
+    if (status && /revis/i.test(status)) {
+      return 'revisao';
+    }
+
+    return 'execucao';
+  }
+
+  private mapCopilotStage(rawStatus: string): PipelineStage | null {
+    if (/✅|conclu/i.test(rawStatus)) {
+      return 'concluido';
+    }
+
+    if (/revis|aguarda/i.test(rawStatus)) {
+      return 'revisao';
+    }
+
+    if (/execu|andamento|prepar/i.test(rawStatus)) {
+      return 'execucao';
+    }
+
+    if (/pendente|bloqueado/i.test(rawStatus)) {
+      return 'triagem';
+    }
+
+    return null;
+  }
+
+  private derivePriority(id: string, title: string): PipelineItem['priority'] {
+    if (/^CORE|^DEBATE/i.test(id) || /crit|schema|guard/i.test(title)) {
+      return 'hi';
+    }
+
+    if (/^HIVE|^TOS|pipeline|ui/i.test(`${id} ${title}`)) {
+      return 'md';
+    }
+
+    return 'lo';
+  }
+
   private parseMetadata(content: string): Record<string, string> {
     const metadata: Record<string, string> = {};
     const regex = /^\*\*\s*([^:*]+?)\s*:\*\*\s*(.+)$/gm;
@@ -234,5 +467,25 @@ export class HiveService {
     } catch {
       return '';
     }
+  }
+
+  private async safeStat(filePath: string): Promise<{ mtimeMs: number } | null> {
+    try {
+      return await fs.stat(filePath);
+    } catch {
+      return null;
+    }
+  }
+
+  private createEvent(level: HiveEvent['level'], msg: string): HiveEvent {
+    return {
+      ts: new Date().toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }),
+      level,
+      msg,
+    };
   }
 }
