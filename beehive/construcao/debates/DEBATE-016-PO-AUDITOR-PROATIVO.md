@@ -29,7 +29,7 @@ participantes:
 - [-] Parecer Copilot
 - [x] Consolidação / Veredito
 - [x] Aprovação Márcio
-- [ ] Work Orders despachadas
+- [x] Work Orders despachadas
 - [ ] Execução concluída
 
 ---
@@ -163,6 +163,6 @@ Não foi criado um agente novo. O cartucho PO ganhou um **Modo Auditoria** (`npm
 | Artefato | Status |
 |---|---|
 | `beehive/roles/po.md` — Modo Auditoria adicionado | ✅ 2026-05-27 |
-| `beehive/registry/reports/PRONTO.md` — critérios de done | ⏳ Work Order pendente |
-| `npm run gemini:po:auditoria` — script de ativação | ⏳ Work Order para Copilot |
+| `beehive/registry/reports/PRONTO.md` — critérios de done | ⏳ Work Order despachada → Gemini PO (2026-05-27) |
+| `npm run gemini:po:auditoria` — script de ativação | ✅ 2026-05-27 |
 | `beehive/registry/reports/AUDIT_PO_LOG.md` — log inicial | ⏳ criado na primeira auditoria |

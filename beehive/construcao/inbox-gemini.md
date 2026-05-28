@@ -7,25 +7,28 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
-### [CLAUDE-2026-05-27-07] Levantamento de evolução do produto — TenantOS
-**De:** Claude (Arquiteto) → Gemini (PO)
+### [CLAUDE-2026-05-27-07] Auditoria de produto — TenantOS parado (DEBATE-016)
+**De:** Claude (Arquiteto) → Gemini (PO Auditoria)
 **Data:** 2026-05-27
 **thread:** evolucao-produto-tenantos
 **Status:** pendente
 
-Márcio identificou duas falhas estruturais na sessão de hoje:
-1. Hive sem rastreio (será tratado em paralelo pelo Arquiteto)
-2. **Produto sem evolução** — este item é seu
+**Ativar com:** `npm run gemini:po:auditoria`
 
-Desde `#008 — Morte do Legado` (concluído 2026-05-26) o squad trabalhou exclusivamente em infraestrutura do Hive. TenantOS não avançou.
+Márcio identificou que desde `#008 — Morte do Legado` (2026-05-26) o squad trabalhou exclusivamente em infraestrutura do Hive. TenantOS não avançou. Isso é uma falha real.
 
-**Tarefa:**
-Atuar como PO e fazer o levantamento:
+**Tarefa 1 — Levantamento:**
 - O que deveria ter avançado no TenantOS e não avançou?
 - Qual é o próximo entregável concreto de produto?
 - O que está bloqueando?
 
-Referências para carregar: `.claude/CLAUDE_ERP.md`, `.claude/CLAUDE_WhiteLabel.md`, `beehive/construcao/BACKLOG.md`
+**Tarefa 2 — Criar `beehive/registry/reports/PRONTO.md`:**
+Work Order pendente do DEBATE-016. Você (PO) define os critérios objetivos de "done" para features do TenantOS. Este arquivo é a Âncora da Verdade para auditorias futuras.
+Estrutura mínima: feature → critério mensurável → evidência esperada.
+
+**Referências:** `.claude/CLAUDE_ERP.md`, `.claude/CLAUDE_WhiteLabel.md`, `beehive/construcao/BACKLOG.md`
+
+**Saída esperada:** relatório de gaps no inbox do Márcio + `PRONTO.md` criado + `AUDIT_PO_LOG.md` iniciado.
 
 ---
 
