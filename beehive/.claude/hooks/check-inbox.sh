@@ -7,8 +7,9 @@ INBOX="$REPO_ROOT/beehive/construcao/inbox-claude.md"
 
 [ ! -f "$INBOX" ] && exit 0
 
-# Conta entradas pendentes
-PENDENTES=$(grep -c "status: pendente\|status:pendente" "$INBOX" 2>/dev/null || echo "0")
+# Conta entradas pendentes — busca apenas o campo **Status:** das entradas,
+# evitando falsos positivos de menções a "status: pendente" no corpo do texto.
+PENDENTES=$(grep -c "^\*\*Status:\*\*[[:space:]]*pendente" "$INBOX" 2>/dev/null || echo "0")
 
 if [ "$PENDENTES" -gt 0 ]; then
   echo ""
@@ -17,8 +18,8 @@ if [ "$PENDENTES" -gt 0 ]; then
   echo "║  Arquivo: beehive/construcao/inbox-claude.md  ║"
   echo "╚══════════════════════════════════════════╝"
   echo ""
-  # Lista os assuntos pendentes
-  grep -A2 "status: pendente\|status:pendente" "$INBOX" | grep "^\###\|^de:\|^para:" | head -10
+  # Lista os títulos das entradas pendentes
+  grep -B10 "^\*\*Status:\*\*[[:space:]]*pendente" "$INBOX" | grep "^### \[" | head -10
   echo ""
 fi
 
