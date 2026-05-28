@@ -30,7 +30,7 @@ Levar ao Márcio para autorização de commit. Ressalva pode ir como nota no cor
 **Data:** 2026-05-28
 **backlog_ref:** TOS-017
 **thread:** debate-020-documentacao-tenantos
-**Status:** pendente
+**Status:** pendente — Onda 1 concluída; aguardando retorno do Claude antes da Onda 2
 
 **workspace_hive:** `/home/marcio/job/hive`
 **workspace_target:** `/home/marcio/job/tenantOS`
