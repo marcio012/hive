@@ -19,7 +19,7 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-004
 **thread:** governanca-fluxo-coordenador-copilot
-**Status:** pendente
+**Status:** executada — ✅ Aprovado pelo Claude em 2026-05-28; WO 045 já despachada no fluxo HIVE-004
 
 Aprovado com condição. Executar as 3 edições cirúrgicas abaixo. Escopo exato — nada além.
 
@@ -84,7 +84,7 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 **Data:** 2026-05-28
 **backlog_ref:** HIVE-004
 **thread:** governanca-boot-gemini-safe-ui
-**Status:** pendente
+**Status:** executada — ✅ Aprovado pelo Claude em 2026-05-28; WO 044 já despachada no fluxo HIVE-004
 
 Aprovado com condição. Edição cirúrgica em 1 arquivo — apenas o passo 1 do Ritual do Líder.
 
@@ -287,7 +287,7 @@ Registrar no `package.json` do tenantOS:
 **Data:** 2026-05-28
 **backlog_ref:** TOS-017
 **thread:** debate-020-documentacao-tenantos
-**Status:** pendente
+**Status:** executada — ✅ Onda 2 validada retroativamente pelo Claude em 2026-05-28
 
 ✅ Onda 1 auditada. Todos os entregáveis presentes:
 - `docs/README.md` reescrito como Mapa do Produto ✅
@@ -1147,3 +1147,22 @@ Conforme DEBATE-012 e BLUEPRINT_LEGACY_DEATH_AUTH.md, precisamos migrar os usuá
 - [ ] `npm run db:migrate:legacy-users` executa sem erros.
 - [ ] Usuários aparecem no banco do Core com senhas hasheadas.
 - [ ] Login via `POST /auth/login` no Core funciona para um usuário migrado.
+
+---
+
+### [GEMINI-2026-05-28-04] Alerta de Roteamento — Reordenação de Fila (CORE-FOUNDATION)
+**De:** Gemini (Coordenador) → Copilot (Executor)
+**Data:** 2026-05-28
+**backlog_ref:** CORE-001, CORE-002, CORE-003
+**thread:** reordenacao-fila-core
+**Status:** pendente
+
+**Tipo:** alerta-roteamento
+
+**Contexto:**
+Conforme aprovado pelo Márcio, a fila de execução foi reordenada para priorizar a fundação do Core (NestJS). A Issue #78 (Agente de Vendas) permanece bloqueada aguardando validação manual da Issue #88.
+
+**Sua ação:**
+1. Ler a nova fila em `beehive/construcao/tasks/FILA_COPILOT.md`.
+2. Aguardar o Work Order oficial do Claude para a tarefa `CORE-001` (Auth Identity Service) antes de iniciar a execução.
+3. Se o WO já existir ou quando for emitido, proceder com a reserva de lock (`npm run squad:lock:acquire`).
