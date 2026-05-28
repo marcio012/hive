@@ -59,6 +59,7 @@ As diretrizes abaixo foram estabelecidas ao longo da evolução da Colmeia e per
 | DIR-083 | Formato de Debates | Todo debate deve ter bloco `## 📊 Status` com participantes (✅/[-]/[ ]) e fases ([x]/[F]/[ ]/[-]). Obrigatório desde a abertura. |
 | DIR-084 | Rastreio por ID | Todo handoff, work order e commit deve referenciar o ID pai do backlog (`HIVE-NNN` ou `TOS-NNN`). |
 | DIR-085 | Saída Operacional Explícita | Interações operacionais devem encerrar com estado atual, próximo passo e ação esperada. Falhas incluem campo `motivo`. Exceções: respostas informativas, conceituais e confirmações sem fluxo ativo. |
+| DIR-086 | Status Report por Entrega | Ao fechar qualquer item de backlog (`HIVE-NNN` ou `TOS-NNN`), o Copilot gera um `SR-NNN` usando `SR_ENTREGA_TEMPLATE.md`. O SR é o gate narrativo para afirmação do Owner — distinto do ACEITE (recibo técnico). |
 
 *(Nota: O registro completo detalhado de todas as 51 diretrizes está arquivado em `beehive/cognition/registry/DIRETRIZES_ATIVAS_LEGACY.md` para consulta de auditoria).*
 
@@ -110,6 +111,24 @@ Em casos de **falha ou bloqueio**, adicionar obrigatoriamente:
 **Onde é obrigatório:** boot/menu, plano de voo, checkpoint, handoff, pedido de aprovação, status, encerramento operacional, falha/bloqueio.
 **Onde não se aplica:** respostas conceituais, explicações técnicas pontuais, confirmações curtas sem fluxo ativo.
 **Fonte:** DEBATE-023 | Padrão completo: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
+## 9. DIR-086 — Status Report por Entrega
+
+Ao fechar qualquer item de backlog (`HIVE-NNN` ou `TOS-NNN`), o Copilot deve gerar um **Status Report de Entrega (SR-NNN)** usando o template `beehive/construcao/templates/SR_ENTREGA_TEMPLATE.md`.
+
+**Distinção de artefatos:**
+- `ACEITE-NNN` — recibo técnico gerado pelo Copilot, auditado por Claude. Público interno do squad.
+- `SR-NNN` — narrativa executiva gerada pelo Copilot para o Márcio. Gate final antes de marcar o item como `[x]` no backlog.
+
+**Onde armazenar:**
+- Itens `HIVE-NNN` → `beehive/registry/reports/SR-HIVE-NNN-[slug].md`
+- Itens `TOS-NNN` → `tenantOS/docs/history/status-reports/SR-TOS-NNN-[slug].md`
+
+**Campos obrigatórios no SR:** `id`, `backlog_ref`, `aceite_ref`, `commit_ref`, resumo executivo, valor gerado e afirmação do Owner.
+
+**Quando não é necessário:** itens encerrados retroativamente sem entrega nova (fechamentos arquivísticos).
+
+**Fonte:** HIVE-003 | Template: `beehive/construcao/templates/SR_ENTREGA_TEMPLATE.md`
 
 ---
 *Assinado: Gemini 1.5 Pro (Facilitador Estratégico) + Claude Sonnet 4.6 (Arquiteto)*
