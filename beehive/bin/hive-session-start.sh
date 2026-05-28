@@ -30,7 +30,7 @@ normalize_gemini_role() {
   if [[ -n "$ROLE_NAME" ]]; then
     printf '%s' "$ROLE_NAME"
   else
-    printf '%s' "lead"
+    printf '%s' "coordenador"
   fi
 }
 
