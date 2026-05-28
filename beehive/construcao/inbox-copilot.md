@@ -16,6 +16,122 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-28-057] Handoff — TOS-013 Onda 2: formulário de branding na Settings
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-28
+**tipo:** handoff-executavel
+**backlog_ref:** TOS-013
+**thread:** branding-dinamico-white-label
+**Status:** pendente
+
+## Destino Operacional (DIR-082)
+
+```yaml
+workspace_hive:   /home/marcio/job/hive
+workspace_target: /home/marcio/job/tenantOS
+repo_target:      tenantOS
+cwd_exec:         /home/marcio/job/tenantOS/frontend
+```
+
+## Contexto
+
+TOS-013 Onda 1 já entregou: CSS vars completas, fallback FluxoLabel, sem FOUC (commit b151437).
+Esta Onda 2 é **puramente frontend** — o backend já está pronto:
+
+- Endpoint: `PATCH /api/tenant/admin/:id` — aceita todos os campos de branding via `UpdateAdminTenantDto`
+- Campos disponíveis: `brandingNome`, `brandingTagline`, `brandingLogoUrl`, `brandingCoverUrl`, `brandingCorPrimaria`, `brandingCorSecundaria`, `brandingTextoSobrePrimaria`, `brandingFundoPagina`, `brandingFundoPainel`, `brandingTextoPrimario`, `brandingTextoSecundario`
+- A tela `Settings.tsx` existe mas está vazia
+
+**Leia antes de executar:**
+- `frontend/src/app/components/pages/Settings.tsx` — estado atual (vazio)
+- `backend/src/tenant/dto/admin-tenant.dto.ts` — `UpdateAdminTenantDto` com todos os campos
+- `frontend/src/app/api.ts` — padrão de chamada `api.xxx()`
+- `frontend/src/app/tenant/TenantThemeProvider.tsx` — como as CSS vars são injetadas
+
+---
+
+## O que implementar
+
+### 1. Adicionar método em `api.ts`
+
+```typescript
+getBrandingAdmin: (tenantId: string) =>
+  request<UpdateAdminTenantDto>(`/tenant/admin/${tenantId}`, 'GET'),
+
+updateBranding: (tenantId: string, dto: Partial<UpdateAdminTenantDto>) =>
+  request<void>(`/tenant/admin/${tenantId}`, 'PATCH', dto),
+```
+
+### 2. Reescrever `Settings.tsx`
+
+Formulário de branding com os campos abaixo. **Apenas admin** pode ver e salvar (verificar com `isAdmin()`).
+
+**Campos do formulário (todos opcionais):**
+
+| Campo | Tipo | Label |
+|---|---|---|
+| `brandingNome` | text | Nome da marca |
+| `brandingTagline` | text | Slogan |
+| `brandingLogoUrl` | url | URL do logo |
+| `brandingCoverUrl` | url | URL da capa |
+| `brandingCorPrimaria` | color | Cor primária |
+| `brandingCorSecundaria` | color | Cor secundária |
+| `brandingTextoSobrePrimaria` | color | Texto sobre primária |
+| `brandingFundoPagina` | color | Fundo da página |
+| `brandingFundoPainel` | color | Fundo do painel |
+
+Os campos `brandingTextoPrimario` e `brandingTextoSecundario` podem ser omitidos desta versão (menos críticos).
+
+**Fluxo:**
+1. No mount: chamar `api.getBrandingAdmin(user.tenantId)` para pré-preencher os campos
+2. Inputs de cor: usar `<input type="color">` — simples e sem dependência
+3. Inputs de texto: `<input type="text">` com placeholder
+4. Preview ao vivo: a cada mudança de cor, atualizar as CSS vars no `document.documentElement` usando `root.style.setProperty()` — igual ao que `TenantThemeProvider` já faz
+5. Botão "Salvar": chamar `api.updateBranding(user.tenantId, formData)` com `PATCH`
+6. Feedback: toast simples ("Branding salvo!" / "Erro ao salvar")
+
+**Preview ao vivo — mapeamento de campo → CSS var:**
+```typescript
+const CSS_MAP: Record<string, string> = {
+  brandingCorPrimaria:        '--tenant-primary',
+  brandingCorSecundaria:      '--tenant-secondary',
+  brandingTextoSobrePrimaria: '--tenant-text-on-primary',
+  brandingFundoPagina:        '--tenant-page-bg',
+  brandingFundoPainel:        '--tenant-panel-bg',
+};
+```
+
+**Não-admin:** exibir mensagem "Configurações disponíveis apenas para administradores."
+
+### 3. Adicionar rota em `routes.tsx`
+
+Verificar se `/app/settings` já está registrada. Se não, adicionar:
+```typescript
+import Settings from "./components/pages/Settings";
+// children de /app:
+{ path: "settings", Component: Settings },
+```
+
+---
+
+## Critérios de Aceite
+
+- [ ] Admin acessa `/app/settings` e vê o formulário de branding
+- [ ] Campos pré-preenchidos com dados atuais do tenant
+- [ ] Mudar cor primária atualiza visualmente a UI em tempo real (sem salvar)
+- [ ] Clicar "Salvar" chama `PATCH /api/tenant/admin/:id` e retorna sucesso
+- [ ] Não-admin vê mensagem de acesso restrito
+- [ ] `npm run check:types` (frontend) → OK
+- [ ] `npm run build` (frontend) → OK
+
+## Ponto de Parada
+
+Reportar ao Claude via `inbox-claude.md` com:
+- Confirmação dos critérios
+- Commit hash
+
+---
+
 ### [CLAUDE-2026-05-28-056] Handoff — Hive Web UI v2: novo design system + 3 telas
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-28
