@@ -61,6 +61,9 @@ As diretrizes abaixo foram estabelecidas ao longo da evolução da Colmeia e per
 | DIR-085 | Saída Operacional Explícita | Interações operacionais devem encerrar com estado atual, próximo passo e ação esperada. Falhas incluem campo `motivo`. Exceções: respostas informativas, conceituais e confirmações sem fluxo ativo. |
 | DIR-086 | Status Report por Entrega | Ao fechar qualquer item de backlog (`HIVE-NNN` ou `TOS-NNN`), o Copilot gera um `SR-NNN` usando `SR_ENTREGA_TEMPLATE.md`. O SR é o gate narrativo para afirmação do Owner — distinto do ACEITE (recibo técnico). |
 | DIR-087 | Limpeza de Processos ao Encerrar | Claude e Copilot devem verificar e encerrar processos, servidores e portas abertas antes de reportar conclusão de qualquer tarefa com execução. |
+| DIR-090 | Taxonomia de Falhas Sistêmicas | Define as categorias de falha de fluxo do Hive, o protocolo de safe-stop via `error-state.json` e as responsabilidades de detecção, contenção e recuperação por agente. |
+| DIR-091 | Rigor de Cano — Sequência Sem Pulo | Toda demanda que resulte em trabalho deve originar de uma Ideação formalizada. Nenhum cano inicia sem o anterior materializado. Claude bloqueia pulo de cano como falha sistêmica `cano_pulado`. |
+| DIR-092 | Márcio como Agente Ativo | Márcio pode adquirir lock e assinar commits por qualquer papel do squad. `marcio` é owner válido no sistema de lock com soberania de override sobre qualquer agente. |
 
 *(Nota: O registro completo detalhado de todas as 51 diretrizes está arquivado em `beehive/cognition/registry/DIRETRIZES_ATIVAS_LEGACY.md` para consulta de auditoria).*
 
@@ -147,4 +150,114 @@ Ao finalizar qualquer tarefa de desenvolvimento ou validação que tenha iniciad
 **Responsabilidade:** Claude e Copilot. PO e Coordenador não executam — não se aplica a eles.
 
 ---
+
+## 11. DIR-090 — Taxonomia de Falhas Sistêmicas no Fluxo Hive
+
+**Origem:** DEBATE-027 | **Data:** 2026-05-29
+
+### Categorias de falha
+
+| Categoria | Definição | Severidade padrão |
+|---|---|---|
+| `executor_errado` | Agente executa ação que pertence a outro (ex: Claude commita o que é do Copilot) | high |
+| `auditoria_pulada` | Ação crítica executada sem o parecer/liberação do auditor designado | high |
+| `roteamento_incorreto` | Inbox ou WO entregue ao agente errado; WO sem campo `executor:` | medium |
+| `estado_inconsistente` | Inbox com `pendente` após commit; WO em `em-execução` após encerramento | medium |
+| `cascata_silenciosa` | Falha em etapa A não sinalizada; etapa B executa sobre estado inválido | high |
+| `lock_orfao` | Agente trava lock e encerra sessão sem liberar | medium |
+| `commit_sem_liberacao` | Commit realizado sem a entrada de inbox correspondente ter sido marcada `consumida` | high |
+
+### Protocolo de safe-stop
+
+Quando qualquer agente detecta uma falha sistêmica:
+
+1. **Escrever** `.hive-agent/error-state.json` atomicamente (via `.tmp` + `rename`) com os campos:
+   - `status`: `alert` | `paused`
+   - `incident_id`: `INC-YYYY-MM-DD-NNN`
+   - `detected_at`: ISO timestamp
+   - `detected_by`: agente
+   - `category`: uma das categorias acima
+   - `severity`: `low` | `medium` | `high` | `critical`
+   - `affected_flows`: lista de WOs/inboxes/commits afetados
+   - `auto_mode_allowed`: `false` se severity >= high
+   - `resume_requirements`: condições para retomar
+
+2. **Criar** arquivo de incidente em `beehive/registry/incidents/INC-YYYY-MM-DD-NNN.md` com schema definido no DEBATE-027 Seção 5.4.
+
+3. **Não continuar** automação crítica (commits, handoffs, despachos de WO) enquanto `status != ok`.
+
+4. Se `severity: high` ou `critical`, **abrir entrada** no `inbox-claude.md` para revisão arquitetural.
+
+### Responsabilidades
+
+| Agente | Detecção | Escrita error-state | Recuperação |
+|---|---|---|---|
+| Qualquer agente | Pode detectar e sinalizar | ✅ Pode escrever | Não — precisa de Claude |
+| Claude (Arquiteto) | Auditor principal | ✅ Pode escrever | ✅ Autoriza retomada |
+| Copilot (Engenheiro) | Pode detectar em execução | ✅ Pode escrever | ❌ Aguarda Claude |
+| Orchestrator | Detecção contínua / reconciliação | ✅ Pode escrever | Parcial (pausa automação) |
+
+### Guards obrigatórios (implementados na WO-028-A)
+
+Todo guard de ação crítica deve validar:
+- `actor` autorizado para a `action`
+- Dependência/auditoria satisfeita antes da ação
+- Estado da inbox/WO compatível com a transição
+- Lock válido ou ausência explícita de lock obrigatório
+- `workspace` e `repo` corretos declarados
+
+**Guard sem consequência bloqueante não é guard — é documentação.** Se a ação é crítica, o guard deve bloquear e exigir override documentado.
+
+---
+
+## 12. DIR-091 — Rigor de Cano: Sequência Sem Pulo
+
+**Origem:** decisão do PO (Márcio) em 2026-05-29
+
+Toda demanda que resulte em trabalho (implementação, debate, WO, handoff, commit) deve obrigatoriamente originar de uma **Ideação formalizada** e percorrer os canos em sequência. Nenhum cano pode iniciar sem o anterior ter sido completado e sua saída materializada.
+
+### Guards obrigatórios — Claude (Arquiteto) DEVE impor:
+
+| Antes de criar... | Verificar que existe... |
+|---|---|
+| WO / handoff ao Copilot | Blueprint aprovado (`BLUEPRINT-NNN.md` ou seção de contrato técnico equivalente) |
+| Blueprint | Debate (`DEBATE-NNN.md` com veredito) se estrutural — ou Ideação se não estrutural |
+| Debate | Ideação registrada (entrada de backlog ou `RESUMO_INTENCAO.md`) |
+| Commit | Auditoria documentada (checkpoint consumido no inbox-claude) |
+| Item fechado no backlog | SR gerado (DIR-086) |
+
+### Consequência de pulo de cano:
+1. Claude **recusa** o handoff e informa o cano faltante ao Márcio
+2. O pulo é registrado como falha `cano_pulado` (DIR-090)
+3. Não há exceção por pressão de tempo ou urgência — se urgente, o cano é simplificado, nunca omitido
+
+### Onde se aplica:
+- Toda interação do Márcio que resulte em demanda de trabalho
+- Não se aplica a consultas puramente informativas sem produto esperado
+
+---
+
+## 13. DIR-092 — Márcio como Agente Ativo: Lock e Assinatura
+
+**Origem:** decisão do PO (Márcio) em 2026-05-29
+
+Márcio é soberano da colmeia e pode atuar diretamente como executor quando necessário.
+
+### Direitos do Márcio no sistema de lock:
+- Adquirir lock com `marcio` como owner (igual a qualquer agente)
+- Override/break de lock de qualquer agente com flag `--force` (sem bloqueio)
+- Delegar lock para um agente com `--delegate <agent>` (Márcio libera, agente executa)
+- `marcio` nunca é bloqueado por lock de outro agente
+
+### Assinaturas de commit válidas quando Márcio executa:
+- `Dev: Márcio - PO` — trabalho próprio
+- `Dev: Márcio - PO (substituindo Claude - Arquiteto)` — em substituição
+- `Dev: Márcio - PO (substituindo Copilot - Engenheiro)` — em substituição
+
+### Implementação técnica (WO-033):
+- `hive-lock.sh`: aceitar `marcio` como owner válido; `--force` quebra lock sem checagem; `--delegate <agent>` grava owner=agent + delegated_by=marcio
+- Assinaturas adicionadas ao `CLAUDE.md` e `feedback-commits.md`
+
+---
+
 *Assinado: Gemini 1.5 Pro (Facilitador Estratégico) + Claude Sonnet 4.6 (Arquiteto)*

@@ -1,6 +1,6 @@
 ---
 gerado_em: 2026-05-28T00:00:00Z
-atualizado_em: 2026-05-28T00:00:00Z
+atualizado_em: 2026-05-29T00:00:00Z
 gerado_por: Claude (Arquiteto)
 ---
 
@@ -13,9 +13,13 @@ gerado_por: Claude (Arquiteto)
 
 ## Em andamento
 
-| ID | Tipo | Título | Status |
-|----|------|--------|--------|
-| HIVE-UI-002 | Blueprint + WO | Hive Web UI v2 — Centro de Controle com ações | em preparação |
+_(nenhum item ativo no momento)_
+
+---
+
+## Pendente (aguardando aprovação do Márcio)
+
+_(nenhum — todas aprovadas e despachadas)_
 
 ---
 
@@ -23,8 +27,7 @@ gerado_por: Claude (Arquiteto)
 
 | ID | Tipo | Título | Dependência |
 |----|------|--------|-------------|
-| CORE-003 | Blueprint | Schema Management — Centralizar migrations e seeds | CORE-002 ✅ |
-| DEBATE-025 | WO | Emitir WO de política de higiene do inbox | debate aberto |
+| DEBATE-031 | Parecer | Hive como Plataforma Containerizada com PG | Gemini e Copilot ainda pendentes |
 
 ---
 
@@ -32,6 +35,13 @@ gerado_por: Claude (Arquiteto)
 
 | ID | Tipo | Título | Entrega |
 |----|------|--------|---------|
+| DEBATE-033 | Consolidação | Esteira Visual — veredito GO (gate: protótipo) | — |
+| DEBATE-029 | WOs preparadas | Módulo de Agenda TOS-015 (3 ondas) | WO-035/036/037 |
+| DEBATE-030 | Consolidação | Telemetria E2: Interações por Tipo — veredito GO | WO-033 criada |
+| DEBATE-032 | Consolidação | Painel de Diretrizes e Governança — veredito GO | WO-034 criada |
+| HIVE-018 | Auditoria + SR | Centro de Controle V2 | 7d8aff9 |
+| HIVE-015 | Auditoria + SR | Telemetria E1: Tokens por Agente | 22bdb51 |
+| HIVE-UI-002 | Blueprint + WO | Hive Web UI v2 — Centro de Controle com ações | 7d8aff9 |
 | HIVE-UI-001 | Blueprint + WO | Hive Web UI MVP | fefb20c |
 | CORE-002 | Auditoria + WO delta | TenantGuard DB validation + ModuleGuard tests | 378f3d6 + 600d597 |
 | CORE-001 | Auditoria + WO | Auth Identity Service JWT | ae61cb8 |

@@ -1,6 +1,6 @@
 ---
 gerado_em: 2026-05-28T00:00:00Z
-atualizado_em: 2026-05-29T09:40:00Z
+atualizado_em: 2026-05-29T10:35:00Z
 gerado_por: Gemini (PO)
 ---
 
@@ -15,9 +15,9 @@ gerado_por: Gemini (PO)
 
 | Campo | Valor |
 |-------|-------|
-| Cartucho | PO |
+| Cartucho | PO / Coordenador / Projetista |
 | Iniciado em | 2026-05-29 |
-| Contexto | Manutenção de Backlog e Despacho do Orquestrador |
+| Contexto | Handoff DEBATE-029, Ideação de Relatórios e Parecer DEBATE-033 |
 
 ---
 
@@ -25,8 +25,9 @@ gerado_por: Gemini (PO)
 
 | ID | Cartucho | Tipo | Título |
 |----|----------|------|--------|
-| — | PO | Ideação | Módulo de Relatórios (TenantOS Ciclo 2) |
 | — | Projetista | Blueprint | Onboarding Full (Depende de Design do Claude) |
+| — | PO | Refinamento | Relatórios por Nicho (TenantOS Ciclo 2) |
+| DEBATE-033 | Projetista | Prompt UI | Rascunho entregue em PROMPT_UI_ESTEIRA_VISUAL.md |
 
 ---
 
@@ -34,6 +35,10 @@ gerado_por: Gemini (PO)
 
 | ID | Cartucho | Título | Entrega |
 |----|----------|--------|---------|
+| DEBATE-029 | PO | Consolidação e Veredito Agenda | veredito GO emitido |
+| DEBATE-033 | PO/Facilitador | Parecer Esteira Visual | parecer registrado |
+| — | PO | Ideação Módulo de Relatórios | DISCOVERY_TOS_RELATORIOS.md |
+| DEBATE-029 | Coordenador | Handoff Agenda para Claude/Copilot | inboxes notificados |
 | DEBATE-026 | PO | Orquestrador Híbrido — parecer e veredito | parecer emitido |
 | DEBATE-025 | PO | Política de higiene estrutural do inbox | parecer emitido |
 | HIVE-UI-003 | Projetista | Hive UI: Centro de Controle Funcional | commit 1309cdd |

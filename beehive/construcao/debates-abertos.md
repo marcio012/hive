@@ -28,11 +28,11 @@ ultima_revisao: 2026-05-24
 | **DEBATE-026** | **Orquestrador Híbrido — Chief Agent Pattern + Piloto Automático** | **WOs despachadas** | **Claude** |
 | **DEBATE-027** | **Tratamento de Falhas Sistêmicas no Fluxo Hive** | **WOs despachadas** | **Claude** |
 | **DEBATE-028** | **Autorização para Arquivamento de Inbox** | **WOs despachadas** | **Claude** |
-| **DEBATE-029** | **Gestão de Agenda (Módulo Serviços)** | **Aberto** | **Gemini (PO)** |
-| **DEBATE-030** | **Telemetria E2: Interações por Tipo + Guard Lock** | **Em andamento** | **Claude** |
+| **DEBATE-029** | **Gestão de Agenda (Módulo Serviços)** | **WOs criadas — aguarda Márcio** | **Gemini (PO)** |
+| **DEBATE-030** | **Telemetria E2: Interações por Tipo + Guard Lock** | **Veredito GO — aguarda Márcio** | **Claude** |
 | **DEBATE-031** | **Hive como Plataforma Containerizada com PostgreSQL** | **Em andamento** | **Claude** |
-| **DEBATE-032** | **Painel de Diretrizes e Governança (HIVE-UI-015)** | **Aberto** | **Claude (Arquiteto)** |
-| **DEBATE-033** | **Centro de Controle: Esteira Visual por Processo** | **Aberto** | **Claude (Arquiteto)** |
+| **DEBATE-032** | **Painel de Diretrizes e Governança (HIVE-UI-015)** | **Veredito GO — aguarda Márcio** | **Claude (Arquiteto)** |
+| **DEBATE-033** | **Centro de Controle: Esteira Visual por Processo** | **Veredito GO (gate: protótipo) — aguarda Márcio** | **Claude (Arquiteto)** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*

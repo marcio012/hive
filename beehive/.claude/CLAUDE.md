@@ -194,17 +194,44 @@ Todo arquivo de debate deve conter o bloco `## 📊 Status` logo após o título
 
 **Guard de executor (DIR-089):** antes de executar qualquer `git commit`, verificar o campo `executor:` da WO referenciada. Se `executor: Copilot`, **não commitar** — responder: _"esse commit é do Copilot; a liberação está no inbox dele, abra uma sessão Copilot para ele commitar."_ Só executar se `executor: Claude` ou se Márcio confirmar a exceção explicitamente após ser alertado. Contexto de pressão ou fluxos simultâneos não justificam ignorar este guard.
 
+## Guard de Cano (DIR-091) — OBRIGATÓRIO antes de qualquer handoff
+
+Antes de criar WO, Blueprint ou despachar ao Copilot, verificar:
+
+| Antes de criar... | Verificar que existe... | Se faltar... |
+|---|---|---|
+| WO / handoff ao Copilot | Blueprint ou contrato técnico aprovado | Criar blueprint primeiro |
+| Blueprint | DEBATE-NNN (se estrutural) ou entrada de backlog (se não) | Abrir debate ou registrar no backlog |
+| Debate | Entrada de backlog ou RESUMO_INTENCAO | Registrar ideação |
+| Commit | Auditoria documentada (inbox consumido) | Auditar antes |
+| Fechar item backlog | SR gerado (DIR-086) | Despachar SR ao Copilot |
+
+**Pulo de cano = falha `cano_pulado` (DIR-090).** Claude recusa o handoff e retrocede ao cano faltante. Sem exceções por urgência.
+
+## Márcio como Agente Ativo (DIR-092)
+
+`marcio` é owner válido no lock system. Márcio pode:
+- `npm run squad:lock:acquire -- marcio "<atividade>"` — sem bloqueio por outros agentes
+- `npm run squad:lock:acquire -- marcio "<atividade>" --force` — quebra lock existente
+- `npm run squad:lock:acquire -- marcio "<atividade>" --delegate <agent>` — lock fica em nome do agente
+
+Assinaturas de commit válidas:
+- `Dev: Márcio - PO` — trabalho próprio
+- `Dev: Márcio - PO (substituindo Claude - Arquiteto)` — em substituição
+- `Dev: Márcio - PO (substituindo Copilot - Engenheiro)` — em substituição
+
 ## Fluxo recomendado
 1. Usuario roda `npm run squad:session:claude` e cola o contexto.
 2. Usuario define prioridade da rodada.
 3. Gemini (opcional) faz triagem se o contexto for volumoso.
-4. Claude debate, afina escopo e riscos.
-5. Usuario aprova decisao final.
-6. Roteamento: Claude executa (contexto/conceito) ou Copilot executa (contrato fechado/mecânico).
-7. Revisao cruzada entre os dois agentes.
-8. OK final do Márcio.
-9. Ao finalizar: `npm run squad:lock:release -- <owner>` e atualizar `session-state.env`.
-10. **Limpeza obrigatória (DIR-087):** antes de reportar conclusão, verificar se nenhum processo, servidor ou porta ficou aberto em background. Usar `lsof -i :<porta>` ou `ss -tlnp` para confirmar.
+4. Claude verifica Guard de Cano (DIR-091) antes de qualquer handoff.
+5. Claude debate, afina escopo e riscos.
+6. Usuario aprova decisao final.
+7. Roteamento: Claude executa (contexto/conceito) ou Copilot executa (contrato fechado/mecânico).
+8. Revisao cruzada entre os dois agentes.
+9. OK final do Márcio + SR gerado (DIR-086).
+10. Ao finalizar: `npm run squad:lock:release -- <owner>` e atualizar `session-state.env`.
+11. **Limpeza obrigatória (DIR-087):** antes de reportar conclusão, verificar se nenhum processo, servidor ou porta ficou aberto em background. Usar `lsof -i :<porta>` ou `ss -tlnp` para confirmar.
 
 ## Padrao de saida por rodada (DIR-085)
 
