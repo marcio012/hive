@@ -113,6 +113,12 @@ Inboxes são arquivos markdown — editar diretamente via ferramenta de edição
 - `repo_target`
 - `cwd_exec`
 
+**Padrao de handoff executavel (DIR-088):**
+- Criar arquivo de WO em `beehive/construcao/work_orders/<PASTA>/<ID>.md` com o contrato tecnico completo
+- Criar entrada de inbox CURTA com `wo_ref` apontando para o arquivo
+- Corpo variavel da entrada (apos `Status:`) <= 30 linhas — sem colar conteudo da WO
+- Template: `beehive/construcao/work_orders/TEMPLATE_HANDOFF.md`
+
 Se a tarefa sair do Hive para um produto externo e esses campos nao estiverem presentes, o handoff esta incompleto e nao deve ser enviado ao Copilot.
 
 **Leitura no inicio de sessao:**

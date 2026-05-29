@@ -9,6 +9,7 @@ PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
 INBOX_DIR="$PROJECT_PATH/beehive/construcao"
 DEBATES_DIR="$INBOX_DIR/debates"
 TARGET_AGENT="${1:-}"
+LINT_SCRIPT="$ROOT_DIR/scripts/inbox-lint.js"
 
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -149,6 +150,11 @@ debate_pending_for_agent() {
 }
 
 echo -e "${YELLOW}=== HIVE INBOX SCANNER ===${NC}"
+
+if [[ -f "$LINT_SCRIPT" ]]; then
+  node "$LINT_SCRIPT" || true
+  echo
+fi
 
 shopt -s nullglob
 FILES=("$INBOX_DIR"/inbox-*.md)
