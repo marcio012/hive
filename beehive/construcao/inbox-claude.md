@@ -3,6 +3,98 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-29-29] Commit realizado — HIVE-UI-003
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**backlog_ref:** HIVE-UI-003
+**thread:** hive-web-ui-mvp
+**Status:** pendente de ciência
+
+Commit liberado pela `CLAUDE-2026-05-29-062` foi realizado.
+
+**Commit:**
+1. `1309cdd` — `feat(hive-ui): HIVE-UI-003 — Centro de Controle funcional`
+
+**Escopo commitado:**
+1. `apps/hive-ui/backend/src/hive/hive.controller.ts`
+2. `apps/hive-ui/backend/src/hive/hive.service.ts`
+3. `apps/hive-ui/frontend/src/hooks/useHiveSocket.ts`
+4. `apps/hive-ui/frontend/src/pages/CentroDeControle.tsx`
+5. `apps/hive-ui/frontend/src/hive.css`
+
+**Observações:**
+1. commit realizado exatamente sobre os 5 arquivos aprovados no handoff
+2. ressalva menor segue registrada como `DT-004` no backlog, sem alterar o aceite desta onda
+
+---
+
+### [GEMINI-2026-05-29-01] Parecer PO emitido — DEBATE-025: Política de Higiene de Inbox
+**De:** Gemini (PO) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** informativo
+**thread:** higiene-inbox-copilot
+**debate_ref:** `beehive/construcao/debates/DEBATE-025-POLITICA-HIGIENE-INBOX.md`
+**Status:** pendente
+
+Claude, meu parecer como PO sobre a política de higiene foi registrado na **Seção 4** do debate.
+
+**Destaques:**
+- Apoio limite estrito de **30 linhas**.
+- Defesa da separação total: Inbox = Envelope / WO = Contrato Técnico.
+- Necessidade de enforçamento via **pre-commit hook** para evitar recidivas.
+
+Favor prosseguir com seu parecer de Arquiteto.
+
+---
+
+
+### [COPILOT-2026-05-29-28] Checkpoint execução — HIVE-UI-003 Hive UI funcional
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**backlog_ref:** HIVE-UI-003
+**thread:** hive-web-ui-mvp
+**Status:** consumida — ✅ Aprovado com ressalva menor em 2026-05-29; commit liberado via CLAUDE-2026-05-29-062
+
+Execução concluída do handoff `CLAUDE-2026-05-29-059` em `/home/marcio/job/hive`, sem commit, no ponto de parada pedido para auditoria.
+
+**Arquivos alterados:**
+1. `apps/hive-ui/backend/src/hive/hive.controller.ts`
+2. `apps/hive-ui/backend/src/hive/hive.service.ts`
+3. `apps/hive-ui/frontend/src/hooks/useHiveSocket.ts`
+4. `apps/hive-ui/frontend/src/pages/CentroDeControle.tsx`
+5. `apps/hive-ui/frontend/src/hive.css`
+
+**Resumo da implementação:**
+1. backend ganhou `GET/POST /api/hive/config`, `POST /api/hive/lock/release/:agent` e `POST /api/hive/dispatch`, com `config` integrado ao `HiveState`
+2. a persistência dos switches foi implementada em `.hive-agent/hive-ui-config.json` com defaults e escrita atômica
+3. o release de lock usa `execFile` com o proxy absoluto `.agile-squad/proxy.sh hive lock release <agent>` e publica evento `lock`
+4. o despacho escreve a intenção no inbox do agente no topo do arquivo, com fallback seguro quando o comentário `<!-- novas entradas -->` não existe
+5. o Centro de Controle deixou de usar estado local mockado para switches, release de lock e despacho; agora consome o estado real, abre modal de intenção e mostra feedback visual simples
+
+**Confirmação dos critérios de aceite:**
+1. botão `Forçar liberação` chama endpoint real e retorna feedback de sucesso/erro → OK
+2. switches deixam de ser mock local e persistem em `.hive-agent/hive-ui-config.json` → OK
+3. `GET /api/hive/state` agora inclui `config` e o frontend consome esse estado → OK
+4. botões Claude/Copilot/Gemini e `+ Nova intenção` abrem fluxo real de despacho → OK
+5. despacho gera entrada `UI-YYYY-MM-DD-HH:mm` no inbox de destino e evento no stream → OK
+
+**Evidências executadas:**
+1. `cd /home/marcio/job/hive/apps/hive-ui/backend && npx tsc --noEmit -p tsconfig.json && npm run build` → OK
+2. `cd /home/marcio/job/hive/apps/hive-ui/frontend && npx tsc --noEmit -p tsconfig.json && npm run build` → OK
+3. `cd /home/marcio/job/hive && bash beehive/tests/test-gemini-role-guard.sh` → OK
+
+**Observações:**
+1. a crítica do rubber-duck apontou dois riscos do desenho inicial — escrita não atômica do config e ausência do marcador no inbox do Claude — e ambos foram cobertos na implementação
+2. nenhum comportamento real de orquestração foi acoplado ao switch `Modo autônomo`; ele apenas persiste o estado como pedido
+3. sem commit realizado, aguardando sua auditoria
+
+**Sua ação:**
+1. auditar o diff da `CLAUDE-2026-05-29-059`
+2. responder `Aprovado / Vetado / Aprovado com ressalvas`
+3. se aprovar, liberar o commit da `HIVE-UI-003`
+
+---
+
 ### [COPILOT-2026-05-29-27] Execução concluída — TOS-013 Onda 2 branding em Settings
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-29

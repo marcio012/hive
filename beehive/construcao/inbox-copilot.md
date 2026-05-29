@@ -16,6 +16,218 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-29-062] Liberação de commit — HIVE-UI-003
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-UI-003
+**thread:** hive-web-ui-mvp
+**Status:** executada — commit `1309cdd` realizado em 2026-05-29; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-29`
+
+HIVE-UI-003 auditada e **aprovada com ressalva menor** (DT-004 registrado no BACKLOG.md).
+
+**Ação:** commitar os 5 arquivos da implementação HIVE-UI-003.
+
+**Mensagem de commit obrigatória:**
+```
+feat(hive-ui): HIVE-UI-003 — Centro de Controle funcional
+
+Lock release via POST /api/hive/lock/release/:agent com execFile +
+proxy.sh. Config persistida em .hive-agent/hive-ui-config.json com
+escrita atômica (tmp → rename). Dispatch escreve entrada UI-* no
+inbox do agente escolhido via anchor ou fallback.
+
+Frontend: switches consomem state.config do WebSocket (sem estado
+local), loading states granulares por chave, modal de despacho com
+aria attributes, toast auto-dismiss, commandCount via events.filter.
+
+DT-004 registrado: CentroDeControle.tsx (~450 linhas) — extrair
+sub-componentes em onda futura.
+
+Dev: Copilot - Engenheiro | Auditoria: Claude - Arquiteto
+Approved by: Márcio
+```
+
+---
+
+### [CLAUDE-2026-05-29-059] Handoff — HIVE-UI-003: Hive UI funcional (lock release + switches persistidos + despacho)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-UI-003
+**thread:** hive-web-ui-mvp
+**Status:** executada — ✅ Aprovado com ressalva menor em 2026-05-29; commit liberado via CLAUDE-2026-05-29-062. DT-004 registrado no BACKLOG.md.
+
+## Destino Operacional (DIR-082)
+
+```yaml
+workspace_hive:   /home/marcio/job/hive
+workspace_target: /home/marcio/job/hive
+repo_target:      hive
+cwd_exec:         /home/marcio/job/hive/apps/hive-ui
+```
+
+## Contexto
+
+A UI do Hive está visualmente completa (HIVE-UI-002 — commit 3060a46) mas os controles não têm efeito real:
+- Botão "Forçar liberação" de lock → visual sem ação
+- Switches (Modo autônomo, Auto-merge, Notificar Márcio) → estado local React, não persiste
+- Botões de despacho (Claude / Copilot / Gemini / + Nova intenção) → visual sem ação
+
+**Leia antes de executar:**
+- `apps/hive-ui/backend/src/hive/hive.service.ts` — serviço atual
+- `apps/hive-ui/backend/src/hive/hive.controller.ts` — endpoints existentes
+- `apps/hive-ui/backend/src/hive/hive.gateway.ts` — WebSocket gateway
+- `apps/hive-ui/frontend/src/pages/CentroDeControle.tsx` — componente com os controles mockados
+- `apps/hive-ui/frontend/src/hooks/useHiveSocket.ts` — hook de estado
+
+**Não implementar:** lógica de orquestrador autônomo — isso está em debate (DEBATE-026). O switch "Modo autônomo" deve persistir o estado mas sem acionar nenhum comportamento real de orquestração por enquanto.
+
+---
+
+## Parte 1 — Backend
+
+### 1.1 Endpoint: liberar lock de agente
+
+```
+POST /api/hive/lock/release/:agent
+```
+
+Executa via `child_process.execFile` o script npm equivalente a:
+```bash
+npm run squad:lock:release -- <agent>
+```
+
+Usar `execFile` com caminho absoluto do script — não `exec` com string shell.
+Retornar `{ ok: true }` em sucesso ou `{ ok: false, error: string }` em falha.
+Emitir evento no `EventBuffer`: `{ level: 'lock', msg: 'Lock de <agent> liberado via UI' }`.
+
+### 1.2 Endpoint: ler e salvar config do squad
+
+```
+GET  /api/hive/config          → retorna HiveConfig
+POST /api/hive/config          → body: Partial<HiveConfig>, salva e retorna HiveConfig atualizado
+```
+
+**Arquivo de persistência:** `.hive-agent/hive-ui-config.json`
+
+```typescript
+interface HiveConfig {
+  autoMode: boolean;       // Modo autônomo (sem efeito real — DEBATE-026 pendente)
+  autoMerge: boolean;      // Auto-merge em verde
+  notifyMarcio: boolean;   // Notificar Márcio
+}
+```
+
+Defaults se arquivo não existir: `{ autoMode: false, autoMerge: false, notifyMarcio: true }`.
+
+### 1.3 Endpoint: despachar intenção
+
+```
+POST /api/hive/dispatch
+Body: { agent: 'claude' | 'copilot' | 'gemini', message: string }
+```
+
+Escreve entrada no inbox do agente escolhido:
+- Claude → `beehive/construcao/inbox-claude.md`
+- Copilot → `beehive/construcao/inbox-copilot.md`
+- Gemini → `beehive/construcao/inbox-gemini.md`
+
+**Formato da entrada a escrever (append no topo, após o comentário `<!-- novas entradas -->`)**:
+```markdown
+### [UI-{YYYY-MM-DD}-{HH:mm}] Intenção despachada via Hive UI
+**De:** Márcio (via Hive UI) → {Agent}
+**Data:** {YYYY-MM-DD}
+**tipo:** pedido-de-parecer
+**Status:** pendente
+
+{message}
+
+---
+```
+
+Retornar `{ ok: true }` em sucesso.
+Emitir evento: `{ level: 'info', msg: 'Intenção despachada para <agent> via UI' }`.
+
+### 1.4 Incluir `config` no HiveState e emitir via WebSocket
+
+Adicionar ao `HiveState`:
+```typescript
+config: HiveConfig;
+```
+
+O `getState()` deve chamar `readConfig()` e incluir no retorno.
+O gateway já emite `hive:update` com o estado completo — nenhuma mudança necessária no gateway.
+
+---
+
+## Parte 2 — Frontend
+
+### 2.1 Hook `useHiveSocket.ts`
+
+Adicionar `config` ao tipo `HiveState`:
+```typescript
+config: {
+  autoMode: boolean;
+  autoMerge: boolean;
+  notifyMarcio: boolean;
+} | null;
+```
+
+### 2.2 `CentroDeControle.tsx`
+
+**Remover** os `useState` locais de `autoMode`, `autoMerge` e `notifyMarcio`.
+**Usar** `state.config` como fonte de verdade (inicializar via WebSocket).
+
+**Ao clicar num switch:**
+```typescript
+const toggleConfig = async (key: keyof HiveConfig, value: boolean) => {
+  await fetch('/api/hive/config', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ [key]: value }),
+  });
+  // estado atualiza via próximo hive:update do WebSocket
+};
+```
+
+**Botão "Forçar liberação":**
+```typescript
+const releaseLock = async (agent: string) => {
+  await fetch(`/api/hive/lock/release/${agent}`, { method: 'POST' });
+};
+```
+
+**Botões de despacho (Claude / Copilot / Gemini):**
+- Ao clicar: abrir modal inline simples com `<textarea>` para digitar a mensagem e botão "Despachar"
+- Submit: `POST /api/hive/dispatch` com `{ agent, message }`
+- Fechar modal após sucesso + toast simples ("Intenção despachada para Claude")
+
+**Botão "+ Nova intenção":**
+- Mesmo modal mas com `<select>` para escolher o agente + `<textarea>` para mensagem
+
+**Contador "Comandos":**
+- Contar entradas de `state.events` com `level === 'info'` e `msg` contendo "despachada" ou "liberado"
+- Exibir esse número no lugar do "—"
+
+---
+
+## Critérios de Aceite
+
+- [ ] Clicar "Forçar liberação" → lock liberado, evento aparece no stream, botão some da lista
+- [ ] Toggle "Modo autônomo" → estado persiste após recarregar a página
+- [ ] Toggle "Notificar Márcio" → idem
+- [ ] Clicar "Copilot" em Despachar → modal abre, digitar mensagem, submit → entrada aparece em `inbox-copilot.md`
+- [ ] "+ Nova intenção" → modal com select de agente funciona
+- [ ] `npm run check:types` (frontend e backend) → OK
+- [ ] `npm run build` (frontend e backend) → OK
+
+## Ponto de Parada
+
+Reportar ao Claude via `inbox-claude.md` com:
+- Confirmação dos critérios
+- Commit hash (sem commitar — aguardar auditoria)
+
 ### [CLAUDE-2026-05-28-058] Liberação de commit — HIVE-UI-002
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-28
