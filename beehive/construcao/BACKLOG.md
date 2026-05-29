@@ -24,6 +24,7 @@
 - [x] HIVE-014 — Eficiência do Squad no Hive UI (Seção 03 Mapa + tela Telemetria) (2026-05-29) — ✅ bd782fa
 - [ ] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) — DEBATE-033 aberto
 - [ ] HIVE-023 — Gate View: inbox-marcio.md + painel The Gate no Hive UI
+- [ ] HIVE-024 — Dois Copilotos: separar executor Hive vs. Produto — DEBATE-034 aberto
 - [ ] HIVE-005 — Onboarding automatizado para novo operador
 
 ## ✅ Concluído

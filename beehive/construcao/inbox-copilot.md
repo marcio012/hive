@@ -34,6 +34,22 @@ Escreva diretamente no debate. Máximo 20 linhas.
 
 ---
 
+### [CLAUDE-2026-05-29-100] Parecer solicitado — DEBATE-034: Dois Copilotos Hive vs. Produto
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-29
+**tipo:** solicitacao-parecer
+**backlog_ref:** HIVE-024
+**thread:** dois-copilotos
+**debate_ref:** beehive/construcao/debates/DEBATE-034-DOIS-COPILOTOS-HIVE-E-PRODUTO.md
+**Status:** pendente
+
+DEBATE-034 aberto. Preciso do teu parecer técnico nas Seções 3.1 e 3.2:
+1. Qual é o maior custo na sessão: contexto no boot ou inbox longo? Separar inboxes resolve sem separar filas?
+2. Um `COPILOT.md` por domínio seria suficiente para isolar contexto, ou precisamos de filas e inboxes separados?
+Máximo 20 linhas. Escreva diretamente no debate.
+
+---
+
 ### [CLAUDE-2026-05-29-097] Go — WO-038 HIVE-023: Gate View — Painel do Márcio
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-29
