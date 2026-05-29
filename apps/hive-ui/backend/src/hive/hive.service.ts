@@ -22,6 +22,16 @@ export interface HiveActionResult {
   error?: string;
 }
 
+export type OrchestratorStatus = 'idle' | 'watching' | 'dispatching' | 'paused' | 'error';
+export type OrchestratorEventLevel = 'info' | 'warn' | 'error';
+
+export interface HiveOrchestratorState {
+  status: OrchestratorStatus;
+  currentItem: string | null;
+  pauseReason: string | null;
+  updatedAt: string | null;
+}
+
 export interface DispatchPayload {
   agent: DispatchAgent;
   message: string;
@@ -41,6 +51,7 @@ export interface AgentLock {
 export interface HiveState {
   locks: Record<AgentName, AgentLock | null>;
   config: HiveConfig;
+  orchestrator: HiveOrchestratorState | null;
   session: {
     activeIssue: string | null;
     lastAction: string | null;
@@ -95,6 +106,7 @@ export class HiveService {
   );
   private readonly proxyScriptPath = path.join(this.hiveRoot, '.agile-squad', 'proxy.sh');
   private readonly events: HiveEvent[] = [this.createEvent('info', 'Hive UI conectado')];
+  private readonly stateListeners = new Set<(state: HiveState) => void | Promise<void>>();
 
   getWatchPaths(): string[] {
     return [
@@ -104,18 +116,21 @@ export class HiveService {
   }
 
   async getState(): Promise<HiveState> {
-    const [locks, config, session, inboxCounts, brainstorm, pipeline] = await Promise.all([
-      this.readLocks(),
-      this.readConfig(),
-      this.readSession(),
-      this.readInboxCounts(),
-      this.readBrainstormFiles(),
-      this.readPipeline(),
-    ]);
+    const [locks, config, orchestrator, session, inboxCounts, brainstorm, pipeline] =
+      await Promise.all([
+        this.readLocks(),
+        this.readConfig(),
+        this.readOrchestratorState(),
+        this.readSession(),
+        this.readInboxCounts(),
+        this.readBrainstormFiles(),
+        this.readPipeline(),
+      ]);
 
     return {
       locks,
       config,
+      orchestrator,
       session,
       inboxCounts,
       brainstorm,
@@ -130,6 +145,22 @@ export class HiveService {
     if (this.events.length > 20) {
       this.events.length = 20;
     }
+  }
+
+  isOrchestratorEventLevel(value: string): value is OrchestratorEventLevel {
+    return value === 'info' || value === 'warn' || value === 'error';
+  }
+
+  subscribeState(listener: (state: HiveState) => void | Promise<void>): () => void {
+    this.stateListeners.add(listener);
+    return () => {
+      this.stateListeners.delete(listener);
+    };
+  }
+
+  async addOrchestratorEvent(level: OrchestratorEventLevel, msg: string): Promise<void> {
+    this.addEvent(level === 'error' ? 'err' : level, msg);
+    await this.broadcastState();
   }
 
   getUptime(): number {
@@ -256,6 +287,23 @@ export class HiveService {
       activeIssue: values.ACTIVE_ISSUE ?? null,
       lastAction: values.LAST_ACTION ?? null,
       nextStep: values.NEXT_STEP ?? null,
+    };
+  }
+
+  private async readOrchestratorState(): Promise<HiveOrchestratorState | null> {
+    const raw = await this.readJsonFile<Partial<HiveOrchestratorState>>(
+      path.join(this.hiveRoot, '.hive-agent', 'orchestrator-state.json'),
+    );
+
+    if (!raw) {
+      return null;
+    }
+
+    return {
+      status: this.isOrchestratorStatus(raw.status) ? raw.status : 'idle',
+      currentItem: raw.currentItem ?? null,
+      pauseReason: raw.pauseReason ?? null,
+      updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : null,
     };
   }
 
@@ -586,6 +634,25 @@ export class HiveService {
       level,
       msg,
     };
+  }
+
+  private isOrchestratorStatus(value: unknown): value is OrchestratorStatus {
+    return (
+      value === 'idle' ||
+      value === 'watching' ||
+      value === 'dispatching' ||
+      value === 'paused' ||
+      value === 'error'
+    );
+  }
+
+  private async broadcastState(): Promise<void> {
+    if (this.stateListeners.size === 0) {
+      return;
+    }
+
+    const state = await this.getState();
+    await Promise.all([...this.stateListeners].map((listener) => listener(state)));
   }
 
   private async writeTextAtomic(filePath: string, content: string): Promise<void> {

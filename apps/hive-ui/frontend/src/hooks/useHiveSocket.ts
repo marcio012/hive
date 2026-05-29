@@ -6,6 +6,7 @@ export type AgentName = 'claude' | 'copilot' | 'gemini';
 export type PipelineStage = 'triagem' | 'execucao' | 'revisao' | 'concluido';
 
 export type PipelineAgent = AgentName | 'marcio';
+export type OrchestratorStatus = 'idle' | 'watching' | 'dispatching' | 'paused' | 'error';
 
 export interface PipelineItem {
   id: string;
@@ -28,6 +29,12 @@ export interface HiveState {
     autoMode: boolean;
     autoMerge: boolean;
     notifyMarcio: boolean;
+  } | null;
+  orchestrator: {
+    status: OrchestratorStatus;
+    currentItem: string | null;
+    pauseReason: string | null;
+    updatedAt: string | null;
   } | null;
   session: {
     activeIssue: string | null;

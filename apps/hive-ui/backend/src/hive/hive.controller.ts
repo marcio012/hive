@@ -3,11 +3,16 @@ import {
   HiveConfig,
   HiveService,
   HiveState,
+  type OrchestratorEventLevel,
   type DispatchPayload,
   type HiveActionResult,
 } from './hive.service';
 
 type HiveConfigPatch = Partial<HiveConfig>;
+type OrchestratorEventPayload = {
+  level?: unknown;
+  msg?: unknown;
+};
 
 @Controller('hive')
 export class HiveController {
@@ -86,5 +91,28 @@ export class HiveController {
       agent: payload.agent,
       message: payload.message,
     });
+  }
+
+  @Post('orchestrator/event')
+  async receiveOrchestratorEvent(@Body() payload: OrchestratorEventPayload): Promise<void> {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      throw new BadRequestException('Payload de evento inválido.');
+    }
+
+    if (
+      typeof payload.level !== 'string' ||
+      !this.hiveService.isOrchestratorEventLevel(payload.level)
+    ) {
+      throw new BadRequestException('level inválido.');
+    }
+
+    if (typeof payload.msg !== 'string' || !payload.msg.trim()) {
+      throw new BadRequestException('msg inválida.');
+    }
+
+    await this.hiveService.addOrchestratorEvent(
+      payload.level as OrchestratorEventLevel,
+      payload.msg.trim(),
+    );
   }
 }

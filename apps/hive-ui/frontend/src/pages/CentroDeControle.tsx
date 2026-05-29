@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { type AgentName, type HiveState } from '../hooks/useHiveSocket';
+import { type AgentName, type HiveState, type OrchestratorStatus } from '../hooks/useHiveSocket';
 
 type CentroDeControleProps = {
   state: HiveState | null;
@@ -55,6 +55,26 @@ function agentLabel(agent: AgentName): string {
   return agent === 'copilot' ? 'P' : agent.charAt(0).toUpperCase();
 }
 
+function orchestratorLabel(status: OrchestratorStatus | null | undefined): string {
+  if (status === 'watching') {
+    return 'MONITORANDO';
+  }
+
+  if (status === 'dispatching') {
+    return 'DESPACHANDO';
+  }
+
+  if (status === 'paused') {
+    return 'PAUSADO';
+  }
+
+  if (status === 'error') {
+    return 'ERRO';
+  }
+
+  return 'IDLE';
+}
+
 export function CentroDeControle({ state }: CentroDeControleProps) {
   const [busyConfigKey, setBusyConfigKey] = useState<keyof HiveConfig | null>(null);
   const [releasingAgent, setReleasingAgent] = useState<AgentName | null>(null);
@@ -65,6 +85,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
   const [toast, setToast] = useState<ToastState>(null);
 
   const config = state?.config ?? DEFAULT_CONFIG;
+  const orchestrator = state?.orchestrator ?? null;
 
   const activeLocks = useMemo(
     () =>
@@ -234,6 +255,13 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
           </div>
         ) : null}
 
+        {orchestrator?.status === 'paused' ? (
+          <div className="orch-banner" role="status">
+            <strong>Orchestrator pausado.</strong>
+            <span>{orchestrator.pauseReason ?? 'Aguardando intervenção manual.'}</span>
+          </div>
+        ) : null}
+
         <div className="page-head">
           <h1>Centro de Controle</h1>
           <div className="sub">
@@ -259,13 +287,60 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
             <div className="v">{commandCount}</div>
           </div>
           <div className="stat good">
-            <div className="k">Status</div>
-            <div className="v">{events.length > 0 ? 'ONLINE' : 'IDLE'}</div>
+            <div className="k">Orchestrator</div>
+            <div className="v">{orchestratorLabel(orchestrator?.status)}</div>
           </div>
         </div>
 
         <div className="cc-grid">
           <div>
+            <div className="panel">
+              <div className="ph">
+                <span className="ph-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M7 6h10" />
+                    <path d="M7 12h10" />
+                    <path d="M7 18h7" />
+                    <circle cx="17" cy="18" r="2" />
+                  </svg>
+                </span>
+                <h3>Orchestrator</h3>
+                <span className={`ph-meta orch-status orch-${orchestrator?.status ?? 'idle'}`}>
+                  {orchestratorLabel(orchestrator?.status)}
+                </span>
+              </div>
+              <div className="pb">
+                <div className="orch-card">
+                  <div className="orch-row">
+                    <span className="orch-label">Item atual</span>
+                    <strong className="orch-current">
+                      {orchestrator?.currentItem ?? 'Nenhum item em processamento'}
+                    </strong>
+                  </div>
+                  <div className="orch-row">
+                    <span className="orch-label">Estado</span>
+                    <span className={`orch-pill orch-${orchestrator?.status ?? 'idle'}`}>
+                      {orchestratorLabel(orchestrator?.status)}
+                    </span>
+                  </div>
+                  {orchestrator?.pauseReason ? (
+                    <div className="panel-feedback error">{orchestrator.pauseReason}</div>
+                  ) : null}
+                  <div className="orch-hint">
+                    {orchestrator?.status === 'dispatching'
+                      ? 'O core está despachando a próxima ação para a inbox correta.'
+                      : orchestrator?.status === 'watching'
+                        ? 'O core está monitorando inboxes e locks para reagir em tempo real.'
+                        : orchestrator?.status === 'paused'
+                          ? 'A execução automática foi interrompida e precisa de decisão manual.'
+                          : orchestrator?.status === 'error'
+                            ? 'O core registrou falha; verifique o stream de eventos para diagnosticar.'
+                            : 'O core está pronto para processar novas entradas.'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="panel">
               <div className="ph">
                 <span className="ph-ico">

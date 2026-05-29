@@ -22,6 +22,7 @@ export class HiveGateway
 
   private watcher?: FSWatcher;
   private debounceTimer?: NodeJS.Timeout;
+  private unsubscribeState?: () => void;
 
   constructor(private readonly hiveService: HiveService) {}
 
@@ -30,6 +31,10 @@ export class HiveGateway
   }
 
   onModuleInit(): void {
+    this.unsubscribeState = this.hiveService.subscribeState(async (state) => {
+      this.server.emit('hive:update', state);
+    });
+
     this.watcher = chokidar.watch(this.hiveService.getWatchPaths(), {
       persistent: true,
       ignoreInitial: true,
@@ -48,6 +53,8 @@ export class HiveGateway
 
       if (basename === 'locks.json') {
         this.hiveService.addEvent('lock', `lock atualizado (${eventName})`);
+      } else if (basename === 'orchestrator-state.json') {
+        this.hiveService.addEvent('info', `orchestrator atualizado (${eventName})`);
       } else if (basename.startsWith('inbox-')) {
         this.hiveService.addEvent('info', `${basename} atualizado (${eventName})`);
       } else if (basename.startsWith('FILA_')) {
@@ -69,6 +76,7 @@ export class HiveGateway
       clearTimeout(this.debounceTimer);
     }
 
+    this.unsubscribeState?.();
     await this.watcher?.close();
   }
 

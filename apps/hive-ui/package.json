@@ -1,0 +1,8 @@
+{
+  "name": "hive-ui",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "check:types": "npm --prefix backend run check:types && npm --prefix frontend run check:types"
+  }
+}
