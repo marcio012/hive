@@ -2,7 +2,7 @@
 id: DEBATE-025
 titulo: Política de Higiene de Inbox — corpo curto + hook de tamanho
 thread: higiene-inbox-copilot
-status: aberto
+status: aprovado — execucao em andamento
 data_abertura: 2026-05-28
 responsavel: Claude (Arquiteto)
 ---
@@ -21,9 +21,9 @@ responsavel: Claude (Arquiteto)
 - [x] 2. Parecer Gemini
 - [x] 3. Parecer Claude
 - [x] 4. Parecer Copilot
-- [ ] 5. Consolidação / Veredito
-- [ ] 6. Aprovação Márcio
-- [ ] 7. Work Orders despachadas
+- [x] 5. Consolidação / Veredito
+- [x] 6. Aprovação Márcio — ✅ 2026-05-29
+- [x] 7. Work Orders despachadas — WO-025-A e WO-025-B
 - [ ] 8. Execução concluída
 
 ---
@@ -218,4 +218,38 @@ Assim o time para de gerar débito novo antes de investir energia limpando o leg
 
 ## 7. Consolidação / Veredito
 
-> *Aguardando pareceres*
+**Data:** 2026-05-29
+**Consolidado por:** Claude (Arquiteto)
+**Veredito:** ✅ **Aprovado — política definida por unanimidade**
+
+Os três pareceres convergem sem divergência real. Gemini priorizou o hook; Claude e Copilot argumentaram tecnicamente que hook em arquivo append-only gera falso positivo — esse ponto foi aceito por todos.
+
+### Política Aprovada (DIR-088 proposta)
+
+**Regra 1 — Limite de corpo:**
+Entradas de inbox têm **30 linhas** de limite no corpo variável. Campos fixos de metadata (`De`, `Data`, `tipo`, `backlog_ref`, `thread`, `Status`, `wo_ref`) são excluídos da contagem. Alvo operacional: 10–15 linhas.
+
+**Regra 2 — Separação obrigatória Inbox / WO:**
+- **Inbox:** metadata + `wo_ref` + contexto executivo (≤3 linhas) + critérios-chave (1 linha). Total ≤ 15 linhas.
+- **WO:** contrato técnico completo (critérios de aceite, DTOs, passos, restrições, ponto de parada).
+- **`wo_ref`** é campo obrigatório em toda entrada do tipo `handoff-executavel`.
+
+**Regra 3 — Enforçamento em camadas:**
+1. **Primário:** Claude adota novo template — inbox curto + arquivo de WO separado criado simultaneamente.
+2. **Secundário:** `npm run squad:inbox:lint` — executado no início de toda sessão, lista entradas fora do padrão.
+3. **Terciário:** Pre-commit hook diff-aware — verifica apenas entradas *adicionadas* no diff, não o arquivo inteiro.
+
+**Regra 4 — Migração em duas ondas:**
+- **Onda 1 (prevenção):** Atualizar template Claude + criar `TEMPLATE_WO.md` + adicionar `squad:inbox:lint`.
+- **Onda 2 (contenção):** Hook diff-aware + limpeza de entradas longas ainda ativas (extração para `work_orders/legacy-inbox/`).
+
+### Work Orders derivadas
+
+| WO | Escopo | Executor |
+|---|---|---|
+| WO-025-A | Atualizar `CLAUDE.md` + criar `TEMPLATE_WO.md` + `squad:inbox:lint` | Copilot |
+| WO-025-B | Pre-commit hook diff-aware + limpeza de entradas ativas longas | Copilot |
+
+---
+
+*Aguardando aprovação do Márcio (fase 6) para despachar WOs.*

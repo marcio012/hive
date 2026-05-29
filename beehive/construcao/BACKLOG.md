@@ -7,6 +7,9 @@
 
 ## 🟡 Média prioridade
 
+## 🔧 Débito Técnico
+- **DT-004** — `CentroDeControle.tsx` (~450 linhas) — extrair sub-componentes (DispatchModal, LockPanel, ConfigPanel) em componentes separados. Registrado em: HIVE-UI-003 (auditoria 2026-05-29). Impacto: baixo — manutenibilidade futura.
+
 ## 🟢 Baixa prioridade / Ideias
 - [ ] HIVE-005 — Onboarding automatizado para novo operador
 

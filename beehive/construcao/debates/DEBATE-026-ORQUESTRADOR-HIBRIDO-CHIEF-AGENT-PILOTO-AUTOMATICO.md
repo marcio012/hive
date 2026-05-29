@@ -2,7 +2,7 @@
 id: DEBATE-026
 titulo: Orquestrador Híbrido — Chief Agent Pattern + Piloto Automático
 thread: orquestrador-hibrido-chief-agent
-status: aberto
+status: aprovado — execucao em andamento
 data_abertura: 2026-05-29
 responsavel: Claude (Arquiteto)
 ---
@@ -21,9 +21,9 @@ responsavel: Claude (Arquiteto)
 - [x] 2. Parecer Gemini
 - [x] 3. Parecer Claude
 - [x] 4. Parecer Copilot
-- [ ] 5. Consolidação / Veredito
-- [ ] 6. Aprovação Márcio
-- [ ] 7. Work Orders despachadas
+- [x] 5. Consolidação / Veredito
+- [x] 6. Aprovação Márcio — ✅ 2026-05-29
+- [x] 7. Work Orders despachadas — WO-026-A e WO-026-B
 - [ ] 8. Execução concluída
 
 ---
@@ -226,4 +226,73 @@ Resumo: **sou favorável**, mas apenas se o projeto assumir que o primeiro alvo 
 
 ## 7. Consolidação / Veredito
 
-> *Aguardando pareceres*
+**Data:** 2026-05-29
+**Consolidado por:** Claude (Arquiteto)
+**Veredito:** ✅ **Aprovado — arquitetura definida por convergência dos três agentes**
+
+### Convergências
+
+Todos os três pareceres convergiram nos pontos essenciais. As únicas divergências foram de gradação, não de direção, e foram resolvidas pela posição técnica mais conservadora.
+
+**Divergência 1 — Maestro com IA na V1:**
+Gemini propôs Maestro com IA para roteamento ambíguo desde o início. Claude e Copilot disseram que V1 deve ser puramente determinística. **Resolução:** Maestro = regras YAML fixas na V1; IA opcional em V2 se casos ambíguos aparecerem na prática.
+
+**Divergência 2 — "+ Nova intenção" trigger direto:**
+Gemini propôs que o botão criasse ticket direto no ciclo do Orquestrador. Claude adicionou o constraint: deve entrar no inbox do Claude como `pedido-de-parecer` primeiro. **Resolução:** constraint do Claude prevalece — bypass de auditoria é risco real.
+
+---
+
+### Arquitetura Aprovada (ORCH-V1)
+
+**Componente 1 — Orchestrator Core**
+- Processo Node.js separado (não dentro do NestJS do Hive UI)
+- Observa inboxes e `.hive-agent/` via chokidar (já disponível no monorepo)
+- Lê `hive-ui-config.json` para saber se `autoMode` está ativo
+- Entrypoint: `npm run squad:orchestrator` (daemon gerenciado por pm2)
+
+**Componente 2 — Roteamento determinístico (V1)**
+Tabela de roteamento YAML fixa — sem IA na primeira versão:
+- `handoff-executavel` + agente livre → despacha para Copilot (adquire lock)
+- `pedido-de-parecer` → roteia para agente solicitado
+- Retorno `COPILOT-*` ou `GEMINI-*` → notifica Claude via inbox
+- `autoMode = false` → Core observa mas não age (modo passivo)
+
+**Componente 3 — Piloto automático (escopo V1)**
+O que o piloto automático FAZ:
+- Detectar item pronto em inbox, respeitar lock, despachar próxima etapa, registrar evento
+
+O que o piloto automático NÃO FAZ (default — nunca sem opt-in explícito):
+- Aprovar diff ou liberar commit sem auditoria do Claude
+- Modificar arquivos de governança
+- Fazer rollback de qualquer tipo
+- Reinterpretar requisito ambíguo
+
+**Componente 4 — Segurança**
+- **Deadman's Switch:** 3 falhas consecutivas na mesma tarefa → desativa `autoMode` + escala para Márcio
+- **Lock conflict:** enfileira despacho, não falha; retenta quando lock for liberado
+- **Idempotência:** estado persistente em `.hive-agent/orchestrator-state.json` — cada entrada processada é marcada para não redisparar
+- **Pausa de emergência:** além do toggle UI, comando `npm run squad:orchestrator:pause` com motivo registrado
+
+**Componente 5 — Integração com Hive UI**
+- Orchestrator escreve estado em `.hive-agent/orchestrator-state.json` → watcher do Hive UI detecta → inclui em `HiveState` → WebSocket emite para a UI
+- Campos de estado: `status` (`idle` / `watching` / `dispatching` / `paused` / `error`), `currentItem`, `pauseReason`
+- Toda ação autônoma gera evento `level: 'info'` ou `'warn'` visível no stream do Centro de Controle
+- Toggle "Modo autônomo" = master switch (já persistido via HIVE-UI-003)
+
+**Componente 6 — "+ Nova intenção" via UI**
+- Entra no inbox do **Claude** como `pedido-de-parecer` (não trigger direto do Orquestrador)
+- Exceção opt-in explícita no modal: tasks triviais pré-definidas (ex: "liberar lock") podem ser roteadas diretamente
+
+---
+
+### Work Orders derivadas
+
+| WO | Escopo | Executor | Prioridade |
+|---|---|---|---|
+| WO-026-A | Orchestrator Core V1: daemon Node.js, watcher, roteamento YAML, idempotência, Deadman's Switch, pm2 | Copilot | Alta |
+| WO-026-B | Integração UI: `orchestrator-state.json` no `HiveState`, estado visível no Centro de Controle | Copilot | Alta (sequencial após 026-A) |
+| WO-026-C *(futuro)* | Maestro IA leve para casos ambíguos — só após V1 estável em produção | — | Baixa |
+
+---
+
+*Aguardando aprovação do Márcio (fase 6) para despachar WOs.*

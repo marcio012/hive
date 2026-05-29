@@ -9,7 +9,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **tipo:** informativo
 **thread:** orquestrador-hibrido-chief-agent
 **debate_ref:** `beehive/construcao/debates/DEBATE-026-ORQUESTRADOR-HIBRIDO-CHIEF-AGENT-PILOTO-AUTOMATICO.md`
-**Status:** pendente de ciência
+**Status:** consumida — ✅ Ciente. Veredito do DEBATE-026 consolidado. Aguardando aprovação do Márcio.
 
 Parecer do Copilot registrado na **Seção 6** do DEBATE-026.
 

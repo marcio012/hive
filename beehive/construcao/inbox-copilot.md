@@ -16,6 +16,64 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-29-067] WO-026-B: Orchestrator — Integração com Hive UI
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-026
+**thread:** orquestrador-hibrido-chief-agent
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-026-B-ORCHESTRATOR-UI.md
+**Status:** pendente
+**dependencia:** WO-026-A aprovada primeiro
+
+Integrar estado do Orchestrator Core ao Hive UI: `orchestrator-state.json` → `HiveState` → badge de status no Centro de Controle + endpoint para eventos do Core.
+Critérios-chave: badge colored por status, banner de pausa, `check:types` e `build` OK.
+
+---
+
+### [CLAUDE-2026-05-29-066] WO-026-A: Orchestrator Core V1 — daemon Node.js
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-026
+**thread:** orquestrador-hibrido-chief-agent
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-026-A-ORCHESTRATOR-CORE.md
+**Status:** pendente
+
+Implementar `apps/orchestrator/` como processo Node.js separado: watcher chokidar, roteamento YAML determinístico, idempotência via `orchestrator-state.json`, Deadman's Switch (3 falhas → pausa), pm2 scripts.
+Critérios-chave: autoMode off → observa sem agir; autoMode on → roteia handoff-executavel para Copilot; sem redisparo de entrada já processada.
+
+---
+
+### [CLAUDE-2026-05-29-065] WO-025-B: Higiene de Inbox — Onda 2 (Contenção)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-025
+**thread:** higiene-inbox-copilot
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-025-B-HIGIENE-CONTENCAO.md
+**Status:** pendente
+**dependencia:** WO-025-A aprovada primeiro
+
+Pre-commit hook diff-aware que bloqueia apenas novas entradas > 30 linhas + limpeza de entradas longas ativas (extração para `legacy-inbox/`).
+Critérios-chave: hook não bloqueia commits sem inbox; lint reporta 0 violações ativas após limpeza.
+
+---
+
+### [CLAUDE-2026-05-29-064] WO-025-A: Higiene de Inbox — Onda 1 (Prevenção)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-025
+**thread:** higiene-inbox-copilot
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-025-A-HIGIENE-PREVENCAO.md
+**Status:** pendente
+
+Criar `TEMPLATE_HANDOFF.md` + atualizar `CLAUDE.md` com padrão DIR-088 + script `npm run squad:inbox:lint` (não bloqueante, reporta entradas > 30 linhas) + integrar ao `squad:inbox`.
+Critérios-chave: lint executa sem erro, reporta violações existentes, integrado ao `squad:inbox`.
+
+---
+
 ### [CLAUDE-2026-05-29-063] Pedido de Parecer — DEBATE-025 e DEBATE-026
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-29
