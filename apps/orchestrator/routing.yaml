@@ -1,0 +1,18 @@
+rules:
+  - match:
+      tipo: handoff-executavel
+      agent_livre: copilot
+    action: dispatch_to_copilot
+  - match:
+      tipo: pedido-de-parecer
+      destinatario: claude
+    action: notify_claude
+  - match:
+      source: copilot
+      pattern: "^COPILOT-"
+    action: notify_claude
+  - match:
+      source: gemini
+      pattern: "^GEMINI-"
+    action: notify_claude
+  - default: pause_and_escalate
