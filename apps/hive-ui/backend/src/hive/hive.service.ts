@@ -98,6 +98,7 @@ export interface AgentEfficiency {
   agent: AgentName;
   role: string;
   sessionCostBRL: number;
+  totalCostBRL: number;
   weeklyBudgetBRL: number;
   weeklyBudgetPct: number;
   weeklyWOs: number;
@@ -405,6 +406,7 @@ export class HiveService {
           agent,
           role: AGENT_ROLES[agent],
           sessionCostBRL: latestInit?.costBRL ?? 0,
+          totalCostBRL: agentCostMap[agent],
           weeklyBudgetBRL,
           weeklyBudgetPct: this.clampPct(rawBudgetPct),
           weeklyWOs: weeklyWorkOrders[agent],

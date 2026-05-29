@@ -91,6 +91,7 @@ export interface AgentEfficiency {
   agent: AgentName;
   role: string;
   sessionCostBRL: number;
+  totalCostBRL: number;
   weeklyBudgetBRL: number;
   weeklyBudgetPct: number;
   weeklyWOs: number;

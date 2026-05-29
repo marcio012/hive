@@ -4,9 +4,10 @@ import { CentroDeControle } from './pages/CentroDeControle';
 import { FunilIntencao } from './pages/FunilIntencao';
 import { MapaFabrica } from './pages/MapaFabrica';
 import { Telemetria } from './pages/Telemetria';
+import { TokensPorAgente } from './pages/TokensPorAgente';
 
 type PublicRoute = '/' | '/landing' | '/login';
-type CockpitRoute = '/mapa' | '/telemetria' | '/funil' | '/controle';
+type CockpitRoute = '/mapa' | '/telemetria' | '/tokens' | '/funil' | '/controle';
 type Route = PublicRoute | CockpitRoute;
 
 type NavItem = {
@@ -32,6 +33,10 @@ function normalizeRoute(pathname: string): Route {
     return '/telemetria';
   }
 
+  if (pathname === '/tokens') {
+    return '/tokens';
+  }
+
   if (pathname === '/controle') {
     return '/controle';
   }
@@ -48,7 +53,13 @@ function formatClock(date: Date): string {
 }
 
 function isCockpitRoute(route: Route): route is CockpitRoute {
-  return route === '/mapa' || route === '/telemetria' || route === '/funil' || route === '/controle';
+  return (
+    route === '/mapa' ||
+    route === '/telemetria' ||
+    route === '/tokens' ||
+    route === '/funil' ||
+    route === '/controle'
+  );
 }
 
 function getStoredSession(): boolean {
@@ -90,6 +101,17 @@ const navItems: NavItem[] = [
     ),
   },
   {
+    route: '/tokens',
+    label: 'Tokens',
+    renderIcon: () => (
+      <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <rect x="3" y="12" width="4" height="9" rx="1" />
+        <rect x="10" y="7" width="4" height="14" rx="1" />
+        <rect x="17" y="3" width="4" height="18" rx="1" />
+      </svg>
+    ),
+  },
+  {
     route: '/funil',
     label: 'Funil de Intenção',
     renderIcon: () => (
@@ -115,6 +137,10 @@ const navItems: NavItem[] = [
 function renderScreen(route: CockpitRoute, data: ReturnType<typeof useHiveSocket>) {
   if (route === '/telemetria') {
     return <Telemetria telemetry={data.telemetry} />;
+  }
+
+  if (route === '/tokens') {
+    return <TokensPorAgente telemetry={data.telemetry} />;
   }
 
   if (route === '/funil') {
