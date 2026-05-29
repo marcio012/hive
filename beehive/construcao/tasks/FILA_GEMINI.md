@@ -15,9 +15,9 @@ gerado_por: Gemini (PO)
 
 | Campo | Valor |
 |-------|-------|
-| Cartucho | PO / Coordenador / Projetista |
+| Cartucho | — (sessão encerrada) |
 | Iniciado em | 2026-05-29 |
-| Contexto | Handoff DEBATE-029, Ideação de Relatórios e Parecer DEBATE-033 |
+| Contexto | — |
 
 ---
 
@@ -25,9 +25,10 @@ gerado_por: Gemini (PO)
 
 | ID | Cartucho | Tipo | Título |
 |----|----------|------|--------|
+| DEBATE-031 | Facilitador | Parecer | Plataforma Containers + PG — notificar via inbox |
 | — | Projetista | Blueprint | Onboarding Full (Depende de Design do Claude) |
 | — | PO | Refinamento | Relatórios por Nicho (TenantOS Ciclo 2) |
-| DEBATE-033 | Projetista | Prompt UI | Rascunho entregue em PROMPT_UI_ESTEIRA_VISUAL.md |
+| DEBATE-033 | Projetista | Prompt UI | Rascunho entregue — aguarda aprovação Márcio |
 
 ---
 

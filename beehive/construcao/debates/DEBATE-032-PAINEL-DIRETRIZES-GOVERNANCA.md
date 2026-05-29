@@ -22,7 +22,7 @@ ideacao_ref: beehive/cognition/intuition/brainstorm/HIVE_UI_PAINEL_DIRETRIZES.md
 |---|---|
 | Claude (Arquiteto) | ✅ |
 | Gemini (PO) | ✅ — ideação entregue |
-| Gemini (Facilitador Estratégico) | [ ] |
+| Gemini (Facilitador Estratégico) | ✅ |
 | Copilot (Engenheiro) | ✅ |
 | Márcio (Owner) | ✅ — aprovou ideação 2026-05-29 |
 

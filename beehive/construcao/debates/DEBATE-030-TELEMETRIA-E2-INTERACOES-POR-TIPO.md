@@ -19,7 +19,7 @@ participantes:
 | Participante | Parecer |
 |---|---|
 | Claude | ✅ |
-| Gemini | [ ] |
+| Gemini | ✅ |
 | Copilot | ✅ |
 | Márcio | [ ] |
 
