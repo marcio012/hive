@@ -84,6 +84,23 @@ assert_output_contains() {
   fi
 }
 
+assert_file_exists() {
+  local file="$1"
+  if [[ ! -f "$file" ]]; then
+    echo "Assertion failed: expected file to exist: $file"
+    exit 1
+  fi
+}
+
+assert_file_not_contains() {
+  local file="$1"
+  local unexpected="$2"
+  if grep -Fq "$unexpected" "$file"; then
+    echo "Assertion failed: expected '$unexpected' to be absent from $file"
+    exit 1
+  fi
+}
+
 assert_output_not_contains() {
   local output="$1"
   local unexpected="$2"
@@ -348,5 +365,155 @@ EOF
   git add beehive/registry/archive/inbox/inbox-claude-historico.md
   node "$HIVE_HOME/scripts/inbox-pre-commit.js"
 )
+
+mkdir -p "$TEST_REPO/beehive/construcao/work_orders/HIVE"
+cat > "$TEST_REPO/beehive/construcao/work_orders/HIVE/WO-TEST-GUARD.md" <<'EOF'
+---
+id: WO-TEST
+executor: Copilot
+status: pendente
+---
+EOF
+
+ERROR_SET_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" HIVE_ACTOR=copilot node "$HIVE_HOME/scripts/hive-error-state.js" set executor_errado high "WO-028, inbox-copilot" "Claude auditar"
+)"
+assert_output_contains "$ERROR_SET_OUTPUT" '"status": "alert"'
+assert_file_contains "$TEST_REPO/.hive-agent/error-state.json" '"detected_by": "copilot"'
+assert_file_contains "$TEST_REPO/.hive-agent/error-state.json" '"auto_mode_allowed": false'
+assert_file_exists "$TEST_REPO/beehive/registry/incidents/INC-$(date -u +%F)-001.md"
+assert_file_contains "$TEST_REPO/beehive/registry/incidents/INC-$(date -u +%F)-001.md" '## Linha do tempo'
+assert_file_exists "$HIVE_HOME/beehive/registry/incidents/TEMPLATE_INCIDENTE.md"
+
+ERROR_READ_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/hive-error-state.js" read
+)"
+assert_output_contains "$ERROR_READ_OUTPUT" '"severity": "high"'
+
+assert_failure_contains \
+  "error-state ativo" \
+  node "$HIVE_HOME/scripts/hive-action-guard.js" \
+    --actor copilot \
+    --action close \
+    --workspace "$TEST_REPO" \
+    --repo workspace
+
+ERROR_CLEAR_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/hive-error-state.js" clear
+)"
+assert_output_contains "$ERROR_CLEAR_OUTPUT" '"status": "ok"'
+assert_file_contains "$TEST_REPO/.hive-agent/error-state.json" '"status": "ok"'
+
+assert_failure_contains \
+  "executor da WO é copilot" \
+  node "$HIVE_HOME/scripts/hive-action-guard.js" \
+    --actor claude \
+    --action commit \
+    --target beehive/construcao/work_orders/HIVE/WO-TEST-GUARD.md \
+    --workspace "$TEST_REPO" \
+    --repo workspace
+
+cat > "$TEST_REPO/beehive/construcao/inbox-claude.md" <<'EOF'
+# Inbox do Claude
+
+**Histórico completo:** `beehive/registry/archive/inbox/inbox-claude-historico.md`
+
+<!-- novas entradas abaixo -->
+
+---
+
+### [CLAUDE-2026-05-10-001] Elegível Faixa A
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-10
+**tipo:** informativo
+**Status:** executada
+
+Pode ser arquivada na Faixa A.
+EOF
+
+cat > "$TEST_REPO/beehive/construcao/inbox-copilot.md" <<'EOF'
+# Inbox — Copilot
+
+<!-- novas entradas abaixo -->
+EOF
+
+cat > "$TEST_REPO/beehive/construcao/inbox-gemini.md" <<'EOF'
+# Inbox — Gemini
+
+<!-- novas entradas abaixo -->
+EOF
+
+DRY_RUN_OUTPUT="$(
+  cd "$TEST_REPO" && \
+  PROJECT_PATH="$TEST_REPO" bash "$HIVE_HOME/beehive/bin/hive-inbox.sh" archive-dry-run claude
+)"
+assert_output_contains "$DRY_RUN_OUTPUT" "1 entrada(s) elegível(eis) para Faixa A"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-claude.md" "[CLAUDE-2026-05-10-001] Elegível Faixa A"
+
+cat > "$TEST_REPO/beehive/construcao/inbox-claude.md" <<'EOF'
+# Inbox do Claude
+
+**Histórico completo:** `beehive/registry/archive/inbox/inbox-claude-historico.md`
+
+<!-- novas entradas abaixo -->
+
+---
+
+### [CLAUDE-2026-05-29-001] Pendência ativa
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** ação
+**Status:** pendente
+
+Impede o arquivamento automático.
+
+---
+
+### [CLAUDE-2026-05-10-001] Elegível Faixa A
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-10
+**tipo:** informativo
+**Status:** executada
+
+Pode ser arquivada na Faixa A.
+EOF
+
+assert_failure_contains \
+  "há 1 pendência(s) ativa(s) no inbox" \
+  env PROJECT_PATH="$TEST_REPO" HIVE_HOME="$HIVE_HOME" bash "$HIVE_HOME/beehive/bin/hive-inbox.sh" archive-faixa-a claude
+
+cat > "$TEST_REPO/beehive/construcao/inbox-claude.md" <<'EOF'
+# Inbox do Claude
+
+**Histórico completo:** `beehive/registry/archive/inbox/inbox-claude-historico.md`
+
+<!-- novas entradas abaixo -->
+
+---
+
+### [CLAUDE-2026-05-10-001] Elegível Faixa A
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-10
+**tipo:** informativo
+**Status:** executada
+
+Pode ser arquivada na Faixa A.
+EOF
+
+FAIXA_A_OUTPUT="$(
+  cd "$TEST_REPO" && \
+  PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/inbox-faixa-a.js" --write claude --now 2026-05-29T12:00:00Z
+)"
+assert_output_contains "$FAIXA_A_OUTPUT" "Log: beehive/registry/archive/inbox/ARCH-2026-05-29-1200-claude.md"
+assert_file_not_contains "$TEST_REPO/beehive/construcao/inbox-claude.md" "[CLAUDE-2026-05-10-001] Elegível Faixa A"
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-claude-historico.md" "[CLAUDE-2026-05-10-001] Elegível Faixa A"
+assert_file_exists "$TEST_REPO/beehive/registry/archive/inbox/ARCH-2026-05-29-1200-claude.md"
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/ARCH-2026-05-29-1200-claude.md" "authorized_by: delegado-faixa-a"
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/ARCH-2026-05-29-1200-claude.md" "trigger: agente-autonomo"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "ARCH-2026-05-29-1200-claude-NOTIF-COPILOT"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-gemini.md" "ARCH-2026-05-29-1200-claude-NOTIF-GEMINI"
 
 echo "PASS: Gemini role guard integration"

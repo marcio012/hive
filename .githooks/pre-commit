@@ -3,4 +3,5 @@ set -euo pipefail
 
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 
+node "$ROOT_DIR/scripts/hive-action-guard.js" --action commit --workspace "$ROOT_DIR" --repo "$(basename "$ROOT_DIR")"
 node "$ROOT_DIR/scripts/inbox-pre-commit.js"

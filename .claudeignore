@@ -1,0 +1,31 @@
+# Build artifacts
+node_modules/
+dist/
+coverage/
+apps/**/dist/
+*.tsbuildinfo
+
+# Arquivos gerados sem valor de governança
+.DS_Store
+jenkins-build*.txt
+
+# Secrets
+.env
+.env.*
+!.env.example
+ops/environments/**/*.env
+ops/environments/**/*-ref.txt
+!ops/environments/**/*.env.example
+
+# DB de dev local
+apps/backend/prisma/dev.db
+apps/backend/prisma/dev.db-journal
+
+# Temporários e backups
+.tmp/
+.agile-squad/session-state.env.bak.*
+deploy/data/
+globals.txt
+
+# Locks de CI/ops (não de telemetria)
+ai/construcao/*.lock

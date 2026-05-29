@@ -58,6 +58,7 @@ export interface HiveState {
     nextStep: string | null;
   };
   inboxCounts: Record<AgentName, number>;
+  inboxArchive: Record<AgentName, { eligibleCount: number; totalLines: number }>;
   brainstorm: Array<{
     filename: string;
     title: string;
@@ -149,6 +150,16 @@ export interface HiveEvent {
 }
 
 const AGENTS: AgentName[] = ['claude', 'copilot', 'gemini'];
+const CLOSED_STATUS_PREFIXES = [
+  'consumida',
+  'executada',
+  'arquivada',
+  'concluida',
+  'concluída',
+  'feito',
+  'feita',
+  'done',
+] as const;
 const DEFAULT_CONFIG: HiveConfig = {
   autoMode: false,
   autoMerge: false,
@@ -232,13 +243,14 @@ export class HiveService {
   }
 
   async getState(): Promise<HiveState> {
-    const [locks, config, orchestrator, session, inboxCounts, brainstorm, pipeline] =
+    const [locks, config, orchestrator, session, inboxCounts, inboxArchive, brainstorm, pipeline] =
       await Promise.all([
         this.readLocks(),
         this.readConfig(),
         this.readOrchestratorState(),
         this.readSession(),
         this.readInboxCounts(),
+        this.readInboxArchiveState(),
         this.readBrainstormFiles(),
         this.readPipeline(),
       ]);
@@ -249,6 +261,7 @@ export class HiveService {
       orchestrator,
       session,
       inboxCounts,
+      inboxArchive,
       brainstorm,
       pipeline,
       events: [...this.events],
@@ -834,6 +847,35 @@ export class HiveService {
     return Object.fromEntries(counts) as Record<AgentName, number>;
   }
 
+  private async readInboxArchiveState(): Promise<
+    Record<AgentName, { eligibleCount: number; totalLines: number }>
+  > {
+    const counts = await Promise.all(
+      AGENTS.map(async (agent) => {
+        const filePath = path.join(
+          this.hiveRoot,
+          'beehive',
+          'construcao',
+          `inbox-${agent}.md`,
+        );
+
+        const content = await this.readTextFile(filePath);
+        return [
+          agent,
+          {
+            eligibleCount: this.countArchivableEntries(content),
+            totalLines: content ? content.replace(/\r/g, '').split('\n').length : 0,
+          },
+        ] as const;
+      }),
+    );
+
+    return Object.fromEntries(counts) as Record<
+      AgentName,
+      { eligibleCount: number; totalLines: number }
+    >;
+  }
+
   private async countPendingEntries(filePath: string): Promise<number> {
     const content = await this.readTextFile(filePath);
     if (!content) {
@@ -847,6 +889,78 @@ export class HiveService {
 
     return blocks.filter((block) => /\*\*Status:\*\*\s*pendente\b/i.test(block))
       .length;
+  }
+
+  private countArchivableEntries(content: string | null): number {
+    if (!content) {
+      return 0;
+    }
+
+    const sevenDaysAgo = this.startOfDay(new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)));
+    const latestBlocks = this.getLatestInboxBlocks(content);
+
+    return latestBlocks.filter((block) => {
+      const status = this.extractInboxField(block, 'Status');
+      if (!status || !this.isClosedInboxStatus(status)) {
+        return false;
+      }
+
+      const date = this.parseInboxDate(this.extractInboxField(block, 'Data'));
+      if (!date) {
+        return false;
+      }
+
+      return this.startOfDay(date).getTime() <= sevenDaysAgo.getTime();
+    }).length;
+  }
+
+  private getLatestInboxBlocks(content: string): string[] {
+    const blocks = content
+      .replace(/\r/g, '')
+      .split(/^### \[/m)
+      .slice(1)
+      .map((block) => `### [${block}`);
+    const latestBlocks: string[] = [];
+    const seenIds = new Set<string>();
+
+    for (const block of blocks) {
+      const idMatch = block.match(/^### \[([^\]]+)\]/m);
+      const id = idMatch?.[1];
+      if (!id || seenIds.has(id)) {
+        continue;
+      }
+      seenIds.add(id);
+      latestBlocks.push(block);
+    }
+
+    return latestBlocks;
+  }
+
+  private extractInboxField(block: string, fieldName: string): string | null {
+    const escapedField = fieldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const match = block.match(new RegExp(`^\\*\\*${escapedField}:\\*\\*\\s*(.+)$`, 'im'));
+    return match?.[1]?.trim() ?? null;
+  }
+
+  private isClosedInboxStatus(status: string): boolean {
+    const normalized = status.trim().toLowerCase();
+    return CLOSED_STATUS_PREFIXES.some((prefix) => normalized.startsWith(prefix));
+  }
+
+  private parseInboxDate(rawDate: string | null): Date | null {
+    if (!rawDate || rawDate.includes('{')) {
+      return null;
+    }
+
+    const parsed = /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+      ? new Date(`${rawDate}T00:00:00`)
+      : new Date(rawDate);
+
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  private startOfDay(value: Date): Date {
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
   }
 
   private async readBrainstormFiles(): Promise<HiveState['brainstorm']> {

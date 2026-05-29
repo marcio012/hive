@@ -4,14 +4,17 @@
 
 set -euo pipefail
 
+HIVE_HOME="${HIVE_HOME:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
 INBOX_DIR="$PROJECT_PATH/beehive/construcao"
 DEBATES_DIR="$INBOX_DIR/debates"
+COMMAND="${1:-scan}"
 TARGET_AGENT="${1:-}"
-LINT_SCRIPT="$ROOT_DIR/scripts/inbox-lint.js"
-PENDING_SCRIPT="$ROOT_DIR/scripts/inbox-pending.js"
-ARCHIVE_SCRIPT="$ROOT_DIR/scripts/inbox-archive.js"
+LINT_SCRIPT="$HIVE_HOME/scripts/inbox-lint.js"
+PENDING_SCRIPT="$HIVE_HOME/scripts/inbox-pending.js"
+ARCHIVE_SCRIPT="$HIVE_HOME/scripts/inbox-archive.js"
+FAIXA_A_SCRIPT="$HIVE_HOME/scripts/inbox-faixa-a.js"
 
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -77,6 +80,35 @@ debate_pending_for_agent() {
     }
   ' "$file"
 }
+
+case "$COMMAND" in
+  archive-faixa-a|archive-dry-run)
+    TARGET_AGENT="${2:-}"
+    if [[ -z "$TARGET_AGENT" ]]; then
+      echo -e "${RED}Uso: bash beehive/bin/hive-inbox.sh ${COMMAND} <agente>${NC}"
+      exit 1
+    fi
+
+    if [[ ! -f "$FAIXA_A_SCRIPT" ]]; then
+      echo -e "${RED}Script de Faixa A não encontrado: $FAIXA_A_SCRIPT${NC}"
+      exit 1
+    fi
+
+    if [[ "$COMMAND" == "archive-dry-run" ]]; then
+      node "$FAIXA_A_SCRIPT" --dry-run "$TARGET_AGENT"
+    else
+      node "$FAIXA_A_SCRIPT" --write "$TARGET_AGENT"
+    fi
+    exit $?
+    ;;
+  scan)
+    TARGET_AGENT=""
+    ;;
+  *)
+    TARGET_AGENT="${1:-}"
+    COMMAND="scan"
+    ;;
+esac
 
 echo -e "${YELLOW}=== HIVE INBOX SCANNER ===${NC}"
 

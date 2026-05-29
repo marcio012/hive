@@ -11,6 +11,7 @@ const rootDir = path.resolve(__dirname, '..');
 const projectPath = path.resolve(process.env.PROJECT_PATH || rootDir);
 const inboxDir = path.join(projectPath, 'beehive/construcao');
 const archiveDir = path.join(projectPath, 'beehive/registry/archive/inbox');
+const MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
 const inboxFiles = {
   claude: path.join(inboxDir, 'inbox-claude.md'),
   copilot: path.join(inboxDir, 'inbox-copilot.md'),
@@ -161,12 +162,48 @@ function readEntryDate(entry) {
     return { rawDate, parsedDate: null, isTemplate: true };
   }
 
-  const parsedDate = new Date(rawDate);
+  const parsedDate = /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+    ? new Date(`${rawDate}T00:00:00`)
+    : new Date(rawDate);
   if (Number.isNaN(parsedDate.getTime())) {
     return { rawDate, parsedDate: null, isTemplate: false };
   }
 
   return { rawDate, parsedDate, isTemplate: false };
+}
+
+function toDayStart(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function isOlderThanDays(parsedDate, now, days) {
+  const minDate = new Date(toDayStart(now).getTime() - (days * MILLIS_PER_DAY));
+  return toDayStart(parsedDate).getTime() <= minDate.getTime();
+}
+
+function shouldArchiveAfterDays(entry, now, days) {
+  const dateInfo = readEntryDate(entry);
+  if (!dateInfo) {
+    return {
+      archive: false,
+      warning: `data inválida ou ausente na entrada [${entry.id}]`,
+    };
+  }
+  if (dateInfo.isTemplate) {
+    return { archive: false };
+  }
+  if (!dateInfo.parsedDate) {
+    return {
+      archive: false,
+      warning: `data inválida ou ausente na entrada [${entry.id}]`,
+    };
+  }
+
+  if (!isOlderThanDays(dateInfo.parsedDate, now, days)) {
+    return { archive: false };
+  }
+
+  return { archive: true };
 }
 
 function shouldArchiveEntry(agent, entry, now, options = {}) {
@@ -179,30 +216,18 @@ function shouldArchiveEntry(agent, entry, now, options = {}) {
   }
 
   if (agent === 'copilot') {
-    const dateInfo = readEntryDate(entry);
-    if (!dateInfo) {
-      return {
-        archive: false,
-        warning: `data inválida ou ausente na entrada [${entry.id}]`,
-      };
-    }
-    if (dateInfo.isTemplate) {
-      return { archive: false };
-    }
-    if (!dateInfo.parsedDate) {
-      return {
-        archive: false,
-        warning: `data inválida ou ausente na entrada [${entry.id}]`,
-      };
-    }
-
-    const minDate = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
-    if (dateInfo.parsedDate > minDate) {
-      return { archive: false };
-    }
+    return shouldArchiveAfterDays(entry, now, 7);
   }
 
   return { archive: true };
+}
+
+function shouldArchiveFaixaA(entry, now) {
+  if (!isClosedStatus(entry.status)) {
+    return { archive: false };
+  }
+
+  return shouldArchiveAfterDays(entry, now, 7);
 }
 
 function ensureDirectory(dirPath) {
@@ -276,7 +301,9 @@ function archiveInbox(agent, options) {
   const warnings = [];
 
   for (const entry of entries) {
-    const decision = shouldArchiveEntry(agent, entry, options.now, options);
+    const decision = options.policy === 'faixa-a'
+      ? shouldArchiveFaixaA(entry, options.now)
+      : shouldArchiveEntry(agent, entry, options.now, options);
     if (decision.warning) {
       warnings.push(decision.warning);
     }
@@ -306,6 +333,8 @@ function archiveInbox(agent, options) {
     inboxPath,
     archivePath,
     archivedCount: archivedEntries.length,
+    archivedEntries,
+    keptEntries,
     warnings,
   };
 }
@@ -391,4 +420,22 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  archiveDir,
+  archiveInbox,
+  buildActiveContent,
+  buildArchiveContent,
+  inboxDir,
+  inboxFiles,
+  isOlderThanDays,
+  readEntryDate,
+  resolveTargets,
+  shouldArchiveEntry,
+  shouldArchiveFaixaA,
+  toDayStart,
+  writeAtomically,
+};
