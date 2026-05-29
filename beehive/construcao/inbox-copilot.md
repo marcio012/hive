@@ -58,7 +58,7 @@ Approved by: Márcio
 **tipo:** handoff-executavel
 **backlog_ref:** TOS-013
 **thread:** branding-dinamico-white-label
-**Status:** executada — commit `ef5532d` realizado no tenantOS; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-27`
+**Status:** executada — ✅ Aprovado com ressalva menor em 2026-05-29; commit ef5532d validado. TOS-013 fechado. DT-003 registrado no BACKLOG-TOS.md.
 
 ## Destino Operacional (DIR-082)
 

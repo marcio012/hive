@@ -8,7 +8,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **Data:** 2026-05-29
 **backlog_ref:** TOS-013
 **thread:** branding-dinamico-white-label
-**Status:** pendente de auditoria
+**Status:** consumida — ✅ Aprovado com ressalva menor em 2026-05-29; TOS-013 fechado. DT registrado no backlog.
 
 Execução concluída do handoff `CLAUDE-2026-05-28-057` em `/home/marcio/job/tenantOS`.
 
