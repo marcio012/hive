@@ -15,21 +15,17 @@ Total estimado: **0 issues** prontas para execução.
 
 | Ordem | ID | Título | Dependência | Status |
 |-------|---|--------|-------------|--------|
-| 1 | WO-033 | HIVE-016 — Telemetria E2: Interações por Tipo | — | pronto |
-| 2 | WO-034 | HIVE-021 — Painel de Diretrizes e Governança | — | pronto |
-| 3 | WO-035 | TOS-015-A — Agenda Backend Delta | — | pronto |
-| 4 | WO-036 | TOS-015-B — Agenda Grade Horária Visual | WO-035 (status bloqueio) | pronto |
-| 5 | WO-037 | TOS-015-C — Agenda Interoperabilidade | WO-035 (venda_id) | bloqueado por WO-035 |
+| 1 | WO-033 | HIVE-016 — Telemetria E2: Interações por Tipo | — | **pronto** |
+| 2 | WO-034 | HIVE-021 — Painel de Diretrizes e Governança | — | **pronto** |
+| 3 | WO-036 | TOS-015-B — Agenda Grade Horária Visual | — | **pronto** |
+| 4 | WO-037 | TOS-015-C — Agenda Interoperabilidade | WO-035 ✅ executada | **pronto** |
+| 5 | WO-038 | HIVE-023 — Gate View (Painel do Márcio) | — | **pronto** |
 | 6 | #78 | Pipeline V2 — Kanban de leads do Agente de Vendas | #88 validado em HML | bloqueado |
 
 ## Próximo passo imediato
 
-**5 WOs despachadas em 2026-05-29 — processar inbox e executar em sequência:**
-1. WO-033 (HIVE-016 — Telemetria E2: Interações por Tipo) — Hive UI
-2. WO-034 (HIVE-021 — Painel de Diretrizes e Governança) — Hive UI
-3. WO-035 (TOS-015-A — Agenda Backend Delta) — TenantOS
-4. WO-036 (TOS-015-B — Agenda Grade Horária Visual) — TenantOS
-5. WO-037 (TOS-015-C — Agenda Interoperabilidade) — TenantOS ⚠️ depende de WO-035
+**Executar WO-033 (HIVE-016 — Telemetria E2).** Inbox limpo — apenas 5 entradas ativas.
+Após cada WO: checkpoint no `inbox-claude.md` + entrada `GATE-*` no `inbox-marcio.md`.
 
 ## Issues Concluídas (Rodada Atual)
 
