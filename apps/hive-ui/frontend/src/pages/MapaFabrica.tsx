@@ -71,6 +71,14 @@ function formatMetric(value: number | null | undefined, digits = 1): string {
   }).format(value);
 }
 
+const STATIONS = [
+  { key: 'marcio',  name: 'Márcio',  role: 'Operador',       initial: 'M', cls: 'human'   },
+  { key: 'gemini',  name: 'Gemini',  role: 'Product Owner',  initial: 'G', cls: 'gemini'  },
+  { key: 'claude',  name: 'Claude',  role: 'Arquiteto',      initial: 'C', cls: 'claude'  },
+  { key: 'copilot', name: 'Copilot', role: 'Engenheiro',     initial: 'P', cls: 'copilot' },
+  { key: 'entrega', name: 'Entrega', role: 'Mergeado',       initial: '✓', cls: 'deliver' },
+] as const;
+
 export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
   const activeIssue = state?.session.activeIssue ?? '—';
   const lastAction = state?.session.lastAction ?? 'Sem ação registrada.';
@@ -80,6 +88,15 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
       new Map((telemetry?.agentEfficiency ?? []).map((item) => [item.agent, item])),
     [telemetry],
   );
+
+  const stationCount: Record<string, { n: number; label: string }> = {
+    gemini:  { n: state?.agentDetails?.gemini?.inboxPending  ?? 0, label: 'em triagem'  },
+    claude:  { n: state?.agentDetails?.claude?.inboxPending  ?? 0, label: 'em análise'  },
+    copilot: { n: state?.agentDetails?.copilot?.activeWo ? 1 : 0,  label: 'em execução' },
+  };
+
+  const transitDebates = (state?.debates ?? []).filter((d) => d.active);
+  const copilotWo = state?.agentDetails?.copilot?.activeWo ?? null;
 
   return (
     <main className="screen active">
@@ -102,6 +119,8 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
           {agents.map((agent) => {
             const lock = state?.locks[agent.key] ?? null;
             const active = Boolean(lock);
+            const inboxCount = state?.inboxCounts[agent.key] ?? 0;
+            const inboxLevel = inboxCount >= 3 ? 'red' : inboxCount >= 1 ? 'gold' : null;
 
             return (
               <article key={agent.key} className={`agent-card ${active ? 'active' : 'free'}`}>
@@ -133,6 +152,15 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
                   <div className="when">
                     <span className={`dot ${active ? 'green' : 'gray'}`} />
                     {formatLockAge(lock?.acquiredAt ?? null)}
+                    {inboxLevel ? (
+                      <span className={`inbox-badge inbox-${inboxLevel}`}>
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                          <rect x="3" y="5" width="18" height="14" rx="2" />
+                          <path d="m3 7 9 6 9-6" />
+                        </svg>
+                        {inboxCount}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               </article>
@@ -140,8 +168,89 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
           })}
         </div>
 
-        <div className="section-label">
+        <div className="section-label" style={{ marginTop: 28 }}>
           <span className="n">02</span>
+          Esteira de Produção
+          <span className="line" />
+          <span className="flow-legend">
+            <span className="dot green pulse" style={{ display: 'inline-block' }} />
+            {' '}fluindo
+          </span>
+        </div>
+
+        <div className="flow-belt-wrap">
+          <div className="flow-track">
+            {STATIONS.map((station, index) => {
+              const count = stationCount[station.key];
+              const active =
+                station.key !== 'marcio' && station.key !== 'entrega'
+                  ? Boolean(state?.locks?.[station.key as AgentName])
+                  : false;
+              return (
+                <div key={station.key} style={{ display: 'contents' }}>
+                  <div className={`flow-station ${station.cls}${active ? ' active' : ''}`}>
+                    {active ? (
+                      <span className="fs-pulse">
+                        <span className="dot green pulse" />
+                      </span>
+                    ) : null}
+                    <div className={`fs-av av-${station.cls}`}>{station.initial}</div>
+                    <div className="fs-name">{station.name}</div>
+                    <div className="fs-role">{station.role}</div>
+                    {count ? (
+                      <div className="fs-count">
+                        <span className="fc-n">{count.n}</span> {count.label}
+                      </div>
+                    ) : null}
+                  </div>
+                  {index < STATIONS.length - 1 ? (
+                    <div className="flow-conveyor">
+                      <div className="belt-stripes" />
+                      <span className={`flow-token t${index + 1}`} />
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+          <div className="flow-return">
+            <span className="fr-label">manutenção contínua ↺</span>
+          </div>
+        </div>
+
+        {transitDebates.length > 0 || copilotWo ? (
+          <div className="flow-items">
+            {transitDebates.map((d) => (
+              <div key={d.id} className="flow-card">
+                <div className="fci-top">
+                  <span className="fci-id">{d.id}</span>
+                  <span className="fci-stage">{d.status}</span>
+                </div>
+                <div className="fci-title">{d.title}</div>
+                <div className="fci-foot">
+                  <span className="mini-av av-claude">C</span>
+                  <span className="fci-eta">→ {d.responsible}</span>
+                </div>
+              </div>
+            ))}
+            {copilotWo ? (
+              <div className="flow-card active">
+                <div className="fci-top">
+                  <span className="fci-id">WO</span>
+                  <span className="fci-stage fci-exec">execução</span>
+                </div>
+                <div className="fci-title">{copilotWo}</div>
+                <div className="fci-foot">
+                  <span className="mini-av av-copilot">P</span>
+                  <span className="fci-eta">→ Entrega</span>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        <div className="section-label">
+          <span className="n">03</span>
           Inbox · Pendências
           <span className="line" />
         </div>
@@ -173,7 +282,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
         </div>
 
         <div className="section-label">
-          <span className="n">03</span>
+          <span className="n">04</span>
           Eficiência do Squad
           <span className="line" />
         </div>

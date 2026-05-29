@@ -14,14 +14,20 @@
 - **DT-007** — `routing.yaml`: campo `agent_livre: copilot` é decorativo — `router.ts` não o verifica. A lógica de lock livre está em `dispatcher.ts`, o que é funcionalmente correto mas cria semântica enganosa no YAML. Registrado em: WO-026-A (auditoria 2026-05-29). Impacto: baixo — documentar ou remover o campo na próxima revisão do routing.
 
 ## 🟡 Média prioridade
-- [ ] HIVE-014 — Eficiência do Squad no Hive UI (Seção 03 Mapa + tela Telemetria) — **bloqueado: aguardando aprovação dos protótipos Claude.ai Design** (prompts em `beehive/assets/hive-ui/prompts/design-tela1-mapa-fabrica.md` v2 e `design-tela-telemetria.md` v2). WO: `WO-027-EFICIENCIA-UI.md`.
-
-## 🟢 Baixa prioridade / Ideias
+- [x] HIVE-015 — Telemetria E1: tela tokens por agente (Claude X, Copilot Y, Gemini Z) (2026-05-29) — ✅ 22bdb51
+- [ ] HIVE-016 — Telemetria E2: interações por tipo com tag no lock acquire — DEBATE-030 em andamento
+- [ ] HIVE-017 — Centro de Controle: componentização (WO-031) — aguarda WO-030 commitada
+- [x] HIVE-018 — Centro de Controle V2 (2026-05-29) — ✅ 7d8aff9 (retroativo — WO-030)
+- [ ] HIVE-019 — Lock System: Márcio como agente ativo (DIR-092) — WO-033 pendente
+- [ ] HIVE-020 — Dispatch de Agentes via UI (V1: somente Márcio) — debate pendente
+- [ ] HIVE-021 — Painel de Diretrizes e Governança na UI — DEBATE-032 em andamento
+- [x] HIVE-014 — Eficiência do Squad no Hive UI (Seção 03 Mapa + tela Telemetria) (2026-05-29) — ✅ bd782fa
+- [ ] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) — DEBATE-033 aberto
 - [ ] HIVE-005 — Onboarding automatizado para novo operador
 
 ## ✅ Concluído
-- [x] HIVE-012 — Política de Higiene de Inbox (DEBATE-025) (2026-05-29)
-- [x] HIVE-013 — Orquestrador Híbrido V1 (DEBATE-026) (Aprovado em 2026-05-29)
+- [x] HIVE-012 — Política de Higiene de Inbox (DEBATE-025) (2026-05-29) — ✅ 8db27c6 + 81773c0
+- [x] HIVE-013 — Orquestrador Híbrido V1 (DEBATE-026) (2026-05-29) — ✅ 53abf8f + 3f5ec9d
 - [x] HIVE-001 — Redesign dos 4 atores do squad (2026-05-26)
 - [x] HIVE-002 — Documentação oficial do Hive (2026-05-26)
 - [x] HIVE-004 — Empacotar framework para outros repositórios (DEBATE-018) (2026-05-28)

@@ -486,6 +486,61 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
     );
   }
 
+  function debateHolder(phase: number): string {
+    if (phase <= 2) return 'Gemini';
+    if (phase === 3) return 'Claude';
+    if (phase === 4) return 'Copilot';
+    if (phase === 5) return 'Consolidando';
+    return '';
+  }
+
+  function renderPipeline() {
+    type PlItem = { id: string; title: string; hint?: string };
+
+    const byPhase = (phases: number[]): PlItem[] =>
+      activeDebates
+        .filter((d) => phases.includes(getDebatePhase(d.status)))
+        .map((d) => ({ id: d.id, title: d.title, hint: debateHolder(getDebatePhase(d.status)) }));
+
+    const copilotWo = agentDetails.copilot.activeWo;
+
+    const stages: Array<{ key: string; label: string; sub: string; cls: string; items: PlItem[] }> = [
+      { key: 'debate',    label: 'Debate',    sub: 'Squad',   cls: 'av-gemini',  items: byPhase([1, 2, 3, 4, 5]) },
+      { key: 'wo',        label: 'WO criada', sub: 'Claude',  cls: 'av-claude',  items: byPhase([7]) },
+      { key: 'execucao',  label: 'Execução',  sub: 'Copilot', cls: 'av-copilot', items: copilotWo ? [{ id: 'WO', title: copilotWo }] : [] },
+      { key: 'auditoria', label: 'Auditoria', sub: 'Claude',  cls: 'av-claude',  items: [] },
+      { key: 'gate',      label: 'Gate',      sub: 'Márcio',  cls: 'av-human',   items: byPhase([6]) },
+      { key: 'sr',        label: 'SR',        sub: 'Copilot', cls: 'av-copilot', items: [] },
+    ];
+
+    return (
+      <div className="pipeline">
+        {stages.map((stage) => (
+          <div key={stage.key} className="pl-col">
+            <div className="pl-head">
+              <span className={`pl-av ${stage.cls}`}>{stage.sub.charAt(0)}</span>
+              <div className="pl-meta">
+                <div className="pl-role">{stage.label}</div>
+                <div className="pl-sub">{stage.sub}</div>
+              </div>
+              {stage.items.length > 0 ? <span className="pl-count">{stage.items.length}</span> : null}
+            </div>
+            <div className="pl-cards">
+              {stage.items.map((item) => (
+                <div key={item.id} className="pl-card">
+                  <span className="pl-id">{item.id}</span>
+                  <span className="pl-title">{item.title}</span>
+                  {item.hint ? <span className="pl-hint">↳ {item.hint}</span> : null}
+                </div>
+              ))}
+              {stage.items.length === 0 ? <div className="pl-empty">livre</div> : null}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   function renderEventStream(title: string, showLiveBadge = false) {
     return (
       <div className="panel">
@@ -860,6 +915,11 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                 Configurações
               </button>
             </div>
+
+            <div className="section-label" style={{ marginTop: 24 }}>
+              <span className="n">02</span> Esteira de Processos <span className="line" />
+            </div>
+            {renderPipeline()}
 
             {activeLocks.length === 0 && totalInboxPending === 0 && totalBlocked === 0 ? (
               <div className="cc2-clean" style={{ marginBottom: 18 }}>
