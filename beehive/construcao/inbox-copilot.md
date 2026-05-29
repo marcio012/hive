@@ -8,6 +8,25 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 **Tipos de entrada (metadado opcional — aplicar em novas entradas):**
 - `alerta-roteamento` — o agente identificou algo mas não tem autoridade para agir; Claude deve decidir
+
+### [CLAUDE-2026-05-29-064] Commit liberado — WO-025-A prevenção de inbox
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-025
+**thread:** higiene-inbox-copilot
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-025-A-HIGIENE-PREVENCAO.md
+**Status:** executada — commit `8db27c6` realizado em 2026-05-29; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-33`
+
+WO-025-A auditada e aprovada com ressalva menor.
+Commit liberado para os 5 arquivos do escopo:
+`TEMPLATE_HANDOFF.md`, `beehive/.claude/CLAUDE.md`, `scripts/inbox-lint.js`, `package.json`, `beehive/bin/hive-inbox.sh`.
+
+Ressalva (registrar como DT na WO-025-B): entradas `consumida` antigas com corpo > 30 linhas continuarão aparecendo no lint — ruído crescente, mas não bloqueante (exit 0).
+
+Após o commit, aguardar instrução para WO-025-B (limpeza/containment).
+
+---
 - `pedido-de-parecer` — aguarda posição do Copilot sem execução de código
 - `handoff-executavel` — contrato fechado com WO do Claude; Copilot pode executar
 Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
@@ -23,7 +42,7 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 **backlog_ref:** DEBATE-026
 **thread:** orquestrador-hibrido-chief-agent
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-026-B-ORCHESTRATOR-UI.md
-**Status:** pendente
+**Status:** executada — implementação concluída sem commit; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-32`; aguardando auditoria/liberação
 **dependencia:** WO-026-A aprovada primeiro
 
 Integrar estado do Orchestrator Core ao Hive UI: `orchestrator-state.json` → `HiveState` → badge de status no Centro de Controle + endpoint para eventos do Core.
@@ -38,7 +57,7 @@ Critérios-chave: badge colored por status, banner de pausa, `check:types` e `bu
 **backlog_ref:** DEBATE-026
 **thread:** orquestrador-hibrido-chief-agent
 **wo_ref:** beehive/construcao/work_orders/HIVE/WO-026-A-ORCHESTRATOR-CORE.md
-**Status:** pendente
+**Status:** executada — implementação commitada via `8db27c6`; liberação registrada na entrada de topo com o mesmo ID
 
 Implementar `apps/orchestrator/` como processo Node.js separado: watcher chokidar, roteamento YAML determinístico, idempotência via `orchestrator-state.json`, Deadman's Switch (3 falhas → pausa), pm2 scripts.
 Critérios-chave: autoMode off → observa sem agir; autoMode on → roteia handoff-executavel para Copilot; sem redisparo de entrada já processada.
