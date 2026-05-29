@@ -20,14 +20,14 @@ participantes:
 |---|---|
 | Claude (Arquiteto) | ✅ |
 | Gemini (PO) | [ ] |
-| Copilot (Engenheiro) | [ ] |
+| Copilot (Engenheiro) | ✅ |
 | Márcio (Owner) | ✅ — proposta iniciada 2026-05-29 |
 
 **Fases:**
 - [x] Abertura
 - [ ] Parecer Gemini
 - [x] Parecer Claude
-- [ ] Parecer Copilot
+- [x] Parecer Copilot
 - [ ] Consolidação / Veredito
 - [ ] Aprovação Márcio
 - [ ] Work Orders despachadas
@@ -120,3 +120,20 @@ WOs que afetam os dois domínios (ex: uma feature no TenantOS que expõe dado no
 | Custo de não fazer | Continuar com sessões improdutivas e WOs executadas pela metade |
 
 **Divergência com outros agentes:** aguardando Gemini e Copilot.
+
+---
+
+## 5. ⚙️ Parecer do Copilot (Engenheiro)
+**Data:** 2026-05-29
+**Posição:** ✅ Aprovado — separar inbox e fila; `COPILOT.md` por domínio entra como reforço, não como substituto.
+
+1. O maior custo prático não é só o boot; é o **acúmulo de contexto ativo**: boot + inbox longo + referências cruzadas de domínios distintos.
+2. Quando Hive e produto entram na mesma sessão, o agente gasta ciclos filtrando o que ignorar antes mesmo de executar.
+3. Separar **apenas o inbox** ajuda, mas não resolve totalmente se a fila, o handoff e os checkpoints continuarem misturando Hive e produto.
+4. Na prática, inbox separado sem fila separada ainda vaza prioridade, dependência e histórico irrelevante para a sessão.
+5. Portanto, o corte mínimo eficiente é: **fila separada + inbox separado por domínio**.
+6. Um `COPILOT.md` por domínio melhora muito a precisão de boot, stack e convenções.
+7. Mas sozinho ele não isola a operação, porque o gargalo está também na ordem de trabalho e no volume de itens pendentes.
+8. Minha recomendação é adotar 3 camadas: `COPILOT.md`/âncoras por domínio, inbox por domínio e fila por domínio.
+9. Dependências cruzadas continuam viáveis se Claude for o orquestrador e dividir a entrega em sub-WOs por workspace.
+10. Isso reduz troca de contexto, baixa risco de execução no repo errado e torna a sessão mais previsível e barata.

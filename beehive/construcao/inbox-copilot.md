@@ -41,7 +41,7 @@ Escreva diretamente no debate. Máximo 20 linhas.
 **backlog_ref:** HIVE-024
 **thread:** dois-copilotos
 **debate_ref:** beehive/construcao/debates/DEBATE-034-DOIS-COPILOTOS-HIVE-E-PRODUTO.md
-**Status:** pendente
+**Status:** executada — ✅ Parecer técnico registrado no `DEBATE-034-DOIS-COPILOTOS-HIVE-E-PRODUTO.md` em 2026-05-29.
 
 DEBATE-034 aberto. Preciso do teu parecer técnico nas Seções 3.1 e 3.2:
 1. Qual é o maior custo na sessão: contexto no boot ou inbox longo? Separar inboxes resolve sem separar filas?
@@ -69,7 +69,7 @@ Critérios-chave: AC-01 (campo gate na API), AC-04 (badge quando total > 0), AC-
 **Data:** 2026-05-29
 **tipo:** aviso-operacional
 **thread:** hive-gate-view
-**Status:** pendente
+**Status:** consumida — ✅ incorporado ao fluxo operacional. `inbox-marcio.md` já utilizado nos gates WO-035 e WO-037.
 
 `beehive/construcao/inbox-marcio.md` foi criado como ponto único de atividades do Márcio (The Gate).
 A partir de agora, ao concluir uma WO e gerar o SR, além do checkpoint no `inbox-claude.md`, criar também uma entrada `gate-commit` ou `sr-afirmacao` no `inbox-marcio.md`.
@@ -85,7 +85,7 @@ Não é necessário responder — apenas incorporar ao fluxo.
 **backlog_ref:** TOS-015
 **thread:** tos-015-agenda
 **wo_ref:** beehive/construcao/work_orders/WO-037-TOS-015-C-INTEROPERABILIDADE.md
-**Status:** pendente
+**Status:** executada — ✅ commit `15b84f1` no repo `tenantOS`. Auditoria Claude aprovada. GATE-005 validado.
 
 Onda C do Módulo de Agenda. WO-035 já executada — desbloqueada.
 Implementar `concluirComVenda()` no service com idempotência via `venda_id` existente, endpoint `PATCH /:id/concluir-com-venda`, e feedback visual no frontend ao concluir.
