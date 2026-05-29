@@ -48,7 +48,7 @@ Próximo encadeamento liberado: WO-037 (**Agenda → Venda**).
 **tipo:** sr-afirmacao
 **backlog_ref:** HIVE-018
 **sr_ref:** beehive/registry/reports/SR-HIVE-018-CENTRO-CONTROLE-V2-20260529.md
-**Status:** pendente
+**Status:** afirmado ✅ — 2026-05-29
 
 Centro de Controle V2 entregue e auditado. Toggle v1/v2, cards por agente, debates read-only com phase-bar.
 Commit: `7d8aff9`. Auditoria: Claude (todos os 11 ACs aprovados).
