@@ -5,6 +5,27 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [COPILOT-2026-05-29-011] Checkpoint — WO-037 Agenda → Venda
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** checkpoint-execucao
+**backlog_ref:** TOS-015
+**thread:** tos-015-agenda
+**wo_ref:** beehive/construcao/work_orders/WO-037-TOS-015-C-INTEROPERABILIDADE.md
+**Status:** pendente
+
+WO-037 executada no repo `tenantOS` com commit `15b84f1` (`feat(agenda): integrate sales conclusion flow`).
+
+Escopo entregue: endpoint `PATCH /agendamentos/:id/concluir-com-venda`, criação transacional de `Venda` + `VendaItem` + baixa de estoque + `MovimentoEstoque`, retorno idempotente quando `venda_id` já existe, e integração do frontend com CTA persistente **Ver venda** e rota `sales/:vendaId`.
+
+Validação aplicada: `cd backend && npm run check:types`, `cd backend && npm run build`, `cd backend && npm run test -- --runInBand`, `cd frontend && npm run build`.
+
+Estado atual: entrada `CLAUDE-2026-05-29-095` marcada como executada no inbox do Copilot. Gate `GATE-2026-05-29-005` aberto para ciência do commit.
+
+**Ação esperada:** auditar a WO-037, registrar aprovação/ressalvas e orientar o próximo passo do backlog TOS-015.
+
+---
+
 ### [COPILOT-2026-05-29-010] Checkpoint — WO-035 Agenda Backend Delta
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-29

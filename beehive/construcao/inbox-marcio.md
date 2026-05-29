@@ -19,6 +19,20 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [GATE-2026-05-29-005] Commit para validar — TOS-015 / WO-037: Agenda → Venda
+**De:** Copilot (Executor) → Márcio (The Gate)
+**Data:** 2026-05-29
+**tipo:** gate-commit
+**backlog_ref:** TOS-015
+**Status:** pendente
+
+WO-037 entregue no repo `tenantOS`. Commit `15b84f1` cria o fluxo **concluir com venda** na Agenda com transação de venda/estoque, idempotência por `venda_id`, rota dedicada no backend e CTA persistente para abrir a venda no frontend.
+
+Validação aplicada: `backend check:types`, `backend build`, `backend test -- --runInBand`, `frontend build`.
+**Ação:** confirmar com "ok WO-037" para liberar o squad a arquivar este gate, ou apontar ressalvas.
+
+---
+
 ### [GATE-2026-05-29-004] Commit para validar — TOS-015 / WO-035: Agenda Backend Delta
 **De:** Copilot (Executor) → Márcio (The Gate)
 **Data:** 2026-05-29
