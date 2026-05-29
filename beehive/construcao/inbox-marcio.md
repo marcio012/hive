@@ -24,7 +24,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **Data:** 2026-05-29
 **tipo:** gate-commit
 **backlog_ref:** TOS-015
-**Status:** pendente
+**Status:** validado ✅ — auditoria Claude aprovada 2026-05-29.
 
 WO-037 entregue no repo `tenantOS`. Commit `15b84f1` cria o fluxo **concluir com venda** na Agenda com transação de venda/estoque, idempotência por `venda_id`, rota dedicada no backend e CTA persistente para abrir a venda no frontend.
 

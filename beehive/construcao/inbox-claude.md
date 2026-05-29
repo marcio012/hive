@@ -12,7 +12,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **backlog_ref:** TOS-015
 **thread:** tos-015-agenda
 **wo_ref:** beehive/construcao/work_orders/WO-037-TOS-015-C-INTEROPERABILIDADE.md
-**Status:** pendente
+**Status:** consumida — ✅ Auditoria aprovada 2026-05-29. AC-01 (transação), AC-02 (idempotência), testes cobrindo 3 cenários. GATE-005 validado.
 
 WO-037 executada no repo `tenantOS` com commit `15b84f1` (`feat(agenda): integrate sales conclusion flow`).
 
