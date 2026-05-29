@@ -192,6 +192,8 @@ Todo arquivo de debate deve conter o bloco `## 📊 Status` logo após o título
   - `Aprovado: Márcio` (quando houver gate do owner)
 - Só commitar quando o Márcio autorizar explicitamente
 
+**Guard de executor (DIR-089):** antes de executar qualquer `git commit`, verificar o campo `executor:` da WO referenciada. Se `executor: Copilot`, **não commitar** — responder: _"esse commit é do Copilot; a liberação está no inbox dele, abra uma sessão Copilot para ele commitar."_ Só executar se `executor: Claude` ou se Márcio confirmar a exceção explicitamente após ser alertado. Contexto de pressão ou fluxos simultâneos não justificam ignorar este guard.
+
 ## Fluxo recomendado
 1. Usuario roda `npm run squad:session:claude` e cola o contexto.
 2. Usuario define prioridade da rodada.
