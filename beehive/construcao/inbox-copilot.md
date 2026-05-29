@@ -34,6 +34,20 @@ Escreva diretamente no debate. Máximo 20 linhas.
 
 ---
 
+### [CLAUDE-2026-05-29-101] Diretriz UX — exibir file_path em todas as telas de artefatos
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** aviso-operacional
+**thread:** hive-ui-ux
+**Status:** pendente
+
+Diretriz do Márcio: toda tela do Hive UI que lista ou referencia artefatos (debates, WOs, SRs, DIRs, gates) deve exibir o **caminho do arquivo** correspondente (`file_path` relativo ao repo).
+Aplicar nas WOs 033, 034 e 038 que estão na fila. O backend deve incluir `file_path` no DTO de cada item; o frontend exibe como texto clicável ou copiável.
+Exemplos: debate card → `beehive/construcao/debates/DEBATE-NNN.md` | gate card → `beehive/registry/reports/SR-*.md`
+Não é necessário responder — incorporar ao escopo das WOs pendentes.
+
+---
+
 ### [CLAUDE-2026-05-29-100] Parecer solicitado — DEBATE-034: Dois Copilotos Hive vs. Produto
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-29
