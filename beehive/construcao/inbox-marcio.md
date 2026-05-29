@@ -53,7 +53,7 @@ Commit: `22bdb51`. Auditoria: Claude (todos os 7 ACs aprovados). Sem débito té
 **tipo:** sr-afirmacao
 **backlog_ref:** HIVE-014
 **sr_ref:** beehive/registry/reports/SR-HIVE-014-EFICIENCIA-SQUAD-20260529.md
-**Status:** pendente
+**Status:** afirmado ✅ — 2026-05-29
 
 Seção 03 (custo/budget/inits por agente) + tela `/telemetria` (janela semanal + histórico).
 Commit: `bd782fa`. Auditoria: Claude aprovada. DTs registrados: DT-008, DT-009, DT-010.
