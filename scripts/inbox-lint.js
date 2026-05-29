@@ -2,6 +2,11 @@
 
 const fs = require('fs');
 const path = require('path');
+const {
+  MAX_INBOX_BODY_LINES,
+  isClosedStatus,
+  parseInboxEntries,
+} = require('./inbox-utils');
 
 const rootDir = path.resolve(__dirname, '..');
 const inboxFiles = [
@@ -9,66 +14,44 @@ const inboxFiles = [
   path.join(rootDir, 'beehive/construcao/inbox-copilot.md'),
   path.join(rootDir, 'beehive/construcao/inbox-gemini.md'),
 ];
-const maxBodyLines = 30;
-
-function splitBlocks(content) {
-  return content
-    .split(/^### \[/m)
-    .slice(1)
-    .map((chunk) => `### [${chunk}`);
-}
-
-function parseBlock(block) {
-  const lines = block.replace(/\r/g, '').split('\n');
-  const header = lines[0] || '';
-  const idMatch = header.match(/^### \[([^\]]+)\]/);
-  const id = idMatch ? idMatch[1] : 'ID desconhecido';
-  const statusIndex = lines.findIndex((line) => /^\*\*[Ss]tatus:\*\*/.test(line.trim()));
-
-  if (statusIndex === -1) {
-    return { id, bodyLineCount: 0 };
-  }
-
-  const bodyLines = lines.slice(statusIndex + 1);
-
-  while (bodyLines.length > 0) {
-    const lastLine = bodyLines[bodyLines.length - 1].trim();
-    if (lastLine === '' || lastLine === '---') {
-      bodyLines.pop();
-      continue;
-    }
-    break;
-  }
-
-  return {
-    id,
-    bodyLineCount: bodyLines.length,
-  };
-}
 
 function lintFile(filePath) {
   if (!fs.existsSync(filePath)) {
     return {
       fileName: path.basename(filePath),
       missing: true,
-      violations: [],
+      activeViolations: [],
+      ignoredViolations: [],
     };
   }
 
   const content = fs.readFileSync(filePath, 'utf8');
-  const blocks = splitBlocks(content);
-  const violations = blocks
-    .map(parseBlock)
-    .filter((block) => block.bodyLineCount > maxBodyLines);
+  const entries = parseInboxEntries(content);
+  const activeViolations = [];
+  const ignoredViolations = [];
+
+  for (const entry of entries) {
+    if (entry.bodyLineCount <= MAX_INBOX_BODY_LINES) {
+      continue;
+    }
+
+    if (isClosedStatus(entry.status)) {
+      ignoredViolations.push(entry);
+      continue;
+    }
+
+    activeViolations.push(entry);
+  }
 
   return {
     fileName: path.basename(filePath),
     missing: false,
-    violations,
+    activeViolations,
+    ignoredViolations,
   };
 }
 
-let hasViolations = false;
+let hasActiveViolations = false;
 
 for (const filePath of inboxFiles) {
   const result = lintFile(filePath);
@@ -78,19 +61,24 @@ for (const filePath of inboxFiles) {
     continue;
   }
 
-  if (result.violations.length === 0) {
+  if (result.activeViolations.length === 0) {
     console.log(`✅  ${result.fileName} — sem violações`);
-    continue;
+  } else {
+    hasActiveViolations = true;
+    for (const violation of result.activeViolations) {
+      console.log(
+        `⚠️  ${result.fileName} — [${violation.id}] — ${violation.bodyLineCount} linhas (limite: ${MAX_INBOX_BODY_LINES})`,
+      );
+    }
   }
 
-  hasViolations = true;
-  for (const violation of result.violations) {
+  for (const violation of result.ignoredViolations) {
     console.log(
-      `⚠️  ${result.fileName} — [${violation.id}] — ${violation.bodyLineCount} linhas (limite: ${maxBodyLines})`,
+      `ℹ️  ${result.fileName} — [${violation.id}] ignorada (status encerrado, ${violation.bodyLineCount} linhas)`,
     );
   }
 }
 
-if (!hasViolations) {
+if (!hasActiveViolations) {
   console.log('✅  Nenhuma violação ativa de higiene de inbox');
 }
