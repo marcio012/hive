@@ -10,6 +10,7 @@ INBOX_DIR="$PROJECT_PATH/beehive/construcao"
 DEBATES_DIR="$INBOX_DIR/debates"
 TARGET_AGENT="${1:-}"
 LINT_SCRIPT="$ROOT_DIR/scripts/inbox-lint.js"
+PENDING_SCRIPT="$ROOT_DIR/scripts/inbox-pending.js"
 
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -17,82 +18,9 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-normalize_status() {
-  local raw="${1:-pendente}"
-  raw="${raw,,}"
-  raw="${raw%% *}"
-  raw="${raw//)/}"
-  raw="${raw//(/}"
-  printf '%s' "$raw"
-}
-
-is_done_status() {
-  case "$1" in
-    consumida|executada|concluida|concluída|feito|feita|done)
-      return 0
-      ;;
-    *)
-      return 1
-      ;;
-  esac
-}
-
 extract_pending_inbox_entries() {
   local file="$1"
-
-  awk '
-    function trim(value) {
-      gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
-      return value
-    }
-
-    function flush() {
-      if (!active) {
-        return
-      }
-
-      status_norm = tolower(status)
-      gsub(/[[:space:]].*$/, "", status_norm)
-      gsub(/[()]/, "", status_norm)
-
-      if (status_norm == "") {
-        status_norm = "pendente"
-      }
-
-      if (status_norm !~ /^(consumida|executada|concluida|concluída|feito|feita|done)$/) {
-        print "  [" id "] " title " (" status_norm ")"
-      }
-
-      active = 0
-      id = ""
-      title = ""
-      status = "pendente"
-    }
-
-    /^### \[/ {
-      flush()
-      line = $0
-      sub(/^### \[/, "", line)
-      split(line, parts, /\] /)
-      id = parts[1]
-      title = parts[2]
-      gsub(/\r/, "", title)
-      active = 1
-      next
-    }
-
-    active {
-      trimmed = trim($0)
-      if (trimmed ~ /^\*\*[Ss]tatus:\*\*/) {
-        sub(/^\*\*[Ss]tatus:\*\*[[:space:]]*/, "", trimmed)
-        status = trimmed
-      }
-    }
-
-    END {
-      flush()
-    }
-  ' "$file"
+  node "$PENDING_SCRIPT" "$file"
 }
 
 debate_pending_for_agent() {

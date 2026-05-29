@@ -1,7 +1,16 @@
 'use strict';
 
 const MAX_INBOX_BODY_LINES = 30;
-const CLOSED_STATUS_PREFIXES = ['consumida', 'executada', 'arquivada'];
+const CLOSED_STATUS_PREFIXES = [
+  'consumida',
+  'executada',
+  'arquivada',
+  'concluida',
+  'concluída',
+  'feito',
+  'feita',
+  'done',
+];
 
 function normalizeStatus(status = '') {
   return status.trim().toLowerCase();
@@ -30,6 +39,7 @@ function buildEntry(rawLines) {
   const header = lines[0] || '';
   const idMatch = header.match(/^### \[([^\]]+)\]/);
   const id = idMatch ? idMatch[1] : 'ID desconhecido';
+  const title = header.replace(/^### \[[^\]]+\]\s*/, '').trim();
   const statusIndex = lines.findIndex((line) => /^\*\*[Ss]tatus:\*\*/.test(line.trim()));
   const statusLine = statusIndex >= 0 ? lines[statusIndex] : '';
   const status = statusLine.replace(/^\*\*[Ss]tatus:\*\*\s*/, '').trim();
@@ -37,6 +47,7 @@ function buildEntry(rawLines) {
 
   return {
     id,
+    title,
     header,
     lines,
     blockText: lines.join('\n'),
@@ -82,8 +93,30 @@ function parseInboxEntries(content) {
   return entries;
 }
 
+function getLatestEntries(entries) {
+  const latestEntries = [];
+  const seenIds = new Set();
+
+  for (const entry of entries) {
+    if (seenIds.has(entry.id)) {
+      continue;
+    }
+
+    seenIds.add(entry.id);
+    latestEntries.push(entry);
+  }
+
+  return latestEntries;
+}
+
+function getPendingEntries(entries) {
+  return getLatestEntries(entries).filter((entry) => !isClosedStatus(entry.status));
+}
+
 module.exports = {
   MAX_INBOX_BODY_LINES,
+  getLatestEntries,
+  getPendingEntries,
   isClosedStatus,
   normalizeStatus,
   parseInboxEntries,

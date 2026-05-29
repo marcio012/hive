@@ -74,6 +74,26 @@ assert_failure_contains() {
   fi
 }
 
+assert_output_contains() {
+  local output="$1"
+  local expected="$2"
+  if [[ "$output" != *"$expected"* ]]; then
+    echo "Assertion failed: expected output to contain '$expected'"
+    echo "$output"
+    exit 1
+  fi
+}
+
+assert_output_not_contains() {
+  local output="$1"
+  local unexpected="$2"
+  if [[ "$output" == *"$unexpected"* ]]; then
+    echo "Assertion failed: expected output not to contain '$unexpected'"
+    echo "$output"
+    exit 1
+  fi
+}
+
 LOCK_FILE="$TEST_REPO/.hive-agent/gemini-session.lock"
 
 assert_success run_session_start gemini --role coordenador
@@ -106,5 +126,49 @@ assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="projetista"'
 
 assert_success run_session_start claude
 assert_success run_session_start copilot
+
+mkdir -p "$TEST_REPO/beehive/construcao/debates"
+cat > "$TEST_REPO/beehive/construcao/inbox-copilot.md" <<'EOF'
+### [CLAUDE-2026-05-29-064] Commit liberado — WO-025-A prevenção de inbox
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**Status:** executada — commit `8db27c6` realizado.
+
+```text
+### [IGNORAR-EM-CODE-FENCE] Cabeçalho falso
+**Status:** pendente
+```
+
+---
+
+### [CLAUDE-2026-05-29-064] WO-025-A: Higiene de Inbox — Onda 1 (Prevenção)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**Status:** pendente
+
+Entrada antiga já encerrada por uma atualização mais recente.
+
+---
+
+### [UI-{YYYY-MM-DD}-{HH:mm}] Intenção despachada via Hive UI
+**De:** Hive UI → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**Status:** pendente
+
+Nova pendência real.
+EOF
+printf '' > "$TEST_REPO/beehive/construcao/inbox-claude.md"
+printf '' > "$TEST_REPO/beehive/construcao/inbox-gemini.md"
+
+INBOX_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" bash "$HIVE_HOME/beehive/bin/hive-inbox.sh" copilot
+)"
+assert_output_contains "$INBOX_OUTPUT" "[UI-{YYYY-MM-DD}-{HH:mm}] Intenção despachada via Hive UI (pendente)"
+assert_output_not_contains "$INBOX_OUTPUT" "[CLAUDE-2026-05-29-064] WO-025-A: Higiene de Inbox — Onda 1 (Prevenção) (pendente)"
+assert_output_not_contains "$INBOX_OUTPUT" "[IGNORAR-EM-CODE-FENCE]"
 
 echo "PASS: Gemini role guard integration"
