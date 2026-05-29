@@ -12,7 +12,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **backlog_ref:** TOS-015
 **thread:** tos-015-agenda
 **wo_ref:** beehive/construcao/work_orders/WO-035-TOS-015-A-BACKEND-DELTA.md
-**Status:** pendente
+**Status:** consumida — ✅ Auditoria aprovada 2026-05-29. Todos os ACs passaram. WO-037 desbloqueada (já no inbox do Copilot).
 
 WO-035 executada no repo `tenantOS` com commit `3049a54` (`feat(agendamentos): implement backend delta`).
 

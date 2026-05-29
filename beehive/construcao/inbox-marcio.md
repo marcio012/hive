@@ -33,6 +33,15 @@ Próximo encadeamento liberado: WO-037 (**Agenda → Venda**).
 
 ---
 
+### [GATE-2026-05-29-004] Commit para validar — TOS-015 / WO-035: Agenda Backend Delta
+**De:** Copilot (Executor) → Márcio (The Gate)
+**Data:** 2026-05-29
+**tipo:** gate-commit
+**backlog_ref:** TOS-015
+**Status:** validado ✅ — auditoria Claude aprovada 2026-05-29. WO-037 desbloqueada.
+
+---
+
 ### [GATE-2026-05-29-003] SR para afirmar — HIVE-018: Centro de Controle V2
 **De:** Copilot (Executor) → Márcio (The Gate)
 **Data:** 2026-05-29
@@ -53,7 +62,7 @@ Commit: `7d8aff9`. Auditoria: Claude (todos os 11 ACs aprovados).
 **tipo:** sr-afirmacao
 **backlog_ref:** HIVE-015
 **sr_ref:** beehive/registry/reports/SR-HIVE-015-TOKENS-POR-AGENTE-20260529.md
-**Status:** pendente
+**Status:** afirmado ✅ — 2026-05-29
 
 Tela `/tokens` entregue e auditada. 3 cards por agente com tokens semanais, custo BRL e barra de budget.
 Commit: `22bdb51`. Auditoria: Claude (todos os 7 ACs aprovados). Sem débito técnico.

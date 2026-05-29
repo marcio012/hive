@@ -2,7 +2,9 @@
 id: SR-HIVE-015
 backlog_ref: HIVE-015
 tipo: status-report-entrega
-status: aguardando-afirmacao
+status: afirmado
+afirmado_em: 2026-05-29
+afirmado_por: Márcio (Owner)
 data: 2026-05-29
 responsavel: Copilot (Engenheiro) | Auditoria: Claude (Arquiteto)
 aceite_ref: WO-032
