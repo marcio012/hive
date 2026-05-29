@@ -7,6 +7,13 @@
         "@modelcontextprotocol/server-filesystem@0.6.2",
         "/home/marcio/job/hive/beehive"
       ]
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github@2025.4.8"
+      ]
     }
   }
 }

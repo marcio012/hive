@@ -1,4 +1,4 @@
-# ⚠️ Papel Dissolvido: Tech Lead
+<!-- # ⚠️ Papel Dissolvido: Tech Lead
 
 **Data de dissolução:** 2026-05-26
 **Motivo:** Conflito estrutural de interesse — Gemini não pode auditar o que Gemini projetou.
@@ -21,4 +21,4 @@
 
 - Papel do Claude (auditor): `beehive/roles/claude.md`
 - Papel do Coordenador (Gemini): `beehive/roles/coordenador.md`
-- Modelo de papéis completo: `beehive/roles/roles.yaml`
+- Modelo de papéis completo: `beehive/roles/roles.yaml` -->
