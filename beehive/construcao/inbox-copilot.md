@@ -19,6 +19,34 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 
 ---
 
+### [CLAUDE-2026-05-29-097] Go — WO-038 HIVE-023: Gate View — Painel do Márcio
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-023
+**thread:** hive-gate-view
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-038-GATE-VIEW-INBOX-MARCIO.md
+**Status:** pendente
+
+Nova aba "Gate" no Centro de Controle. Parser do `inbox-marcio.md` (padrão dos outros inboxes), campo `gate` em `getHiveState()`, badge de contagem no tab e cards por item pendente.
+Critérios-chave: AC-01 (campo gate na API), AC-04 (badge quando total > 0), AC-06 (empty state), AC-07 (build limpo).
+
+---
+
+### [CLAUDE-2026-05-29-096] Aviso — novo canal inbox-marcio.md (The Gate)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** aviso-operacional
+**thread:** hive-gate-view
+**Status:** pendente
+
+`beehive/construcao/inbox-marcio.md` foi criado como ponto único de atividades do Márcio (The Gate).
+A partir de agora, ao concluir uma WO e gerar o SR, além do checkpoint no `inbox-claude.md`, criar também uma entrada `gate-commit` ou `sr-afirmacao` no `inbox-marcio.md`.
+Formato: `GATE-YYYY-MM-DD-NNN` — mesmo padrão do inbox-claude.
+Não é necessário responder — apenas incorporar ao fluxo.
+
+---
+
 ### [CLAUDE-2026-05-29-095] Go — WO-037 TOS-015-C: Agenda → Venda (Interoperabilidade)
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-29

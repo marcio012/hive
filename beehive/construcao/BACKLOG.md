@@ -23,6 +23,7 @@
 - [ ] HIVE-021 — Painel de Diretrizes e Governança na UI — DEBATE-032 em andamento
 - [x] HIVE-014 — Eficiência do Squad no Hive UI (Seção 03 Mapa + tela Telemetria) (2026-05-29) — ✅ bd782fa
 - [ ] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) — DEBATE-033 aberto
+- [ ] HIVE-023 — Gate View: inbox-marcio.md + painel The Gate no Hive UI
 - [ ] HIVE-005 — Onboarding automatizado para novo operador
 
 ## ✅ Concluído
