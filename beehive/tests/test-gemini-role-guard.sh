@@ -265,6 +265,44 @@ if grep -Fq "[CLAUDE-2026-05-20-001]" "$TEST_REPO/beehive/construcao/inbox-copil
 fi
 assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-copilot-historico.md" "[CLAUDE-2026-05-20-001] Entrada antiga"
 
+cat > "$TEST_REPO/beehive/construcao/inbox-copilot.md" <<'EOF'
+# Inbox — Copilot
+
+Canal de entrada de contexto e tarefas para o Copilot.
+Append-only — nunca apagar entradas. Apenas atualizar `status`.
+Entradas com mais de 7 dias e status consumida/executada → mover para `registry/archive/inbox/`.
+
+### [CLAUDE-2026-05-29-010] Entrega recente
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**Status:** executada
+
+Pode ser arquivada apenas com autorização manual explícita.
+
+---
+
+### [CLAUDE-2026-05-29-011] Pendência real
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**Status:** pendente
+
+Deve permanecer no inbox ativo.
+EOF
+
+COPILOT_MANUAL_ARCHIVE_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/inbox-archive.js" --write --manual copilot
+)"
+assert_output_contains "$COPILOT_MANUAL_ARCHIVE_OUTPUT" "inbox-copilot.md — 1 entrada(s) movida(s) para o histórico"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "[CLAUDE-2026-05-29-011] Pendência real"
+if grep -Fq "[CLAUDE-2026-05-29-010]" "$TEST_REPO/beehive/construcao/inbox-copilot.md"; then
+  echo "Assertion failed: manual archive should remove closed Copilot entry from active inbox"
+  exit 1
+fi
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-copilot-historico.md" "[CLAUDE-2026-05-29-010] Entrega recente"
+
 mkdir -p "$TEST_REPO/beehive/registry/archive/inbox"
 cat > "$TEST_REPO/beehive/registry/archive/inbox/inbox-claude-historico.md" <<'EOF'
 ### [COPILOT-2026-05-29-099] Histórico congelado

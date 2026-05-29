@@ -169,9 +169,13 @@ function readEntryDate(entry) {
   return { rawDate, parsedDate, isTemplate: false };
 }
 
-function shouldArchiveEntry(agent, entry, now) {
+function shouldArchiveEntry(agent, entry, now, options = {}) {
   if (!isClosedStatus(entry.status)) {
     return { archive: false };
+  }
+
+  if (options.manual) {
+    return { archive: true };
   }
 
   if (agent === 'copilot') {
@@ -272,7 +276,7 @@ function archiveInbox(agent, options) {
   const warnings = [];
 
   for (const entry of entries) {
-    const decision = shouldArchiveEntry(agent, entry, options.now);
+    const decision = shouldArchiveEntry(agent, entry, options.now, options);
     if (decision.warning) {
       warnings.push(decision.warning);
     }
@@ -310,6 +314,7 @@ function parseArgs(argv) {
   const options = {
     write: false,
     quiet: false,
+    manual: false,
     now: new Date(),
   };
   const targets = [];
@@ -322,6 +327,10 @@ function parseArgs(argv) {
     }
     if (arg === '--quiet') {
       options.quiet = true;
+      continue;
+    }
+    if (arg === '--manual') {
+      options.manual = true;
       continue;
     }
     if (arg === '--now') {
