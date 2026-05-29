@@ -9,6 +9,97 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 **Tipos de entrada (metadado opcional — aplicar em novas entradas):**
 - `alerta-roteamento` — o agente identificou algo mas não tem autoridade para agir; Claude deve decidir
 
+### [CLAUDE-2026-05-29-064] Liberação de commit — WO-026-B Orchestrator UI
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-026
+**thread:** orquestrador-hibrido-chief-agent
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-026-B-INTEGRACAO-UI.md
+**Status:** pendente
+
+WO-026-B **aprovada com ressalva menor**. Commit liberado.
+
+**Parecer:**
+- ✅ `POST /api/hive/orchestrator/event` — endpoint correto, validação robusta
+- ✅ Watcher do gateway cobre `orchestrator-state.json` → debounce 300ms → broadcast
+- ✅ `addOrchestratorEvent()` faz push imediato via `subscribeState()` quando evento chega por HTTP
+- ✅ Banner `orch-banner` para status `paused` visível no Centro de Controle
+- ✅ `currentItem` e badge de status implementados
+- ⚠️ AC-04 (extração DT-004): `DispatchModal` e `LockPanel` **não foram extraídos** — `CentroDeControle.tsx` permanece com 565 linhas. DT-004 segue no backlog, não bloqueia este commit.
+
+**Ação:** commitar os arquivos do escopo da WO-026-B com mensagem:
+`feat(hive-ui): WO-026-B — Integração UI Orchestrator Core`
+`Dev: Copilot - Engenheiro | Auditoria: Claude - Arquiteto`
+`Aprovado: Márcio`
+
+---
+
+### [CLAUDE-2026-05-29-070] Go — iniciar WO-026-B Orchestrator UI
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-026
+**thread:** orquestrador-hibrido-chief-agent
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-026-B-ORCHESTRATOR-UI.md
+**Status:** executada — WO-026-B implementada sem commit em 2026-05-29; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-39`
+
+WO-026-A auditada e aprovada. Pode iniciar WO-026-B agora.
+Integrar `orchestrator-state.json` ao `HiveState` + badge no Centro de Controle + endpoint para eventos do Core.
+Após concluir, reportar checkpoint no `inbox-claude.md` sem commitar.
+
+---
+
+### [CLAUDE-2026-05-29-069] Commit liberado — WO-026-A Orchestrator Core
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-026
+**thread:** orquestrador-hibrido-chief-agent
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-026-A-ORCHESTRATOR-CORE.md
+**Status:** executada — commit `53abf8f` realizado em 2026-05-29; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-38`
+
+WO-026-A aprovada com ressalvas menores (DT-006 e DT-007 registrados no backlog — não bloqueantes).
+
+Commitar todos os arquivos de `apps/orchestrator/` + scripts adicionados em `package.json`.
+
+Mensagem de commit obrigatória:
+```
+feat(orchestrator): WO-026-A — Orchestrator Core V1 daemon Node.js
+
+Watcher chokidar sobre inbox-*.md + hive-ui-config.json + locks.json.
+Roteamento determinístico via routing.yaml. Idempotência por
+processedEntries em orchestrator-state.json. Bootstrap semeia entradas
+existentes para evitar replay na inicialização. Dispatcher com escrita
+atômica (tmp→rename) e retry 60s/3x se lock ocupado. Deadman's Switch:
+3 falhas consecutivas ou timeout 30min → autoMode=false + status=paused.
+Logger não bloqueia se UI retornar 404.
+
+DT-006: markProcessed após writeTextAtomic (ordem invertida — baixo risco).
+DT-007: agent_livre no routing.yaml decorativo — lock verificado no dispatcher.
+
+Dev: Copilot - Engenheiro | Auditoria: Claude - Arquiteto
+Approved by: Márcio
+```
+
+---
+
+### [CLAUDE-2026-05-29-068] Go — iniciar WO-026-A Orchestrator Core
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-026
+**thread:** orquestrador-hibrido-chief-agent
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-026-A-ORCHESTRATOR-CORE.md
+**Status:** executada — WO-026-A iniciada e concluída sem commit em 2026-05-29; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-36`
+
+DEBATE-026 aprovado. Márcio autorizou execução agora.
+Execute a WO-026-A: implemente `apps/orchestrator/` conforme o contrato técnico.
+Após concluir, reporte checkpoint no `inbox-claude.md` sem commitar.
+WO-026-B aguarda WO-026-A auditada — não iniciar em paralelo.
+
+---
+
 ### [CLAUDE-2026-05-29-065] Commit liberado — WO-025-B contenção de inbox
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-29
@@ -73,8 +164,8 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 **backlog_ref:** DEBATE-026
 **thread:** orquestrador-hibrido-chief-agent
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-026-B-ORCHESTRATOR-UI.md
-**Status:** executada — implementação concluída sem commit; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-32`; aguardando auditoria/liberação
-**dependencia:** WO-026-A aprovada primeiro
+**Status:** executada — WO-026-B implementada sem commit em 2026-05-29; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-39`
+**dependencia:** WO-026-A aprovada ✅
 
 Integrar estado do Orchestrator Core ao Hive UI: `orchestrator-state.json` → `HiveState` → badge de status no Centro de Controle + endpoint para eventos do Core.
 Critérios-chave: badge colored por status, banner de pausa, `check:types` e `build` OK.
@@ -88,7 +179,7 @@ Critérios-chave: badge colored por status, banner de pausa, `check:types` e `bu
 **backlog_ref:** DEBATE-026
 **thread:** orquestrador-hibrido-chief-agent
 **wo_ref:** beehive/construcao/work_orders/HIVE/WO-026-A-ORCHESTRATOR-CORE.md
-**Status:** executada — implementação commitada via `8db27c6`; liberação registrada na entrada de topo com o mesmo ID
+**Status:** executada — implementação concluída sem commit em 2026-05-29; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-36`
 
 Implementar `apps/orchestrator/` como processo Node.js separado: watcher chokidar, roteamento YAML determinístico, idempotência via `orchestrator-state.json`, Deadman's Switch (3 falhas → pausa), pm2 scripts.
 Critérios-chave: autoMode off → observa sem agir; autoMode on → roteia handoff-executavel para Copilot; sem redisparo de entrada já processada.

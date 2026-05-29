@@ -2,10 +2,12 @@
 titulo: Prompt de Design — Tela 1: Mapa da Fábrica
 produto: hive-ui
 tela: /mapa
-versao: v1
+versao: v2
 criado_em: 2026-05-28
+atualizado_em: 2026-05-29
 criado_por: Claude (Arquiteto)
 destino: Claude.ai Design
+changelog: v2 — adicionada Seção 03 Eficiência do Squad (cards inline por agente)
 ---
 
 ```
@@ -49,7 +51,7 @@ TELA — MAPA DA FÁBRICA
 
 Subtítulo abaixo do header: "Estado operacional em tempo real"
 
-SEÇÃO 1: Agentes (grid 3 colunas iguais)
+SEÇÃO 01: Agentes (grid 3 colunas iguais)
 
   Card de agente ATIVO (tem lock adquirido):
     - Border: 1px solid #00FF9F com glow verde suave
@@ -70,7 +72,7 @@ SEÇÃO 1: Agentes (grid 3 colunas iguais)
     Copilot → ativo (ex: "implementando module.guard.spec.ts")
     Gemini → livre
 
-SEÇÃO 2: Inbox Pendentes (grid 3 colunas, logo abaixo dos cards de agente)
+SEÇÃO 02: Inbox Pendentes (grid 3 colunas, logo abaixo dos cards de agente)
 
   Badge Claude — COM pendências:
     - Fundo #FFD70015, border 1px #FFD700
@@ -84,7 +86,58 @@ SEÇÃO 2: Inbox Pendentes (grid 3 colunas, logo abaixo dos cards de agente)
   Badge Gemini — COM pendências:
     - Mesmo estilo do Claude, número "1"
 
-SEÇÃO 3: Item Ativo (card full-width, rodapé)
+SEÇÃO 03: Eficiência do Squad (grid 3 colunas — um card por agente)
+
+  Propósito: responder em 3 segundos se o squad está custando bem ou mal.
+  Não é telemetria profunda — é o termômetro rápido de saúde financeira.
+
+  Cada card tem altura fixa, sem scroll. Layout interno:
+
+  ┌─────────────────────────────────┐
+  │  [avatar]  CLAUDE               │
+  │            Arquiteto            │
+  ├─────────────────────────────────┤
+  │  R$ 4,20        Custo sessão    │
+  │  ████████░░░░░  42% do budget   │
+  ├─────────────────────────────────┤
+  │  3 WOs      ·  92% aprovação    │
+  │  8 inits    ·  15 rodadas/init  │
+  └─────────────────────────────────┘
+
+  Detalhes visuais por campo:
+
+  CUSTO DA SESSÃO
+    - Valor em destaque: 22px, fonte mono, cor --gold
+    - Label "Custo sessão" cinza 11px acima
+    - Mini barra de progresso horizontal (fundo #1A1A1A, preenchimento gradiente
+      --gold → --orange quando > 70%, → vermelho quando > 90%)
+    - Percentual do budget logo abaixo da barra: cinza 11px
+
+  WOs ENTREGUES
+    - Número bold branco 16px + label "WOs" cinza 11px
+    - Separador "·"
+    - Taxa de aprovação direta (sem retoque): número bold + "%" label
+      - >= 90%: cor --green
+      - 70–89%: cor --gold
+      - < 70%: cor --orange
+
+  INITS & RODADAS
+    - "N inits" monospace cinza claro
+    - Separador "·"
+    - "N rodadas/init" monospace cinza claro
+    - Abaixo: label "último init há Xmin" cinza escuro 11px
+
+  ESTADO DO CARD por threshold de custo:
+    - Normal   (< 70% budget): border rgba(255,255,255,0.08) padrão
+    - Alerta   (70–89%):       border 1px #FF6B35, glow laranja suave
+    - Crítico  (>= 90%):       border 1px #FF4444, glow vermelho + badge "BUDGET CRÍTICO"
+
+  Dados de exemplo para os 3 cards:
+    Claude  → R$ 4,20 sessão · 42% budget · 3 WOs · 92% aprovação · 8 inits · 15 rodadas/init
+    Copilot → R$ 1,80 sessão · 18% budget · 5 WOs · 88% aprovação · 12 inits · 9 rodadas/init
+    Gemini  → R$ 0,90 sessão · 9% budget  · 2 WOs · 95% aprovação · 5 inits  · 6 rodadas/init
+
+SEÇÃO 04: Item Ativo (card full-width, rodapé)
 
   Card com border rgba(255,215,0,0.2):
     - Título "Item Ativo" + ícone de raio à esquerda

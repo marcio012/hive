@@ -1,7 +1,7 @@
 ---
 gerado_em: 2026-05-28T00:00:00Z
-atualizado_em: 2026-05-28T00:00:00Z
-gerado_por: Claude (Arquiteto)
+atualizado_em: 2026-05-29T09:40:00Z
+gerado_por: Gemini (PO)
 ---
 
 # Fila de Trabalho — Gemini (PO / Projetista / Coordenador)
@@ -15,11 +15,9 @@ gerado_por: Claude (Arquiteto)
 
 | Campo | Valor |
 |-------|-------|
-| Cartucho | — (nenhuma sessão ativa) |
-| Iniciado em | — |
-| Contexto | — |
-
-> Atualizar ao rodar `npm run gemini:po` / `gemini:projetista` / `gemini:coordenador`
+| Cartucho | PO |
+| Iniciado em | 2026-05-29 |
+| Contexto | Manutenção de Backlog e Despacho do Orquestrador |
 
 ---
 
@@ -27,9 +25,8 @@ gerado_por: Claude (Arquiteto)
 
 | ID | Cartucho | Tipo | Título |
 |----|----------|------|--------|
-| DEBATE-025 | PO | Parecer | Política de higiene estrutural do inbox |
-| HIVE-UI-002 | Projetista | Ideação visual | Telas v2 do Hive Web UI — Centro de Controle |
 | — | PO | Ideação | Módulo de Relatórios (TenantOS Ciclo 2) |
+| — | Projetista | Blueprint | Onboarding Full (Depende de Design do Claude) |
 
 ---
 
@@ -37,6 +34,10 @@ gerado_por: Claude (Arquiteto)
 
 | ID | Cartucho | Título | Entrega |
 |----|----------|--------|---------|
+| DEBATE-026 | PO | Orquestrador Híbrido — parecer e veredito | parecer emitido |
+| DEBATE-025 | PO | Política de higiene estrutural do inbox | parecer emitido |
+| HIVE-UI-003 | Projetista | Hive UI: Centro de Controle Funcional | commit 1309cdd |
+| HIVE-UI-002 | Projetista | Telas v2 do Hive Web UI — Centro de Controle | Handoff 056 |
 | DEBATE-024 | PO | Brainstorm Hive Web UI — 2 artefatos de ideação | HIVE_WEB_UI_STRATEGY.md + HIVE_UI_MACRO_MAPPING.md |
 | DEBATE-023 | Coordenador | Conduzir debate DIR-085 | parecer emitido |
 | HIVE-004 | Coordenador | Dissolução Gemini Lead + isolamento de cartucho | — |
