@@ -48,6 +48,20 @@ export interface AgentLock {
   acquiredAt: string | null;
 }
 
+export interface AgentDetail {
+  inboxPending: number;
+  activeWo: string | null;
+  blockedCount: number;
+}
+
+export interface DebateEntry {
+  id: string;
+  title: string;
+  status: string;
+  responsible: string;
+  active: boolean;
+}
+
 export interface HiveState {
   locks: Record<AgentName, AgentLock | null>;
   config: HiveConfig;
@@ -59,6 +73,8 @@ export interface HiveState {
   };
   inboxCounts: Record<AgentName, number>;
   inboxArchive: Record<AgentName, { eligibleCount: number; totalLines: number }>;
+  agentDetails: Record<AgentName, AgentDetail>;
+  debates: DebateEntry[];
   brainstorm: Array<{
     filename: string;
     title: string;
@@ -239,11 +255,26 @@ export class HiveService {
     return [
       path.join(this.hiveRoot, 'beehive'),
       path.join(this.hiveRoot, '.hive-agent'),
+      path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-claude.md'),
+      path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-copilot.md'),
+      path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-gemini.md'),
+      path.join(this.hiveRoot, 'beehive', 'construcao', 'debates-abertos.md'),
     ];
   }
 
   async getState(): Promise<HiveState> {
-    const [locks, config, orchestrator, session, inboxCounts, inboxArchive, brainstorm, pipeline] =
+    const [
+      locks,
+      config,
+      orchestrator,
+      session,
+      inboxCounts,
+      inboxArchive,
+      inboxDetails,
+      debates,
+      brainstorm,
+      pipeline,
+    ] =
       await Promise.all([
         this.readLocks(),
         this.readConfig(),
@@ -251,6 +282,8 @@ export class HiveService {
         this.readSession(),
         this.readInboxCounts(),
         this.readInboxArchiveState(),
+        this.readAgentInboxDetails(),
+        this.readActiveDebates(),
         this.readBrainstormFiles(),
         this.readPipeline(),
       ]);
@@ -262,6 +295,21 @@ export class HiveService {
       session,
       inboxCounts,
       inboxArchive,
+      agentDetails: {
+        claude: {
+          ...inboxDetails.claude,
+          activeWo: locks.claude?.activity ?? null,
+        },
+        copilot: {
+          ...inboxDetails.copilot,
+          activeWo: locks.copilot?.activity ?? null,
+        },
+        gemini: {
+          ...inboxDetails.gemini,
+          activeWo: locks.gemini?.activity ?? null,
+        },
+      },
+      debates,
       brainstorm,
       pipeline,
       events: [...this.events],
@@ -847,6 +895,87 @@ export class HiveService {
     return Object.fromEntries(counts) as Record<AgentName, number>;
   }
 
+  private async readAgentInboxDetails(): Promise<
+    Record<AgentName, Omit<AgentDetail, 'activeWo'>>
+  > {
+    const details = await Promise.all(
+      AGENTS.map(async (agent) => {
+        const { pending, blocked } = await this.readInboxPending(agent);
+        return [
+          agent,
+          {
+            inboxPending: pending,
+            blockedCount: blocked,
+          },
+        ] as const;
+      }),
+    );
+
+    return Object.fromEntries(details) as Record<AgentName, Omit<AgentDetail, 'activeWo'>>;
+  }
+
+  private async readInboxPending(
+    agent: AgentName,
+  ): Promise<{ pending: number; blocked: number }> {
+    const filePath = path.join(this.hiveRoot, 'beehive', 'construcao', `inbox-${agent}.md`);
+    const content = await this.readTextFile(filePath);
+
+    if (!content) {
+      return { pending: 0, blocked: 0 };
+    }
+
+    const blocks = this.getLatestInboxBlocks(content);
+
+    return blocks.reduce(
+      (acc, block) => {
+        const status = this.extractInboxField(block, 'Status');
+        const isClosed = status ? this.isClosedInboxStatus(status) : false;
+
+        if (!isClosed) {
+          acc.pending += 1;
+        }
+
+        if (!isClosed && /\bbloquead[oa]\b/i.test(block)) {
+          acc.blocked += 1;
+        }
+
+        return acc;
+      },
+      { pending: 0, blocked: 0 },
+    );
+  }
+
+  private async readActiveDebates(): Promise<DebateEntry[]> {
+    const filePath = path.join(this.hiveRoot, 'beehive', 'construcao', 'debates-abertos.md');
+    const content = await this.readTextFile(filePath);
+
+    if (!content) {
+      return [];
+    }
+
+    return content
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith('|') && /DEBATE-/i.test(line))
+      .map((line) => this.parseMarkdownTableRow(line))
+      .map((cells) => {
+        const id = this.stripMarkdownFormatting(cells[0] ?? '');
+        const title = this.stripMarkdownFormatting(cells[1] ?? '');
+        const status = this.stripMarkdownFormatting(cells[2] ?? '');
+        const responsible = this.stripMarkdownFormatting(cells[3] ?? '');
+        const active = !/(consolidado|encerrado)/i.test(status);
+
+        return {
+          id,
+          title,
+          status,
+          responsible,
+          active,
+        } satisfies DebateEntry;
+      })
+      .filter((entry) => entry.id && entry.title);
+  }
+
   private async readInboxArchiveState(): Promise<
     Record<AgentName, { eligibleCount: number; totalLines: number }>
   > {
@@ -1152,6 +1281,10 @@ export class HiveService {
       .split('|')
       .slice(1, -1)
       .map((cell) => cell.trim());
+  }
+
+  private stripMarkdownFormatting(value: string): string {
+    return value.replace(/\*\*/g, '').trim();
   }
 
   private mapClaudeStage(

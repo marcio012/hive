@@ -23,6 +23,20 @@ export interface HiveEvent {
   msg: string;
 }
 
+export interface AgentDetail {
+  inboxPending: number;
+  activeWo: string | null;
+  blockedCount: number;
+}
+
+export interface DebateEntry {
+  id: string;
+  title: string;
+  status: string;
+  responsible: string;
+  active: boolean;
+}
+
 export interface HiveState {
   locks: Record<AgentName, { activity: string | null; acquiredAt: string | null } | null>;
   config: {
@@ -42,6 +56,9 @@ export interface HiveState {
     nextStep: string | null;
   };
   inboxCounts: Record<AgentName, number>;
+  inboxArchive: Record<AgentName, { eligibleCount: number; totalLines: number }>;
+  agentDetails?: Record<AgentName, AgentDetail>;
+  debates?: DebateEntry[];
   brainstorm: Array<{
     filename: string;
     title: string;
