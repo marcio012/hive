@@ -80,7 +80,7 @@ Gerenciados por `docker-compose.hml.yml`:
 2. Atualizar webhook no console do Twilio (manual — API não permite)
    - Console: campo "When a message comes in" → `<nova URL>/webhook/whatsapp`
 
-**URL atual:** `https://martha-immune-bracelet-rebecca.trycloudflare.com` (2026-05-28 — pós-reboot)
+**URL atual:** `https://delivery-exemption-wine-moscow.trycloudflare.com` (2026-05-29 — pós-restart)
 
 **Após qualquer reboot do servidor — rodar um único comando:**
 ```bash
@@ -116,6 +116,7 @@ npm run ops:tunnel:url:hml
 | 2026-05-28 | Copilot: `fix: alinhar CI com estrutura atual` (`85c4cd6`) — `ci.yml` apontava para `apps/*` inexistente | ✅ CI corrigido; frontend e backend CI passando |
 | 2026-05-28 | Stack caiu (rootlessport preso nas portas 3000/5173 após down/up manual) — resolvido com force-recreate | ✅ todos os containers up |
 | 2026-05-28 | Reboot do servidor — Cloudflare tunnel gerou nova URL; docker-proxy preso na 3000 após reboot; resolvido com `docker stop/rm + docker compose up` | ✅ nova URL ativa; `/api/health` OK |
+| 2026-05-29 | Stack HML encontrada parada (socket Podman inativo pós-reboot) — executado `ops:restart:hml`; APP_URL atualizado em `~/wl-envs/core.env` e `.env.core`; wl-core recriado | ✅ todos os containers up; nova URL `delivery-exemption-wine-moscow.trycloudflare.com` |
 
 ---
 
