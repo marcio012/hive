@@ -1,8 +1,28 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type AgentName, type HiveState } from '../hooks/useHiveSocket';
 
 type CentroDeControleProps = {
   state: HiveState | null;
+};
+
+type HiveConfig = NonNullable<HiveState['config']>;
+type DispatchAgent = AgentName;
+
+type DispatchDialogState = {
+  agent: DispatchAgent | '';
+  message: string;
+  selectEnabled: boolean;
+};
+
+type ToastState = {
+  kind: 'success' | 'error';
+  message: string;
+} | null;
+
+const DEFAULT_CONFIG: HiveConfig = {
+  autoMode: false,
+  autoMerge: false,
+  notifyMarcio: true,
 };
 
 function formatUptime(totalSeconds: number): string {
@@ -36,9 +56,15 @@ function agentLabel(agent: AgentName): string {
 }
 
 export function CentroDeControle({ state }: CentroDeControleProps) {
-  const [autoMode, setAutoMode] = useState(true);
-  const [autoMerge, setAutoMerge] = useState(false);
-  const [notifyMarcio, setNotifyMarcio] = useState(true);
+  const [busyConfigKey, setBusyConfigKey] = useState<keyof HiveConfig | null>(null);
+  const [releasingAgent, setReleasingAgent] = useState<AgentName | null>(null);
+  const [dispatchDialog, setDispatchDialog] = useState<DispatchDialogState | null>(null);
+  const [dispatching, setDispatching] = useState(false);
+  const [dialogError, setDialogError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastState>(null);
+
+  const config = state?.config ?? DEFAULT_CONFIG;
 
   const activeLocks = useMemo(
     () =>
@@ -49,10 +75,165 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
   );
 
   const events = state?.events ?? [];
+  const commandCount = useMemo(
+    () =>
+      events.filter(
+        (event) =>
+          (event.level === 'info' || event.level === 'lock') &&
+          /(despachad|liberad)/i.test(event.msg),
+      ).length,
+    [events],
+  );
+
+  useEffect(() => {
+    if (!toast) {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(() => setToast(null), 2400);
+    return () => window.clearTimeout(timeout);
+  }, [toast]);
+
+  async function parseActionResponse(response: Response): Promise<{ ok: boolean; error?: string }> {
+    if (!response.ok) {
+      const fallback = `HTTP ${response.status}`;
+      try {
+        const payload = (await response.json()) as { message?: string; error?: string };
+        throw new Error(payload.message ?? payload.error ?? fallback);
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error(fallback);
+      }
+    }
+
+    return (await response.json()) as { ok: boolean; error?: string };
+  }
+
+  async function toggleConfig(key: keyof HiveConfig, value: boolean) {
+    try {
+      setActionError(null);
+      setBusyConfigKey(key);
+      const response = await fetch('/api/hive/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [key]: value }),
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+        throw new Error(payload?.message ?? `HTTP ${response.status}`);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Falha ao salvar configuração.';
+      setActionError(message);
+      setToast({ kind: 'error', message });
+    } finally {
+      setBusyConfigKey(null);
+    }
+  }
+
+  async function releaseLock(agent: AgentName) {
+    try {
+      setActionError(null);
+      setReleasingAgent(agent);
+      const result = await parseActionResponse(
+        await fetch(`/api/hive/lock/release/${agent}`, { method: 'POST' }),
+      );
+
+      if (!result.ok) {
+        throw new Error(result.error ?? 'Falha ao liberar lock.');
+      }
+
+      setToast({ kind: 'success', message: `Lock de ${agent} liberado.` });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Falha ao liberar lock.';
+      setActionError(message);
+      setToast({ kind: 'error', message });
+    } finally {
+      setReleasingAgent(null);
+    }
+  }
+
+  function openDispatchDialog(agent?: DispatchAgent) {
+    setDialogError(null);
+    setDispatchDialog({
+      agent: agent ?? '',
+      message: '',
+      selectEnabled: !agent,
+    });
+  }
+
+  function closeDispatchDialog() {
+    if (dispatching) {
+      return;
+    }
+    setDialogError(null);
+    setDispatchDialog(null);
+  }
+
+  async function submitDispatch() {
+    if (!dispatchDialog) {
+      return;
+    }
+
+    if (!dispatchDialog.agent) {
+      setDialogError('Selecione o agente de destino.');
+      return;
+    }
+
+    if (!dispatchDialog.message.trim()) {
+      setDialogError('Digite a intenção antes de despachar.');
+      return;
+    }
+
+    try {
+      setDispatching(true);
+      setDialogError(null);
+      setActionError(null);
+      const result = await parseActionResponse(
+        await fetch('/api/hive/dispatch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agent: dispatchDialog.agent,
+            message: dispatchDialog.message,
+          }),
+        }),
+      );
+
+      if (!result.ok) {
+        throw new Error(result.error ?? 'Falha ao despachar intenção.');
+      }
+
+      const label =
+        dispatchDialog.agent === 'claude'
+          ? 'Claude'
+          : dispatchDialog.agent === 'copilot'
+            ? 'Copilot'
+            : 'Gemini';
+
+      setToast({ kind: 'success', message: `Intenção despachada para ${label}.` });
+      setDispatchDialog(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Falha ao despachar intenção.';
+      setDialogError(message);
+      setToast({ kind: 'error', message });
+    } finally {
+      setDispatching(false);
+    }
+  }
 
   return (
     <main className="screen active">
       <div className="page">
+        {toast ? (
+          <div className={`toast toast-${toast.kind}`} role="status" aria-live="polite">
+            {toast.message}
+          </div>
+        ) : null}
+
         <div className="page-head">
           <h1>Centro de Controle</h1>
           <div className="sub">
@@ -75,7 +256,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
           </div>
           <div className="stat">
             <div className="k">Comandos</div>
-            <div className="v">—</div>
+            <div className="v">{commandCount}</div>
           </div>
           <div className="stat good">
             <div className="k">Status</div>
@@ -108,8 +289,13 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                         </div>
                         <div className="since">{lock?.acquiredAt ?? 'sem timestamp'}</div>
                       </div>
-                      <button className="btn-ghost" type="button">
-                        Forçar liberação
+                      <button
+                        className="btn-ghost"
+                        disabled={releasingAgent === agent}
+                        onClick={() => void releaseLock(agent)}
+                        type="button"
+                      >
+                        {releasingAgent === agent ? 'Liberando...' : 'Forçar liberação'}
                       </button>
                     </div>
                   ))
@@ -143,8 +329,9 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                     <div className="cd">agentes despacham sem confirmação</div>
                   </div>
                   <button
-                    className={`switch ${autoMode ? 'on' : ''}`}
-                    onClick={() => setAutoMode((value) => !value)}
+                    className={`switch ${config.autoMode ? 'on' : ''}`}
+                    disabled={busyConfigKey === 'autoMode'}
+                    onClick={() => void toggleConfig('autoMode', !config.autoMode)}
                     type="button"
                   >
                     <i />
@@ -156,8 +343,9 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                     <div className="cd">merge se CI passar e review aprovado</div>
                   </div>
                   <button
-                    className={`switch ${autoMerge ? 'on' : ''}`}
-                    onClick={() => setAutoMerge((value) => !value)}
+                    className={`switch ${config.autoMerge ? 'on' : ''}`}
+                    disabled={busyConfigKey === 'autoMerge'}
+                    onClick={() => void toggleConfig('autoMerge', !config.autoMerge)}
                     type="button"
                   >
                     <i />
@@ -169,8 +357,9 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                     <div className="cd">push em pendências e falhas</div>
                   </div>
                   <button
-                    className={`switch ${notifyMarcio ? 'on' : ''}`}
-                    onClick={() => setNotifyMarcio((value) => !value)}
+                    className={`switch ${config.notifyMarcio ? 'on' : ''}`}
+                    disabled={busyConfigKey === 'notifyMarcio'}
+                    onClick={() => void toggleConfig('notifyMarcio', !config.notifyMarcio)}
                     type="button"
                   >
                     <i />
@@ -190,22 +379,75 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
               </div>
               <div className="pb">
                 <div className="dispatch">
-                  <button className="disp-btn" type="button">
+                  <button className="disp-btn" onClick={() => openDispatchDialog('claude')} type="button">
                     <span className="dot gold" />
                     Claude
                   </button>
-                  <button className="disp-btn" type="button">
+                  <button className="disp-btn" onClick={() => openDispatchDialog('copilot')} type="button">
                     <span className="dot green" />
                     Copilot
                   </button>
-                  <button className="disp-btn" type="button">
+                  <button className="disp-btn" onClick={() => openDispatchDialog('gemini')} type="button">
                     <span className="dot gray" />
                     Gemini
                   </button>
-                  <button className="disp-btn primary" type="button">
+                  <button className="disp-btn primary" onClick={() => openDispatchDialog()} type="button">
                     + Nova intenção
                   </button>
                 </div>
+                {actionError ? <div className="panel-feedback error">{actionError}</div> : null}
+                {dispatchDialog ? (
+                  <div className="dispatch-modal" role="dialog" aria-modal="true" aria-labelledby="dispatch-title">
+                    <div className="dispatch-modal-head">
+                      <h4 id="dispatch-title">Despachar intenção</h4>
+                      <button className="btn-ghost" onClick={closeDispatchDialog} type="button">
+                        Fechar
+                      </button>
+                    </div>
+                    {dispatchDialog.selectEnabled ? (
+                      <label className="dispatch-field">
+                        <span>Agente</span>
+                        <select
+                          value={dispatchDialog.agent}
+                          onChange={(event) =>
+                            setDispatchDialog((current) =>
+                              current
+                                ? { ...current, agent: event.target.value as DispatchAgent | '' }
+                                : current,
+                            )
+                          }
+                        >
+                          <option value="">Selecione</option>
+                          <option value="claude">Claude</option>
+                          <option value="copilot">Copilot</option>
+                          <option value="gemini">Gemini</option>
+                        </select>
+                      </label>
+                    ) : null}
+                    <label className="dispatch-field">
+                      <span>Mensagem</span>
+                      <textarea
+                        value={dispatchDialog.message}
+                        onChange={(event) =>
+                          setDispatchDialog((current) =>
+                            current ? { ...current, message: event.target.value } : current,
+                          )
+                        }
+                        placeholder="Descreva a intenção para o agente..."
+                        rows={5}
+                      />
+                    </label>
+                    {dialogError ? <div className="panel-feedback error">{dialogError}</div> : null}
+                    <div className="dispatch-actions">
+                      <button className="disp-btn" onClick={closeDispatchDialog} type="button">
+                        Cancelar
+                      </button>
+                      <button className="disp-btn primary" disabled={dispatching} onClick={() => void submitDispatch()} type="button">
+                        {dispatching ? 'Despachando...' : 'Despachar'}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

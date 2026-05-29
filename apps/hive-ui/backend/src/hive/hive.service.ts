@@ -1,10 +1,31 @@
 import { Injectable } from '@nestjs/common';
+import { execFile as execFileCallback } from 'child_process';
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import { promisify } from 'util';
 
 type AgentName = 'claude' | 'copilot' | 'gemini';
 type PipelineStage = 'triagem' | 'execucao' | 'revisao' | 'concluido';
 type PipelineAgent = AgentName | 'marcio';
+type DispatchAgent = AgentName;
+
+const execFile = promisify(execFileCallback);
+
+export interface HiveConfig {
+  autoMode: boolean;
+  autoMerge: boolean;
+  notifyMarcio: boolean;
+}
+
+export interface HiveActionResult {
+  ok: boolean;
+  error?: string;
+}
+
+export interface DispatchPayload {
+  agent: DispatchAgent;
+  message: string;
+}
 
 interface RawLock {
   owner?: string;
@@ -19,6 +40,7 @@ export interface AgentLock {
 
 export interface HiveState {
   locks: Record<AgentName, AgentLock | null>;
+  config: HiveConfig;
   session: {
     activeIssue: string | null;
     lastAction: string | null;
@@ -54,6 +76,11 @@ export interface HiveEvent {
 }
 
 const AGENTS: AgentName[] = ['claude', 'copilot', 'gemini'];
+const DEFAULT_CONFIG: HiveConfig = {
+  autoMode: false,
+  autoMerge: false,
+  notifyMarcio: true,
+};
 
 @Injectable()
 export class HiveService {
@@ -61,6 +88,12 @@ export class HiveService {
   private readonly hiveRoot = path.resolve(
     process.env.HIVE_ROOT || path.resolve(process.cwd(), '../../..'),
   );
+  private readonly configPath = path.join(
+    this.hiveRoot,
+    '.hive-agent',
+    'hive-ui-config.json',
+  );
+  private readonly proxyScriptPath = path.join(this.hiveRoot, '.agile-squad', 'proxy.sh');
   private readonly events: HiveEvent[] = [this.createEvent('info', 'Hive UI conectado')];
 
   getWatchPaths(): string[] {
@@ -71,8 +104,9 @@ export class HiveService {
   }
 
   async getState(): Promise<HiveState> {
-    const [locks, session, inboxCounts, brainstorm, pipeline] = await Promise.all([
+    const [locks, config, session, inboxCounts, brainstorm, pipeline] = await Promise.all([
       this.readLocks(),
+      this.readConfig(),
       this.readSession(),
       this.readInboxCounts(),
       this.readBrainstormFiles(),
@@ -81,6 +115,7 @@ export class HiveService {
 
     return {
       locks,
+      config,
       session,
       inboxCounts,
       brainstorm,
@@ -99,6 +134,70 @@ export class HiveService {
 
   getUptime(): number {
     return Math.floor((Date.now() - this.startedAt) / 1000);
+  }
+
+  isAgentName(value: string): value is AgentName {
+    return AGENTS.includes(value as AgentName);
+  }
+
+  async readConfig(): Promise<HiveConfig> {
+    const raw = await this.readJsonFile<Partial<HiveConfig>>(this.configPath);
+
+    return {
+      autoMode: raw?.autoMode ?? DEFAULT_CONFIG.autoMode,
+      autoMerge: raw?.autoMerge ?? DEFAULT_CONFIG.autoMerge,
+      notifyMarcio: raw?.notifyMarcio ?? DEFAULT_CONFIG.notifyMarcio,
+    };
+  }
+
+  async updateConfig(partial: Partial<HiveConfig>): Promise<HiveConfig> {
+    const current = await this.readConfig();
+    const next: HiveConfig = {
+      autoMode: partial.autoMode ?? current.autoMode,
+      autoMerge: partial.autoMerge ?? current.autoMerge,
+      notifyMarcio: partial.notifyMarcio ?? current.notifyMarcio,
+    };
+
+    await this.writeTextAtomic(this.configPath, `${JSON.stringify(next, null, 2)}\n`);
+
+    return next;
+  }
+
+  async releaseLock(agent: AgentName): Promise<HiveActionResult> {
+    try {
+      await execFile(
+        'bash',
+        [this.proxyScriptPath, 'hive', 'lock', 'release', agent],
+        { cwd: this.hiveRoot },
+      );
+      this.addEvent('lock', `Lock de ${agent} liberado via UI`);
+      return { ok: true };
+    } catch (error) {
+      const message = this.extractExecError(error, 'Falha ao liberar lock.');
+      return { ok: false, error: message };
+    }
+  }
+
+  async dispatchIntent(payload: DispatchPayload): Promise<HiveActionResult> {
+    const message = payload.message.trim();
+    if (!message) {
+      return { ok: false, error: 'Mensagem obrigatória.' };
+    }
+
+    const inboxPath = path.join(
+      this.hiveRoot,
+      'beehive',
+      'construcao',
+      `inbox-${payload.agent}.md`,
+    );
+    const content = await this.readTextFile(inboxPath);
+    const entry = this.buildDispatchEntry(payload.agent, message);
+    const updated = this.insertInboxEntry(content, entry);
+
+    await this.writeTextAtomic(inboxPath, updated);
+    this.addEvent('info', `Intenção despachada para ${payload.agent} via UI`);
+
+    return { ok: true };
   }
 
   private async readLocks(): Promise<Record<AgentName, AgentLock | null>> {
@@ -487,5 +586,91 @@ export class HiveService {
       level,
       msg,
     };
+  }
+
+  private async writeTextAtomic(filePath: string, content: string): Promise<void> {
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    const tempPath = `${filePath}.tmp`;
+    await fs.writeFile(tempPath, content, 'utf8');
+    await fs.rename(tempPath, filePath);
+  }
+
+  private extractExecError(error: unknown, fallback: string): string {
+    if (error && typeof error === 'object') {
+      const stderr = 'stderr' in error ? error.stderr : null;
+      if (typeof stderr === 'string' && stderr.trim()) {
+        return stderr.replace(/\u001b\[[0-9;]*m/g, '').trim();
+      }
+
+      const stdout = 'stdout' in error ? error.stdout : null;
+      if (typeof stdout === 'string' && stdout.trim()) {
+        return stdout.replace(/\u001b\[[0-9;]*m/g, '').trim();
+      }
+
+      const message = 'message' in error ? error.message : null;
+      if (typeof message === 'string' && message.trim()) {
+        return message.trim();
+      }
+    }
+
+    return fallback;
+  }
+
+  private buildDispatchEntry(agent: DispatchAgent, message: string): string {
+    const now = new Date();
+    const date = now.toISOString().slice(0, 10);
+    const time = now.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'America/Sao_Paulo',
+    });
+
+    return [
+      `### [UI-${date}-${time}] Intenção despachada via Hive UI`,
+      `**De:** Márcio (via Hive UI) → ${this.getAgentLabel(agent)}`,
+      `**Data:** ${date}`,
+      `**tipo:** pedido-de-parecer`,
+      `**Status:** pendente`,
+      '',
+      message,
+      '',
+      '---',
+      '',
+    ].join('\n');
+  }
+
+  private getAgentLabel(agent: DispatchAgent): string {
+    if (agent === 'claude') {
+      return 'Claude';
+    }
+
+    if (agent === 'copilot') {
+      return 'Copilot';
+    }
+
+    return 'Gemini';
+  }
+
+  private insertInboxEntry(content: string, entry: string): string {
+    const anchor = '<!-- novas entradas abaixo';
+    const anchorIndex = content.indexOf(anchor);
+
+    if (anchorIndex >= 0) {
+      const lineEnd = content.indexOf('\n', anchorIndex);
+      if (lineEnd === -1) {
+        return `${content}\n${entry}`;
+      }
+
+      return `${content.slice(0, lineEnd + 1)}\n${entry}${content.slice(lineEnd + 1)}`;
+    }
+
+    const separatorIndex = content.indexOf('\n---\n');
+    if (separatorIndex >= 0) {
+      const insertAt = separatorIndex + '\n---\n'.length;
+      return `${content.slice(0, insertAt)}\n${entry}${content.slice(insertAt)}`;
+    }
+
+    return `${content.trimEnd()}\n\n${entry}`;
   }
 }

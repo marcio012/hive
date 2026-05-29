@@ -24,6 +24,11 @@ export interface HiveEvent {
 
 export interface HiveState {
   locks: Record<AgentName, { activity: string | null; acquiredAt: string | null } | null>;
+  config: {
+    autoMode: boolean;
+    autoMerge: boolean;
+    notifyMarcio: boolean;
+  } | null;
   session: {
     activeIssue: string | null;
     lastAction: string | null;
