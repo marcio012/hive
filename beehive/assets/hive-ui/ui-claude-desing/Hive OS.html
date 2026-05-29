@@ -33,6 +33,10 @@
       <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4" fill="#0a0a0a"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4" fill="#0a0a0a"/></svg>
       Centro de Controle
     </button>
+    <button class="nav-tab" data-screen="brainstorm">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.2 1 2V16h6v-.5c0-.8.4-1.4 1-2A6 6 0 0 0 12 3Z"/></svg>
+      Brainstorm
+    </button>
   </nav>
 
   <div class="ws-status">
@@ -63,12 +67,12 @@
     <div class="grid-3" style="margin-bottom:30px">
 
       <!-- Claude — ativo -->
-      <div class="agent-card active">
-        <span class="dot green pulse agent-corner"></span>
+      <div class="agent-card active claude">
+        <span class="dot pulse agent-corner"></span>
         <div class="agent-top">
-          <div class="agent-ico">C</div>
+          <div class="agent-ico"><svg class="gear" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V15Z"/></svg></div>
           <div class="agent-meta">
-            <span class="badge green"><span class="dot green"></span> Em operação</span>
+            <span class="badge status"><span class="dot"></span> Em operação</span>
             <div class="agent-name">Claude</div>
             <div class="agent-model">claude-sonnet · lock adquirido</div>
           </div>
@@ -76,17 +80,17 @@
         <div class="agent-activity">
           <div class="what"><span class="tag">▸</span> auditando <span style="font-family:var(--mono)">CORE-002</span> delta</div>
           <div class="act-bar"><i></i></div>
-          <div class="when"><span class="dot green" style="width:6px;height:6px"></span> há <span class="ago" data-min="12">12</span>min · iniciou 09:48</div>
+          <div class="when"><span class="dot ac" style="width:6px;height:6px"></span> há <span class="ago" data-min="12">12</span>min · iniciou 09:48</div>
         </div>
       </div>
 
       <!-- Copilot — ativo -->
-      <div class="agent-card active">
-        <span class="dot green pulse agent-corner"></span>
+      <div class="agent-card active copilot">
+        <span class="dot pulse agent-corner"></span>
         <div class="agent-top">
-          <div class="agent-ico" style="background:rgba(0,255,159,0.13);color:var(--green);border-color:rgba(0,255,159,0.3)">G</div>
+          <div class="agent-ico"><svg class="brk" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="brk-l" d="m8 8-4 4 4 4"/><path class="brk-r" d="m16 8 4 4-4 4"/><line class="brk-s" x1="13.5" y1="6" x2="10.5" y2="18"/></svg></div>
           <div class="agent-meta">
-            <span class="badge green"><span class="dot green"></span> Em operação</span>
+            <span class="badge status"><span class="dot"></span> Em operação</span>
             <div class="agent-name">Copilot</div>
             <div class="agent-model">gpt-codex · lock adquirido</div>
           </div>
@@ -94,14 +98,14 @@
         <div class="agent-activity">
           <div class="what"><span class="tag">▸</span> implementando <span style="font-family:var(--mono)">module.guard.spec.ts</span></div>
           <div class="act-bar"><i></i></div>
-          <div class="when"><span class="dot green" style="width:6px;height:6px"></span> há <span class="ago" data-min="4">4</span>min · iniciou 09:56</div>
+          <div class="when"><span class="dot ac" style="width:6px;height:6px"></span> há <span class="ago" data-min="4">4</span>min · iniciou 09:56</div>
         </div>
       </div>
 
       <!-- Gemini — livre -->
-      <div class="agent-card free">
+      <div class="agent-card free gemini">
         <div class="agent-top">
-          <div class="agent-ico">A</div>
+          <div class="agent-ico"><svg class="compass" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path class="needle" d="m9 15 1.6-4.4L15 9l-1.6 4.4L9 15Z" fill="currentColor" stroke="none"/></svg></div>
           <div class="agent-meta">
             <span class="badge gray"><span class="dot gray"></span> Livre</span>
             <div class="agent-name">Gemini</div>
@@ -118,24 +122,24 @@
     <!-- Seção 2: Inbox Pendentes -->
     <div class="section-label"><span class="n">02</span> Inbox · Pendências <span class="line"></span></div>
     <div class="grid-3" style="margin-bottom:8px">
-      <div class="inbox-card pending glow-border-pulse">
-        <div class="inbox-ico">
+      <div class="inbox-card pending glow-border-pulse" data-agent="claude">
+        <button class="inbox-ico" type="button" title="Ver inbox de Claude" aria-label="Ver inbox de Claude">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-        </div>
+        </button>
         <div><div class="who">Claude</div><div class="desc">aprovações aguardando</div></div>
         <div class="inbox-count">2</div>
       </div>
-      <div class="inbox-card">
-        <div class="inbox-ico">
+      <div class="inbox-card" data-agent="copilot">
+        <button class="inbox-ico" type="button" title="Ver inbox de Copilot" aria-label="Ver inbox de Copilot">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-        </div>
+        </button>
         <div><div class="who" style="color:var(--t2)">Copilot</div><div class="desc">inbox limpa</div></div>
         <div class="inbox-count">0</div>
       </div>
-      <div class="inbox-card pending glow-border-pulse">
-        <div class="inbox-ico">
+      <div class="inbox-card pending glow-border-pulse" data-agent="gemini">
+        <button class="inbox-ico" type="button" title="Ver inbox de Gemini" aria-label="Ver inbox de Gemini">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-        </div>
+        </button>
         <div><div class="who">Gemini</div><div class="desc">aprovação aguardando</div></div>
         <div class="inbox-count">1</div>
       </div>
@@ -258,11 +262,26 @@
 <!-- ============================ TELA 3 — CENTRO DE CONTROLE ============================ -->
 <main class="screen" id="screen-controle" data-screen-label="Centro de Controle">
   <div class="page">
-    <div class="page-head">
-      <h1>Centro de Controle</h1>
-      <div class="sub"><span class="live-dot"></span> Orquestração manual do squad</div>
+    <div class="page-head" style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
+      <div>
+        <h1>Centro de Controle</h1>
+        <div class="sub"><span class="live-dot"></span> <span id="ccSub">Orquestração manual do squad</span></div>
+      </div>
+      <div class="bs-view" id="ccView" style="margin-top:4px">
+        <button class="bs-view-btn active" data-view="v1" type="button" title="Controles (v1)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.4"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.4"/></svg>
+        </button>
+        <button class="bs-view-btn" data-view="v2" type="button" title="Visibilidade (v2)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button class="bs-view-btn" data-view="v3" type="button" title="Fluxo / Esteira (v3)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="17" r="2.4"/><circle cx="18" cy="17" r="2.4"/><path d="M4 13h16M8.4 17h7.2M7 13l1.5-6h7L17 13"/></svg>
+        </button>
+      </div>
     </div>
 
+    <!-- ===================== v1 (Controles) ===================== -->
+    <div id="cc-v1">
     <!-- stats -->
     <div class="cc-stats">
       <div class="stat good"><div class="k">Uptime do squad</div><div class="v" id="uptime">04:12:38</div></div>
@@ -283,7 +302,7 @@
           </div>
           <div class="pb" style="padding-top:4px;padding-bottom:6px">
             <div class="lock-row">
-              <div class="la" style="background:rgba(255,215,0,0.14);color:var(--gold)">C</div>
+              <div class="la" style="background:color-mix(in srgb, var(--claude) 16%, transparent);color:var(--claude)">C</div>
               <div class="lmeta"><div class="res">CORE-002 <span class="by">· Claude</span></div><div class="since">detido há <span class="ago" data-min="12">12</span>min</div></div>
               <button class="btn-ghost">Forçar liberação</button>
             </div>
@@ -347,8 +366,383 @@
         </div>
       </div>
     </div>
+    </div><!-- /#cc-v1 -->
+
+    <!-- ===================== v2 (Visibilidade) ===================== -->
+    <div id="cc-v2" style="display:none">
+
+      <!-- Zona 2: Estado por Agente -->
+      <div class="section-label"><span class="n">01</span> Estado por agente <span class="line"></span></div>
+      <div class="grid-3" style="margin-bottom:26px">
+
+        <!-- Claude -->
+        <div class="cc2-agent claude free">
+          <div class="cc2-head">
+            <span class="cc2-av">C</span>
+            <div class="cc2-id"><div class="cc2-name">Claude</div><div class="cc2-role">Arquiteto</div></div>
+            <span class="cc2-lock free"><span class="dot"></span> Livre</span>
+          </div>
+          <div class="cc2-body">
+            <div class="cc2-clean"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 13 4 4L19 7"/></svg> Nenhuma pendência</div>
+          </div>
+          <div class="cc2-foot"><button class="btn-ghost cc2-dispatch" data-agent="Claude">Despachar →</button></div>
+        </div>
+
+        <!-- Copilot — em execução -->
+        <div class="cc2-agent copilot running">
+          <div class="cc2-head">
+            <span class="cc2-av">G</span>
+            <div class="cc2-id"><div class="cc2-name">Copilot</div><div class="cc2-role">Engenheiro</div></div>
+            <span class="cc2-lock running"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> WO-026-A</span>
+            <span class="cc2-count">3</span>
+          </div>
+          <div class="cc2-body">
+            <div class="cc2-item">
+              <span class="cc2-iid">068</span>
+              <span class="cc2-subj">Go — WO-026-A</span>
+              <span class="cc2-tag handoff">handoff</span>
+            </div>
+            <div class="cc2-item">
+              <span class="cc2-iid">066</span>
+              <span class="cc2-subj">Orchestrator Core V1</span>
+              <span class="cc2-tag handoff">handoff</span>
+            </div>
+            <div class="cc2-item blocked">
+              <span class="cc2-iid">067</span>
+              <span class="cc2-subj">WO-026-B (bloqueada)</span>
+              <span class="cc2-tag blocked"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> bloqueado</span>
+            </div>
+          </div>
+          <div class="cc2-foot"><button class="btn-ghost cc2-dispatch" data-agent="Copilot">Despachar →</button></div>
+        </div>
+
+        <!-- Gemini -->
+        <div class="cc2-agent gemini free">
+          <div class="cc2-head">
+            <span class="cc2-av">A</span>
+            <div class="cc2-id"><div class="cc2-name">Gemini</div><div class="cc2-role">PO</div></div>
+            <span class="cc2-lock free"><span class="dot"></span> Livre</span>
+          </div>
+          <div class="cc2-body">
+            <div class="cc2-clean"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 13 4 4L19 7"/></svg> Nenhuma pendência</div>
+          </div>
+          <div class="cc2-foot"><button class="btn-ghost cc2-dispatch" data-agent="Gemini">Despachar →</button></div>
+        </div>
+      </div>
+
+      <!-- Zona 3: Ações Rápidas -->
+      <div class="cc2-actions">
+        <button class="cc2-action" id="cc2Release">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 7-2.6"/></svg>
+          Liberar lock Copilot
+        </button>
+        <button class="cc2-action cc2-dispatch" data-agent="Claude"><span class="d" style="background:var(--claude)"></span> Despachar para Claude</button>
+        <button class="cc2-action cc2-dispatch" data-agent="Gemini"><span class="d" style="background:var(--gemini)"></span> Despachar para Gemini</button>
+        <button class="cc2-action" id="cc2Settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V15Z"/></svg>
+          Configurações
+        </button>
+      </div>
+
+      <!-- painel de configurações expansível -->
+      <div class="cc2-settings" id="cc2SettingsPanel">
+        <div class="ctrl-row"><div class="cmeta"><div class="ct">Modo autônomo</div><div class="cd">agentes despacham sem confirmação</div></div><div class="switch on" data-toggle><i></i></div></div>
+        <div class="ctrl-row"><div class="cmeta"><div class="ct">Auto-merge em verde</div><div class="cd">merge se CI passar e review aprovado</div></div><div class="switch" data-toggle><i></i></div></div>
+        <div class="ctrl-row"><div class="cmeta"><div class="ct">Notificar Márcio</div><div class="cd">push em pendências e falhas</div></div><div class="switch on" data-toggle><i></i></div></div>
+      </div>
+
+      <!-- Zona 4: grid inferior -->
+      <div class="cc2-grid">
+        <!-- Debates ativos -->
+        <div class="panel">
+          <div class="ph">
+            <span class="ph-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 10h8M8 14h5"/><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-6.5A8 8 0 1 1 21 12Z"/></svg></span>
+            <h3>Debates ativos</h3>
+          </div>
+          <div class="pb" style="padding-top:6px">
+            <div class="debate">
+              <div class="debate-top"><span class="debate-id">DEBATE-026</span><span class="debate-state done">✓ Concluído</span></div>
+              <div class="debate-title">Orquestrador Híbrido</div>
+              <div class="phase-bar" data-phase="7"><i style="--p:7"></i></div>
+              <div class="debate-meta">Fase 7 · Work Orders despachadas <span class="debate-block">desbloqueado</span></div>
+            </div>
+            <div class="debate">
+              <div class="debate-top"><span class="debate-id">DEBATE-025</span><span class="debate-state done">✓ Concluído</span></div>
+              <div class="debate-title">Higiene de Inbox</div>
+              <div class="phase-bar" data-phase="8"><i style="--p:8"></i></div>
+              <div class="debate-meta">Fase 8 · Execução <span class="debate-block">desbloqueado</span></div>
+            </div>
+            <div class="debate active">
+              <div class="debate-top"><span class="debate-id">DEBATE-027</span><span class="debate-state turn">sua vez</span></div>
+              <div class="debate-title">Schema Management — CORE-003</div>
+              <div class="phase-bar" data-phase="4"><i style="--p:4"></i></div>
+              <div class="debate-meta">Fase 4 · Aguardando parecer de Márcio <button class="debate-adv">Avançar →</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eventos ao vivo -->
+        <div class="panel">
+          <div class="ph">
+            <span class="ph-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 7 5 5-5 5"/><line x1="12" y1="17" x2="20" y2="17"/></svg></span>
+            <h3>Eventos ao vivo</h3>
+            <span class="ph-meta"><span class="dot green pulse" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>ao vivo</span>
+          </div>
+          <div class="pb" style="padding-top:8px">
+            <div class="stream" id="stream2">
+              <div class="log"><span class="ts">09:56:11</span><span class="lv lock">LOCK</span><span class="msg"><b>Copilot</b> adquiriu lock <span class="g">WO-026-A</span></span></div>
+              <div class="log"><span class="ts">09:58:02</span><span class="lv info">INFO</span><span class="msg">handoff <b>068</b> despachado para Copilot</span></div>
+              <div class="log"><span class="ts">10:01:44</span><span class="lv warn">WARN</span><span class="msg">WO-026-B bloqueada — depende de WO-026-A</span></div>
+              <div class="log"><span class="ts">10:03:20</span><span class="lv ok">OK</span><span class="msg">DEBATE-026 concluído · 7 fases</span></div>
+              <div class="log"><span class="ts">10:05:09</span><span class="lv info">INFO</span><span class="msg">DEBATE-027 aguardando parecer de <b>Márcio</b></span></div>
+              <div class="log" id="streamTail2"><span class="ts" id="tailTs2">10:05:12</span><span class="lv info">INFO</span><span class="msg">aguardando próximo evento<span class="cursor"></span></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /#cc-v2 -->
+
+    <!-- ===================== v3 (Fluxo / Esteira) ===================== -->
+    <div id="cc-v3" style="display:none">
+
+      <div class="section-label"><span class="n">01</span> Esteira de produção <span class="line"></span><span class="flow-legend"><span class="dot green pulse" style="display:inline-block"></span> fluindo</span></div>
+
+      <!-- esteira: 5 estações em fluxo -->
+      <div class="flow-belt-wrap">
+        <div class="flow-track">
+
+          <!-- Estação 1: Márcio -->
+          <div class="flow-station human" data-station="marcio">
+            <div class="fs-av">M</div>
+            <div class="fs-name">Márcio</div>
+            <div class="fs-role">Operador</div>
+            <div class="fs-count"><span class="fc-n">2</span> intenções</div>
+          </div>
+
+          <!-- correia 1 -->
+          <div class="flow-conveyor"><div class="belt-stripes"></div><span class="flow-token t1"></span></div>
+
+          <!-- Estação 2: Gemini (PO) -->
+          <div class="flow-station gemini" data-station="po">
+            <div class="fs-av">A</div>
+            <div class="fs-name">Gemini</div>
+            <div class="fs-role">Product Owner</div>
+            <div class="fs-count"><span class="fc-n">1</span> em triagem</div>
+          </div>
+
+          <!-- correia 2 -->
+          <div class="flow-conveyor"><div class="belt-stripes"></div><span class="flow-token t2"></span></div>
+
+          <!-- Estação 3: Claude (Arquiteto) -->
+          <div class="flow-station claude" data-station="arq">
+            <div class="fs-av">C</div>
+            <div class="fs-name">Claude</div>
+            <div class="fs-role">Arquiteto</div>
+            <div class="fs-count"><span class="fc-n">1</span> auditando</div>
+          </div>
+
+          <!-- correia 3 -->
+          <div class="flow-conveyor"><div class="belt-stripes"></div><span class="flow-token t3"></span></div>
+
+          <!-- Estação 4: Copilot (Engenheiro) -->
+          <div class="flow-station copilot active" data-station="eng">
+            <span class="fs-pulse"><span class="dot green pulse"></span></span>
+            <div class="fs-av">G</div>
+            <div class="fs-name">Copilot</div>
+            <div class="fs-role">Engenheiro</div>
+            <div class="fs-count"><span class="fc-n">3</span> em execução</div>
+          </div>
+
+          <!-- correia 4 -->
+          <div class="flow-conveyor"><div class="belt-stripes"></div><span class="flow-token t4"></span></div>
+
+          <!-- Estação 5: Entrega -->
+          <div class="flow-station deliver" data-station="entrega">
+            <div class="fs-av"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m5 13 4 4L19 7"/></svg></div>
+            <div class="fs-name">Entrega</div>
+            <div class="fs-role">Mergeado</div>
+            <div class="fs-count"><span class="fc-n">18</span> hoje</div>
+          </div>
+
+          <!-- retorno (loop) -->
+          <div class="flow-return"><span class="fr-label">manutenção contínua ↺</span></div>
+        </div>
+      </div>
+
+      <!-- itens em trânsito (legenda do que está fluindo) -->
+      <div class="section-label" style="margin-top:30px"><span class="n">02</span> Em trânsito <span class="line"></span></div>
+      <div class="flow-items" id="flowItems">
+        <div class="flow-card" data-at="po">
+          <div class="fci-top"><span class="fci-id">HIVE-091</span><span class="fci-stage" style="--c:var(--gemini)">triagem</span></div>
+          <div class="fci-title">Exportar relatório de squad em PDF</div>
+          <div class="fci-foot"><span class="mini-av av-gemini">A</span><span class="fci-eta">→ Arquiteto</span></div>
+        </div>
+        <div class="flow-card" data-at="arq">
+          <div class="fci-top"><span class="fci-id">CORE-002</span><span class="fci-stage" style="--c:var(--claude)">auditoria</span></div>
+          <div class="fci-title">Auditoria de delta do core de locks</div>
+          <div class="fci-foot"><span class="mini-av av-claude">C</span><span class="fci-eta">→ Engenheiro</span></div>
+        </div>
+        <div class="flow-card active" data-at="eng">
+          <div class="fci-top"><span class="fci-id">WO-026-A</span><span class="fci-stage" style="--c:var(--copilot)">execução</span></div>
+          <div class="fci-title">Implementação do orchestrator core</div>
+          <div class="fci-foot"><span class="mini-av av-copilot">G</span><span class="fci-eta">→ Entrega</span></div>
+        </div>
+        <div class="flow-card" data-at="eng">
+          <div class="fci-top"><span class="fci-id">TEST-014</span><span class="fci-stage" style="--c:var(--copilot)">execução</span></div>
+          <div class="fci-title">module.guard.spec.ts — cobertura</div>
+          <div class="fci-foot"><span class="mini-av av-copilot">G</span><span class="fci-eta">→ Entrega</span></div>
+        </div>
+      </div>
+    </div><!-- /#cc-v3 -->
   </div>
 </main>
+
+<!-- ============================ TELA 4 — BRAINSTORM BOARD ============================ -->
+<main class="screen" id="screen-brainstorm" data-screen-label="Brainstorm Board">
+  <div class="page">
+    <div class="page-head" style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
+      <div>
+        <h1>Brainstorm Board</h1>
+        <div class="sub"><span class="live-dot"></span> Ideação do squad</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <div class="bs-view" id="bsView">
+          <button class="bs-view-btn active" data-view="board" type="button" title="Quadro Hive">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="11" rx="1.5"/></svg>
+          </button>
+          <button class="bs-view-btn" data-view="trello" type="button" title="Estilo Trello">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="6" height="16" rx="1.5"/><rect x="10.5" y="4" width="6" height="10" rx="1.5"/><rect x="18" y="4" width="3" height="13" rx="1.2"/></svg>
+          </button>
+        </div>
+        <button class="disp-btn primary" id="bsNew" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+          Novo brainstorm
+        </button>
+      </div>
+    </div>
+
+    <!-- barra de filtro -->
+    <div class="bs-filter">
+      <div class="bs-seg" id="bsAgentFilter">
+        <button class="bs-seg-btn active" data-agent="todos">Todos</button>
+        <button class="bs-seg-btn" data-agent="claude"><span class="seg-dot" style="background:var(--claude)"></span> Claude</button>
+        <button class="bs-seg-btn" data-agent="copilot"><span class="seg-dot" style="background:var(--copilot)"></span> Copilot</button>
+        <button class="bs-seg-btn" data-agent="gemini"><span class="seg-dot" style="background:var(--gemini)"></span> Gemini</button>
+        <button class="bs-seg-btn" data-agent="human"><span class="seg-dot" style="background:var(--t2)"></span> Márcio</button>
+      </div>
+      <div class="bs-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+        <input type="text" id="bsSearch" placeholder="buscar por thread…" autocomplete="off" />
+      </div>
+      <div class="bs-result" id="bsResult">7 brainstorms</div>
+    </div>
+
+    <!-- kanban -->
+    <div class="bs-board" id="bsBoard">
+      <!-- Captura -->
+      <div class="bs-col" data-col="captura">
+        <div class="col-head">Captura <span class="ct">1</span></div>
+        <div class="bs-stack">
+          <article class="bs-card" data-agent="human" data-thread="orquestrador-hibrido">
+            <div class="bs-title">Ideia: Rate Limit por Agente</div>
+            <div class="bs-thread">› orquestrador-hibrido</div>
+            <div class="bs-foot"><span class="mini-av av-human">M</span><span class="bs-date">29 mai</span></div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Refinando -->
+      <div class="bs-col" data-col="refinando">
+        <div class="col-head">Refinando <span class="ct">1</span></div>
+        <div class="bs-stack">
+          <article class="bs-card" data-agent="gemini" data-thread="hive-web-ui-discovery">
+            <div class="bs-title">Hive Web UI Strategy</div>
+            <div class="bs-thread">› hive-web-ui-discovery</div>
+            <div class="bs-foot"><span class="mini-av av-gemini">A</span><span class="bs-date">28 mai</span></div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Pronto p/ Debate -->
+      <div class="bs-col" data-col="pronto">
+        <div class="col-head">Pronto p/ Debate <span class="ct">1</span></div>
+        <div class="bs-stack">
+          <article class="bs-card ready" data-agent="gemini" data-thread="tos-015-agenda">
+            <div class="bs-title">Discovery TOS-015 Agenda</div>
+            <div class="bs-thread">› tos-015-agenda</div>
+            <div class="bs-foot"><span class="mini-av av-gemini">A</span><span class="bs-date">27 mai</span></div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Em Debate -->
+      <div class="bs-col" data-col="debate">
+        <div class="col-head">Em Debate <span class="ct">2</span></div>
+        <div class="bs-stack">
+          <article class="bs-card debating" data-agent="claude" data-thread="orquestrador-hibrido">
+            <div class="bs-title">Orquestrador Híbrido</div>
+            <div class="bs-thread">› orquestrador-hibrido</div>
+            <div class="bs-foot"><span class="mini-av av-claude">C</span><span class="debate-badge">DEBATE-026</span><span class="bs-date">29 mai</span></div>
+          </article>
+          <article class="bs-card debating" data-agent="claude" data-thread="higiene-inbox">
+            <div class="bs-title">Política de Higiene de Inbox</div>
+            <div class="bs-thread">› higiene-inbox</div>
+            <div class="bs-foot"><span class="mini-av av-claude">C</span><span class="debate-badge">DEBATE-025</span><span class="bs-date">28 mai</span></div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Arquivado -->
+      <div class="bs-col" data-col="arquivado">
+        <div class="col-head">Arquivado <span class="ct">2</span></div>
+        <div class="bs-stack">
+          <article class="bs-card archived" data-agent="gemini" data-thread="showroom-bella-corte">
+            <div class="bs-title">Dashboard Showroom Bella Corte</div>
+            <div class="bs-thread">› showroom-bella-corte</div>
+            <div class="bs-foot"><span class="mini-av av-gemini">A</span><span class="bs-date">26 mai</span></div>
+          </article>
+          <article class="bs-card archived" data-agent="gemini" data-thread="hive-ui-macro">
+            <div class="bs-title">Macro Mapping Hive UI</div>
+            <div class="bs-thread">› hive-ui-macro</div>
+            <div class="bs-foot"><span class="mini-av av-gemini">A</span><span class="bs-date">28 mai</span></div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="bs-empty" id="bsEmpty">Nenhum brainstorm corresponde ao filtro.</div>
+  </div>
+</main>
+
+<!-- ============================ MODAL — INBOX DO AGENTE ============================ -->
+<div class="modal-overlay" id="inboxModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="inboxModalTitle">
+    <div class="modal-head">
+      <div class="modal-ico" id="inboxModalIco">C</div>
+      <div class="modal-titles">
+        <h3 id="inboxModalTitle">Inbox de Claude</h3>
+        <div class="modal-sub"><span id="inboxModalCount">2</span> pendência(s) aguardando ação</div>
+      </div>
+      <button class="modal-close" id="inboxModalClose" type="button" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <ul class="inbox-list" id="inboxList"></ul>
+      <div class="inbox-empty" id="inboxEmpty">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m5 13 4 4L19 7"/></svg>
+        <div>Inbox vazia — nada aguardando aprovação.</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <span class="modal-foot-meta" id="inboxFootMeta">2 itens</span>
+      <button class="btn-clear-all" id="inboxClearAll" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14"/></svg>
+        Remover tudo
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- tweaks mount -->
 <div id="tweaks-root"></div>
