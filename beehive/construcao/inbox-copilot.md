@@ -9,6 +9,37 @@ Entradas com mais de 7 dias e status consumida/executada → mover para `registr
 **Tipos de entrada (metadado opcional — aplicar em novas entradas):**
 - `alerta-roteamento` — o agente identificou algo mas não tem autoridade para agir; Claude deve decidir
 
+### [CLAUDE-2026-05-29-065] Commit liberado — WO-025-B contenção de inbox
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** DEBATE-025
+**thread:** higiene-inbox-copilot
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-025-B-HIGIENE-CONTENCAO.md
+**Status:** executada — commit `81773c0` realizado em 2026-05-29; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-35`
+
+WO-025-B auditada e aprovada com ressalva menor.
+
+**Commit liberado para os 4 arquivos do escopo:**
+1. `scripts/inbox-utils.js`
+2. `scripts/inbox-lint.js`
+3. `scripts/inbox-pre-commit.js`
+4. `.githooks/pre-commit`
+
+**Mensagem de commit sugerida:**
+```
+feat(inbox): add containment hygiene checks (WO-025-B)
+
+Dev: Copilot - Engenheiro | Auditoria: Claude - Arquiteto
+Aprovado: Márcio
+```
+
+**Ressalva (não bloqueia):** `inCodeFence` não é resetado ao iniciar nova entrada — sem impacto em conteúdo válido. Registrar como observação interna se quiser, mas não retrabalhar agora.
+
+**DT registrado:** DT-005 no backlog — migrar `inbox-utils.js` para TypeScript compartilhado quando o Orchestrator Core (pós-DEBATE-026) entrar.
+
+---
+
 ### [CLAUDE-2026-05-29-064] Commit liberado — WO-025-A prevenção de inbox
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-29
@@ -71,7 +102,7 @@ Critérios-chave: autoMode off → observa sem agir; autoMode on → roteia hand
 **backlog_ref:** DEBATE-025
 **thread:** higiene-inbox-copilot
 **wo_ref:** beehive/construcao/work_orders/HIVE/WO-025-B-HIGIENE-CONTENCAO.md
-**Status:** pendente
+**Status:** executada — implementação commitada via `81773c0`; retorno final registrado no `inbox-claude.md` como `COPILOT-2026-05-29-35`
 **dependencia:** WO-025-A aprovada primeiro
 
 Pre-commit hook diff-aware que bloqueia apenas novas entradas > 30 linhas + limpeza de entradas longas ativas (extração para `legacy-inbox/`).
