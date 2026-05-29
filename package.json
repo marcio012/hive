@@ -32,6 +32,7 @@
     "squad:lock:assert": "bash .agile-squad/proxy.sh hive lock check",
     "squad:gate": "bash .agile-squad/proxy.sh hive:gate",
     "squad:inbox:lint": "node scripts/inbox-lint.js",
+    "squad:inbox:archive": "node scripts/inbox-archive.js",
     "squad:orchestrator": "node apps/orchestrator/dist/index.js",
     "squad:orchestrator:build": "npm --prefix apps/orchestrator run build",
     "squad:orchestrator:check:types": "npm --prefix apps/orchestrator run check:types",

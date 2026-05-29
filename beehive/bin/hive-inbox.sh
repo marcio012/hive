@@ -11,6 +11,7 @@ DEBATES_DIR="$INBOX_DIR/debates"
 TARGET_AGENT="${1:-}"
 LINT_SCRIPT="$ROOT_DIR/scripts/inbox-lint.js"
 PENDING_SCRIPT="$ROOT_DIR/scripts/inbox-pending.js"
+ARCHIVE_SCRIPT="$ROOT_DIR/scripts/inbox-archive.js"
 
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -82,6 +83,17 @@ echo -e "${YELLOW}=== HIVE INBOX SCANNER ===${NC}"
 if [[ -f "$LINT_SCRIPT" ]]; then
   node "$LINT_SCRIPT" || true
   echo
+fi
+
+if [[ -f "$ARCHIVE_SCRIPT" ]]; then
+  ARCHIVE_ARGS=(--quiet)
+  if [[ -n "$TARGET_AGENT" ]]; then
+    ARCHIVE_ARGS+=("$TARGET_AGENT")
+  fi
+  ARCHIVE_REPORT="$(node "$ARCHIVE_SCRIPT" "${ARCHIVE_ARGS[@]}" || true)"
+  if [[ -n "$ARCHIVE_REPORT" ]]; then
+    printf '%s\n\n' "$ARCHIVE_REPORT"
+  fi
 fi
 
 shopt -s nullglob

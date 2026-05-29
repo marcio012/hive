@@ -24,7 +24,7 @@ function getStagedInboxFiles() {
   return output
     .split('\n')
     .map((line) => line.trim())
-    .filter((line) => /(^|\/)inbox-.*\.md$/.test(line));
+    .filter((line) => /(^|\/)beehive\/construcao\/inbox-.*\.md$/.test(line));
 }
 
 function readStagedFile(filePath) {

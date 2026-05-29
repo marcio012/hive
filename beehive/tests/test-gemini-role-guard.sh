@@ -171,4 +171,144 @@ assert_output_contains "$INBOX_OUTPUT" "[UI-{YYYY-MM-DD}-{HH:mm}] Intenção des
 assert_output_not_contains "$INBOX_OUTPUT" "[CLAUDE-2026-05-29-064] WO-025-A: Higiene de Inbox — Onda 1 (Prevenção) (pendente)"
 assert_output_not_contains "$INBOX_OUTPUT" "[IGNORAR-EM-CODE-FENCE]"
 
+cat > "$TEST_REPO/beehive/construcao/inbox-claude.md" <<'EOF'
+### [COPILOT-2026-05-29-001] Entrega concluída
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** checkpoint
+**Status:** consumida
+
+Entrega finalizada e sem pendências.
+
+---
+
+# Inbox do Claude
+
+Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
+Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
+
+### [GEMINI-2026-05-29-002] Parecer pendente
+**De:** Gemini (Coordenador) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** pedido-de-parecer
+**Status:** pendente
+
+Avaliar o debate ativo.
+EOF
+
+CLAUDE_ARCHIVE_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/inbox-archive.js" --write claude
+)"
+assert_output_contains "$CLAUDE_ARCHIVE_OUTPUT" "inbox-claude.md — 1 entrada(s) movida(s) para o histórico"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-claude.md" "# Inbox do Claude"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-claude.md" "[GEMINI-2026-05-29-002] Parecer pendente"
+if grep -Fq "[COPILOT-2026-05-29-001]" "$TEST_REPO/beehive/construcao/inbox-claude.md"; then
+  echo "Assertion failed: closed Claude entry should be removed from active inbox"
+  exit 1
+fi
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-claude-historico.md" "[COPILOT-2026-05-29-001] Entrega concluída"
+
+cat > "$TEST_REPO/beehive/construcao/inbox-copilot.md" <<'EOF'
+# Inbox — Copilot
+
+Canal de entrada de contexto e tarefas para o Copilot.
+Append-only — nunca apagar entradas. Apenas atualizar `status`.
+Entradas com mais de 7 dias e status consumida/executada → mover para `registry/archive/inbox/`.
+
+### [CLAUDE-2026-05-20-001] Entrada antiga
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-20
+**tipo:** handoff-executavel
+**Status:** executada
+
+Arquivar por idade.
+
+---
+
+### [CLAUDE-2026-05-29-002] Entrada recente
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**Status:** executada
+
+Ainda deve permanecer no inbox ativo.
+
+---
+
+**Histórico completo:** `beehive/registry/archive/inbox/inbox-copilot-historico.md`
+
+**Tipos de entrada (metadado opcional — aplicar em novas entradas):**
+- `alerta-roteamento` — o agente identificou algo mas não tem autoridade para agir; Claude deve decidir
+
+### [UI-{YYYY-MM-DD}-{HH:mm}] Intenção despachada via Hive UI
+**De:** Hive UI → Copilot (Executor)
+**Data:** {YYYY-MM-DD}
+**tipo:** handoff-executavel
+**Status:** executada
+
+Modelo inválido de data não deve quebrar nem ser arquivado.
+EOF
+
+COPILOT_ARCHIVE_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/inbox-archive.js" --write --now 2026-05-29T12:00:00Z copilot
+)"
+assert_output_contains "$COPILOT_ARCHIVE_OUTPUT" "inbox-copilot.md — 1 entrada(s) movida(s) para o histórico"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "[CLAUDE-2026-05-29-002] Entrada recente"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" '**Histórico completo:** `beehive/registry/archive/inbox/inbox-copilot-historico.md`'
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "**Tipos de entrada (metadado opcional — aplicar em novas entradas):**"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "[UI-{YYYY-MM-DD}-{HH:mm}] Intenção despachada via Hive UI"
+if grep -Fq "[CLAUDE-2026-05-20-001]" "$TEST_REPO/beehive/construcao/inbox-copilot.md"; then
+  echo "Assertion failed: old Copilot entry should be removed from active inbox"
+  exit 1
+fi
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-copilot-historico.md" "[CLAUDE-2026-05-20-001] Entrada antiga"
+
+mkdir -p "$TEST_REPO/beehive/registry/archive/inbox"
+cat > "$TEST_REPO/beehive/registry/archive/inbox/inbox-claude-historico.md" <<'EOF'
+### [COPILOT-2026-05-29-099] Histórico congelado
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**Status:** consumida
+
+Linha 01
+Linha 02
+Linha 03
+Linha 04
+Linha 05
+Linha 06
+Linha 07
+Linha 08
+Linha 09
+Linha 10
+Linha 11
+Linha 12
+Linha 13
+Linha 14
+Linha 15
+Linha 16
+Linha 17
+Linha 18
+Linha 19
+Linha 20
+Linha 21
+Linha 22
+Linha 23
+Linha 24
+Linha 25
+Linha 26
+Linha 27
+Linha 28
+Linha 29
+Linha 30
+Linha 31
+EOF
+
+(
+  cd "$TEST_REPO"
+  git add beehive/registry/archive/inbox/inbox-claude-historico.md
+  node "$HIVE_HOME/scripts/inbox-pre-commit.js"
+)
+
 echo "PASS: Gemini role guard integration"
