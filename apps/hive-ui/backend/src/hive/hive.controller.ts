@@ -3,6 +3,7 @@ import {
   HiveConfig,
   HiveService,
   HiveState,
+  TelemetryState,
   type OrchestratorEventLevel,
   type DispatchPayload,
   type HiveActionResult,
@@ -21,6 +22,11 @@ export class HiveController {
   @Get('state')
   getState(): Promise<HiveState> {
     return this.hiveService.getState();
+  }
+
+  @Get('telemetry')
+  getTelemetry(): Promise<TelemetryState> {
+    return this.hiveService.readTelemetry();
   }
 
   @Get('config')

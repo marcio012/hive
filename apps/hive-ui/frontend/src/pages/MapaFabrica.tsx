@@ -1,7 +1,9 @@
-import { type AgentName, type HiveState } from '../hooks/useHiveSocket';
+import { useMemo } from 'react';
+import { type AgentName, type HiveState, type TelemetryState } from '../hooks/useHiveSocket';
 
 type MapaFabricaProps = {
   state: HiveState | null;
+  telemetry: TelemetryState | null;
 };
 
 const agents: Array<{
@@ -15,7 +17,7 @@ const agents: Array<{
   { key: 'gemini', name: 'Gemini', model: 'gemini-pro', initial: 'G' },
 ];
 
-function formatMinutesAgo(value: string | null): string {
+function formatLockAge(value: string | null): string {
   if (!value) {
     return 'sem lock recente';
   }
@@ -29,14 +31,59 @@ function formatMinutesAgo(value: string | null): string {
   return minutes === 0 ? 'agora' : `há ${minutes}min`;
 }
 
-export function MapaFabrica({ state }: MapaFabricaProps) {
+function formatMinutesAgo(value: number | null): string {
+  if (value === null) {
+    return '—';
+  }
+
+  if (value <= 0) {
+    return 'agora';
+  }
+
+  return `há ${value}min`;
+}
+
+function formatCurrency(value: number | null | undefined): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value ?? 0);
+}
+
+function formatPercent(value: number | null | undefined): string {
+  if (value === null || value === undefined) {
+    return '—';
+  }
+
+  return `${Math.round(value)}%`;
+}
+
+function formatMetric(value: number | null | undefined, digits = 1): string {
+  if (value === null || value === undefined) {
+    return '—';
+  }
+
+  return new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digits,
+  }).format(value);
+}
+
+export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
   const activeIssue = state?.session.activeIssue ?? '—';
   const lastAction = state?.session.lastAction ?? 'Sem ação registrada.';
   const nextStep = state?.session.nextStep ?? 'Aguardando próximo passo definido.';
+  const efficiencyByAgent = useMemo(
+    () =>
+      new Map((telemetry?.agentEfficiency ?? []).map((item) => [item.agent, item])),
+    [telemetry],
+  );
 
   return (
     <main className="screen active">
-      <div className="page">
+      <div className="page page-map">
         <div className="page-head">
           <h1>Mapa da Fábrica</h1>
           <div className="sub">
@@ -78,10 +125,14 @@ export function MapaFabrica({ state }: MapaFabricaProps) {
                     {active ? <span className="tag">▸</span> : null}
                     {lock?.activity ?? 'Sem operação ativa — pronto para receber tarefa'}
                   </div>
-                  {active ? <div className="act-bar"><i /></div> : null}
+                  {active ? (
+                    <div className="act-bar">
+                      <i />
+                    </div>
+                  ) : null}
                   <div className="when">
                     <span className={`dot ${active ? 'green' : 'gray'}`} />
-                    {formatMinutesAgo(lock?.acquiredAt ?? null)}
+                    {formatLockAge(lock?.acquiredAt ?? null)}
                   </div>
                 </div>
               </article>
@@ -113,12 +164,85 @@ export function MapaFabrica({ state }: MapaFabricaProps) {
                 </div>
                 <div>
                   <div className="who">{agent.name}</div>
-                  <div className="desc">
-                    {pending ? 'aprovações aguardando' : 'inbox limpa'}
-                  </div>
+                  <div className="desc">{pending ? 'aprovações aguardando' : 'inbox limpa'}</div>
                 </div>
                 <div className="inbox-count">{count}</div>
               </div>
+            );
+          })}
+        </div>
+
+        <div className="section-label">
+          <span className="n">03</span>
+          Eficiência do Squad
+          <span className="line" />
+        </div>
+
+        <div className="grid-3">
+          {agents.map((agent) => {
+            const metrics = efficiencyByAgent.get(agent.key);
+            const budgetPct = metrics?.weeklyBudgetPct ?? 0;
+            const cardState =
+              budgetPct >= 90 ? 'eff-critical' : budgetPct >= 75 ? 'eff-alert' : '';
+
+            return (
+              <article key={agent.key} className={`eff-card ${cardState}`.trim()}>
+                <div className="eff-head">
+                  <div className={`eff-avatar av-${agent.key}`}>{agent.initial}</div>
+                  <div>
+                    <div className="eff-name">{agent.name}</div>
+                    <div className="eff-role">{metrics?.role ?? 'Sem dados'}</div>
+                  </div>
+                  {metrics?.lastInitMinutesAgo !== null &&
+                  metrics?.lastInitMinutesAgo !== undefined &&
+                  metrics.lastInitMinutesAgo <= 30 ? (
+                    <span className="eff-pill">
+                      <span className="dot green pulse" />
+                      init ativa
+                    </span>
+                  ) : (
+                    <span className="eff-pill muted">sem init</span>
+                  )}
+                </div>
+
+                <div className="eff-grid">
+                  <div className="eff-metric">
+                    <span>WO’s semana</span>
+                    <strong>{formatMetric(metrics?.weeklyWOs ?? 0, 0)}</strong>
+                  </div>
+                  <div className="eff-metric">
+                    <span>Custo sessão</span>
+                    <strong>{formatCurrency(metrics?.sessionCostBRL)}</strong>
+                  </div>
+                  <div className="eff-metric">
+                    <span>Inits</span>
+                    <strong>{formatMetric(metrics?.initCount ?? 0, 0)}</strong>
+                  </div>
+                  <div className="eff-metric">
+                    <span>Rodadas/init</span>
+                    <strong>{formatMetric(metrics?.avgRoundsPerInit)}</strong>
+                  </div>
+                </div>
+
+                <div className="eff-progress">
+                  <div className="eff-progress-meta">
+                    <span>Budget semanal</span>
+                    <span>{formatPercent(metrics?.weeklyBudgetPct ?? 0)}</span>
+                  </div>
+                  <div className="eff-bar">
+                    <i style={{ width: `${Math.max(0, Math.min(100, budgetPct))}%` }} />
+                  </div>
+                  <div className="eff-progress-foot">
+                    <span>{formatCurrency(metrics?.weeklyBudgetBRL)}</span>
+                    <span>{formatMinutesAgo(metrics?.lastInitMinutesAgo ?? null)}</span>
+                  </div>
+                </div>
+
+                <div className="eff-foot">
+                  <span>Aprovação: {formatPercent(metrics?.approvalRate)}</span>
+                  <span>Peso: {formatMetric(metrics?.peso, 0)}</span>
+                </div>
+              </article>
             );
           })}
         </div>

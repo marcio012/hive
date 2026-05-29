@@ -55,8 +55,74 @@ export interface HiveState {
   uptime: number;
 }
 
+export interface WeeklyUsage {
+  tokensUsed: number;
+  tokenLimit: number;
+  usagePct: number;
+  totalCostBRL: number;
+  budgetBRL: number;
+  inputTokens: number;
+  outputTokens: number;
+  cacheTokens: number;
+  inputCostBRL: number;
+  outputCostBRL: number;
+  cacheCostBRL: number;
+  resetInDays: number;
+}
+
+export interface AgentEfficiency {
+  agent: AgentName;
+  role: string;
+  sessionCostBRL: number;
+  weeklyBudgetBRL: number;
+  weeklyBudgetPct: number;
+  weeklyWOs: number;
+  approvalRate: number | null;
+  initCount: number;
+  avgRoundsPerInit: number | null;
+  lastInitMinutesAgo: number | null;
+  peso: number | null;
+}
+
+export interface InitSession {
+  index: number;
+  startedAt: string;
+  rounds: number;
+  costBRL: number;
+  isActive: boolean;
+}
+
+export interface AgentInitHistory {
+  agent: AgentName;
+  role: string;
+  weeklyInits: InitSession[];
+  avgRounds: number;
+  avgCostBRL: number;
+  totalInits: number;
+  totalRounds: number;
+  totalCostBRL: number;
+}
+
+export interface TelemetryState {
+  weeklyUsage: WeeklyUsage;
+  agentEfficiency: AgentEfficiency[];
+  initHistory: AgentInitHistory[];
+  logExists: boolean;
+  configExists: boolean;
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return (await response.json()) as T;
+}
+
 export function useHiveSocket() {
   const [state, setState] = useState<HiveState | null>(null);
+  const [telemetry, setTelemetry] = useState<TelemetryState | null>(null);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,15 +137,16 @@ export function useHiveSocket() {
   useEffect(() => {
     let mounted = true;
 
-    fetch('/api/hive/state')
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
+    const syncTelemetry = async () => {
+      const payload = await fetchJson<TelemetryState>('/api/hive/telemetry');
+      if (mounted) {
+        setTelemetry(payload);
+        setError(null);
+      }
+    };
 
-        return (await response.json()) as HiveState;
-      })
-      .then((payload) => {
+    Promise.all([fetchJson<HiveState>('/api/hive/state'), syncTelemetry()])
+      .then(([payload]) => {
         if (mounted) {
           setState(payload);
         }
@@ -91,21 +158,37 @@ export function useHiveSocket() {
       });
 
     socket.on('connect', () => {
+      if (!mounted) {
+        return;
+      }
+
       setConnected(true);
       setError(null);
     });
 
     socket.on('disconnect', () => {
-      setConnected(false);
+      if (mounted) {
+        setConnected(false);
+      }
     });
 
     socket.on('hive:update', (payload: HiveState) => {
-      setState(payload);
+      if (mounted) {
+        setState(payload);
+      }
+
+      void syncTelemetry().catch((fetchError: Error) => {
+        if (mounted) {
+          setError(fetchError.message);
+        }
+      });
     });
 
     socket.on('connect_error', (socketError: Error) => {
-      setConnected(false);
-      setError(socketError.message);
+      if (mounted) {
+        setConnected(false);
+        setError(socketError.message);
+      }
     });
 
     return () => {
@@ -115,5 +198,5 @@ export function useHiveSocket() {
     };
   }, [socket]);
 
-  return { state, connected, error };
+  return { state, telemetry, connected, error };
 }

@@ -59,7 +59,7 @@ Critérios-chave: AC-01 (error-state set/clear/read), AC-06 (guard bloqueia exec
 **backlog_ref:** HIVE-014
 **thread:** eficiencia-squad-hive-ui
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-027-EFICIENCIA-SQUAD-UI.md
-**Status:** pendente
+**Status:** consumida — ✅ Commit realizado em 2026-05-29 (aguardando hash final)
 
 Auditoria concluída. WO-027 **aprovada**. Pode commitar os arquivos abaixo com a mensagem definida na WO.
 

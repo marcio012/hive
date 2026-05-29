@@ -3,9 +3,10 @@ import { useHiveSocket } from './hooks/useHiveSocket';
 import { CentroDeControle } from './pages/CentroDeControle';
 import { FunilIntencao } from './pages/FunilIntencao';
 import { MapaFabrica } from './pages/MapaFabrica';
+import { Telemetria } from './pages/Telemetria';
 
 type PublicRoute = '/' | '/landing' | '/login';
-type CockpitRoute = '/mapa' | '/funil' | '/controle';
+type CockpitRoute = '/mapa' | '/telemetria' | '/funil' | '/controle';
 type Route = PublicRoute | CockpitRoute;
 
 type NavItem = {
@@ -27,6 +28,10 @@ function normalizeRoute(pathname: string): Route {
     return '/funil';
   }
 
+  if (pathname === '/telemetria') {
+    return '/telemetria';
+  }
+
   if (pathname === '/controle') {
     return '/controle';
   }
@@ -43,7 +48,7 @@ function formatClock(date: Date): string {
 }
 
 function isCockpitRoute(route: Route): route is CockpitRoute {
-  return route === '/mapa' || route === '/funil' || route === '/controle';
+  return route === '/mapa' || route === '/telemetria' || route === '/funil' || route === '/controle';
 }
 
 function getStoredSession(): boolean {
@@ -73,6 +78,18 @@ const navItems: NavItem[] = [
     ),
   },
   {
+    route: '/telemetria',
+    label: 'Telemetria',
+    renderIcon: () => (
+      <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M4 18h16" />
+        <path d="M7 15V9" />
+        <path d="M12 15V5" />
+        <path d="M17 15v-3" />
+      </svg>
+    ),
+  },
+  {
     route: '/funil',
     label: 'Funil de Intenção',
     renderIcon: () => (
@@ -95,16 +112,20 @@ const navItems: NavItem[] = [
   },
 ];
 
-function renderScreen(route: CockpitRoute, state: ReturnType<typeof useHiveSocket>['state']) {
+function renderScreen(route: CockpitRoute, data: ReturnType<typeof useHiveSocket>) {
+  if (route === '/telemetria') {
+    return <Telemetria telemetry={data.telemetry} />;
+  }
+
   if (route === '/funil') {
-    return <FunilIntencao state={state} />;
+    return <FunilIntencao state={data.state} />;
   }
 
   if (route === '/controle') {
-    return <CentroDeControle state={state} />;
+    return <CentroDeControle state={data.state} />;
   }
 
-  return <MapaFabrica state={state} />;
+  return <MapaFabrica state={data.state} telemetry={data.telemetry} />;
 }
 
 type ShellHeaderProps = {
@@ -623,7 +644,8 @@ export function App() {
   const [authenticated, setAuthenticated] = useState<boolean>(() => getStoredSession());
   const [submittingLogin, setSubmittingLogin] = useState(false);
   const [clock, setClock] = useState(() => formatClock(new Date()));
-  const { state, connected, error } = useHiveSocket();
+  const hiveSocket = useHiveSocket();
+  const { connected, error } = hiveSocket;
 
   useEffect(() => {
     const onPopState = () => setRoute(normalizeRoute(window.location.pathname));
@@ -716,7 +738,7 @@ export function App() {
         </div>
       ) : null}
 
-      {renderScreen(cockpitRoute, state)}
+      {renderScreen(cockpitRoute, hiveSocket)}
     </>
   );
 }
