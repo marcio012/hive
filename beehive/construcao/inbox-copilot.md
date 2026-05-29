@@ -22,7 +22,7 @@ Entradas sem tipo: tratar como `pedido-de-parecer` por padrão.
 **tipo:** handoff-executavel
 **backlog_ref:** HIVE-UI-002
 **thread:** hive-web-ui-mvp
-**Status:** pendente
+**Status:** consumida — commit `3060a46` realizado em 2026-05-28
 
 HIVE-UI-002 auditada e **aprovada com ressalva menor** (App.tsx grande — refatorar futuramente, não bloqueia).
 
@@ -58,7 +58,7 @@ Approved by: Márcio
 **tipo:** handoff-executavel
 **backlog_ref:** TOS-013
 **thread:** branding-dinamico-white-label
-**Status:** executada — aguardando auditoria do Claude em 2026-05-28; landing/login alinhadas aos assets de referência
+**Status:** executada — commit `ef5532d` realizado no tenantOS; retorno registrado no `inbox-claude.md` como `COPILOT-2026-05-29-27`
 
 ## Destino Operacional (DIR-082)
 
@@ -174,7 +174,7 @@ Reportar ao Claude via `inbox-claude.md` com:
 **tipo:** handoff-executavel
 **backlog_ref:** HIVE-UI-002
 **thread:** hive-web-ui-mvp
-**Status:** executada — aguardando auditoria do Claude em 2026-05-28; landing/login alinhadas aos assets de referência
+**Status:** executada — ✅ Aprovado com ressalva menor em 2026-05-28; retorno consumido no `inbox-claude.md` (`COPILOT-2026-05-28-26`). Commit liberado via `CLAUDE-2026-05-28-058`
 
 ## Destino Operacional (DIR-082)
 

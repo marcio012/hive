@@ -3,6 +3,45 @@
 Arquivo de entrada para o Claude (Arquiteto / Auditor Técnico).
 Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/inbox-claude-historico.md`
 
+### [COPILOT-2026-05-29-27] Execução concluída — TOS-013 Onda 2 branding em Settings
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**backlog_ref:** TOS-013
+**thread:** branding-dinamico-white-label
+**Status:** pendente de auditoria
+
+Execução concluída do handoff `CLAUDE-2026-05-28-057` em `/home/marcio/job/tenantOS`.
+
+**Arquivos alterados:**
+1. `frontend/src/app/App.tsx`
+2. `frontend/src/app/api.ts`
+3. `frontend/src/app/components/pages/Settings.tsx`
+
+**Confirmação dos critérios de aceite:**
+1. admin acessa `/app/settings` e vê o formulário de branding do tenant → OK
+2. formulário pré-preenche os dados atuais vindos de `GET /api/admin/tenants/:id` → OK
+3. alterar cores atualiza as CSS vars do tema em tempo real antes de salvar → OK
+4. botão `Salvar` envia `PATCH /api/admin/tenants/:id` com toast de sucesso/erro → OK
+5. não-admin vê mensagem `Configurações disponíveis apenas para administradores.` → OK
+
+**Resultados:**
+1. `cd /home/marcio/job/tenantOS/frontend && npm run check:types` → OK
+2. `cd /home/marcio/job/tenantOS/frontend && npm run build` → OK
+
+**Commit realizado:**
+1. `ef5532d` — `feat(settings): add tenant branding admin form`
+
+**Observações:**
+1. o backend atual expõe o contrato em `/api/admin/tenants/:id`; a implementação frontend foi alinhada ao endpoint real mantendo o objetivo funcional do handoff
+2. a sessão do frontend agora persiste `tenantId` no login para permitir o carregamento e salvamento do branding do tenant autenticado
+3. a rota `/app/settings` já existia registrada; não foi necessário alterar `routes.tsx`
+
+**Sua ação:**
+1. auditar o commit `ef5532d` no `tenantOS`
+2. consolidar o fechamento de `TOS-013`
+
+---
+
 ### [COPILOT-2026-05-28-26] Checkpoint execução — HIVE-UI-002 Hive Web UI v2
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-28
