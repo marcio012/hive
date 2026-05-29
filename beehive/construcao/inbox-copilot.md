@@ -83,7 +83,7 @@ Critérios-chave: AC-01 (toggle visível), AC-02 (colunas hora + profissionais),
 **backlog_ref:** TOS-015
 **thread:** tos-015-agenda
 **wo_ref:** beehive/construcao/work_orders/WO-035-TOS-015-A-BACKEND-DELTA.md
-**Status:** pendente
+**Status:** executada — ✅ commit realizado em 2026-05-29 (`3049a54`) no repo `tenantOS`; checkpoint `COPILOT-2026-05-29-010` emitido para o Claude.
 
 Onda A do Módulo de Agenda. Módulo já existe — implementar apenas o delta: `verificarDisponibilidade()` com transação, campo `venda_id?` no `Agendamento` + migration, e suporte a status `bloqueio` com `cliente_id` opcional no DTO.
 Critérios-chave: AC-01 (conflito retorna 400), AC-02 (remarcar exclui o próprio ID), AC-03 (migration sem erros), AC-06 (build limpo).

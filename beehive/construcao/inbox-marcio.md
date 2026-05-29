@@ -19,6 +19,20 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [GATE-2026-05-29-004] Commit para validar — TOS-015 / WO-035: Agenda Backend Delta
+**De:** Copilot (Executor) → Márcio (The Gate)
+**Data:** 2026-05-29
+**tipo:** gate-commit
+**backlog_ref:** TOS-015
+**Status:** pendente
+
+WO-035 entregue no repo `tenantOS`. Commit `3049a54` adiciona `venda_id` no agendamento, suporte a `bloqueio`, validação de conflito por horário e cobertura de testes do serviço.
+
+Próximo encadeamento liberado: WO-037 (**Agenda → Venda**).
+**Ação:** confirmar com "ok WO-035" para liberar o squad a arquivar este gate, ou apontar ressalvas.
+
+---
+
 ### [GATE-2026-05-29-003] SR para afirmar — HIVE-018: Centro de Controle V2
 **De:** Copilot (Executor) → Márcio (The Gate)
 **Data:** 2026-05-29
