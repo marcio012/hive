@@ -1,4 +1,5 @@
 import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import {
   HiveConfig,
   HiveService,
@@ -15,26 +16,46 @@ type OrchestratorEventPayload = {
   msg?: unknown;
 };
 
+@ApiTags('hive')
 @Controller('hive')
 export class HiveController {
   constructor(private readonly hiveService: HiveService) {}
 
   @Get('state')
+  @ApiOperation({ summary: 'Estado completo do Hive', description: 'Retorna locks, config, inbox counts, gate, debates, pipeline, governança, telemetria de interações e eventos.' })
+  @ApiResponse({ status: 200, description: 'Estado atual do Hive.' })
   getState(): Promise<HiveState> {
     return this.hiveService.getState();
   }
 
   @Get('telemetry')
+  @ApiOperation({ summary: 'Telemetria de uso', description: 'Retorna uso de tokens, custos BRL, eficiência por agente e histórico de inits.' })
+  @ApiResponse({ status: 200, description: 'Dados de telemetria.' })
   getTelemetry(): Promise<TelemetryState> {
     return this.hiveService.readTelemetry();
   }
 
   @Get('config')
+  @ApiOperation({ summary: 'Configuração atual', description: 'Retorna a configuração ativa da Hive UI (autoMode, autoMerge, notifyMarcio).' })
+  @ApiResponse({ status: 200, description: 'Configuração atual.' })
   getConfig(): Promise<HiveConfig> {
     return this.hiveService.readConfig();
   }
 
   @Post('config')
+  @ApiOperation({ summary: 'Atualizar configuração', description: 'Atualiza parcialmente a configuração da Hive UI. Aceita autoMode, autoMerge e/ou notifyMarcio.' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        autoMode:    { type: 'boolean', example: false },
+        autoMerge:   { type: 'boolean', example: false },
+        notifyMarcio: { type: 'boolean', example: true },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Configuração atualizada.' })
+  @ApiResponse({ status: 400, description: 'Payload inválido ou nenhuma propriedade reconhecida.' })
   updateConfig(@Body() payload: HiveConfigPatch): Promise<HiveConfig> {
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
       throw new BadRequestException('Payload de config inválido.');
@@ -71,6 +92,10 @@ export class HiveController {
   }
 
   @Post('lock/release/:agent')
+  @ApiOperation({ summary: 'Liberar lock de agente', description: 'Executa o script de release do lock para o agente informado (claude, copilot ou gemini).' })
+  @ApiParam({ name: 'agent', enum: ['claude', 'copilot', 'gemini'], description: 'Nome do agente' })
+  @ApiResponse({ status: 201, description: 'Lock liberado com sucesso. { ok: true }' })
+  @ApiResponse({ status: 400, description: 'Agente inválido.' })
   releaseLock(@Param('agent') agent: string): Promise<HiveActionResult> {
     if (!this.hiveService.isAgentName(agent)) {
       throw new BadRequestException('Agente inválido.');
@@ -80,6 +105,19 @@ export class HiveController {
   }
 
   @Post('dispatch')
+  @ApiOperation({ summary: 'Despachar mensagem para inbox de agente', description: 'Insere uma nova entrada no inbox-{agent}.md com a mensagem informada.' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['agent', 'message'],
+      properties: {
+        agent:   { type: 'string', enum: ['claude', 'copilot', 'gemini'], example: 'claude' },
+        message: { type: 'string', example: 'Revisar arquitetura do módulo de telemetria.' },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Mensagem inserida no inbox. { ok: true }' })
+  @ApiResponse({ status: 400, description: 'Agente inválido ou mensagem vazia.' })
   dispatch(@Body() payload: Partial<DispatchPayload>): Promise<HiveActionResult> {
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
       throw new BadRequestException('Payload de dispatch inválido.');
@@ -100,6 +138,19 @@ export class HiveController {
   }
 
   @Post('orchestrator/event')
+  @ApiOperation({ summary: 'Injetar evento do orchestrador', description: 'Adiciona um evento ao log interno e faz broadcast via WebSocket para todos os clientes conectados.' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['level', 'msg'],
+      properties: {
+        level: { type: 'string', enum: ['info', 'warn', 'error'], example: 'info' },
+        msg:   { type: 'string', example: 'Orchestrador iniciou processamento da fila.' },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Evento registrado e broadcast enviado.' })
+  @ApiResponse({ status: 400, description: 'level ou msg inválidos.' })
   async receiveOrchestratorEvent(@Body() payload: OrchestratorEventPayload): Promise<void> {
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
       throw new BadRequestException('Payload de evento inválido.');

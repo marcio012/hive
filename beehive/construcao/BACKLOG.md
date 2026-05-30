@@ -16,15 +16,15 @@
 ## 🟡 Média prioridade
 - [x] HIVE-015 — Telemetria E1: tela tokens por agente (Claude X, Copilot Y, Gemini Z) (2026-05-29) — ✅ 22bdb51
 - [x] HIVE-016 — Telemetria E2: interações por tipo com tag no lock acquire (2026-05-29) — ✅ f52078f
-- [ ] HIVE-017 — Centro de Controle: componentização (WO-031) — aguarda WO-030 commitada
+- [ ] HIVE-017 — Centro de Controle: componentização (WO-031) — WO-030 commitada (7d8aff9), aguarda execução da WO-031
 - [x] HIVE-018 — Centro de Controle V2 (2026-05-29) — ✅ 7d8aff9 (retroativo — WO-030)
-- [ ] HIVE-019 — Lock System: Márcio como agente ativo (DIR-092) — WO-033 pendente
+- [ ] HIVE-019 — Lock System: Márcio como agente ativo (DIR-092) — WO pendente
 - [ ] HIVE-020 — Dispatch de Agentes via UI (V1: somente Márcio) — debate pendente
 - [x] HIVE-021 — Painel de Diretrizes e Governança na UI (2026-05-29) — ✅ 3e653c6
 - [x] HIVE-014 — Eficiência do Squad no Hive UI (Seção 03 Mapa + tela Telemetria) (2026-05-29) — ✅ bd782fa
-- [ ] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) — DEBATE-033 aberto
-- [ ] HIVE-023 — Gate View: inbox-marcio.md + painel The Gate no Hive UI
-- [ ] HIVE-024 — Dois Copilotos: separar executor Hive vs. Produto — DEBATE-034 aberto
+- [ ] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) — WO-039 na fila Copilot-Hive
+- [x] HIVE-023 — Gate View: inbox-marcio.md + painel The Gate no Hive UI (2026-05-29) — ✅ 9138908
+- [x] HIVE-024 — Dois Copilotos: separar executor Hive vs. Produto — DEBATE-034 concluído (2026-05-29) — ✅ 8b94926
 - [ ] HIVE-005 — Onboarding automatizado para novo operador
 
 ## ✅ Concluído
