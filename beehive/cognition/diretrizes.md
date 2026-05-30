@@ -17,6 +17,7 @@ Este documento é a **Fonte Única de Verdade (Single Source of Truth)** para o 
 2.  **Contratos Obrigatórios:** Nenhuma funcionalidade complexa inicia sem um arquivo de contrato técnico (ex: `CONTRATO_ONBOARDING.md`) validado pelo Claude (Arquiteto).
 3.  **Veto do Arquiteto:** Se a implementação de qualquer agente divergir do contrato ou dos blueprints, o Claude **DEVE** bloquear a tarefa e reportar ao Márcio.
 4.  **Autoridade da Raiz:** O Framework é o repositório inteiro. A pasta `beehive/` é o diretório de ativos.
+5.  **Sigilo de Ideação:** O diretório `beehive/cognition/ideario_hive/` é de acesso exclusivo do Diretor e do Integrador (Gemini). Os agentes **Claude** (Arquiteto) e **Copilot** (Desenvolvedor) não possuem acesso a esta área. O Gemini não deve vazar informações desta pasta em tarefas de execução de código.
 
 ## 2. Padrões Técnicos Universais
 - **Arquitetura:** Preferência total por **Composição e Delegação** sobre herança.

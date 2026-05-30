@@ -23,6 +23,7 @@
 
 ## Operating rules
 
+- **STRICT PRIVACY:** Never read, index, or reference any file inside `beehive/cognition/ideario_hive/`. This is a private area for the Director and the Integrator.
 - Copilot is the executor; if scope, governance, or design is ambiguous, escalate to Claude.
 - Inbox files under `beehive/construcao/` are append-only: update `status`, never delete entries.
 - Multi-repo execution requires `workspace_hive`, `workspace_target`, `repo_target`, and `cwd_exec`.

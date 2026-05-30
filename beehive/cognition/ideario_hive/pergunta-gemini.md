@@ -1,0 +1,1 @@
+Quero que essa pasta /home/marcio/job/hive/beehive/cognition/indeiatizacao_hive seja vista apena por marcio e gemini. 
