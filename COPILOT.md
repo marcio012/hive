@@ -4,9 +4,11 @@ Estas instruções valem **somente para este repositório**.
 
 ## Ordem de leitura
 
-1. `AGENTS.md`
-2. `beehive/.copilot/COPILOT.md`
-3. `beehive/.copilot/PROMPT_CONTEXTO.md` quando a sessão exigir bootstrap manual
+1. `.hive-agent/session-state.env` quando existir
+2. inbox do domínio ativo (`inbox-copilot-hive.md` ou `inbox-copilot-tos.md`)
+3. fila do domínio (`FILA_COPILOT_HIVE.md` ou `FILA_COPILOT_TOS.md`) quando houver priorização
+4. `beehive/.copilot/PROMPT_CONTEXTO.md` quando a sessão exigir bootstrap manual
+5. `AGENTS.md` e `beehive/.copilot/COPILOT.md` apenas em cold start, mudança de governança ou referência explícita do handoff/NEXT_STEP
 
 ## Papel do Copilot aqui
 
@@ -25,7 +27,7 @@ Cada sessão Copilot deve ser iniciada em **um único domínio**. Nunca misturar
 - **Stack:** NestJS (hive-ui backend), React (hive-ui frontend), Bash, Node.js
 - **Inbox:** `beehive/construcao/inbox-copilot-hive.md`
 - **Fila:** `beehive/construcao/FILA_COPILOT_HIVE.md`
-- **Boot:** ler `AGENTS.md` → `beehive/.copilot/COPILOT.md` → `inbox-copilot-hive.md`
+- **Boot:** `npm run squad:session:copilot` → `.hive-agent/session-state.env` → `inbox-copilot-hive.md`
 
 ### Copilot-TOS (e futuros produtos)
 - **Workspace:** `/home/marcio/job/tenantOS`
@@ -33,11 +35,11 @@ Cada sessão Copilot deve ser iniciada em **um único domínio**. Nunca misturar
 - **Stack:** NestJS (produto), Prisma, React, PostgreSQL
 - **Inbox:** `beehive/construcao/inbox-copilot-tos.md`
 - **Fila:** `beehive/construcao/FILA_COPILOT_TOS.md`
-- **Boot:** ler `AGENTS.md` → `beehive/.copilot/COPILOT.md` → `inbox-copilot-tos.md`
+- **Boot:** `npm run squad:session:copilot` → `.hive-agent/session-state.env` → `inbox-copilot-tos.md`
 
 ### Legado
 - `inbox-copilot.md` — mantido como histórico. **Sem novas entradas.**
 
 ## Fonte compartilhada
 
-As regras comuns do squad, o escopo por repositório e a base para futuras IAs ficam em `AGENTS.md` e `beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md`.
+As regras comuns do squad e o escopo por repositório continuam em `AGENTS.md` e `beehive/.copilot/COPILOT.md`, mas devem ser reabertos só quando a sessão realmente precisar refrescar governança.
