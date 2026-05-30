@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
-import type { AgentName, FlowStation, HiveState } from '../hooks/useHiveSocket';
+import type { AgentName, FlowItem, FlowStation, HiveState } from '../hooks/useHiveSocket';
 
 interface EsteiraPorProcessoProps {
   state: HiveState | null;
@@ -14,6 +14,7 @@ const STATIONS: Array<{
   cls: string;
   countLabel: string;
 }> = [
+  { key: 'backlog',   name: 'Backlog',      role: 'Márcio Owner',   initial: '⚡', cls: 'st-backlog',   countLabel: 'na captura' },
   { key: 'debate',    name: 'Debate',       role: 'Gemini Lead',    initial: '🗣️', cls: 'st-debate',    countLabel: 'em discussão' },
   { key: 'blueprint', name: 'Blueprint',    role: 'Claude Arq',     initial: '📐', cls: 'st-blueprint', countLabel: 'contratos' },
   { key: 'wo',        name: 'Work Order',   role: 'Claude Arq',     initial: '📋', cls: 'st-wo',        countLabel: 'despachados' },
@@ -39,7 +40,7 @@ const STATIONS: Array<{
 
 export function EsteiraPorProcesso({ state }: EsteiraPorProcessoProps) {
   const flowItems = state?.flowItems ?? [];
-  const transitItems = flowItems.filter(item => item.ativo);
+  const transitItems = flowItems.filter(item => item.ativo || isBacklogCapture(item));
 
   const getStationCount = (key: string) => {
     if (key === 'backlog')   return flowItems.filter(i => i.station === 'marcio' && i.lane === 'captura').length;
@@ -122,17 +123,17 @@ export function EsteiraPorProcesso({ state }: EsteiraPorProcessoProps) {
             <div key={item.id} className={`flow-card ${item.ativo ? 'active' : ''}`}>
               <div className="fci-top">
                 <span className="fci-id">{item.id}</span>
-                <span className={`fci-stage fci-stage--${item.station}`}>
-                  {item.lane}
+                <span className={`fci-stage ${flowItemStageClass(item)}`}>
+                  {flowItemStageLabel(item)}
                 </span>
               </div>
               <div className="fci-title">{item.titulo}</div>
               <ArtifactFilePath path={item.file_path} className="artifact-path--compact" />
               <div className="fci-foot">
                 <span className={`mini-av av-${item.station}`}>
-                  {item.station.charAt(0).toUpperCase()}
+                  {isBacklogCapture(item) ? 'M' : item.station.charAt(0).toUpperCase()}
                 </span>
-                <span className="fci-eta">→ {stationName(item.proxima)}</span>
+                <span className="fci-eta">→ {flowItemNextStation(item)}</span>
               </div>
             </div>
           ))
@@ -142,6 +143,26 @@ export function EsteiraPorProcesso({ state }: EsteiraPorProcessoProps) {
       </div>
     </div>
   );
+}
+
+function isBacklogCapture(item: FlowItem): boolean {
+  return item.station === 'marcio' && item.lane === 'captura';
+}
+
+function flowItemStageLabel(item: FlowItem): string {
+  return isBacklogCapture(item) ? 'no backlog' : item.lane;
+}
+
+function flowItemStageClass(item: FlowItem): string {
+  return isBacklogCapture(item) ? 'fci-stage--captura' : `fci-stage--${item.station}`;
+}
+
+function flowItemNextStation(item: FlowItem): string {
+  if (isBacklogCapture(item)) {
+    return 'Gemini';
+  }
+
+  return stationName(item.proxima);
 }
 
 function stationName(station: FlowStation | null): string {
