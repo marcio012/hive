@@ -17,9 +17,9 @@ Para mais detalhes sobre papéis e processos, consulte:
 - `beehive/cognition/diretrizes.md` (Regras de Ouro)
 
 ## 🔐 PROTOCOLO DE SIGILO (ESTRATÉGICO)
-- O diretório `beehive/cognition/ideario_hive/` é de acesso exclusivo do **Diretor (Márcio)** e do **Integrador (Gemini)**.
-- Os agentes **Claude** e **Copilot** estão terminantemente proibidos de ler, indexar ou referenciar este diretório.
-- O **Gemini** acessa esta área apenas quando invocado em modo Integrador ou Neutral pelo Diretor, sendo vedada a exposição deste conteúdo em tarefas de execução comum.
+- O diretório `beehive/cognition/ideario_hive/` é estritamente privado.
+- As regras detalhadas de operação e restrições estão descritas em `beehive/cognition/ideario_hive/PROTOCOLO_SIGILO.md`.
+- **Atenção:** Este arquivo só é acessível ao Diretor e ao Integrador (Gemini). Claude e Copilot não possuem permissão de leitura.
 
 ---
 *Assinado: Hive OS Kernel*
