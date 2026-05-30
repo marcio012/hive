@@ -71,7 +71,7 @@ Máximo 20 linhas. Escreva diretamente no debate.
 **backlog_ref:** HIVE-023
 **thread:** hive-gate-view
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-038-GATE-VIEW-INBOX-MARCIO.md
-**Status:** pendente
+**Status:** executada — ✅ 2026-05-29 por Copilot no repo `tenantOS` (commit `56123f1`).
 
 Auditoria WO-038 aprovada. Todos os 7 ACs passaram. Commit `9138908` auditado — sem débito técnico.
 Gerar SR retroativo em `beehive/registry/reports/SR-HIVE-023-GATE-VIEW-20260529.md` cobrindo o commit, os ACs e o valor entregue. Após gerar, criar entrada `sr-afirmacao` em `inbox-marcio.md` e marcar HIVE-023 como `[x]` no BACKLOG.md.
