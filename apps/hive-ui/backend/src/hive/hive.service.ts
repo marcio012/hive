@@ -405,9 +405,12 @@ export class HiveService {
         this.readArtifactIndex(),
       ]);
 
-    const resolvedDebates = await this.enrichDebatesWithArtifacts(debates, artifactIndex);
+    const [resolvedDebates, deliveryReports, reservedBacklogRefs] = await Promise.all([
+      this.enrichDebatesWithArtifacts(debates, artifactIndex),
+      this.readAffirmedReports(artifactIndex),
+      this.readReservedBacklogRefs(artifactIndex),
+    ]);
     const resolvedPipeline = this.enrichPipelineWithArtifacts(pipeline, artifactIndex);
-    const deliveryReports = await this.readAffirmedReports(artifactIndex);
     const flowItems = this.inferPhase(
       locks,
       gate.pendentes,
@@ -415,6 +418,7 @@ export class HiveService {
       resolvedPipeline,
       backlogItems,
       deliveryReports,
+      reservedBacklogRefs,
     );
     const funnel = this.buildFunnel(flowItems);
 
@@ -1742,9 +1746,10 @@ export class HiveService {
     pipeline: PipelineItem[],
     backlogItems: BacklogItem[],
     deliveryReports: AffirmedReport[],
+    reservedBacklogRefs: string[],
   ): FlowItem[] {
     const items = new Map<string, FlowItem>();
-    const trackedBacklogRefs = new Set<string>();
+    const trackedBacklogRefs = new Set<string>(reservedBacklogRefs);
 
     debates.forEach((entry) => {
       const backlogRef = this.normalizeBacklogRef(entry.backlog_ref ?? entry.title);
@@ -2032,6 +2037,23 @@ export class HiveService {
     };
   }
 
+  private async readReservedBacklogRefs(artifactIndex: ArtifactIndex): Promise<string[]> {
+    const [debateRefs, workOrderRefs] = await Promise.all([
+      Promise.all(
+        artifactIndex.debatePaths.map((filePath) => this.readReservedDebateBacklogRef(filePath)),
+      ),
+      Promise.all(
+        artifactIndex.workOrderPaths.map((filePath) => this.readReservedWorkOrderBacklogRef(filePath)),
+      ),
+    ]);
+
+    return Array.from(
+      new Set(
+        [...debateRefs, ...workOrderRefs].filter((value): value is string => Boolean(value)),
+      ),
+    );
+  }
+
   private async listMarkdownFiles(directory: string): Promise<string[]> {
     const entries = await fs.readdir(directory, { withFileTypes: true }).catch(() => []);
     const nested = await Promise.all(
@@ -2078,6 +2100,36 @@ export class HiveService {
 
     return affirmedReports
       .sort((left, right) => (right.afirmadoEm ?? '').localeCompare(left.afirmadoEm ?? ''));
+  }
+
+  private async readReservedDebateBacklogRef(filePath: string): Promise<string | null> {
+    const content = await this.readTextFile(filePath);
+    if (!content) {
+      return null;
+    }
+
+    const metadata = this.parseFrontmatter(content);
+    if (this.isClosedDebateStatus(metadata.status ?? '')) {
+      return null;
+    }
+
+    return this.normalizeBacklogRef(metadata.backlog_ref ?? metadata.titulo ?? content);
+  }
+
+  private async readReservedWorkOrderBacklogRef(filePath: string): Promise<string | null> {
+    const content = await this.readTextFile(filePath);
+    if (!content) {
+      return null;
+    }
+
+    const metadata = this.parseFrontmatter(content);
+    if (this.isClosedWorkOrderStatus(metadata.status ?? '')) {
+      return null;
+    }
+
+    return this.normalizeBacklogRef(
+      metadata.backlog_ref ?? metadata.titulo ?? path.basename(filePath, path.extname(filePath)),
+    );
   }
 
   private parseFrontmatter(content: string): Record<string, string> {
@@ -2194,6 +2246,22 @@ export class HiveService {
     }
 
     return 3;
+  }
+
+  private isClosedDebateStatus(status: string): boolean {
+    const normalized = this.normalizeText(status);
+    return normalized.includes('encerrado') || normalized.includes('execucao concluida');
+  }
+
+  private isClosedWorkOrderStatus(status: string): boolean {
+    const normalized = this.normalizeText(status);
+    return (
+      normalized.includes('executada') ||
+      normalized.includes('concluida') ||
+      normalized.includes('encerrada') ||
+      normalized.includes('cancelada') ||
+      normalized.includes('done')
+    );
   }
 
   private normalizeText(value: string): string {
