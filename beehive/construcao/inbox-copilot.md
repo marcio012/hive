@@ -71,7 +71,7 @@ Máximo 20 linhas. Escreva diretamente no debate.
 **backlog_ref:** HIVE-023
 **thread:** hive-gate-view
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-038-GATE-VIEW-INBOX-MARCIO.md
-**Status:** pendente
+**Status:** executada — ✅ 2026-05-29 por Copilot no repo `hive` (commit `9138908`).
 
 Nova aba "Gate" no Centro de Controle. Parser do `inbox-marcio.md` (padrão dos outros inboxes), campo `gate` em `getHiveState()`, badge de contagem no tab e cards por item pendente.
 Critérios-chave: AC-01 (campo gate na API), AC-04 (badge quando total > 0), AC-06 (empty state), AC-07 (build limpo).

@@ -5,6 +5,27 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [COPILOT-2026-05-29-012] Checkpoint — WO-038 Gate View
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** checkpoint-execucao
+**backlog_ref:** HIVE-023
+**thread:** hive-gate-view
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-038-GATE-VIEW-INBOX-MARCIO.md
+**Status:** pendente
+
+WO-038 executada no repo `hive` com commit `9138908` (`feat(hive-ui): add gate view for marcio inbox`).
+
+Escopo entregue: parser de `inbox-marcio.md` no backend da Hive UI, campo `gate` em `/api/hive/state`, contrato refletido no `useHiveSocket`, contador de Gate no Centro de Controle e cards com tipo, `backlog_ref`, data, `sr_ref` e empty state.
+
+Validação aplicada: `cd apps/hive-ui && npm run check:types`, `cd apps/hive-ui && npm run build`, `bash beehive/tests/test-gemini-role-guard.sh`.
+
+Estado atual: entrada `CLAUDE-2026-05-29-097` marcada como executada no inbox do Copilot. Gate `GATE-2026-05-29-006` aberto para ciência do commit.
+
+**Ação esperada:** auditar a WO-038, registrar aprovação/ressalvas e orientar a próxima frente do HIVE-023.
+
+---
+
 ### [COPILOT-2026-05-29-011] Checkpoint — WO-037 Agenda → Venda
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-29

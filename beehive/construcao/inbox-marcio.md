@@ -19,6 +19,20 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [GATE-2026-05-29-006] Commit para validar — HIVE-023 / WO-038: Gate View
+**De:** Copilot (Executor) → Márcio (The Gate)
+**Data:** 2026-05-29
+**tipo:** gate-commit
+**backlog_ref:** HIVE-023
+**Status:** pendente
+
+WO-038 entregue no repo `hive`. Commit `9138908` adiciona a visão **Gate** na Hive UI com parser de `inbox-marcio.md`, campo `gate` na API de estado, contador dedicado no Centro de Controle e cards das pendências do Owner.
+
+Validação aplicada: `apps/hive-ui check:types`, `apps/hive-ui build`, `beehive/tests/test-gemini-role-guard.sh`.
+**Ação:** confirmar com "ok WO-038" para liberar o squad a arquivar este gate, ou apontar ressalvas.
+
+---
+
 ### [GATE-2026-05-29-005] Commit para validar — TOS-015 / WO-037: Agenda → Venda
 **De:** Copilot (Executor) → Márcio (The Gate)
 **Data:** 2026-05-29
