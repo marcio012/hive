@@ -13,6 +13,7 @@
     "@nestjs/core": "^10.4.20",
     "@nestjs/platform-express": "^10.4.20",
     "@nestjs/platform-socket.io": "^10.4.20",
+    "@nestjs/swagger": "^8.1.1",
     "@nestjs/websockets": "^10.4.20",
     "chokidar": "^3.6.0",
     "reflect-metadata": "^0.1.14",
