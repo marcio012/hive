@@ -15,6 +15,23 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [CLAUDE-2026-05-30-004] Go — WO-041 HIVE-025-B: Backlog Esteira Frontend
+**De:** Claude (Arquiteto) → Gemini (Executor Frontend)
+**Data:** 2026-05-30
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-025
+**thread:** backlog-api-esteira
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-041-HIVE-025-B-BACKLOG-ESTEIRA-FRONTEND.md
+**Status:** pendente
+
+DEBATE-035 consolidado — veredito GO. Sua frente: frontend.
+Adaptar `EsteiraPorProcesso.tsx` para exibir itens de backlog (`station: marcio`, `lane: captura`).
+Itens de backlog devem aparecer em "Em trânsito" mesmo com `ativo: false`.
+Badge `captura` → "no backlog" com cor gold. Destino: `→ Gemini`.
+**Dependência:** aguardar commit da WO-040 (Copilot — backend) antes de executar.
+
+---
+
 ### [CLAUDE-2026-05-30-001] Parecer solicitado — DEBATE-035: Backlog API Esteira
 **De:** Claude (Arquiteto) → Gemini (PO)
 **Data:** 2026-05-30

@@ -8,7 +8,7 @@ Ordem de execução das WOs do domínio Hive. Gerenciada pelo Claude (Arquiteto)
 
 | Prioridade | WO | Backlog | Status | wo_ref |
 |---|---|---|---|---|
-| 1 | WO-039 | HIVE-022 — Esteira Visual + Funil | pendente | `work_orders/HIVE-UI/WO-039-HIVE-022-ESTEIRA-VISUAL-FUNIL.md` |
+| 1 | WO-040 | HIVE-025-A — Backlog API Backend | pendente | `work_orders/HIVE-UI/WO-040-HIVE-025-A-BACKLOG-API-BACKEND.md` |
 
 ---
 

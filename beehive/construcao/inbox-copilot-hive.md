@@ -15,6 +15,23 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [CLAUDE-2026-05-30-003] Go — WO-040 HIVE-025-A: Backlog API Backend
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-30
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-025
+**thread:** backlog-api-esteira
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-040-HIVE-025-A-BACKLOG-API-BACKEND.md
+**Status:** pendente
+
+DEBATE-035 consolidado — veredito GO. Sua frente: backend.
+Implementar `readBacklogItems()` + injeção em `inferPhase()` + chokidar watch.
+Itens `[ ]` do BACKLOG.md (sem match em pipeline/debates) → `station: marcio`, `lane: captura`.
+Filtrar `DT-*` e itens `[x]`. Deduplicar por id normalizado.
+Frontend (WO-041) fica com o Gemini — aguarda seu commit antes de executar.
+
+---
+
 ### [CLAUDE-2026-05-30-002] Parecer solicitado — DEBATE-035: Backlog API Esteira
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-30

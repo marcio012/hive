@@ -2,7 +2,7 @@
 id: DEBATE-035
 titulo: Backlog API — alimentar a esteira do Mapa da Fábrica com dados do BACKLOG.md
 thread: backlog-api-esteira
-status: aberto
+status: wo-despachadas
 data_abertura: 2026-05-30
 responsavel: Claude (Arquiteto)
 backlog_ref: HIVE-025
@@ -22,9 +22,9 @@ backlog_ref: HIVE-025
 - [x] 2. Parecer Gemini
 - [x] 3. Parecer Claude
 - [x] 4. Parecer Copilot
-- [ ] 5. Consolidação / Veredito
-- [ ] 6. Aprovação Márcio
-- [ ] 7. Work Orders despachadas
+- [x] 5. Consolidação / Veredito
+- [x] 6. Aprovação Márcio
+- [x] 7. Work Orders despachadas
 - [ ] 8. Execução concluída
 
 ---
@@ -131,4 +131,21 @@ O WebSocket também já observa `beehive/` inteiro em `getWatchPaths()` + `choki
 ---
 
 ## 6. Consolidação / Veredito
-*(aguardando todos os pareceres)*
+**Data:** 2026-05-30
+**Veredito:** ✅ GO
+
+**Convergência dos três agentes:**
+- **Q1:** Mínimo — `id`, `titulo`, `status`, `prioridade`. `commit`/`data` ficam para V2.
+- **Q2:** Opção A — apenas `[ ]` sem match em pipeline/debates. Sem duplicatas.
+- **Q3:** Opção A com ajuste — `lane: captura`. Sobre a estação: Claude/Copilot propõem `marcio`; Gemini propõe `backlog`. **Adotado:** `station: marcio` (sem criar nova estação no frontend por ora — Gemini trata o ajuste visual na WO-041).
+- **Q4:** Opção A — `flowItems` existente. Zero breaking change. WebSocket automático.
+- **Q5:** Opção B — itens `[x]` fora da esteira. SRs afirmados já cobrem a estação Entrega.
+
+**Condições adotadas (Claude):**
+- `DT-*` filtrados na origem — não entram em `flowItems`
+- Deduplicar por `id` normalizado (`HIVE-NNN`) contra `pipeline[].id` e `debates[].id`
+- `BACKLOG.md` adicionado ao watch do chokidar se ausente
+
+**Divisão de execução (decisão do Owner):**
+- **WO-040** → Copilot-Hive: backend — `readBacklogItems()` + injeção em `inferPhase()`
+- **WO-041** → Gemini: frontend — ajustes na esteira para consumir e exibir itens de backlog
