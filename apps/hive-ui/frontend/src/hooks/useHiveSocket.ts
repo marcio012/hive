@@ -73,6 +73,22 @@ export interface RoleEntry {
   descricao: string;
 }
 
+export interface InteractionEntry {
+  id: string;
+  owner: string;
+  activity: string;
+  type: string;
+  acquired_at: string;
+  released_at: string | null;
+}
+
+export interface InteractionLog {
+  entries: InteractionEntry[];
+  byAgent: Record<string, Record<string, number>>;
+  totalByType: Record<string, number>;
+  mostFrequentType: string | null;
+}
+
 export interface HiveState {
   locks: Record<AgentName, { activity: string | null; acquiredAt: string | null } | null>;
   config: {
@@ -114,6 +130,7 @@ export interface HiveState {
     manifesto: ManifestoContent;
     roles: RoleEntry[];
   };
+  interactionLog: InteractionLog;
   events: HiveEvent[];
   uptime: number;
 }

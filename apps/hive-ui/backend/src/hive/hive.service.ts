@@ -46,6 +46,7 @@ interface RawLock {
   owner?: string;
   activity?: string;
   acquired_at?: string;
+  interaction_id?: string;
 }
 
 export interface AgentLock {
@@ -89,6 +90,22 @@ export interface HiveGateState {
   total: number;
 }
 
+export interface InteractionEntry {
+  id: string;
+  owner: string;
+  activity: string;
+  type: string;
+  acquired_at: string;
+  released_at: string | null;
+}
+
+export interface InteractionLog {
+  entries: InteractionEntry[];
+  byAgent: Record<string, Record<string, number>>;
+  totalByType: Record<string, number>;
+  mostFrequentType: string | null;
+}
+
 export interface HiveState {
   locks: Record<AgentName, AgentLock | null>;
   config: HiveConfig;
@@ -114,6 +131,7 @@ export interface HiveState {
   }>;
   pipeline: PipelineItem[];
   governance: GovernanceData;
+  interactionLog: InteractionLog;
   events: HiveEvent[];
   uptime: number;
 }
@@ -233,6 +251,10 @@ interface ParsedTelemetryConfig {
   configExists: boolean;
 }
 
+interface RawInteractionLog {
+  entries?: unknown;
+}
+
 interface ParsedCostEntry {
   agent: AgentName;
   occurredAt: string;
@@ -280,6 +302,7 @@ export class HiveService {
     path.join(this.hiveRoot, 'beehive', 'construcao', 'logs', 'custos.log'),
   ];
   private readonly proxyScriptPath = path.join(this.hiveRoot, '.agile-squad', 'proxy.sh');
+  private readonly interactionLogPath = path.join(this.hiveRoot, '.hive-agent', 'interaction-log.json');
   private readonly governanceRepository: GovernanceRepository;
   private readonly events: HiveEvent[] = [this.createEvent('info', 'Hive UI conectado')];
   private readonly stateListeners = new Set<(state: HiveState) => void | Promise<void>>();
@@ -314,6 +337,7 @@ export class HiveService {
       brainstorm,
       pipeline,
       governance,
+      interactionLog,
     ] =
       await Promise.all([
         this.readLocks(),
@@ -328,6 +352,7 @@ export class HiveService {
         this.readBrainstormFiles(),
         this.readPipeline(),
         this.governanceRepository.getAll(),
+        this.readInteractionLog(),
       ]);
 
     return {
@@ -356,6 +381,7 @@ export class HiveService {
       brainstorm,
       pipeline,
       governance,
+      interactionLog,
       events: [...this.events],
       uptime: this.getUptime(),
     };
@@ -884,6 +910,77 @@ export class HiveService {
     }
 
     return emptyLocks;
+  }
+
+  private async readInteractionLog(): Promise<InteractionLog> {
+    const emptyState: InteractionLog = {
+      entries: [],
+      byAgent: {},
+      totalByType: {},
+      mostFrequentType: null,
+    };
+
+    const raw = await this.readJsonFile<RawInteractionLog>(this.interactionLogPath);
+    if (!raw || !Array.isArray(raw.entries)) {
+      return emptyState;
+    }
+
+    const entries = raw.entries
+      .map((entry) => this.parseInteractionEntry(entry))
+      .filter((entry): entry is InteractionEntry => entry !== null);
+
+    if (entries.length === 0) {
+      return emptyState;
+    }
+
+    const byAgent: Record<string, Record<string, number>> = {};
+    const totalByType: Record<string, number> = {};
+
+    for (const entry of entries) {
+      byAgent[entry.owner] ??= {};
+      byAgent[entry.owner][entry.type] = (byAgent[entry.owner][entry.type] ?? 0) + 1;
+      totalByType[entry.type] = (totalByType[entry.type] ?? 0) + 1;
+    }
+
+    const mostFrequentType =
+      Object.entries(totalByType)
+        .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))[0]?.[0] ??
+      null;
+
+    return {
+      entries,
+      byAgent,
+      totalByType,
+      mostFrequentType,
+    };
+  }
+
+  private parseInteractionEntry(value: unknown): InteractionEntry | null {
+    if (!value || typeof value !== 'object') {
+      return null;
+    }
+
+    const candidate = value as Record<string, unknown>;
+
+    if (
+      typeof candidate.id !== 'string' ||
+      typeof candidate.owner !== 'string' ||
+      typeof candidate.activity !== 'string' ||
+      typeof candidate.type !== 'string' ||
+      typeof candidate.acquired_at !== 'string'
+    ) {
+      return null;
+    }
+
+    return {
+      id: candidate.id,
+      owner: candidate.owner,
+      activity: candidate.activity,
+      type: candidate.type,
+      acquired_at: candidate.acquired_at,
+      released_at:
+        typeof candidate.released_at === 'string' ? candidate.released_at : null,
+    };
   }
 
   private async readSession(): Promise<HiveState['session']> {

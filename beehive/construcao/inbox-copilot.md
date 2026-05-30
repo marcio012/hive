@@ -183,7 +183,7 @@ Critérios-chave: AC-01 (campo `governance` na API), AC-05 (sem erro 500 por arq
 **backlog_ref:** HIVE-016
 **thread:** telemetria-interacoes
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-033-TELEMETRIA-E2-INTERACOES-POR-TIPO.md
-**Status:** pendente
+**Status:** executada — telemetria de interações por tipo entregue no lock + Hive UI.
 
 Telemetria E2: adicionar `[tipo]` opcional no `hive lock set`, 9 categorias, gravar `interaction-log.json` append-only, expor via `getHiveState()`, e nova tela `/interacoes` com 3 cards por agente.
 Critérios-chave: AC-01 (grava no log), AC-02 (tipo ausente → `unknown` + warning), AC-03 (release fecha entrada), AC-05 (API retorna `interactionLog`), AC-08 (build limpo).

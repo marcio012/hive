@@ -2,12 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useHiveSocket } from './hooks/useHiveSocket';
 import { CentroDeControle } from './pages/CentroDeControle';
 import { FunilIntencao } from './pages/FunilIntencao';
+import { InteracoesPorTipo } from './pages/InteracoesPorTipo';
 import { MapaFabrica } from './pages/MapaFabrica';
 import { Telemetria } from './pages/Telemetria';
 import { TokensPorAgente } from './pages/TokensPorAgente';
 
 type PublicRoute = '/' | '/landing' | '/login';
-type CockpitRoute = '/mapa' | '/telemetria' | '/tokens' | '/funil' | '/controle';
+type CockpitRoute = '/mapa' | '/telemetria' | '/tokens' | '/interacoes' | '/funil' | '/controle';
 type Route = PublicRoute | CockpitRoute;
 
 type NavItem = {
@@ -37,6 +38,10 @@ function normalizeRoute(pathname: string): Route {
     return '/tokens';
   }
 
+  if (pathname === '/interacoes') {
+    return '/interacoes';
+  }
+
   if (pathname === '/controle') {
     return '/controle';
   }
@@ -57,6 +62,7 @@ function isCockpitRoute(route: Route): route is CockpitRoute {
     route === '/mapa' ||
     route === '/telemetria' ||
     route === '/tokens' ||
+    route === '/interacoes' ||
     route === '/funil' ||
     route === '/controle'
   );
@@ -112,6 +118,18 @@ const navItems: NavItem[] = [
     ),
   },
   {
+    route: '/interacoes',
+    label: 'Interações',
+    renderIcon: () => (
+      <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M4 19h16" />
+        <rect x="5" y="11" width="3" height="6" rx="1" />
+        <rect x="10.5" y="7" width="3" height="10" rx="1" />
+        <rect x="16" y="4" width="3" height="13" rx="1" />
+      </svg>
+    ),
+  },
+  {
     route: '/funil',
     label: 'Funil de Intenção',
     renderIcon: () => (
@@ -141,6 +159,10 @@ function renderScreen(route: CockpitRoute, data: ReturnType<typeof useHiveSocket
 
   if (route === '/tokens') {
     return <TokensPorAgente telemetry={data.telemetry} />;
+  }
+
+  if (route === '/interacoes') {
+    return <InteracoesPorTipo state={data.state} />;
   }
 
   if (route === '/funil') {

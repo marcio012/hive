@@ -111,6 +111,19 @@ assert_output_not_contains() {
   fi
 }
 
+assert_jq_equals() {
+  local file="$1"
+  local filter="$2"
+  local expected="$3"
+  local actual
+
+  actual="$(jq -r "$filter" "$file")"
+  if [[ "$actual" != "$expected" ]]; then
+    echo "Assertion failed: expected jq '$filter' on $file to be '$expected', got '$actual'"
+    exit 1
+  fi
+}
+
 LOCK_FILE="$TEST_REPO/.hive-agent/gemini-session.lock"
 
 assert_success run_session_start gemini --role coordenador
@@ -515,5 +528,63 @@ assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/ARCH-2026-05-29-
 assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/ARCH-2026-05-29-1200-claude.md" "trigger: agente-autonomo"
 assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "ARCH-2026-05-29-1200-claude-NOTIF-COPILOT"
 assert_file_contains "$TEST_REPO/beehive/construcao/inbox-gemini.md" "ARCH-2026-05-29-1200-claude-NOTIF-GEMINI"
+
+rm -f "$TEST_REPO/.hive-agent/interaction-log.json"
+printf '{}\n' > "$TEST_REPO/.hive-agent/locks.json"
+
+LOCK_ACQUIRE_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" npm run --silent squad:lock:acquire -- claude "WO-033" feat 2>&1
+)"
+assert_output_contains "$LOCK_ACQUIRE_OUTPUT" "[Tipo: feat]"
+assert_file_exists "$TEST_REPO/.hive-agent/interaction-log.json"
+assert_jq_equals "$TEST_REPO/.hive-agent/locks.json" '.owner' "claude"
+assert_jq_equals "$TEST_REPO/.hive-agent/locks.json" '.interaction_id' "ILG-$(date -u +%F)-001"
+assert_jq_equals "$TEST_REPO/.hive-agent/interaction-log.json" '.entries | length' "1"
+assert_jq_equals "$TEST_REPO/.hive-agent/interaction-log.json" '.entries[0].type' "feat"
+assert_jq_equals "$TEST_REPO/.hive-agent/interaction-log.json" '.entries[0].released_at' "null"
+
+LOCK_RELEASE_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" npm run --silent squad:lock:release -- claude 2>&1
+)"
+assert_output_contains "$LOCK_RELEASE_OUTPUT" "RELEASE: Colmeia liberada por 'claude'"
+assert_jq_equals "$TEST_REPO/.hive-agent/locks.json" 'keys | length' "0"
+if [[ "$(jq -r '.entries[0].released_at' "$TEST_REPO/.hive-agent/interaction-log.json")" == "null" ]]; then
+  echo "Assertion failed: expected first interaction to be closed on release"
+  exit 1
+fi
+
+UNKNOWN_LOCK_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" npm run --silent squad:lock:acquire -- claude "WO-033 sem tipo" 2>&1
+)"
+assert_output_contains "$UNKNOWN_LOCK_OUTPUT" "tipo de interação ausente"
+assert_output_contains "$UNKNOWN_LOCK_OUTPUT" "[Tipo: unknown]"
+assert_jq_equals "$TEST_REPO/.hive-agent/interaction-log.json" '.entries | length' "2"
+assert_jq_equals "$TEST_REPO/.hive-agent/interaction-log.json" '.entries[1].type' "unknown"
+assert_jq_equals "$TEST_REPO/.hive-agent/locks.json" '.interaction_id' "ILG-$(date -u +%F)-002"
+
+UNKNOWN_RELEASE_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" npm run --silent squad:lock:release -- claude 2>&1
+)"
+assert_output_contains "$UNKNOWN_RELEASE_OUTPUT" "RELEASE: Colmeia liberada por 'claude'"
+if [[ "$(jq -r '.entries[1].released_at' "$TEST_REPO/.hive-agent/interaction-log.json")" == "null" ]]; then
+  echo "Assertion failed: expected second interaction to be closed on release"
+  exit 1
+fi
+
+rm -f "$TEST_REPO/.hive-agent/interaction-log.json"
+cat > "$TEST_REPO/.hive-agent/locks.json" <<'EOF'
+{"owner":"claude","activity":"legacy-lock","acquired_at":"2026-05-29T00:00:00Z"}
+EOF
+LEGACY_RELEASE_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" npm run --silent squad:lock:release -- claude 2>&1
+)"
+assert_output_contains "$LEGACY_RELEASE_OUTPUT" "RELEASE: Colmeia liberada por 'claude'"
+assert_jq_equals "$TEST_REPO/.hive-agent/locks.json" 'keys | length' "0"
+assert_jq_equals "$TEST_REPO/.hive-agent/interaction-log.json" '.entries | length' "0"
 
 echo "PASS: Gemini role guard integration"
