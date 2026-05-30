@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { type AgentName, type HiveState, type TelemetryState } from '../hooks/useHiveSocket';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
+import { ActiveItem } from '../components/ActiveItem';
+import { EsteiraPorProcesso } from './EsteiraPorProcesso';
 
 type MapaFabricaProps = {
   state: HiveState | null;
@@ -205,91 +207,13 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
           })}
         </div>
 
-        <div className="section-label" style={{ marginTop: 28 }}>
-          <span className="n">02</span>
-          Esteira de Produção
-          <span className="line" />
-          <span className="flow-legend">
-            <span className="dot green pulse" style={{ display: 'inline-block' }} />
-            {' '}fluindo
-          </span>
-        </div>
+        <ActiveItem 
+          activeIssue={activeIssue}
+          lastAction={lastAction}
+          nextStep={nextStep}
+        />
 
-        <div className="flow-belt-wrap">
-          <div className="flow-track">
-            {STATIONS.map((station, index) => {
-              const count = stationCount[station.key];
-              const active =
-                station.key !== 'marcio' && station.key !== 'entrega'
-                  ? Boolean(state?.locks?.[station.key as AgentName])
-                  : false;
-              return (
-                <div key={station.key} style={{ display: 'contents' }}>
-                  <div className={`flow-station ${station.cls}${active ? ' active' : ''}`}>
-                    {active ? (
-                      <span className="fs-pulse">
-                        <span className="dot green pulse" />
-                      </span>
-                    ) : null}
-                    <div className={`fs-av av-${station.cls}`}>{station.initial}</div>
-                    <div className="fs-name">{station.name}</div>
-                    <div className="fs-role">{station.role}</div>
-                    {count ? (
-                      <div className="fs-count">
-                        <span className="fc-n">{count.n}</span> {count.label}
-                      </div>
-                    ) : null}
-                  </div>
-                  {index < STATIONS.length - 1 ? (
-                    <div className="flow-conveyor">
-                      <div className="belt-stripes" />
-                      <span className={`flow-token t${index + 1}`} />
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-          <div className="flow-return">
-            <span className="fr-label">manutenção contínua ↺</span>
-          </div>
-        </div>
-
-        {transitDebates.length > 0 || copilotWo ? (
-          <div className="flow-items">
-            {transitDebates.map((d) => (
-              <div key={d.id} className="flow-card">
-                <div className="fci-top">
-                  <span className="fci-id">{d.id}</span>
-                  <span className="fci-stage">{d.status}</span>
-                </div>
-                <div className="fci-title">{d.title}</div>
-                <ArtifactFilePath path={d.file_path} className="artifact-path--compact" />
-                <div className="fci-foot">
-                  <span className="mini-av av-claude">C</span>
-                  <span className="fci-eta">→ {d.responsible}</span>
-                </div>
-              </div>
-            ))}
-            {copilotWo ? (
-              <div className="flow-card active">
-                <div className="fci-top">
-                  <span className="fci-id">{activeCopilotPipelineItem?.id ?? 'WO'}</span>
-                  <span className="fci-stage fci-exec">execução</span>
-                </div>
-                <div className="fci-title">{copilotWo}</div>
-                <ArtifactFilePath
-                  path={activeCopilotPipelineItem?.file_path ?? null}
-                  className="artifact-path--compact"
-                />
-                <div className="fci-foot">
-                  <span className="mini-av av-copilot">P</span>
-                  <span className="fci-eta">→ Entrega</span>
-                </div>
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+        <EsteiraPorProcesso state={state} />
 
         <div className="section-label">
           <span className="n">03</span>
@@ -398,31 +322,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
           })}
         </div>
 
-        <div className="active-item">
-          <div className="ai-head">
-            <span className="bolt">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" />
-              </svg>
-            </span>
-            <h3>Item Ativo</h3>
-            <span className="pill">foco da fábrica</span>
-          </div>
-          <div className="ai-grid">
-            <div className="ai-col">
-              <div className="lab">Issue ativa</div>
-              <div className="issue">{activeIssue}</div>
-            </div>
-            <div className="ai-col">
-              <div className="lab">Última ação</div>
-              <div className="val">{lastAction}</div>
-            </div>
-            <div className="ai-col">
-              <div className="lab">Próximo passo</div>
-              <div className="next">{nextStep}</div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </main>
   );

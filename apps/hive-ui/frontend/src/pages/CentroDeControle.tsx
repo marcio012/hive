@@ -11,6 +11,8 @@ import {
   type RoleEntry,
 } from '../hooks/useHiveSocket';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
+import { ActiveItem } from '../components/ActiveItem';
+import { DebateCard } from '../components/DebateCard';
 import { EsteiraPorProcesso } from './EsteiraPorProcesso';
 
 type CentroDeControleProps = {
@@ -1213,10 +1215,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
               </button>
             </div>
 
-            <div className="section-label" style={{ marginTop: 24 }}>
-              <span className="n">02</span> Esteira de Processos <span className="line" />
-            </div>
-            {view === 'v3' ? <EsteiraPorProcesso flowItems={state?.flowItems ?? []} /> : renderPipeline()}
+            {view === 'v3' ? <EsteiraPorProcesso state={state} /> : renderPipeline()}
 
             {activeLocks.length === 0 && totalInboxPending === 0 && totalBlocked === 0 && gate.total === 0 ? (
               <div className="cc2-clean" style={{ marginBottom: 18 }}>
@@ -1247,26 +1246,11 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                 </div>
                 <div className="pb" style={{ paddingTop: 6 }}>
                   {activeDebates.length > 0 ? (
-                    activeDebates.map((entry) => (
-                      <div
-                        key={entry.id}
-                        className={`debate ${debateStateClass(entry) === 'turn' ? 'active' : ''}`}
-                      >
-                        <div className="debate-top">
-                          <span className="debate-id">{entry.id}</span>
-                          <span className={`debate-state ${debateStateClass(entry)}`}>{entry.status}</span>
-                        </div>
-                        <div className="debate-title">{entry.title}</div>
-                        <div className="phase-bar">
-                          <i style={phaseStyle(getDebatePhase(entry.status))} />
-                        </div>
-                        <ArtifactFilePath path={entry.file_path} className="artifact-path--compact" />
-                        <div className="debate-meta">
-                          {entry.status}
-                          <span className="debate-block">{entry.responsible}</span>
-                        </div>
-                      </div>
-                    ))
+                    <div className="debates-grid">
+                      {activeDebates.map((entry) => (
+                        <DebateCard key={entry.id} entry={entry} />
+                      ))}
+                    </div>
                   ) : (
                     <div className="cc2-clean">
                       <svg viewBox="0 0 24 24" fill="none" height="15" stroke="currentColor" strokeWidth="2.2" width="15">
