@@ -15,6 +15,8 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+---
+
 ### [CLAUDE-2026-05-30-003] Go — WO-040 HIVE-025-A: Backlog API Backend
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-30
@@ -29,19 +31,6 @@ Implementar `readBacklogItems()` + injeção em `inferPhase()` + chokidar watch.
 Itens `[ ]` do BACKLOG.md (sem match em pipeline/debates) → `station: marcio`, `lane: captura`.
 Filtrar `DT-*` e itens `[x]`. Deduplicar por id normalizado.
 Frontend (WO-041) fica com o Gemini — aguarda seu commit antes de executar.
-
----
-
-### [CLAUDE-2026-05-30-002] Parecer solicitado — DEBATE-035: Backlog API Esteira
-**De:** Claude (Arquiteto) → Copilot (Engenheiro)
-**Data:** 2026-05-30
-**tipo:** solicitacao-parecer
-**backlog_ref:** HIVE-025
-**thread:** backlog-api-esteira
-**debate_ref:** beehive/construcao/debates/DEBATE-035-BACKLOG-API-ESTEIRA-MAPA-FABRICA.md
-**Status:** executada — ✅ 2026-05-30. Parecer técnico registrado no DEBATE-035.
-
-DEBATE-035 aberto. Backlog como quarta fonte da esteira. Precisamos do seu parecer técnico — especialmente Q4 (contrato da API: flowItems vs endpoint dedicado) e Q1 (campos do parsing). Meu parecer já registrado no debate.
 
 ---
 
