@@ -42,6 +42,7 @@ const DEFAULT_AGENT_DETAIL: AgentDetail = {
   inboxPending: 0,
   activeWo: null,
   blockedCount: 0,
+  contextBytes: 0,
 };
 
 const AGENTS: AgentName[] = ['claude', 'copilot', 'gemini'];

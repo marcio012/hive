@@ -60,6 +60,7 @@ export interface AgentDetail {
   inboxPending: number;
   activeWo: string | null;
   blockedCount: number;
+  contextBytes: number;
 }
 
 export interface DebateEntry {
@@ -417,14 +418,17 @@ export class HiveService {
         claude: {
           ...inboxDetails.claude,
           activeWo: locks.claude?.activity ?? null,
+          contextBytes: inboxDetails.claude.contextBytes,
         },
         copilot: {
           ...inboxDetails.copilot,
           activeWo: locks.copilot?.activity ?? null,
+          contextBytes: inboxDetails.copilot.contextBytes,
         },
         gemini: {
           ...inboxDetails.gemini,
           activeWo: locks.gemini?.activity ?? null,
+          contextBytes: inboxDetails.gemini.contextBytes,
         },
       },
       gate,
@@ -1090,17 +1094,55 @@ export class HiveService {
     return Object.fromEntries(counts) as Record<AgentName, number>;
   }
 
+  private async readAgentContextBytes(agent: AgentName): Promise<number> {
+    const contextFiles: Record<AgentName, string[]> = {
+      claude: [
+        path.join(this.hiveRoot, 'beehive', '.claude', 'CLAUDE.md'),
+        path.join(this.hiveRoot, 'AGENTS.md'),
+        path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-claude.md'),
+      ],
+      copilot: [
+        path.join(this.hiveRoot, 'COPILOT.md'),
+        path.join(this.hiveRoot, 'beehive', '.copilot', 'COPILOT.md'),
+        path.join(this.hiveRoot, 'AGENTS.md'),
+        path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-copilot-hive.md'),
+      ],
+      gemini: [
+        path.join(this.hiveRoot, 'GEMINI.md'),
+        path.join(this.hiveRoot, 'AGENTS.md'),
+        path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-gemini.md'),
+      ],
+    };
+
+    const sizes = await Promise.all(
+      contextFiles[agent].map(async (filePath) => {
+        try {
+          const stat = await fs.stat(filePath);
+          return stat.size;
+        } catch {
+          return 0;
+        }
+      }),
+    );
+
+    return sizes.reduce((sum, s) => sum + s, 0);
+  }
+
   private async readAgentInboxDetails(): Promise<
     Record<AgentName, Omit<AgentDetail, 'activeWo'>>
   > {
     const details = await Promise.all(
       AGENTS.map(async (agent) => {
-        const { pending, blocked } = await this.readInboxPending(agent);
+        const [{ pending, blocked }, contextBytes] = await Promise.all([
+          this.readInboxPending(agent),
+          this.readAgentContextBytes(agent),
+        ]);
         return [
           agent,
           {
             inboxPending: pending,
             blockedCount: blocked,
+            contextBytes,
           },
         ] as const;
       }),

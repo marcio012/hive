@@ -61,6 +61,12 @@ function formatPercent(value: number | null | undefined): string {
   return `${Math.round(value)}%`;
 }
 
+function formatContextBytes(bytes: number): string {
+  if (bytes === 0) return '—';
+  if (bytes < 1024) return `${bytes} B`;
+  return `${(bytes / 1024).toFixed(1)} KB`;
+}
+
 function formatMetric(value: number | null | undefined, digits = 1): string {
   if (value === null || value === undefined) {
     return '—';
@@ -139,7 +145,13 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
                       <span className={`dot ${active ? 'green' : 'gray'}`} />
                       {active ? 'Em operação' : 'Livre'}
                     </span>
-                    <div className="agent-name">{agent.name}</div>
+                    <div className="agent-name-row">
+                      <div className="agent-name">{agent.name}</div>
+                      <div className="agent-context-cost">
+                        <span>{formatContextBytes(state?.agentDetails?.[agent.key]?.contextBytes ?? 0)}</span>
+                        <span className="agent-context-pct">init</span>
+                      </div>
+                    </div>
                     <div className="agent-model">
                       {agent.model} · {active ? 'lock adquirido' : 'aguardando despacho'}
                     </div>

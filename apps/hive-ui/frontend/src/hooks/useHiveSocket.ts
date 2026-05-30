@@ -49,6 +49,7 @@ export interface AgentDetail {
   inboxPending: number;
   activeWo: string | null;
   blockedCount: number;
+  contextBytes: number;
 }
 
 export interface DebateEntry {
