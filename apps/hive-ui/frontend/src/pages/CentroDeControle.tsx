@@ -3,10 +3,12 @@ import {
   type AgentDetail,
   type AgentName,
   type DebateEntry,
+  type DirectiveEntry,
   type GateItem,
   type HiveState,
   type OrchestratorStatus,
   type PipelineItem,
+  type RoleEntry,
 } from '../hooks/useHiveSocket';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
 
@@ -16,7 +18,7 @@ type CentroDeControleProps = {
 
 type HiveConfig = NonNullable<HiveState['config']>;
 type DispatchAgent = AgentName;
-type ControlView = 'v1' | 'v2';
+type ControlView = 'v1' | 'v2' | 'governance';
 
 type DispatchDialogState = {
   agent: DispatchAgent | '';
@@ -175,9 +177,37 @@ function blockedInboxText(count: number): string {
 }
 
 function viewSubtitle(view: ControlView): string {
+  if (view === 'governance') {
+    return 'DIRs, manifesto e papéis do squad em leitura única';
+  }
+
   return view === 'v2'
     ? 'Visibilidade total do squad em tempo real'
     : 'Decisões pendentes — aja sem sair do painel';
+}
+
+function governanceBadgeClass(status?: string): string {
+  return status === 'revogado' ? 'gov-badge gov-badge--revogado' : 'gov-badge gov-badge--ativo';
+}
+
+function governanceStatusLabel(status?: string): string {
+  return status === 'revogado' ? 'revogado' : 'ativo';
+}
+
+function governanceAgentLabel(agent: RoleEntry['agente']): string {
+  if (agent === 'claude') {
+    return 'Claude';
+  }
+  if (agent === 'copilot') {
+    return 'Copilot';
+  }
+  if (agent === 'gemini') {
+    return 'Gemini';
+  }
+  if (agent === 'marcio') {
+    return 'Márcio';
+  }
+  return agent;
 }
 
 function phaseStyle(phase: number): CSSProperties {
@@ -233,6 +263,11 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
   const debates = state?.debates ?? [];
   const gate = state?.gate ?? { pendentes: [], total: 0 };
   const pipelineItems = state?.pipeline ?? [];
+  const governance = state?.governance ?? {
+    directives: [] as DirectiveEntry[],
+    manifesto: { principios: [] },
+    roles: [] as RoleEntry[],
+  };
 
   const activeLocks = useMemo(
     () =>
@@ -705,6 +740,117 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
     );
   }
 
+  function renderGovernance() {
+    const directives = governance.directives ?? [];
+    const principles = governance.manifesto?.principios ?? [];
+    const roles = governance.roles ?? [];
+
+    return (
+      <div id="cc-governance">
+        <div className="section-label">
+          <span className="n">01</span> Explorador de DIRs <span className="line" />
+        </div>
+        <section className="panel gov-section">
+          <div className="ph">
+            <span className="ph-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M7 4h8l4 4v12H7z" />
+                <path d="M15 4v4h4" />
+                <path d="M10 12h6M10 16h5" />
+              </svg>
+            </span>
+            <h3>Diretrizes ativas do Hive</h3>
+            <span className="ph-meta">{directives.length > 0 ? `${directives.length} DIRs` : 'sem dados'}</span>
+          </div>
+          <div className="pb">
+            {directives.length > 0 ? (
+              <div className="gov-dir-list">
+                {directives.map((directive) => (
+                  <article key={directive.id} className="gov-dir-row">
+                    <div className="gov-dir-main">
+                      <div className="gov-dir-head">
+                        <span className="gov-dir-id">{directive.id}</span>
+                        <span className={governanceBadgeClass(directive.status)}>
+                          {governanceStatusLabel(directive.status)}
+                        </span>
+                      </div>
+                      <h4>{directive.titulo}</h4>
+                      <p>{directive.resumo}</p>
+                    </div>
+                    {directive.data ? <span className="gov-dir-date">{directive.data}</span> : null}
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="cc2-clean">Nenhuma diretriz disponível no momento.</div>
+            )}
+          </div>
+        </section>
+
+        <div className="section-label" style={{ marginTop: 24 }}>
+          <span className="n">02</span> Manifesto Vivo <span className="line" />
+        </div>
+        <section className="panel gov-section">
+          <div className="ph">
+            <span className="ph-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v18H7.5A2.5 2.5 0 0 0 5 23z" />
+                <path d="M5 5.5v15A2.5 2.5 0 0 1 7.5 18H19" />
+              </svg>
+            </span>
+            <h3>Princípios do manifesto</h3>
+            <span className="ph-meta">{principles.length > 0 ? `${principles.length} princípios` : 'sem dados'}</span>
+          </div>
+          <div className="pb">
+            {principles.length > 0 ? (
+              <div className="gov-manifesto-list">
+                {principles.map((principio) => (
+                  <details key={principio.titulo} className="gov-manifesto-item">
+                    <summary>{principio.titulo}</summary>
+                    <div className="gov-manifesto-body">{principio.corpo}</div>
+                  </details>
+                ))}
+              </div>
+            ) : (
+              <div className="cc2-clean">Manifesto indisponível no momento.</div>
+            )}
+          </div>
+        </section>
+
+        <div className="section-label" style={{ marginTop: 24 }}>
+          <span className="n">03</span> Mindset por agente <span className="line" />
+        </div>
+        <section className="panel gov-section">
+          <div className="ph">
+            <span className="ph-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M7 19v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </span>
+            <h3>Papéis do squad</h3>
+            <span className="ph-meta">{roles.length > 0 ? `${roles.length} agentes` : 'sem dados'}</span>
+          </div>
+          <div className="pb">
+            {roles.length > 0 ? (
+              <div className="gov-role-grid">
+                {roles.map((role) => (
+                  <article key={role.agente} className="gov-role-card">
+                    <div className="gov-role-agent">{governanceAgentLabel(role.agente)}</div>
+                    <h4>{role.papel}</h4>
+                    <p>{role.descricao}</p>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="cc2-clean">Papéis indisponíveis no momento.</div>
+            )}
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <main className="screen active">
       <div className="page">
@@ -757,7 +903,17 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </button>
-            <span className="bs-view-chip">Governança</span>
+            <button
+              className={`bs-view-btn ${view === 'governance' ? 'active' : ''}`}
+              onClick={() => setView('governance')}
+              title="Governança"
+              type="button"
+            >
+              <svg viewBox="0 0 24 24" fill="none" height="16" stroke="currentColor" strokeWidth="1.8" width="16">
+                <path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z" />
+                <path d="M9 12h6M12 9v6" />
+              </svg>
+            </button>
             <span className={`bs-view-chip bs-view-chip-gate ${gate.total > 0 ? 'alert' : ''}`}>
               Gate
               {gate.total > 0 ? <span className="gate-counter">{gate.total}</span> : null}
@@ -1108,6 +1264,8 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
             </div>
           </div>
         ) : null}
+
+        {view === 'governance' ? renderGovernance() : null}
       </div>
     </main>
   );

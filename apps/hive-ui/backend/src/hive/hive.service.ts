@@ -3,6 +3,11 @@ import { execFile as execFileCallback } from 'child_process';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
+import {
+  FileBasedGovernanceRepository,
+  type GovernanceData,
+  type GovernanceRepository,
+} from './governance.repository';
 
 type AgentName = 'claude' | 'copilot' | 'gemini';
 type PipelineStage = 'triagem' | 'execucao' | 'revisao' | 'concluido';
@@ -108,6 +113,7 @@ export interface HiveState {
     responsible: string | null;
   }>;
   pipeline: PipelineItem[];
+  governance: GovernanceData;
   events: HiveEvent[];
   uptime: number;
 }
@@ -274,8 +280,13 @@ export class HiveService {
     path.join(this.hiveRoot, 'beehive', 'construcao', 'logs', 'custos.log'),
   ];
   private readonly proxyScriptPath = path.join(this.hiveRoot, '.agile-squad', 'proxy.sh');
+  private readonly governanceRepository: GovernanceRepository;
   private readonly events: HiveEvent[] = [this.createEvent('info', 'Hive UI conectado')];
   private readonly stateListeners = new Set<(state: HiveState) => void | Promise<void>>();
+
+  constructor() {
+    this.governanceRepository = new FileBasedGovernanceRepository(this.hiveRoot);
+  }
 
   getWatchPaths(): string[] {
     return [
@@ -302,6 +313,7 @@ export class HiveService {
       debates,
       brainstorm,
       pipeline,
+      governance,
     ] =
       await Promise.all([
         this.readLocks(),
@@ -315,6 +327,7 @@ export class HiveService {
         this.readActiveDebates(),
         this.readBrainstormFiles(),
         this.readPipeline(),
+        this.governanceRepository.getAll(),
       ]);
 
     return {
@@ -342,6 +355,7 @@ export class HiveService {
       debates,
       brainstorm,
       pipeline,
+      governance,
       events: [...this.events],
       uptime: this.getUptime(),
     };

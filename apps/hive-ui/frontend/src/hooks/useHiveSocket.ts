@@ -55,6 +55,24 @@ export interface GateItem {
   file_path: string;
 }
 
+export interface DirectiveEntry {
+  id: string;
+  titulo: string;
+  resumo: string;
+  data?: string;
+  status?: string;
+}
+
+export interface ManifestoContent {
+  principios: Array<{ titulo: string; corpo: string }>;
+}
+
+export interface RoleEntry {
+  agente: string;
+  papel: string;
+  descricao: string;
+}
+
 export interface HiveState {
   locks: Record<AgentName, { activity: string | null; acquiredAt: string | null } | null>;
   config: {
@@ -91,6 +109,11 @@ export interface HiveState {
     responsible: string | null;
   }>;
   pipeline: PipelineItem[];
+  governance: {
+    directives: DirectiveEntry[];
+    manifesto: ManifestoContent;
+    roles: RoleEntry[];
+  };
   events: HiveEvent[];
   uptime: number;
 }

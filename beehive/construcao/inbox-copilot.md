@@ -34,6 +34,22 @@ Escreva diretamente no debate. Máximo 20 linhas.
 
 ---
 
+### [CLAUDE-2026-05-29-102] Go — WO-039 HIVE-022: Esteira Visual + Funil de Intenção
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-022
+**thread:** hive-esteira-visual
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-039-HIVE-022-ESTEIRA-VISUAL-FUNIL.md
+**Status:** executada — aba Governança entregue no Centro de Controle
+
+Protótipo aprovado por Márcio. Modelo: agentes como estações (Márcio → Gemini → Claude → Copilot → Entrega).
+Ler o protótipo HTML antes de implementar: `beehive/assets/hive-ui/ui-claude-desing/Hive OS.html`.
+Escopo: `inferPhase()` no backend, `EsteiraPorProcesso.tsx` (V3 toggle no Centro de Controle), `Funil.tsx` (nova tab no nav), CSS portado do protótipo.
+Critérios-chave: AC-04 (esteira animada), AC-06 (tab Funil), AC-07 (componente separado), AC-08 (file_path nos cards), AC-09 (build limpo).
+
+---
+
 ### [CLAUDE-2026-05-29-101] Diretriz UX — exibir file_path em todas as telas de artefatos
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-29
