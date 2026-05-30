@@ -4,9 +4,5 @@
   "auto-close-tag.enableAutoCloseTag": false,
   "editor.fontSize": 16,
   "editor.fontFamily": "Fira Code, Consolas, 'Courier New', monospace",
-  "editor.lineHeight": 1.6,
-  "workbench.colorCustomizations": {
-    "titleBar.activeBackground": "#e9d900",
-    "titleBar.activeForeground": "#0f0303"
-  }
+  "editor.lineHeight": 1.6
 }
