@@ -22,7 +22,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **backlog_ref:** HIVE-025
 **thread:** backlog-api-esteira
 **debate_ref:** beehive/construcao/debates/DEBATE-035-BACKLOG-API-ESTEIRA-MAPA-FABRICA.md
-**Status:** pendente
+**Status:** executada — ✅ 2026-05-30. Parecer técnico registrado no DEBATE-035.
 
 DEBATE-035 aberto. Backlog como quarta fonte da esteira. Precisamos do seu parecer técnico — especialmente Q4 (contrato da API: flowItems vs endpoint dedicado) e Q1 (campos do parsing). Meu parecer já registrado no debate.
 

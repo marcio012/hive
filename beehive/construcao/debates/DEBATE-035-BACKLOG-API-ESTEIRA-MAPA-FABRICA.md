@@ -13,15 +13,15 @@ backlog_ref: HIVE-025
 ## 📊 Status
 
 **Participantes:**
-- Gemini (PO): [ ] ainda não se manifestou
+- Gemini (PO): ✅ parecer emitido (2026-05-30)
 - Claude (Arquiteto): ✅ parecer emitido (2026-05-30)
-- Copilot (Engenheiro): [ ] ainda não se manifestou
+- Copilot (Engenheiro): ✅ parecer emitido (2026-05-30)
 
 **Fases:**
 - [x] 1. Abertura
-- [ ] 2. Parecer Gemini
+- [x] 2. Parecer Gemini
 - [x] 3. Parecer Claude
-- [ ] 4. Parecer Copilot
+- [x] 4. Parecer Copilot
 - [ ] 5. Consolidação / Veredito
 - [ ] 6. Aprovação Márcio
 - [ ] 7. Work Orders despachadas
@@ -99,13 +99,34 @@ Itens de backlog visíveis na esteira: qual estação e lane?
 
 ---
 
-## 4. Parecer do Gemini — DEBATE-035
-*(aguardando)*
+## 4. Parecer do Gemini (PO) — DEBATE-035
+**Data:** 2026-05-30
+**Posição:** ✅ Aprovado (GO!)
+
+**Q1 — Escopo:** Mínimo (`id`, `titulo`, `status`, `prioridade`). Foco no estoque de intenções e visibilidade estratégica.
+**Q2 — Critério de visibilidade:** Opção A. Mostrar apenas itens `[ ]` sem debate ou WO ativa para evitar redundância visual e refletir o "estado da arte" do fluxo.
+**Q3 — Estação:** Opção A (`station: backlog`, `lane: captura`). Como a esteira foi expandida para 8 fases, esses itens devem alimentar a estação inicial (**Backlog / ⚡**).
+**Q4 — Contrato:** Opção A (`flowItems`). Melhor caminho para integração rápida via WebSocket.
+**Q5 — Concluídos:** Opção B. Não mostrar itens `[x]`; focar na energia do que está pendente.
+
+**Visão Estratégica:** A integração transforma o `BACKLOG.md` no "pulmão" da fábrica, permitindo que o Márcio visualize o estoque de intenções antes mesmo de entrarem em rito formal de debate.
 
 ---
 
 ## 5. Parecer do Copilot — DEBATE-035
-*(aguardando)*
+**Data:** 2026-05-30
+**Posição:** ✅ Aprovado (GO)
+
+**Q1 — Escopo:** parser regex é viável para V1 se separar explicitamente três casos: `- [ ] HIVE-*`, `- [x] HIVE-*` e `- **DT-*`.
+Extrair só `id`, `titulo`, `status` e `prioridade`; `commit`/`data` podem ficar fora porque hoje a esteira só precisa de visibilidade operacional.
+
+**Q4 — Contrato:** Opção A em `flowItems`. O backend já concentra a composição da esteira em `inferPhase()`, então backlog como quarta fonte encaixa sem breaking change.
+O WebSocket também já observa `beehive/` inteiro em `getWatchPaths()` + `chokidar.watch(...)`; na prática o custo extra não é novo watch, é só mais um parse leve por refresh.
+
+**Recomendação técnica:** deduplicar por `backlog_ref`/`id` normalizado (`HIVE-NNN`) contra debates e pipeline antes de inserir o item na lane `captura`.
+`DT-*` deve ser filtrado na origem e não entrar em `flowItems`.
+
+**Risco baixo:** o formato atual do `BACKLOG.md` é estável e pequeno; um parse linear por mudança é barato. Se o arquivo crescer muito, dá para evoluir depois para parser por seções/cache por mtime.
 
 ---
 
