@@ -1,10 +1,8 @@
 import React from 'react';
 import { type AgentName, type HiveState } from '../hooks/useHiveSocket';
 
-type AgentCardKey = AgentName | 'marcio';
-
 type AgentCardProps = {
-  agentKey: AgentCardKey;
+  agentKey: AgentName | 'marcio';
   name: string;
   role: string;
   model: string;
@@ -12,8 +10,8 @@ type AgentCardProps = {
   state: HiveState | null;
 };
 
-const CTX_WARN = 8 * 1024; // 8 KB
-const CTX_CRITICAL = 15 * 1024; // 15 KB
+const CTX_WARN = 8 * 1024;
+const CTX_CRITICAL = 15 * 1024;
 
 function contextLevel(bytes: number): 'ok' | 'warn' | 'critical' {
   if (bytes === 0) return 'ok';
@@ -28,35 +26,19 @@ function formatContextBytes(bytes: number): string {
   return `${(bytes / 1024).toFixed(1)} KB`;
 }
 
-const CTX_LABEL: Record<'ok' | 'warn' | 'critical', string> = {
-  ok: 'init saudável',
-  warn: 'monitorar',
-  critical: 'higiene urgente',
-};
-
-function getAgentValue<T>(
-  record: Record<AgentName, T> | null | undefined,
-  agent: AgentCardKey,
-): T | undefined {
-  if (!record) return undefined;
-  switch (agent) {
-    case 'claude':
-      return record.claude;
-    case 'copilot':
-      return record.copilot;
-    case 'gemini':
-      return record.gemini;
-    case 'marcio':
-      return undefined;
-  }
-}
-
 function formatLockAge(value: string | null): string {
-  if (!value) return 'sem lock recente';
+  if (!value) return 'ocioso';
   const diffMs = Date.now() - new Date(value).getTime();
   if (Number.isNaN(diffMs) || diffMs < 0) return 'agora';
   const minutes = Math.max(0, Math.floor(diffMs / 60000));
-  return minutes === 0 ? 'agora' : `há ${minutes}min`;
+  return `há ${minutes} min`;
+}
+
+function formatStartTime(value: string | null): string {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return `iniciou ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 
 export const AgentCard: React.FC<AgentCardProps> = ({
@@ -67,62 +49,79 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   initial,
   state,
 }) => {
-  const lock = getAgentValue(state?.locks ?? null, agentKey) ?? null;
+  const lock = state?.locks[agentKey as AgentName] ?? null;
   const active = Boolean(lock);
-  const inboxCount = getAgentValue(state?.inboxCounts ?? null, agentKey) ?? 0;
-  const inboxLevel = inboxCount >= 3 ? 'red' : inboxCount >= 1 ? 'gold' : null;
-  const ctxBytes = getAgentValue(state?.agentDetails ?? null, agentKey)?.contextBytes ?? 0;
+  const ctxBytes = state?.agentDetails?.[agentKey as AgentName]?.contextBytes ?? 0;
   const ctxLevel = contextLevel(ctxBytes);
 
   return (
-    <article className={`agent-card ${active ? 'active' : 'free'} ctx-${ctxLevel}`}>
-      {active ? <span className="dot green pulse agent-corner" /> : null}
+    <article className={`agent-card-v2 ${active ? 'is-active' : 'is-free'} agent-${agentKey} ctx-${ctxLevel}`}>
+      <div className="agent-v2-header">
+        {/* Ícone Estilizado */}
+        <div className="agent-v2-icon">
+          {agentKey === 'claude' && (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V15Z" />
+            </svg>
+          )}
+          {agentKey === 'copilot' && (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="m18 16 4-4-4-4" /><path d="m6 8-4 4 4 4" /><path d="m14.5 4-5 16" />
+            </svg>
+          )}
+          {agentKey === 'gemini' && (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" /><path d="m16.2 7.8-2 2.1-2.2 2.2-2.1 2.1" /><path d="m7.8 7.8 2.1 2 2.2 2.2 2.1 2.1" />
+            </svg>
+          )}
+          {agentKey === 'marcio' && <span className="initial-m">{initial}</span>}
+        </div>
 
-      <div className="agent-top">
-        {/* Coluna 1: Ícone */}
-        <div className="agent-ico">{initial}</div>
-
-        {/* Coluna 2: Informação */}
-        <div className="agent-meta">
-          <div className="agent-name-row">
-            <div className="agent-name">Agente</div>
-            <span className={`badge ${active ? 'green' : 'gray'}`}>
-              <span className={`dot ${active ? 'green' : 'gray'}`} />
-              {active ? 'Ativo' : 'Livre'}
-            </span>
+        <div className="agent-v2-meta">
+          <div className="agent-v2-status">
+            <span className="status-dot"></span>
+            {active ? 'Em operação' : 'Livre'}
           </div>
-          <div className="agent-model">{name} · {role}</div>
+          <div className="agent-v2-title">Agente</div>
+          <div className="agent-v2-subtitle">{name} · {role}</div>
         </div>
 
-        {/* Coluna 3: Sinal do Init (Bytes) */}
-        <div className={`agent-context-cost ctx-cost--${ctxLevel} context-emphasis`}>
-          <span className="ctx-bytes">{formatContextBytes(ctxBytes)}</span>
-          <span className="ctx-badge">{CTX_LABEL[ctxLevel]}</span>
+        {/* Indicador de Inicialização (Bytes) - Integrado como Badge Superior */}
+        <div className={`agent-v2-bytes ctx-level-${ctxLevel}`}>
+          {formatContextBytes(ctxBytes)}
         </div>
+
+        {/* Ponto de status no canto */}
+        <div className="corner-status-dot"></div>
       </div>
 
-      <div className={`agent-activity ${active ? '' : 'idle'}`}>
-        <div className="what">
-          {active ? <span className="tag">▸</span> : null}
-          {lock?.activity ?? 'Sem operação ativa — pronto para receber tarefa'}
+      <div className="agent-v2-body">
+        <div className="agent-v2-activity">
+          {active ? (
+            <>
+              <span className="arrow">▸</span>
+              {lock?.activity}
+            </>
+          ) : (
+            <span className="idle-text">Sem operação ativa — pronto para receber tarefa</span>
+          )}
         </div>
-        {active ? (
-          <div className="act-bar">
-            <i />
-          </div>
-        ) : null}
-        <div className="when">
-          <span className={`dot ${active ? 'green' : 'gray'}`} />
-          {formatLockAge(lock?.acquiredAt ?? null)}
-          {inboxLevel ? (
-            <span className={`inbox-badge inbox-${inboxLevel}`}>
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="m3 7 9 6 9-6" />
-              </svg>
-              {inboxCount}
-            </span>
-          ) : null}
+
+        <div className="agent-v2-footer">
+          <span className="time-ago">{formatLockAge(lock?.acquiredAt ?? null)}</span>
+          {active && lock?.acquiredAt && (
+            <>
+              <span className="sep">·</span>
+              <span className="start-time">{formatStartTime(lock.acquiredAt)}</span>
+            </>
+          )}
+          {!active && (
+            <>
+              <span className="sep">·</span>
+              <span className="model-name">{model}</span>
+            </>
+          )}
         </div>
       </div>
     </article>
