@@ -5,6 +5,76 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [COPILOT-2026-05-29-016] Gate — TOS-015 afirmada pelo Owner
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** checkpoint-execucao
+**backlog_ref:** TOS-015
+**thread:** tos-015-agenda
+**Status:** consumida — ✅ Márcio afirmou TOS-015 em 2026-05-29. GATE-008 encerrado.
+
+O gate `GATE-2026-05-29-008` foi marcado como afirmado em `inbox-marcio.md` e o SR `beehive/registry/reports/SR-TOS-015-AGENDA-20260529.md` teve a afirmação final registrada.
+
+Sem novas ressalvas do Owner nesta rodada.
+
+**Ação esperada:** tomar ciência do encerramento do Gate para TOS-015.
+
+---
+
+### [COPILOT-2026-05-29-015] Gate — HIVE-021 afirmada pelo Owner
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** checkpoint-execucao
+**backlog_ref:** HIVE-021
+**thread:** hive-ui-diretrizes-governanca
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-034-PAINEL-DIRETRIZES-GOVERNANCA.md
+**Status:** consumida — ✅ Márcio afirmou HIVE-021 em 2026-05-29. GATE-007 encerrado.
+
+O gate `GATE-2026-05-29-007` foi marcado como afirmado em `inbox-marcio.md` e o SR `beehive/registry/reports/SR-HIVE-021-GOVERNANCA-20260529.md` teve a afirmação final registrada.
+
+Sem novas ressalvas do Owner nesta rodada.
+
+**Ação esperada:** tomar ciência do encerramento do Gate para HIVE-021.
+
+---
+
+### [COPILOT-2026-05-29-014] Checkpoint — SR consolidado TOS-015
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** checkpoint-execucao
+**backlog_ref:** TOS-015
+**thread:** tos-015-agenda
+**Status:** consumida — ✅ SR consolidado 2026-05-29. Rastreabilidade completa. GATE-008 aberto para afirmação do Márcio.
+
+SR consolidado gerado em `beehive/registry/reports/SR-TOS-015-AGENDA-20260529.md`, cobrindo os commits `3049a54`, `56123f1` e `15b84f1`, as auditorias aprovadas das WOs 035/036/037 e o valor entregue pelo módulo Agenda ponta a ponta.
+
+`BACKLOG-TOS.md` atualizado para `[x] TOS-015` e entrada `GATE-2026-05-29-008` criada em `inbox-marcio.md` para afirmação do Owner.
+
+Entrada `CLAUDE-2026-05-29-104` marcada como consumida no inbox do Copilot. Sem débito técnico novo registrado na trilha consolidada.
+
+**Ação esperada:** tomar ciência do SR consolidado e aguardar a afirmação do Márcio ou eventuais ressalvas.
+
+---
+
+### [COPILOT-2026-05-29-013] Checkpoint — SR HIVE-021 Governança
+**De:** Copilot (Executor) → Claude (Arquiteto)
+**Data:** 2026-05-29
+**tipo:** checkpoint-execucao
+**backlog_ref:** HIVE-021
+**thread:** hive-ui-diretrizes-governanca
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-034-PAINEL-DIRETRIZES-GOVERNANCA.md
+**Status:** consumida — ✅ SR gerado 2026-05-29. Rastreabilidade completa. GATE-007 aberto para afirmação do Márcio.
+
+SR gerado em `beehive/registry/reports/SR-HIVE-021-GOVERNANCA-20260529.md`, cobrindo o commit `3e653c6`, a aprovação dos 8 ACs da WO-034 e o valor entregue pela nova aba de Governança na Hive UI.
+
+`BACKLOG.md` atualizado para `[x] HIVE-021` e entrada `GATE-2026-05-29-007` criada em `inbox-marcio.md` para afirmação do Owner.
+
+Entrada `CLAUDE-2026-05-29-103` marcada como consumida no inbox do Copilot. Sem débito técnico novo registrado na auditoria.
+
+**Ação esperada:** tomar ciência do SR e aguardar a afirmação do Márcio ou eventuais ressalvas.
+
+---
+
 ### [COPILOT-2026-05-29-012] Checkpoint — WO-038 Gate View
 **De:** Copilot (Executor) → Claude (Arquiteto)
 **Data:** 2026-05-29
@@ -12,7 +82,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **backlog_ref:** HIVE-023
 **thread:** hive-gate-view
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-038-GATE-VIEW-INBOX-MARCIO.md
-**Status:** pendente
+**Status:** consumida — ✅ Auditoria aprovada 2026-05-29. Todos os 7 ACs passaram. SR despachado ao Copilot (CLAUDE-2026-05-29-098). GATE-006 atualizado.
 
 WO-038 executada no repo `hive` com commit `9138908` (`feat(hive-ui): add gate view for marcio inbox`).
 

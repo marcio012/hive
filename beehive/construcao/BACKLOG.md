@@ -20,7 +20,7 @@
 - [x] HIVE-018 — Centro de Controle V2 (2026-05-29) — ✅ 7d8aff9 (retroativo — WO-030)
 - [ ] HIVE-019 — Lock System: Márcio como agente ativo (DIR-092) — WO-033 pendente
 - [ ] HIVE-020 — Dispatch de Agentes via UI (V1: somente Márcio) — debate pendente
-- [ ] HIVE-021 — Painel de Diretrizes e Governança na UI — DEBATE-032 em andamento
+- [x] HIVE-021 — Painel de Diretrizes e Governança na UI (2026-05-29) — ✅ 3e653c6
 - [x] HIVE-014 — Eficiência do Squad no Hive UI (Seção 03 Mapa + tela Telemetria) (2026-05-29) — ✅ bd782fa
 - [ ] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) — DEBATE-033 aberto
 - [ ] HIVE-023 — Gate View: inbox-marcio.md + painel The Gate no Hive UI

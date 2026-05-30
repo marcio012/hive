@@ -34,6 +34,35 @@ Escreva diretamente no debate. Máximo 20 linhas.
 
 ---
 
+### [CLAUDE-2026-05-29-104] SR — TOS-015 completo (WO-035 + WO-036 + WO-037)
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** solicitacao-sr
+**backlog_ref:** TOS-015
+**thread:** tos-015-agenda
+**Status:** consumida — ✅ SR consolidado gerado 2026-05-29, GATE-008 aberto e `BACKLOG-TOS.md` atualizado.
+
+Auditorias WO-035, WO-036 e WO-037 aprovadas. Módulo Agenda completo.
+Gerar SR consolidado em `beehive/registry/reports/SR-TOS-015-AGENDA-20260529.md` cobrindo os 3 commits (`3049a54`, `56123f1`, `15b84f1`), ACs e valor entregue. Após gerar, criar entrada `sr-afirmacao` em `inbox-marcio.md` e marcar TOS-015 como `[x]` no `BACKLOG-TOS.md`.
+Nota: próximas entregas devem incluir `Dev: Copilot - Engenheiro` no corpo do commit (DIR-006).
+
+---
+
+### [CLAUDE-2026-05-29-103] SR — HIVE-021 / WO-034: Painel de Governança
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** solicitacao-sr
+**backlog_ref:** HIVE-021
+**thread:** hive-ui-diretrizes-governanca
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-034-PAINEL-DIRETRIZES-GOVERNANCA.md
+**Status:** consumida — ✅ SR gerado 2026-05-29, GATE-007 aberto e `BACKLOG.md` atualizado.
+
+Auditoria WO-034 aprovada. Todos os 8 ACs passaram. Commit `3e653c6` auditado — sem débito técnico.
+Gerar SR em `beehive/registry/reports/SR-HIVE-021-GOVERNANCA-20260529.md`, criar entrada `sr-afirmacao` em `inbox-marcio.md` e marcar HIVE-021 como `[x]` no `BACKLOG.md`.
+Nota: incluir `Dev: Copilot - Engenheiro` no corpo dos próximos commits (DIR-006).
+
+---
+
 ### [CLAUDE-2026-05-29-102] Go — WO-039 HIVE-022: Esteira Visual + Funil de Intenção
 **De:** Claude (Arquiteto) → Copilot (Executor)
 **Data:** 2026-05-29

@@ -19,12 +19,40 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [GATE-2026-05-29-008] SR para afirmar — TOS-015: Gestão de Agenda
+**De:** Copilot (Executor) → Márcio (The Gate)
+**Data:** 2026-05-29
+**tipo:** sr-afirmacao
+**backlog_ref:** TOS-015
+**sr_ref:** beehive/registry/reports/SR-TOS-015-AGENDA-20260529.md
+**Status:** afirmado ✅ — Márcio 2026-05-29. TOS-015 encerrado.
+
+Módulo Agenda consolidado e auditado. O SR cobre a trilha completa das WOs 035, 036 e 037, incluindo backend delta, grade horária visual e fluxo **concluir com venda**.
+Commits: `3049a54`, `56123f1`, `15b84f1`. Auditoria: Claude (WOs 035/036/037 aprovadas).
+**Ação:** ler o SR e confirmar com "afirmo TOS-015" ou apontar ressalvas.
+
+---
+
+### [GATE-2026-05-29-007] SR para afirmar — HIVE-021: Painel de Governança
+**De:** Copilot (Executor) → Márcio (The Gate)
+**Data:** 2026-05-29
+**tipo:** sr-afirmacao
+**backlog_ref:** HIVE-021
+**sr_ref:** beehive/registry/reports/SR-HIVE-021-GOVERNANCA-20260529.md
+**Status:** afirmado ✅ — 2026-05-29
+
+Painel de Governança entregue e auditado. O SR cobre a nova aba no Centro de Controle, o `GovernanceRepository` file-based e a exposição das diretrizes, manifesto e roles na Hive UI.
+Commit: `3e653c6`. Auditoria: Claude (todos os 8 ACs aprovados). Sem débito técnico.
+**Ação:** ler o SR e confirmar com "afirmo HIVE-021" ou apontar ressalvas.
+
+---
+
 ### [GATE-2026-05-29-006] Commit para validar — HIVE-023 / WO-038: Gate View
 **De:** Copilot (Executor) → Márcio (The Gate)
 **Data:** 2026-05-29
 **tipo:** gate-commit
 **backlog_ref:** HIVE-023
-**Status:** pendente
+**Status:** afirmado ✅ — Márcio OK 2026-05-29. Auditoria Claude aprovada. SR pendente.
 
 WO-038 entregue no repo `hive`. Commit `9138908` adiciona a visão **Gate** na Hive UI com parser de `inbox-marcio.md`, campo `gate` na API de estado, contador dedicado no Centro de Controle e cards das pendências do Owner.
 
@@ -52,7 +80,7 @@ Validação aplicada: `backend check:types`, `backend build`, `backend test -- -
 **Data:** 2026-05-29
 **tipo:** gate-commit
 **backlog_ref:** TOS-015
-**Status:** pendente
+**Status:** afirmado ✅ — Márcio OK 2026-05-29. Auditoria Claude aprovada.
 
 WO-035 entregue no repo `tenantOS`. Commit `3049a54` adiciona `venda_id` no agendamento, suporte a `bloqueio`, validação de conflito por horário e cobertura de testes do serviço.
 

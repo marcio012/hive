@@ -3,7 +3,7 @@
 > Para itens do Hive Framework: `beehive/construcao/BACKLOG.md`
 
 ## 🔴 Alta prioridade
-- [ ] TOS-015 — Gestão de Agenda (Módulo Serviços)
+- [x] TOS-015 — Gestão de Agenda (Módulo Serviços) (2026-05-29) — ✅ 3049a54 + 56123f1 + 15b84f1
 - [x] TOS-019 — Clientes Demo para Apresentação (DEBATE-022 aprovado — Entregue em 2026-05-28 via commit 99ae307)
 
 ## 🟡 Média prioridade
