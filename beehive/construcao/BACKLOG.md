@@ -6,6 +6,9 @@
 ## 🔴 Alta prioridade
 
 ## 🟡 Média prioridade
+- [ ] HIVE-025 — Backlog API: alimentar esteira do Mapa da Fábrica com BACKLOG.md — DEBATE-035 aberto
+
+
 
 ## 🔧 Débito Técnico
 - **DT-004** — `CentroDeControle.tsx` (~450 linhas) — extrair sub-componentes (DispatchModal, LockPanel, ConfigPanel) em componentes separados. Registrado em: HIVE-UI-003 (auditoria 2026-05-29). Impacto: baixo — manutenibilidade futura.
