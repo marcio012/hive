@@ -19,6 +19,20 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [GATE-2026-05-30-001] SR para afirmar — HIVE-016: Telemetria E2 Interações por Tipo
+**De:** Copilot (Executor) → Márcio (The Gate)
+**Data:** 2026-05-30
+**tipo:** sr-afirmacao
+**backlog_ref:** HIVE-016
+**sr_ref:** beehive/registry/reports/SR-HIVE-016-INTERACOES-POR-TIPO-20260529.md
+**Status:** afirmado ✅ — Márcio 2026-05-30. HIVE-016 encerrada.
+
+Telemetria E2 entregue e auditada. O SR cobre o lock com `interaction_id`, o `interaction-log.json` append-only, o campo `interactionLog` na API e a nova tela `/interacoes` na Hive UI.
+Commit: `f52078f`. Auditoria: Claude (todos os 8 ACs aprovados). Sem débito técnico.
+**Ação:** ler o SR e confirmar com "afirmo HIVE-016" ou apontar ressalvas.
+
+---
+
 ### [GATE-2026-05-29-008] SR para afirmar — TOS-015: Gestão de Agenda
 **De:** Copilot (Executor) → Márcio (The Gate)
 **Data:** 2026-05-29

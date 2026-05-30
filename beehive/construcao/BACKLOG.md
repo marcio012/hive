@@ -15,7 +15,7 @@
 
 ## 🟡 Média prioridade
 - [x] HIVE-015 — Telemetria E1: tela tokens por agente (Claude X, Copilot Y, Gemini Z) (2026-05-29) — ✅ 22bdb51
-- [ ] HIVE-016 — Telemetria E2: interações por tipo com tag no lock acquire — DEBATE-030 em andamento
+- [x] HIVE-016 — Telemetria E2: interações por tipo com tag no lock acquire (2026-05-29) — ✅ f52078f
 - [ ] HIVE-017 — Centro de Controle: componentização (WO-031) — aguarda WO-030 commitada
 - [x] HIVE-018 — Centro de Controle V2 (2026-05-29) — ✅ 7d8aff9 (retroativo — WO-030)
 - [ ] HIVE-019 — Lock System: Márcio como agente ativo (DIR-092) — WO-033 pendente
