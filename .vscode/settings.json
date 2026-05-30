@@ -2,7 +2,7 @@
   "github.copilot.chat.githubMcpServer.lockdown": true,
   "auto-close-tag.enableAutoCloseSelfClosingTag": false,
   "auto-close-tag.enableAutoCloseTag": false,
-  "editor.fontSize": 16,
+  "editor.fontSize": 18,
   "editor.fontFamily": "Fira Code, Consolas, 'Courier New', monospace",
   "editor.lineHeight": 1.6
 }
