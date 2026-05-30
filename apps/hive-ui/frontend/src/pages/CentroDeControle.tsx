@@ -6,7 +6,9 @@ import {
   type GateItem,
   type HiveState,
   type OrchestratorStatus,
+  type PipelineItem,
 } from '../hooks/useHiveSocket';
+import { ArtifactFilePath } from '../components/ArtifactFilePath';
 
 type CentroDeControleProps = {
   state: HiveState | null;
@@ -230,6 +232,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
   const events = state?.events ?? [];
   const debates = state?.debates ?? [];
   const gate = state?.gate ?? { pendentes: [], total: 0 };
+  const pipelineItems = state?.pipeline ?? [];
 
   const activeLocks = useMemo(
     () =>
@@ -529,19 +532,42 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
   }
 
   function renderPipeline() {
-    type PlItem = { id: string; title: string; hint?: string };
+    type PlItem = { id: string; title: string; hint?: string; filePath: string | null };
 
     const byPhase = (phases: number[]): PlItem[] =>
       activeDebates
         .filter((d) => phases.includes(getDebatePhase(d.status)))
-        .map((d) => ({ id: d.id, title: d.title, hint: debateHolder(getDebatePhase(d.status)) }));
+        .map((d) => ({
+          id: d.id,
+          title: d.title,
+          hint: debateHolder(getDebatePhase(d.status)),
+          filePath: d.file_path,
+        }));
 
     const copilotWo = agentDetails.copilot.activeWo;
+    const copilotExecutionItems = pipelineItems
+      .filter((item) => item.agent === 'copilot' && item.stage === 'execucao')
+      .map((item) => ({
+        id: item.id,
+        title: item.title,
+        filePath: item.file_path,
+      }));
 
     const stages: Array<{ key: string; label: string; sub: string; cls: string; items: PlItem[] }> = [
       { key: 'debate',    label: 'Debate',    sub: 'Squad',   cls: 'av-gemini',  items: byPhase([1, 2, 3, 4, 5]) },
       { key: 'wo',        label: 'WO criada', sub: 'Claude',  cls: 'av-claude',  items: byPhase([7]) },
-      { key: 'execucao',  label: 'Execução',  sub: 'Copilot', cls: 'av-copilot', items: copilotWo ? [{ id: 'WO', title: copilotWo }] : [] },
+      {
+        key: 'execucao',
+        label: 'Execução',
+        sub: 'Copilot',
+        cls: 'av-copilot',
+        items:
+          copilotExecutionItems.length > 0
+            ? copilotExecutionItems
+            : copilotWo
+              ? [{ id: 'WO', title: copilotWo, filePath: null }]
+              : [],
+      },
       { key: 'auditoria', label: 'Auditoria', sub: 'Claude',  cls: 'av-claude',  items: [] },
       { key: 'gate',      label: 'Gate',      sub: 'Márcio',  cls: 'av-human',   items: byPhase([6]) },
       { key: 'sr',        label: 'SR',        sub: 'Copilot', cls: 'av-copilot', items: [] },
@@ -564,6 +590,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                 <div key={item.id} className="pl-card">
                   <span className="pl-id">{item.id}</span>
                   <span className="pl-title">{item.title}</span>
+                  <ArtifactFilePath path={item.filePath} className="artifact-path--compact" />
                   {item.hint ? <span className="pl-hint">↳ {item.hint}</span> : null}
                 </div>
               ))}
@@ -615,6 +642,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                       {item.backlog_ref ? <span>{item.backlog_ref}</span> : <span>Sem backlog_ref</span>}
                       <span>{item.data || 'Sem data'}</span>
                     </div>
+                    <ArtifactFilePath path={item.file_path} className="artifact-path--compact" />
                     {item.sr_ref ? (
                       <div className="gate-ref">
                         <span>SR</span>
@@ -1058,6 +1086,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                         <div className="phase-bar">
                           <i style={phaseStyle(getDebatePhase(entry.status))} />
                         </div>
+                        <ArtifactFilePath path={entry.file_path} className="artifact-path--compact" />
                         <div className="debate-meta">
                           {entry.status}
                           <span className="debate-block">{entry.responsible}</span>

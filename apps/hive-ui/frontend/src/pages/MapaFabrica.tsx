@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { type AgentName, type HiveState, type TelemetryState } from '../hooks/useHiveSocket';
+import { ArtifactFilePath } from '../components/ArtifactFilePath';
 
 type MapaFabricaProps = {
   state: HiveState | null;
@@ -97,6 +98,12 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
 
   const transitDebates = (state?.debates ?? []).filter((d) => d.active);
   const copilotWo = state?.agentDetails?.copilot?.activeWo ?? null;
+  const activeCopilotPipelineItem = useMemo(
+    () =>
+      (state?.pipeline ?? []).find((item) => item.agent === 'copilot' && item.stage === 'execucao') ??
+      null,
+    [state?.pipeline],
+  );
 
   return (
     <main className="screen active">
@@ -227,6 +234,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
                   <span className="fci-stage">{d.status}</span>
                 </div>
                 <div className="fci-title">{d.title}</div>
+                <ArtifactFilePath path={d.file_path} className="artifact-path--compact" />
                 <div className="fci-foot">
                   <span className="mini-av av-claude">C</span>
                   <span className="fci-eta">→ {d.responsible}</span>
@@ -236,10 +244,14 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
             {copilotWo ? (
               <div className="flow-card active">
                 <div className="fci-top">
-                  <span className="fci-id">WO</span>
+                  <span className="fci-id">{activeCopilotPipelineItem?.id ?? 'WO'}</span>
                   <span className="fci-stage fci-exec">execução</span>
                 </div>
                 <div className="fci-title">{copilotWo}</div>
+                <ArtifactFilePath
+                  path={activeCopilotPipelineItem?.file_path ?? null}
+                  className="artifact-path--compact"
+                />
                 <div className="fci-foot">
                   <span className="mini-av av-copilot">P</span>
                   <span className="fci-eta">→ Entrega</span>

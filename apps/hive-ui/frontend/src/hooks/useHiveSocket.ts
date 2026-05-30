@@ -15,6 +15,7 @@ export interface PipelineItem {
   agent: PipelineAgent;
   priority: 'hi' | 'md' | 'lo';
   updatedAt: string;
+  file_path: string | null;
 }
 
 export interface HiveEvent {
@@ -35,6 +36,7 @@ export interface DebateEntry {
   status: string;
   responsible: string;
   active: boolean;
+  file_path: string;
 }
 
 export type GateItemType =
@@ -50,6 +52,7 @@ export interface GateItem {
   backlog_ref?: string;
   sr_ref?: string;
   data: string;
+  file_path: string;
 }
 
 export interface HiveState {
@@ -80,6 +83,7 @@ export interface HiveState {
   debates?: DebateEntry[];
   brainstorm: Array<{
     filename: string;
+    file_path: string;
     title: string;
     thread: string | null;
     status: string | null;

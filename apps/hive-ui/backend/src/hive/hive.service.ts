@@ -60,6 +60,7 @@ export interface DebateEntry {
   status: string;
   responsible: string;
   active: boolean;
+  file_path: string;
 }
 
 export type GateItemType =
@@ -75,6 +76,7 @@ export interface GateItem {
   backlog_ref?: string;
   sr_ref?: string;
   data: string;
+  file_path: string;
 }
 
 export interface HiveGateState {
@@ -98,6 +100,7 @@ export interface HiveState {
   debates: DebateEntry[];
   brainstorm: Array<{
     filename: string;
+    file_path: string;
     title: string;
     thread: string | null;
     status: string | null;
@@ -179,6 +182,7 @@ export interface PipelineItem {
   agent: PipelineAgent;
   priority: 'hi' | 'md' | 'lo';
   updatedAt: string;
+  file_path: string | null;
 }
 
 export interface HiveEvent {
@@ -950,7 +954,7 @@ export class HiveService {
     }
 
     const pendentes = this.getLatestInboxBlocks(content)
-      .map((block) => this.parseGateItem(block))
+      .map((block) => this.parseGateItem(block, filePath))
       .filter((item): item is GateItem => item !== null);
 
     return {
@@ -993,6 +997,7 @@ export class HiveService {
   private async readActiveDebates(): Promise<DebateEntry[]> {
     const filePath = path.join(this.hiveRoot, 'beehive', 'construcao', 'debates-abertos.md');
     const content = await this.readTextFile(filePath);
+    const repoFilePath = this.toRepoRelativePath(filePath);
 
     if (!content) {
       return [];
@@ -1016,6 +1021,7 @@ export class HiveService {
           status,
           responsible,
           active,
+          file_path: repoFilePath,
         } satisfies DebateEntry;
       })
       .filter((entry) => entry.id && entry.title);
@@ -1137,7 +1143,7 @@ export class HiveService {
     return new Date(value.getFullYear(), value.getMonth(), value.getDate());
   }
 
-  private parseGateItem(block: string): GateItem | null {
+  private parseGateItem(block: string, filePath: string): GateItem | null {
     const status = this.extractInboxField(block, 'Status');
     if (!status || !this.isPendingInboxStatus(status)) {
       return null;
@@ -1163,6 +1169,7 @@ export class HiveService {
       ...(backlogRef ? { backlog_ref: backlogRef } : {}),
       ...(srRef ? { sr_ref: srRef } : {}),
       data,
+      file_path: this.toRepoRelativePath(filePath),
     };
   }
 
@@ -1212,7 +1219,8 @@ export class HiveService {
       filenames
         .filter((filename) => filename.endsWith('.md'))
         .map(async (filename) => {
-          const content = await this.readTextFile(path.join(directory, filename));
+          const filePath = path.join(directory, filename);
+          const content = await this.readTextFile(filePath);
           const title =
             content
               .split('\n')
@@ -1224,6 +1232,7 @@ export class HiveService {
 
           return {
             filename,
+            file_path: this.toRepoRelativePath(filePath),
             title,
             thread: metadata.thread ?? null,
             status: metadata.status ?? null,
@@ -1292,6 +1301,7 @@ export class HiveService {
           updatedAt: new Date(
             (stats?.mtimeMs ?? Date.now()) - (sectionIndex * 60 + rowIndex) * 1000,
           ).toISOString(),
+          file_path: this.toRepoRelativePath(filePath),
         });
       });
 
@@ -1337,6 +1347,7 @@ export class HiveService {
         agent: 'copilot',
         priority: this.derivePriority(id, title),
         updatedAt: new Date(((stats?.mtimeMs ?? Date.now()) - rowIndex * 1000)).toISOString(),
+        file_path: this.toRepoRelativePath(filePath),
       });
     });
 
@@ -1436,6 +1447,10 @@ export class HiveService {
     }
 
     return 'lo';
+  }
+
+  private toRepoRelativePath(filePath: string): string {
+    return path.relative(this.hiveRoot, filePath).split(path.sep).join('/');
   }
 
   private parseMetadata(content: string): Record<string, string> {

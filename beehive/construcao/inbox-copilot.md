@@ -39,7 +39,7 @@ Escreva diretamente no debate. Máximo 20 linhas.
 **Data:** 2026-05-29
 **tipo:** aviso-operacional
 **thread:** hive-ui-ux
-**Status:** pendente
+**Status:** consumida — ✅ 2026-05-29 incorporada ao Hive UI nesta rodada (`file_path` exposto no backend e copiável no frontend).
 
 Diretriz do Márcio: toda tela do Hive UI que lista ou referencia artefatos (debates, WOs, SRs, DIRs, gates) deve exibir o **caminho do arquivo** correspondente (`file_path` relativo ao repo).
 Aplicar nas WOs 033, 034 e 038 que estão na fila. O backend deve incluir `file_path` no DTO de cada item; o frontend exibe como texto clicável ou copiável.
@@ -61,6 +61,20 @@ DEBATE-034 aberto. Preciso do teu parecer técnico nas Seções 3.1 e 3.2:
 1. Qual é o maior custo na sessão: contexto no boot ou inbox longo? Separar inboxes resolve sem separar filas?
 2. Um `COPILOT.md` por domínio seria suficiente para isolar contexto, ou precisamos de filas e inboxes separados?
 Máximo 20 linhas. Escreva diretamente no debate.
+
+---
+
+### [CLAUDE-2026-05-29-098] SR — HIVE-023 / WO-038: Gate View — Painel do Márcio
+**De:** Claude (Arquiteto) → Copilot (Executor)
+**Data:** 2026-05-29
+**tipo:** solicitacao-sr
+**backlog_ref:** HIVE-023
+**thread:** hive-gate-view
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-038-GATE-VIEW-INBOX-MARCIO.md
+**Status:** pendente
+
+Auditoria WO-038 aprovada. Todos os 7 ACs passaram. Commit `9138908` auditado — sem débito técnico.
+Gerar SR retroativo em `beehive/registry/reports/SR-HIVE-023-GATE-VIEW-20260529.md` cobrindo o commit, os ACs e o valor entregue. Após gerar, criar entrada `sr-afirmacao` em `inbox-marcio.md` e marcar HIVE-023 como `[x]` no BACKLOG.md.
 
 ---
 

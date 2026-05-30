@@ -1,4 +1,5 @@
 import { type HiveState, type PipelineAgent, type PipelineItem, type PipelineStage } from '../hooks/useHiveSocket';
+import { ArtifactFilePath } from '../components/ArtifactFilePath';
 
 type FunilIntencaoProps = {
   state: HiveState | null;
@@ -18,6 +19,7 @@ const captureItems: PipelineItem[] = [
     agent: 'marcio',
     priority: 'lo',
     updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    file_path: null,
   },
   {
     id: 'HIVE-090',
@@ -26,6 +28,7 @@ const captureItems: PipelineItem[] = [
     agent: 'marcio',
     priority: 'md',
     updatedAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    file_path: null,
   },
 ];
 
@@ -88,6 +91,7 @@ function renderIntent(item: PipelineItem) {
         <span className={`prio ${item.priority}`} />
       </div>
       <div className="it-title">{item.title}</div>
+      <ArtifactFilePath path={item.file_path} className="artifact-path--compact" />
       <div className="it-foot">
         <span className={`mini-av ${avatarClass(item.agent)}`}>{avatarLabel(item.agent)}</span>
         <span className="t">{formatUpdatedAt(item.updatedAt)}</span>
