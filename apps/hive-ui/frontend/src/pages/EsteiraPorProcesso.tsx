@@ -1,34 +1,39 @@
 import React from 'react';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
-import type { FlowStation, HiveState } from '../hooks/useHiveSocket';
+import type { AgentName, FlowStation, HiveState } from '../hooks/useHiveSocket';
 
 interface EsteiraPorProcessoProps {
   state: HiveState | null;
 }
 
 const STATIONS: Array<{
-  key: FlowStation;
+  key: string;
   name: string;
   role: string;
   initial: string | React.ReactNode;
   cls: string;
   countLabel: string;
 }> = [
-  { key: 'marcio',  name: 'Márcio',  role: 'Operador',       initial: 'M', cls: 'human',   countLabel: 'intenções' },
-  { key: 'gemini',  name: 'Gemini',  role: 'Product Owner',  initial: 'G', cls: 'gemini',  countLabel: 'em triagem' },
-  { key: 'claude',  name: 'Claude',  role: 'Arquiteto',      initial: 'C', cls: 'claude',  countLabel: 'auditando' },
-  { key: 'copilot', name: 'Copilot', role: 'Engenheiro',     initial: 'P', cls: 'copilot', countLabel: 'em execução' },
+  { key: 'debate',    name: 'Debate',       role: 'Gemini Lead',    initial: '🗣️', cls: 'st-debate',    countLabel: 'em discussão' },
+  { key: 'blueprint', name: 'Blueprint',    role: 'Claude Arq',     initial: '📐', cls: 'st-blueprint', countLabel: 'contratos' },
+  { key: 'wo',        name: 'Work Order',   role: 'Claude Arq',     initial: '📋', cls: 'st-wo',        countLabel: 'despachados' },
+  { key: 'execucao',  name: 'Execução',     role: 'Copilot Eng',    initial: '🛠️', cls: 'st-exec',      countLabel: 'codando' },
+  { key: 'auditoria', name: 'Auditoria',    role: 'Claude Arq',     initial: '🔍', cls: 'st-audit',     countLabel: 'revisando' },
+  { key: 'sr',        name: 'Status Report',role: 'Copilot Eng',    initial: '📊', cls: 'st-sr',        countLabel: 'gerados' },
   { 
-    key: 'entrega', 
-    name: 'Entrega', 
-    role: 'Mergeado',       
+    key: 'gate',      
+    name: 'The Gate',     
+    role: 'Márcio Owner',   
     initial: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9">
-        <path d="m5 13 4 4L19 7" />
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" />
+        <path d="M12 22V12" />
+        <path d="M12 12L3 7" />
+        <path d="M12 12l9-5" />
       </svg>
     ), 
-    cls: 'deliver', 
-    countLabel: 'hoje' 
+    cls: 'st-gate', 
+    countLabel: 'afirmando' 
   },
 ];
 
@@ -36,22 +41,24 @@ export function EsteiraPorProcesso({ state }: EsteiraPorProcessoProps) {
   const flowItems = state?.flowItems ?? [];
   const transitItems = flowItems.filter(item => item.ativo);
 
-  const getStationCount = (key: FlowStation) => {
-    // Tentativa de usar dados reais do state, caso contrário usa o count do flowItems
-    if (key === 'marcio') return flowItems.filter(i => i.station === 'marcio').length;
-    if (key === 'gemini') return state?.inboxCounts?.gemini ?? flowItems.filter(i => i.station === 'gemini').length;
-    if (key === 'claude') return state?.inboxCounts?.claude ?? flowItems.filter(i => i.station === 'claude').length;
-    if (key === 'copilot') return (state?.agentDetails?.copilot?.activeWo ? 1 : 0) + (state?.inboxCounts?.copilot ?? 0);
-    if (key === 'entrega') return flowItems.filter(i => i.station === 'entrega').length || 18;
+  const getStationCount = (key: string) => {
+    if (key === 'backlog')   return flowItems.filter(i => i.station === 'marcio' && i.lane === 'captura').length;
+    if (key === 'debate')    return (state?.debates?.filter(d => d.active).length || 0);
+    if (key === 'blueprint') return flowItems.filter(i => i.station === 'claude' && i.lane === 'triagem').length;
+    if (key === 'wo')        return flowItems.filter(i => i.station === 'claude' && i.lane === 'revisao').length;
+    if (key === 'execucao')  return state?.agentDetails?.copilot?.activeWo ? 1 : 0;
+    if (key === 'auditoria') return state?.inboxCounts?.claude ?? 0;
+    if (key === 'sr')        return state?.gate?.pendentes?.filter(g => g.tipo === 'sr-afirmacao').length || 0;
+    if (key === 'gate')      return state?.gate?.total ?? 0;
     return 0;
   };
 
-  const getStationInitial = (itemStation: string) => {
-    if (itemStation === 'marcio') return 'M';
-    if (itemStation === 'gemini') return 'G';
-    if (itemStation === 'claude') return 'C';
-    if (itemStation === 'copilot') return 'P';
-    return '?';
+  const getAgentByStation = (key: string): AgentName | 'human' => {
+    if (key === 'backlog' || key === 'gate') return 'human';
+    if (key === 'debate') return 'gemini';
+    if (key === 'blueprint' || key === 'wo' || key === 'auditoria') return 'claude';
+    if (key === 'execucao' || key === 'sr') return 'copilot';
+    return 'human';
   };
 
   return (
@@ -69,8 +76,9 @@ export function EsteiraPorProcesso({ state }: EsteiraPorProcessoProps) {
         <div className="flow-track">
           {STATIONS.map((station, index) => {
             const count = getStationCount(station.key);
-            const active = station.key !== 'marcio' && station.key !== 'entrega' 
-              ? Boolean(state?.locks?.[station.key as any]) 
+            const agentKey = getAgentByStation(station.key);
+            const active = agentKey !== 'human'
+              ? Boolean(state?.locks?.[agentKey])
               : false;
 
             return (
@@ -92,7 +100,7 @@ export function EsteiraPorProcesso({ state }: EsteiraPorProcessoProps) {
                 {index < STATIONS.length - 1 && (
                   <div className="flow-conveyor">
                     <div className="belt-stripes" />
-                    <span className={`flow-token t${index + 1}`} />
+                    <span className={`flow-token t${(index % 4) + 1}`} />
                   </div>
                 )}
               </React.Fragment>
@@ -122,7 +130,7 @@ export function EsteiraPorProcesso({ state }: EsteiraPorProcessoProps) {
               <ArtifactFilePath path={item.file_path} className="artifact-path--compact" />
               <div className="fci-foot">
                 <span className={`mini-av av-${item.station}`}>
-                  {getStationInitial(item.station)}
+                  {item.station.charAt(0).toUpperCase()}
                 </span>
                 <span className="fci-eta">→ {stationName(item.proxima)}</span>
               </div>
