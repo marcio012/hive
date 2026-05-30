@@ -11,6 +11,7 @@ import {
   type RoleEntry,
 } from '../hooks/useHiveSocket';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
+import { EsteiraPorProcesso } from './EsteiraPorProcesso';
 
 type CentroDeControleProps = {
   state: HiveState | null;
@@ -18,7 +19,7 @@ type CentroDeControleProps = {
 
 type HiveConfig = NonNullable<HiveState['config']>;
 type DispatchAgent = AgentName;
-type ControlView = 'v1' | 'v2' | 'governance';
+type ControlView = 'v1' | 'v2' | 'v3' | 'governance';
 
 type DispatchDialogState = {
   agent: DispatchAgent | '';
@@ -179,6 +180,10 @@ function blockedInboxText(count: number): string {
 function viewSubtitle(view: ControlView): string {
   if (view === 'governance') {
     return 'DIRs, manifesto e papéis do squad em leitura única';
+  }
+
+  if (view === 'v3') {
+    return 'Esteira visual aprovada para leitura operacional';
   }
 
   return view === 'v2'
@@ -904,6 +909,18 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
               </svg>
             </button>
             <button
+              className={`bs-view-btn ${view === 'v3' ? 'active' : ''}`}
+              onClick={() => setView('v3')}
+              title="Esteira visual (v3)"
+              type="button"
+            >
+              <svg viewBox="0 0 24 24" fill="none" height="16" stroke="currentColor" strokeWidth="1.8" width="16">
+                <path d="M4 7h16" />
+                <path d="M6 12h12" />
+                <path d="M9 17h6" />
+              </svg>
+            </button>
+            <button
               className={`bs-view-btn ${view === 'governance' ? 'active' : ''}`}
               onClick={() => setView('governance')}
               title="Governança"
@@ -1091,7 +1108,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
           </div>
         ) : null}
 
-        {view === 'v2' ? (
+        {view === 'v2' || view === 'v3' ? (
           <div id="cc-v2">
             <div className="section-label">
               <span className="n">01</span> Estado por agente <span className="line" />
@@ -1198,7 +1215,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
             <div className="section-label" style={{ marginTop: 24 }}>
               <span className="n">02</span> Esteira de Processos <span className="line" />
             </div>
-            {renderPipeline()}
+            {view === 'v3' ? <EsteiraPorProcesso flowItems={state?.flowItems ?? []} /> : renderPipeline()}
 
             {activeLocks.length === 0 && totalInboxPending === 0 && totalBlocked === 0 && gate.total === 0 ? (
               <div className="cc2-clean" style={{ marginBottom: 18 }}>

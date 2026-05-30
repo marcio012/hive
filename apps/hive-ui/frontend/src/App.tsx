@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useHiveSocket } from './hooks/useHiveSocket';
 import { CentroDeControle } from './pages/CentroDeControle';
-import { FunilIntencao } from './pages/FunilIntencao';
+import { Funil } from './pages/Funil';
 import { InteracoesPorTipo } from './pages/InteracoesPorTipo';
 import { MapaFabrica } from './pages/MapaFabrica';
 import { Telemetria } from './pages/Telemetria';
@@ -166,7 +166,7 @@ function renderScreen(route: CockpitRoute, data: ReturnType<typeof useHiveSocket
   }
 
   if (route === '/funil') {
-    return <FunilIntencao state={data.state} />;
+    return <Funil state={data.state} />;
   }
 
   if (route === '/controle') {

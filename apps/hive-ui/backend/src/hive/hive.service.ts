@@ -13,6 +13,8 @@ type AgentName = 'claude' | 'copilot' | 'gemini';
 type PipelineStage = 'triagem' | 'execucao' | 'revisao' | 'concluido';
 type PipelineAgent = AgentName | 'marcio';
 type DispatchAgent = AgentName;
+type FlowStation = 'marcio' | 'gemini' | 'claude' | 'copilot' | 'entrega';
+type FunnelLane = 'captura' | 'triagem' | 'execucao' | 'revisao' | 'entregue';
 
 const execFile = promisify(execFileCallback);
 
@@ -130,6 +132,8 @@ export interface HiveState {
     responsible: string | null;
   }>;
   pipeline: PipelineItem[];
+  flowItems: FlowItem[];
+  funnel: FunnelState;
   governance: GovernanceData;
   interactionLog: InteractionLog;
   events: HiveEvent[];
@@ -209,6 +213,25 @@ export interface PipelineItem {
   file_path: string | null;
 }
 
+export interface FlowItem {
+  id: string;
+  tipo: 'wo' | 'debate' | 'sr';
+  titulo: string;
+  lane: FunnelLane;
+  station: FlowStation;
+  proxima: FlowStation | null;
+  ativo: boolean;
+  file_path: string;
+}
+
+export interface FunnelState {
+  captura: number;
+  triagem: number;
+  execucao: number;
+  revisao: number;
+  entregue: number;
+}
+
 export interface HiveEvent {
   ts: string;
   level: 'ok' | 'info' | 'warn' | 'err' | 'lock';
@@ -266,6 +289,20 @@ interface ParsedCostEntry {
   inputCostBRL: number;
   outputCostBRL: number;
   cacheCostBRL: number;
+}
+
+interface ArtifactIndex {
+  debatePaths: string[];
+  reportPaths: string[];
+  workOrderPaths: string[];
+}
+
+interface AffirmedReport {
+  id: string;
+  backlogRef: string | null;
+  titulo: string;
+  file_path: string;
+  afirmadoEm: string | null;
 }
 
 interface ParsedCostLog {
@@ -338,6 +375,7 @@ export class HiveService {
       pipeline,
       governance,
       interactionLog,
+      artifactIndex,
     ] =
       await Promise.all([
         this.readLocks(),
@@ -353,7 +391,20 @@ export class HiveService {
         this.readPipeline(),
         this.governanceRepository.getAll(),
         this.readInteractionLog(),
+        this.readArtifactIndex(),
       ]);
+
+    const resolvedDebates = this.enrichDebatesWithArtifacts(debates, artifactIndex);
+    const resolvedPipeline = this.enrichPipelineWithArtifacts(pipeline, artifactIndex);
+    const deliveryReports = await this.readAffirmedReports(artifactIndex);
+    const flowItems = this.inferPhase(
+      locks,
+      gate.pendentes,
+      resolvedDebates,
+      resolvedPipeline,
+      deliveryReports,
+    );
+    const funnel = this.buildFunnel(flowItems);
 
     return {
       locks,
@@ -377,9 +428,11 @@ export class HiveService {
         },
       },
       gate,
-      debates,
+      debates: resolvedDebates,
       brainstorm,
-      pipeline,
+      pipeline: resolvedPipeline,
+      flowItems,
+      funnel,
       governance,
       interactionLog,
       events: [...this.events],
@@ -1546,6 +1599,450 @@ export class HiveService {
     }
 
     return null;
+  }
+
+  private buildFunnel(flowItems: FlowItem[]): FunnelState {
+    return flowItems.reduce(
+      (acc, item) => {
+        acc[item.lane] += 1;
+        return acc;
+      },
+      {
+        captura: 0,
+        triagem: 0,
+        execucao: 0,
+        revisao: 0,
+        entregue: 0,
+      } satisfies FunnelState,
+    );
+  }
+
+  private inferPhase(
+    locks: Record<AgentName, AgentLock | null>,
+    gateItems: GateItem[],
+    debates: DebateEntry[],
+    pipeline: PipelineItem[],
+    deliveryReports: AffirmedReport[],
+  ): FlowItem[] {
+    const items = new Map<string, FlowItem>();
+
+    debates.forEach((entry) => {
+      const phase = this.getDebatePhase(entry.status);
+      if (phase >= 7) {
+        return;
+      }
+
+      const lane = this.inferDebateLane(phase);
+      const station = this.inferDebateStation(entry, phase, locks, gateItems);
+      const activeLock = this.findMatchingLockStation(locks, [entry.id, entry.title]);
+      const isGatePending = this.hasGateReference(gateItems, [entry.id, entry.title]);
+
+      items.set(`debate:${entry.id}`, {
+        id: entry.id,
+        tipo: 'debate',
+        titulo: entry.title,
+        lane,
+        station,
+        proxima: this.nextStationForDebate(phase, station, isGatePending),
+        ativo: activeLock !== null,
+        file_path: entry.file_path,
+      });
+    });
+
+    pipeline
+      .filter((entry) => entry.stage !== 'concluido')
+      .forEach((entry) => {
+        const descriptor = this.describePipelineItem(entry);
+        if (descriptor.tipo === 'debate') {
+          return;
+        }
+
+        const lockRefs = [entry.id, descriptor.id, descriptor.titulo].filter(Boolean);
+        const activeLock = this.findMatchingLockStation(locks, lockRefs);
+        const isGatePending = this.hasGateReference(gateItems, lockRefs);
+        const station = this.inferWorkOrderStation(entry, activeLock, isGatePending);
+        const lane = this.inferWorkOrderLane(station, isGatePending);
+
+        items.set(`wo:${descriptor.id}`, {
+          id: descriptor.id,
+          tipo: 'wo',
+          titulo: descriptor.titulo,
+          lane,
+          station,
+          proxima: this.nextStationForWorkOrder(station, isGatePending),
+          ativo: activeLock !== null,
+          file_path: entry.file_path ?? this.fallbackPipelinePath(entry.agent),
+        });
+      });
+
+    deliveryReports.forEach((report) => {
+      items.set(`sr:${report.id}`, {
+        id: report.id,
+        tipo: 'sr',
+        titulo: report.titulo,
+        lane: 'entregue',
+        station: 'entrega',
+        proxima: null,
+        ativo: false,
+        file_path: report.file_path,
+      });
+    });
+
+    return [...items.values()].sort((left, right) => left.id.localeCompare(right.id));
+  }
+
+  private inferDebateLane(phase: number): FunnelLane {
+    if (phase <= 2) {
+      return 'captura';
+    }
+
+    if (phase <= 4) {
+      return 'triagem';
+    }
+
+    return 'revisao';
+  }
+
+  private inferDebateStation(
+    entry: DebateEntry,
+    phase: number,
+    locks: Record<AgentName, AgentLock | null>,
+    gateItems: GateItem[],
+  ): FlowStation {
+    const activeLock = this.findMatchingLockStation(locks, [entry.id, entry.title]);
+    if (activeLock) {
+      return activeLock;
+    }
+
+    if (this.hasGateReference(gateItems, [entry.id, entry.title]) || phase === 6) {
+      return 'marcio';
+    }
+
+    if (phase <= 2) {
+      return 'gemini';
+    }
+
+    return 'claude';
+  }
+
+  private nextStationForDebate(
+    phase: number,
+    station: FlowStation,
+    isGatePending: boolean,
+  ): FlowStation | null {
+    if (station === 'marcio' || isGatePending) {
+      return 'copilot';
+    }
+
+    if (phase <= 2) {
+      return 'claude';
+    }
+
+    return phase <= 4 ? 'marcio' : 'copilot';
+  }
+
+  private inferWorkOrderStation(
+    item: PipelineItem,
+    activeLock: AgentName | null,
+    isGatePending: boolean,
+  ): FlowStation {
+    if (activeLock) {
+      return activeLock;
+    }
+
+    if (isGatePending) {
+      return 'marcio';
+    }
+
+    if (item.stage === 'revisao' || item.agent === 'claude') {
+      return 'claude';
+    }
+
+    return 'copilot';
+  }
+
+  private inferWorkOrderLane(station: FlowStation, isGatePending: boolean): FunnelLane {
+    if (station === 'claude' || station === 'marcio' || isGatePending) {
+      return 'revisao';
+    }
+
+    return 'execucao';
+  }
+
+  private nextStationForWorkOrder(station: FlowStation, isGatePending: boolean): FlowStation | null {
+    if (station === 'copilot') {
+      return 'claude';
+    }
+
+    if (station === 'claude') {
+      return 'marcio';
+    }
+
+    if (station === 'marcio' || isGatePending) {
+      return 'entrega';
+    }
+
+    return null;
+  }
+
+  private describePipelineItem(
+    item: PipelineItem,
+  ): { id: string; tipo: FlowItem['tipo']; titulo: string; backlogRef: string | null } {
+    if (/^DEBATE-/i.test(item.id)) {
+      return {
+        id: item.id,
+        tipo: 'debate',
+        titulo: item.title,
+        backlogRef: null,
+      };
+    }
+
+    const match = item.title.match(/^([A-Z]+-\d+)\s+[—-]\s+(.+)$/);
+    if (match) {
+      return {
+        id: match[1],
+        tipo: 'wo',
+        titulo: match[2].trim(),
+        backlogRef: match[1],
+      };
+    }
+
+    return {
+      id: item.id,
+      tipo: 'wo',
+      titulo: item.title,
+      backlogRef: this.extractBacklogRef(item.title),
+    };
+  }
+
+  private enrichDebatesWithArtifacts(entries: DebateEntry[], artifactIndex: ArtifactIndex): DebateEntry[] {
+    return entries.map((entry) => ({
+      ...entry,
+      file_path: this.resolveArtifactPath(artifactIndex.debatePaths, entry.id) ?? entry.file_path,
+    }));
+  }
+
+  private enrichPipelineWithArtifacts(
+    entries: PipelineItem[],
+    artifactIndex: ArtifactIndex,
+  ): PipelineItem[] {
+    return entries.map((entry) => {
+      const descriptor = this.describePipelineItem(entry);
+
+      if (descriptor.tipo === 'debate') {
+        return {
+          ...entry,
+          file_path: this.resolveArtifactPath(artifactIndex.debatePaths, descriptor.id) ?? entry.file_path,
+        };
+      }
+
+      const workOrderPath =
+        this.resolveArtifactPath(artifactIndex.workOrderPaths, entry.id) ??
+        (descriptor.backlogRef
+          ? this.resolveArtifactPath(artifactIndex.workOrderPaths, descriptor.backlogRef)
+          : null);
+
+      return {
+        ...entry,
+        file_path: workOrderPath ?? entry.file_path,
+      };
+    });
+  }
+
+  private async readArtifactIndex(): Promise<ArtifactIndex> {
+    const [debatePaths, reportPaths, workOrderPaths] = await Promise.all([
+      this.listMarkdownFiles(path.join(this.hiveRoot, 'beehive', 'construcao', 'debates')),
+      this.listMarkdownFiles(path.join(this.hiveRoot, 'beehive', 'registry', 'reports')),
+      this.listMarkdownFiles(path.join(this.hiveRoot, 'beehive', 'construcao', 'work_orders')),
+    ]);
+
+    return {
+      debatePaths,
+      reportPaths,
+      workOrderPaths,
+    };
+  }
+
+  private async listMarkdownFiles(directory: string): Promise<string[]> {
+    const entries = await fs.readdir(directory, { withFileTypes: true }).catch(() => []);
+    const nested = await Promise.all(
+      entries.map(async (entry) => {
+        const fullPath = path.join(directory, entry.name);
+        if (entry.isDirectory()) {
+          return this.listMarkdownFiles(fullPath);
+        }
+
+        return entry.isFile() && entry.name.endsWith('.md') ? [fullPath] : [];
+      }),
+    );
+
+    return nested.flat();
+  }
+
+  private async readAffirmedReports(artifactIndex: ArtifactIndex): Promise<AffirmedReport[]> {
+    const reports = await Promise.all(
+      artifactIndex.reportPaths.map(async (filePath) => {
+        const content = await this.readTextFile(filePath);
+        const metadata = this.parseFrontmatter(content);
+        if (metadata.status !== 'afirmado') {
+          return null;
+        }
+
+        const heading =
+          content
+            .split('\n')
+            .find((line) => line.startsWith('# '))
+            ?.replace(/^#\s+/, '')
+            .trim() ?? metadata.backlog_ref ?? path.basename(filePath, '.md');
+
+        return {
+          id: metadata.id ?? path.basename(filePath, '.md'),
+          backlogRef: metadata.backlog_ref ?? null,
+          titulo: heading.replace(/^📊\s*Status Report\s+[—-]\s*/i, ''),
+          file_path: this.toRepoRelativePath(filePath),
+          afirmadoEm: metadata.afirmado_em ?? metadata.data ?? null,
+        } satisfies AffirmedReport;
+      }),
+    );
+
+    const affirmedReports: AffirmedReport[] = reports.flatMap((report) => (report ? [report] : []));
+
+    return affirmedReports
+      .sort((left, right) => (right.afirmadoEm ?? '').localeCompare(left.afirmadoEm ?? ''));
+  }
+
+  private parseFrontmatter(content: string): Record<string, string> {
+    const match = content.match(/^---\n([\s\S]*?)\n---/);
+    if (!match) {
+      return {};
+    }
+
+    return match[1]
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .reduce<Record<string, string>>((acc, line) => {
+        const separator = line.indexOf(':');
+        if (separator === -1) {
+          return acc;
+        }
+
+        const key = line.slice(0, separator).trim();
+        const value = line.slice(separator + 1).trim();
+        acc[key] = value;
+        return acc;
+      }, {});
+  }
+
+  private resolveArtifactPath(paths: string[], identifier: string): string | null {
+    const normalizedIdentifier = identifier.trim().toLowerCase();
+    const match = paths.find((filePath) =>
+      path
+        .basename(filePath, path.extname(filePath))
+        .toLowerCase()
+        .startsWith(normalizedIdentifier),
+    );
+
+    return match ? this.toRepoRelativePath(match) : null;
+  }
+
+  private hasGateReference(gateItems: GateItem[], refs: string[]): boolean {
+    const normalizedRefs = refs
+      .filter(Boolean)
+      .map((value) => this.normalizeText(value))
+      .filter(Boolean);
+
+    return gateItems.some((item) => {
+      const haystacks = [item.id, item.titulo, item.backlog_ref ?? '', item.sr_ref ?? '']
+        .map((value) => this.normalizeText(value))
+        .filter(Boolean);
+
+      return normalizedRefs.some((ref) => haystacks.some((haystack) => haystack.includes(ref)));
+    });
+  }
+
+  private findMatchingLockStation(
+    locks: Record<AgentName, AgentLock | null>,
+    refs: string[],
+  ): AgentName | null {
+    const normalizedRefs = refs
+      .filter(Boolean)
+      .map((value) => this.normalizeText(value))
+      .filter(Boolean);
+
+    for (const agent of AGENTS) {
+      const activity = locks[agent]?.activity;
+      if (!activity) {
+        continue;
+      }
+
+      const normalizedActivity = this.normalizeText(activity);
+      if (normalizedRefs.some((ref) => normalizedActivity.includes(ref))) {
+        return agent;
+      }
+    }
+
+    return null;
+  }
+
+  private getDebatePhase(status: string): number {
+    const normalized = this.normalizeText(status);
+
+    if (normalized.includes('abertura')) {
+      return 1;
+    }
+
+    if (normalized.includes('parecer gemini')) {
+      return 2;
+    }
+
+    if (normalized.includes('parecer claude')) {
+      return 3;
+    }
+
+    if (normalized.includes('parecer copilot')) {
+      return 4;
+    }
+
+    if (normalized.includes('consolidacao') || normalized.includes('consolidado')) {
+      return 5;
+    }
+
+    if (normalized.includes('aprovacao marcio') || normalized.includes('aguardando parecer de marcio')) {
+      return 6;
+    }
+
+    if (normalized.includes('wo') && normalized.includes('despachadas')) {
+      return 7;
+    }
+
+    if (normalized.includes('execucao concluida') || normalized.includes('encerrado')) {
+      return 8;
+    }
+
+    if (normalized.includes('veredito go') || normalized.includes('aguarda marcio')) {
+      return 6;
+    }
+
+    return 3;
+  }
+
+  private normalizeText(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
+  private extractBacklogRef(value: string): string | null {
+    const match = value.match(/\b([A-Z]+-\d+)\b/);
+    return match?.[1] ?? null;
+  }
+
+  private fallbackPipelinePath(agent: PipelineAgent): string {
+    return agent === 'claude'
+      ? 'beehive/construcao/tasks/FILA_CLAUDE.md'
+      : 'beehive/construcao/tasks/FILA_COPILOT.md';
   }
 
   private derivePriority(id: string, title: string): PipelineItem['priority'] {

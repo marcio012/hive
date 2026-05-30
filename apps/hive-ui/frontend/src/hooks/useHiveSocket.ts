@@ -6,6 +6,8 @@ export type AgentName = 'claude' | 'copilot' | 'gemini';
 export type PipelineStage = 'triagem' | 'execucao' | 'revisao' | 'concluido';
 
 export type PipelineAgent = AgentName | 'marcio';
+export type FlowStation = 'marcio' | 'gemini' | 'claude' | 'copilot' | 'entrega';
+export type FunnelLane = 'captura' | 'triagem' | 'execucao' | 'revisao' | 'entregue';
 export type OrchestratorStatus = 'idle' | 'watching' | 'dispatching' | 'paused' | 'error';
 
 export interface PipelineItem {
@@ -16,6 +18,25 @@ export interface PipelineItem {
   priority: 'hi' | 'md' | 'lo';
   updatedAt: string;
   file_path: string | null;
+}
+
+export interface FlowItem {
+  id: string;
+  tipo: 'wo' | 'debate' | 'sr';
+  titulo: string;
+  lane: FunnelLane;
+  station: FlowStation;
+  proxima: FlowStation | null;
+  ativo: boolean;
+  file_path: string;
+}
+
+export interface FunnelState {
+  captura: number;
+  triagem: number;
+  execucao: number;
+  revisao: number;
+  entregue: number;
 }
 
 export interface HiveEvent {
@@ -125,6 +146,8 @@ export interface HiveState {
     responsible: string | null;
   }>;
   pipeline: PipelineItem[];
+  flowItems?: FlowItem[];
+  funnel?: FunnelState;
   governance: {
     directives: DirectiveEntry[];
     manifesto: ManifestoContent;
