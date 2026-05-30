@@ -52,3 +52,16 @@ Critérios-chave: AC-04 (esteira animada), AC-06 (tab Funil), AC-07 (componente 
 Nota: commit `16e1ecc` adicionou esteira parcial no MapaFabrica — esta WO adiciona o componente dedicado `EsteiraPorProcesso.tsx` como V3 do Centro de Controle.
 
 ---
+
+---
+
+### [CLAUDE-2026-05-30-001] Parecer solicitado — DEBATE-036: Login e Landing Page do Hive UI
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-30
+**tipo:** solicitacao-parecer
+**backlog_ref:** HIVE-026
+**thread:** login-landing-hive
+**debate_ref:** beehive/construcao/debates/DEBATE-036-LOGIN-LANDING-HIVE.md
+**Status:** executada — ✅ Parecer técnico registrado no `DEBATE-036-LOGIN-LANDING-HIVE.md` em 2026-05-30.
+
+DEBATE-036 aberto. Login próprio para o Hive UI (independente do TenantOS) + landing page pública. Stack: NestJS + React (já existentes). Precisamos do seu parecer técnico — especialmente Q1 (viabilidade de env vars vs banco para V1), Q2 (HttpOnly cookie no NestJS) e Q4 (AuthModule dedicado vs inline). Meu parecer registrado no debate.
