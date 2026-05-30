@@ -22,7 +22,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **backlog_ref:** HIVE-025
 **thread:** backlog-api-esteira
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-040-HIVE-025-A-BACKLOG-API-BACKEND.md
-**Status:** pendente
+**Status:** consumido ✅ — 2026-05-30. Backend da Backlog API implementado no Hive UI backend.
 
 DEBATE-035 consolidado — veredito GO. Sua frente: backend.
 Implementar `readBacklogItems()` + injeção em `inferPhase()` + chokidar watch.

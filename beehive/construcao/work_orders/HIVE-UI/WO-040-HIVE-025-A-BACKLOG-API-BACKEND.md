@@ -5,7 +5,7 @@ backlog_ref: HIVE-025
 debate_ref: beehive/construcao/debates/DEBATE-035-BACKLOG-API-ESTEIRA-MAPA-FABRICA.md
 thread: backlog-api-esteira
 executor: Copilot
-status: pendente
+status: executada
 data: 2026-05-30
 workspace_hive: /home/marcio/job/hive
 workspace_target: /home/marcio/job/hive
