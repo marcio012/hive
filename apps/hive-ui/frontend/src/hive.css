@@ -263,6 +263,60 @@ a { color: inherit; text-decoration: none; }
 /* ============================================================
    CARDS de agente (Tela 1)
    ============================================================ */
+/* Ênfase na Telemetria de Bytes (Mapa da Fábrica) */
+.context-emphasis {
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 2px !important;
+}
+.context-emphasis .ctx-bytes {
+  font-family: var(--mono);
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--t1) !important;
+}
+.context-emphasis .ctx-badge {
+  font-size: 9px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+/* Cores de Alerta por Nível */
+.ctx-cost--ok.context-emphasis {
+  border-color: rgba(0, 255, 159, 0.2) !important;
+  background: rgba(0, 255, 159, 0.03) !important;
+}
+.ctx-cost--ok.context-emphasis .ctx-bytes { color: #00ff9f !important; }
+
+.ctx-cost--warn.context-emphasis {
+  border-color: rgba(255, 159, 67, 0.3) !important;
+  background: rgba(255, 159, 67, 0.05) !important;
+  animation: context-pulse-warn 2s infinite;
+}
+.ctx-cost--warn.context-emphasis .ctx-bytes { color: #ff9f43 !important; }
+
+.ctx-cost--critical.context-emphasis {
+  border-color: rgba(255, 107, 107, 0.4) !important;
+  background: rgba(255, 107, 107, 0.08) !important;
+  animation: context-pulse-critical 1.5s infinite;
+}
+.ctx-cost--critical.context-emphasis .ctx-bytes { color: #ff6b6b !important; }
+
+@keyframes context-pulse-warn {
+  0%, 100% { box-shadow: 0 0 0px transparent; }
+  50% { box-shadow: 0 0 10px rgba(255, 159, 67, 0.15); }
+}
+@keyframes context-pulse-critical {
+  0%, 100% { box-shadow: 0 0 0px transparent; }
+  50% { box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
+}
+
 .agent-card {
   position: relative;
   background: var(--surface);
@@ -281,19 +335,72 @@ a { color: inherit; text-decoration: none; }
   background: var(--green);
   box-shadow: 0 0 16px var(--green);
 }
-.agent-top { display: flex; align-items: flex-start; gap: 14px; }
+.agent-top { 
+  display: grid; 
+  grid-template-columns: auto 1fr auto; 
+  align-items: center; 
+  gap: 12px; 
+}
 .agent-ico {
-  width: 48px; height: 48px; border-radius: 14px; flex: none;
+  width: 44px; height: 44px; border-radius: 12px; flex: none;
   display: grid; place-items: center;
   font-family: var(--mono);
-  font-weight: 600; font-size: 20px;
+  font-weight: 700; font-size: 18px;
 }
+
 .agent-card.active .agent-ico { background: rgba(0,255,159,0.13); color: var(--green); border: 1px solid rgba(0,255,159,0.3); }
 .agent-card.free  .agent-ico { background: var(--surface-2); color: var(--t3); border: 1px solid var(--border); }
 
-.agent-meta { flex: 1; min-width: 0; }
-.agent-name-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 4px; }
-.agent-name { font-size: 20px; font-weight: 700; line-height: 1; }
+.agent-meta { 
+  min-width: 0; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 2px; 
+}
+.agent-name { 
+  font-size: 16px; 
+  font-weight: 700; 
+  line-height: 1.2; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  color: var(--t1);
+}
+.agent-model {
+  font-size: 10px;
+  color: var(--t3);
+  font-family: var(--mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.8;
+}
+
+/* Coluna 3: Sinal do Init (Destaque) */
+.context-emphasis {
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  display: flex !important;
+  flex-direction: column !important; /* Voltando para vertical para melhor leitura na coluna 3 */
+  align-items: flex-end !important;
+  gap: 1px !important;
+  flex-shrink: 0;
+}
+.context-emphasis .ctx-bytes {
+  font-family: var(--mono);
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+.context-emphasis .ctx-badge {
+  font-size: 8px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
 .agent-context-cost { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-family: var(--mono); white-space: nowrap; }
 .ctx-bytes { font-size: 12px; font-weight: 700; }
 .ctx-badge { font-size: 9px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -835,7 +942,19 @@ a { color: inherit; text-decoration: none; }
 .telemetry-agent-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+.telemetry-agent-head .eff-avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+.telemetry-agent-head .eff-name {
+  font-size: 14px;
+}
+.telemetry-agent-head .eff-role {
+  font-size: 11px;
 }
 .eff-avatar {
   width: 42px;
@@ -1020,7 +1139,34 @@ a { color: inherit; text-decoration: none; }
 }
 .telemetry-agent-card {
   display: grid;
-  gap: 16px;
+  gap: 12px;
+  padding: 14px;
+}
+.telemetry-summary { 
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.telemetry-summary > div {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.telemetry-summary span {
+  display: block;
+  color: var(--t3);
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+}
+.telemetry-summary strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -.02em;
 }
 .telemetry-table-wrap {
   overflow-x: auto;

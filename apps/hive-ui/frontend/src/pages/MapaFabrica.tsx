@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { type AgentName, type HiveState, type TelemetryState } from '../hooks/useHiveSocket';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
 import { ActiveItem } from '../components/ActiveItem';
+import { AgentCard } from '../components/AgentCard';
 import { EsteiraPorProcesso } from './EsteiraPorProcesso';
 
 type MapaFabricaProps = {
@@ -19,20 +20,6 @@ const agents: Array<{
   { key: 'copilot', name: 'Copilot', model: 'gpt-5.4', initial: 'P' },
   { key: 'gemini', name: 'Gemini', model: 'gemini-pro', initial: 'G' },
 ];
-
-function formatLockAge(value: string | null): string {
-  if (!value) {
-    return 'sem lock recente';
-  }
-
-  const diffMs = Date.now() - new Date(value).getTime();
-  if (Number.isNaN(diffMs) || diffMs < 0) {
-    return 'agora';
-  }
-
-  const minutes = Math.max(0, Math.floor(diffMs / 60000));
-  return minutes === 0 ? 'agora' : `há ${minutes}min`;
-}
 
 function formatMinutesAgo(value: number | null): string {
   if (value === null) {
@@ -63,28 +50,6 @@ function formatPercent(value: number | null | undefined): string {
   return `${Math.round(value)}%`;
 }
 
-const CTX_WARN     = 8 * 1024;   // 8 KB
-const CTX_CRITICAL = 15 * 1024;  // 15 KB
-
-function contextLevel(bytes: number): 'ok' | 'warn' | 'critical' {
-  if (bytes === 0)              return 'ok';
-  if (bytes >= CTX_CRITICAL)   return 'critical';
-  if (bytes >= CTX_WARN)       return 'warn';
-  return 'ok';
-}
-
-function formatContextBytes(bytes: number): string {
-  if (bytes === 0) return '—';
-  if (bytes < 1024) return `${bytes} B`;
-  return `${(bytes / 1024).toFixed(1)} KB`;
-}
-
-const CTX_LABEL: Record<'ok' | 'warn' | 'critical', string> = {
-  ok:       'init saudável',
-  warn:     'monitorar',
-  critical: 'higiene urgente',
-};
-
 function formatMetric(value: number | null | undefined, digits = 1): string {
   if (value === null || value === undefined) {
     return '—';
@@ -114,21 +79,6 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
     [telemetry],
   );
 
-  const stationCount: Record<string, { n: number; label: string }> = {
-    gemini:  { n: state?.agentDetails?.gemini?.inboxPending  ?? 0, label: 'em triagem'  },
-    claude:  { n: state?.agentDetails?.claude?.inboxPending  ?? 0, label: 'em análise'  },
-    copilot: { n: state?.agentDetails?.copilot?.activeWo ? 1 : 0,  label: 'em execução' },
-  };
-
-  const transitDebates = (state?.debates ?? []).filter((d) => d.active);
-  const copilotWo = state?.agentDetails?.copilot?.activeWo ?? null;
-  const activeCopilotPipelineItem = useMemo(
-    () =>
-      (state?.pipeline ?? []).find((item) => item.agent === 'copilot' && item.stage === 'execucao') ??
-      null,
-    [state?.pipeline],
-  );
-
   return (
     <main className="screen active">
       <div className="page page-map">
@@ -147,64 +97,16 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
         </div>
 
         <div className="grid-3">
-          {agents.map((agent) => {
-            const lock = state?.locks[agent.key] ?? null;
-            const active = Boolean(lock);
-            const inboxCount = state?.inboxCounts[agent.key] ?? 0;
-            const inboxLevel = inboxCount >= 3 ? 'red' : inboxCount >= 1 ? 'gold' : null;
-            const ctxBytes = state?.agentDetails?.[agent.key]?.contextBytes ?? 0;
-            const ctxLevel = contextLevel(ctxBytes);
-
-            return (
-              <article key={agent.key} className={`agent-card ${active ? 'active' : 'free'} ctx-${ctxLevel}`}>
-                {active ? <span className="dot green pulse agent-corner" /> : null}
-                <div className="agent-top">
-                  <div className="agent-ico">{agent.initial}</div>
-                  <div className="agent-meta">
-                    <span className={`badge ${active ? 'green' : 'gray'}`}>
-                      <span className={`dot ${active ? 'green' : 'gray'}`} />
-                      {active ? 'Em operação' : 'Livre'}
-                    </span>
-                    <div className="agent-name-row">
-                      <div className="agent-name">{agent.name}</div>
-                      <div className={`agent-context-cost ctx-cost--${ctxLevel}`}>
-                        <span className="ctx-bytes">{formatContextBytes(ctxBytes)}</span>
-                        <span className="ctx-badge">{CTX_LABEL[ctxLevel]}</span>
-                      </div>
-                    </div>
-                    <div className="agent-model">
-                      {agent.model} · {active ? 'lock adquirido' : 'aguardando despacho'}
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`agent-activity ${active ? '' : 'idle'}`}>
-                  <div className="what">
-                    {active ? <span className="tag">▸</span> : null}
-                    {lock?.activity ?? 'Sem operação ativa — pronto para receber tarefa'}
-                  </div>
-                  {active ? (
-                    <div className="act-bar">
-                      <i />
-                    </div>
-                  ) : null}
-                  <div className="when">
-                    <span className={`dot ${active ? 'green' : 'gray'}`} />
-                    {formatLockAge(lock?.acquiredAt ?? null)}
-                    {inboxLevel ? (
-                      <span className={`inbox-badge inbox-${inboxLevel}`}>
-                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                          <rect x="3" y="5" width="18" height="14" rx="2" />
-                          <path d="m3 7 9 6 9-6" />
-                        </svg>
-                        {inboxCount}
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+          {agents.map((agent) => (
+            <AgentCard
+              key={agent.key}
+              agentKey={agent.key}
+              initial={agent.initial}
+              model={agent.model}
+              name={agent.name}
+              state={state}
+            />
+          ))}
         </div>
 
         <ActiveItem 
