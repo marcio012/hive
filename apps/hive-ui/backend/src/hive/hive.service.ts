@@ -62,6 +62,26 @@ export interface DebateEntry {
   active: boolean;
 }
 
+export type GateItemType =
+  | 'sr-afirmacao'
+  | 'gate-commit'
+  | 'aprovacao-debate'
+  | 'decisao-estrategica';
+
+export interface GateItem {
+  id: string;
+  tipo: GateItemType;
+  titulo: string;
+  backlog_ref?: string;
+  sr_ref?: string;
+  data: string;
+}
+
+export interface HiveGateState {
+  pendentes: GateItem[];
+  total: number;
+}
+
 export interface HiveState {
   locks: Record<AgentName, AgentLock | null>;
   config: HiveConfig;
@@ -74,6 +94,7 @@ export interface HiveState {
   inboxCounts: Record<AgentName, number>;
   inboxArchive: Record<AgentName, { eligibleCount: number; totalLines: number }>;
   agentDetails: Record<AgentName, AgentDetail>;
+  gate: HiveGateState;
   debates: DebateEntry[];
   brainstorm: Array<{
     filename: string;
@@ -259,6 +280,7 @@ export class HiveService {
       path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-claude.md'),
       path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-copilot.md'),
       path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-gemini.md'),
+      path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-marcio.md'),
       path.join(this.hiveRoot, 'beehive', 'construcao', 'debates-abertos.md'),
     ];
   }
@@ -272,6 +294,7 @@ export class HiveService {
       inboxCounts,
       inboxArchive,
       inboxDetails,
+      gate,
       debates,
       brainstorm,
       pipeline,
@@ -284,6 +307,7 @@ export class HiveService {
         this.readInboxCounts(),
         this.readInboxArchiveState(),
         this.readAgentInboxDetails(),
+        this.readGateState(),
         this.readActiveDebates(),
         this.readBrainstormFiles(),
         this.readPipeline(),
@@ -310,6 +334,7 @@ export class HiveService {
           activeWo: locks.gemini?.activity ?? null,
         },
       },
+      gate,
       debates,
       brainstorm,
       pipeline,
@@ -916,6 +941,24 @@ export class HiveService {
     return Object.fromEntries(details) as Record<AgentName, Omit<AgentDetail, 'activeWo'>>;
   }
 
+  private async readGateState(): Promise<HiveGateState> {
+    const filePath = path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-marcio.md');
+    const content = await this.readTextFile(filePath);
+
+    if (!content) {
+      return { pendentes: [], total: 0 };
+    }
+
+    const pendentes = this.getLatestInboxBlocks(content)
+      .map((block) => this.parseGateItem(block))
+      .filter((item): item is GateItem => item !== null);
+
+    return {
+      pendentes,
+      total: pendentes.length,
+    };
+  }
+
   private async readInboxPending(
     agent: AgentName,
   ): Promise<{ pending: number; blocked: number }> {
@@ -1092,6 +1135,61 @@ export class HiveService {
 
   private startOfDay(value: Date): Date {
     return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  }
+
+  private parseGateItem(block: string): GateItem | null {
+    const status = this.extractInboxField(block, 'Status');
+    if (!status || !this.isPendingInboxStatus(status)) {
+      return null;
+    }
+
+    const headingMatch = block.match(/^### \[([^\]]+)\]\s*(.+)$/m);
+    const id = headingMatch?.[1]?.trim();
+    const titulo = this.stripMarkdownFormatting(headingMatch?.[2] ?? '');
+
+    if (!id || !titulo) {
+      return null;
+    }
+
+    const tipo = this.parseGateTipo(this.extractInboxField(block, 'tipo'));
+    const backlogRef = this.stripOptionalInboxField(this.extractInboxField(block, 'backlog_ref'));
+    const srRef = this.stripOptionalInboxField(this.extractInboxField(block, 'sr_ref'));
+    const data = this.stripOptionalInboxField(this.extractInboxField(block, 'Data')) ?? '';
+
+    return {
+      id,
+      tipo,
+      titulo,
+      ...(backlogRef ? { backlog_ref: backlogRef } : {}),
+      ...(srRef ? { sr_ref: srRef } : {}),
+      data,
+    };
+  }
+
+  private isPendingInboxStatus(status: string): boolean {
+    return /^pendente\b/i.test(status.trim());
+  }
+
+  private parseGateTipo(rawTipo: string | null): GateItemType {
+    switch ((rawTipo ?? '').trim().toLowerCase()) {
+      case 'sr-afirmacao':
+        return 'sr-afirmacao';
+      case 'gate-commit':
+        return 'gate-commit';
+      case 'aprovacao-debate':
+        return 'aprovacao-debate';
+      default:
+        return 'decisao-estrategica';
+    }
+  }
+
+  private stripOptionalInboxField(value: string | null): string | null {
+    if (!value) {
+      return null;
+    }
+
+    const stripped = this.stripMarkdownFormatting(value);
+    return stripped || null;
   }
 
   private async readBrainstormFiles(): Promise<HiveState['brainstorm']> {

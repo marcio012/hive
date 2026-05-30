@@ -37,6 +37,21 @@ export interface DebateEntry {
   active: boolean;
 }
 
+export type GateItemType =
+  | 'sr-afirmacao'
+  | 'gate-commit'
+  | 'aprovacao-debate'
+  | 'decisao-estrategica';
+
+export interface GateItem {
+  id: string;
+  tipo: GateItemType;
+  titulo: string;
+  backlog_ref?: string;
+  sr_ref?: string;
+  data: string;
+}
+
 export interface HiveState {
   locks: Record<AgentName, { activity: string | null; acquiredAt: string | null } | null>;
   config: {
@@ -58,6 +73,10 @@ export interface HiveState {
   inboxCounts: Record<AgentName, number>;
   inboxArchive: Record<AgentName, { eligibleCount: number; totalLines: number }>;
   agentDetails?: Record<AgentName, AgentDetail>;
+  gate: {
+    pendentes: GateItem[];
+    total: number;
+  };
   debates?: DebateEntry[];
   brainstorm: Array<{
     filename: string;

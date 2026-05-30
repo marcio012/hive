@@ -3,6 +3,7 @@ import {
   type AgentDetail,
   type AgentName,
   type DebateEntry,
+  type GateItem,
   type HiveState,
   type OrchestratorStatus,
 } from '../hooks/useHiveSocket';
@@ -181,6 +182,38 @@ function phaseStyle(phase: number): CSSProperties {
   return { '--p': phase } as CSSProperties;
 }
 
+function gateBadgeLabel(tipo: GateItem['tipo']): string {
+  if (tipo === 'sr-afirmacao') {
+    return 'SR';
+  }
+
+  if (tipo === 'gate-commit') {
+    return 'Commit';
+  }
+
+  if (tipo === 'aprovacao-debate') {
+    return 'Debate';
+  }
+
+  return 'Decisão';
+}
+
+function gateBadgeClass(tipo: GateItem['tipo']): string {
+  if (tipo === 'sr-afirmacao') {
+    return 'gate-badge gate-badge--sr';
+  }
+
+  if (tipo === 'gate-commit') {
+    return 'gate-badge gate-badge--commit';
+  }
+
+  if (tipo === 'aprovacao-debate') {
+    return 'gate-badge gate-badge--debate';
+  }
+
+  return 'gate-badge gate-badge--decisao';
+}
+
 export function CentroDeControle({ state }: CentroDeControleProps) {
   const [busyConfigKey, setBusyConfigKey] = useState<keyof HiveConfig | null>(null);
   const [releasingAgent, setReleasingAgent] = useState<AgentName | null>(null);
@@ -196,6 +229,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
   const orchestrator = state?.orchestrator ?? null;
   const events = state?.events ?? [];
   const debates = state?.debates ?? [];
+  const gate = state?.gate ?? { pendentes: [], total: 0 };
 
   const activeLocks = useMemo(
     () =>
@@ -541,6 +575,62 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
     );
   }
 
+  function renderGateSection() {
+    return (
+      <>
+        <div className="section-label" style={{ marginTop: 24 }}>
+          <span className="n">03</span> Gate <span className="line" />
+        </div>
+        <div className="panel">
+          <div className="ph">
+            <span className="ph-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M12 3 4 7v6c0 5 3.4 7.7 8 8 4.6-.3 8-3 8-8V7l-8-4Z" />
+                <path d="m9.5 12 1.8 1.8L15 10.2" />
+              </svg>
+            </span>
+            <h3>Gate</h3>
+            <span className="ph-meta">{gate.total > 0 ? `${gate.total} pendente(s)` : 'em ordem'}</span>
+          </div>
+          <div className="pb">
+            {gate.total === 0 ? (
+              <div className="gate-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="m5 13 4 4L19 7" />
+                </svg>
+                <span>Nenhuma atividade aguardando. Tudo em ordem.</span>
+              </div>
+            ) : (
+              <div className="gate-list">
+                {gate.pendentes.map((item) => (
+                  <article key={item.id} className="gate-card">
+                    <div className="gate-card-head">
+                      <div>
+                        <div className="gate-id">{item.id}</div>
+                        <h4>{item.titulo}</h4>
+                      </div>
+                      <span className={gateBadgeClass(item.tipo)}>{gateBadgeLabel(item.tipo)}</span>
+                    </div>
+                    <div className="gate-meta">
+                      {item.backlog_ref ? <span>{item.backlog_ref}</span> : <span>Sem backlog_ref</span>}
+                      <span>{item.data || 'Sem data'}</span>
+                    </div>
+                    {item.sr_ref ? (
+                      <div className="gate-ref">
+                        <span>SR</span>
+                        <code>{item.sr_ref}</code>
+                      </div>
+                    ) : null}
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  }
+
   function renderEventStream(title: string, showLiveBadge = false) {
     return (
       <div className="panel">
@@ -639,6 +729,11 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                 <circle cx="12" cy="12" r="3" />
               </svg>
             </button>
+            <span className="bs-view-chip">Governança</span>
+            <span className={`bs-view-chip bs-view-chip-gate ${gate.total > 0 ? 'alert' : ''}`}>
+              Gate
+              {gate.total > 0 ? <span className="gate-counter">{gate.total}</span> : null}
+            </span>
           </div>
         </div>
 
@@ -921,7 +1016,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
             </div>
             {renderPipeline()}
 
-            {activeLocks.length === 0 && totalInboxPending === 0 && totalBlocked === 0 ? (
+            {activeLocks.length === 0 && totalInboxPending === 0 && totalBlocked === 0 && gate.total === 0 ? (
               <div className="cc2-clean" style={{ marginBottom: 18 }}>
                 <svg viewBox="0 0 24 24" fill="none" height="15" stroke="currentColor" strokeWidth="2.2" width="15">
                   <path d="m5 13 4 4L19 7" />
@@ -934,6 +1029,8 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
             {renderDispatchDialog()}
 
             <div className={`cc2-settings ${settingsOpen ? 'open' : ''}`}>{renderConfigControls()}</div>
+
+            {renderGateSection()}
 
             <div className="cc2-grid">
               <div className="panel">
