@@ -61,11 +61,27 @@ function formatPercent(value: number | null | undefined): string {
   return `${Math.round(value)}%`;
 }
 
+const CTX_WARN     = 8 * 1024;   // 8 KB
+const CTX_CRITICAL = 15 * 1024;  // 15 KB
+
+function contextLevel(bytes: number): 'ok' | 'warn' | 'critical' {
+  if (bytes === 0)              return 'ok';
+  if (bytes >= CTX_CRITICAL)   return 'critical';
+  if (bytes >= CTX_WARN)       return 'warn';
+  return 'ok';
+}
+
 function formatContextBytes(bytes: number): string {
   if (bytes === 0) return '—';
   if (bytes < 1024) return `${bytes} B`;
   return `${(bytes / 1024).toFixed(1)} KB`;
 }
+
+const CTX_LABEL: Record<'ok' | 'warn' | 'critical', string> = {
+  ok:       'init saudável',
+  warn:     'monitorar',
+  critical: 'higiene urgente',
+};
 
 function formatMetric(value: number | null | undefined, digits = 1): string {
   if (value === null || value === undefined) {
@@ -134,9 +150,11 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
             const active = Boolean(lock);
             const inboxCount = state?.inboxCounts[agent.key] ?? 0;
             const inboxLevel = inboxCount >= 3 ? 'red' : inboxCount >= 1 ? 'gold' : null;
+            const ctxBytes = state?.agentDetails?.[agent.key]?.contextBytes ?? 0;
+            const ctxLevel = contextLevel(ctxBytes);
 
             return (
-              <article key={agent.key} className={`agent-card ${active ? 'active' : 'free'}`}>
+              <article key={agent.key} className={`agent-card ${active ? 'active' : 'free'} ctx-${ctxLevel}`}>
                 {active ? <span className="dot green pulse agent-corner" /> : null}
                 <div className="agent-top">
                   <div className="agent-ico">{agent.initial}</div>
@@ -147,9 +165,9 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
                     </span>
                     <div className="agent-name-row">
                       <div className="agent-name">{agent.name}</div>
-                      <div className="agent-context-cost">
-                        <span>{formatContextBytes(state?.agentDetails?.[agent.key]?.contextBytes ?? 0)}</span>
-                        <span className="agent-context-pct">init</span>
+                      <div className={`agent-context-cost ctx-cost--${ctxLevel}`}>
+                        <span className="ctx-bytes">{formatContextBytes(ctxBytes)}</span>
+                        <span className="ctx-badge">{CTX_LABEL[ctxLevel]}</span>
                       </div>
                     </div>
                     <div className="agent-model">
