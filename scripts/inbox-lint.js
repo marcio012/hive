@@ -11,7 +11,8 @@ const {
 const rootDir = path.resolve(__dirname, '..');
 const inboxFiles = [
   path.join(rootDir, 'beehive/construcao/inbox-claude.md'),
-  path.join(rootDir, 'beehive/construcao/inbox-copilot.md'),
+  path.join(rootDir, 'beehive/construcao/inbox-copilot-hive.md'),
+  path.join(rootDir, 'beehive/construcao/inbox-copilot-tos.md'),
   path.join(rootDir, 'beehive/construcao/inbox-gemini.md'),
 ];
 

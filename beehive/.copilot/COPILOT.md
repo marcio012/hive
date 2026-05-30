@@ -41,7 +41,12 @@ beehive/bin/*.sh
 
 ## Canal de comunicacao entre agentes (inbox)
 
-O Copilot recebe mensagens via `beehive/construcao/inbox-copilot.md`.
+**A partir de 2026-05-29 (DEBATE-034), o inbox é separado por domínio:**
+- **Copilot-Hive** → `beehive/construcao/inbox-copilot-hive.md` + fila `FILA_COPILOT_HIVE.md`
+- **Copilot-TOS** → `beehive/construcao/inbox-copilot-tos.md` + fila `FILA_COPILOT_TOS.md`
+- `inbox-copilot.md` → legado, sem novas entradas
+
+O Copilot recebe mensagens via o inbox do seu domínio ativo.
 Inboxes são arquivos markdown — editar diretamente. Append-only, nunca apagar entradas.
 
 Redundância operacional: se um debate aberto contiver perguntas explícitas ao Copilot e o inbox não tiver sido materializado, o scanner `inbox` deve sinalizar essa pendência como alerta de debate.
@@ -67,7 +72,9 @@ Redundância operacional: se um debate aberto contiver perguntas explícitas ao 
 Se a implementacao apontar para produto externo e esses campos nao estiverem no handoff/contrato, bloquear a execucao e escalar para Claude. Nao usar busca ampla no filesystem como substituto do destino explicito.
 
 **Leitura no inicio de sessao:**
-- Ler `beehive/construcao/inbox-copilot.md` e listar entradas com `status: pendente`
+- Identificar o domínio da sessão: **Hive** ou **TOS**
+- Ler o inbox correspondente (`inbox-copilot-hive.md` ou `inbox-copilot-tos.md`) e listar entradas com `status: pendente`
+- Consultar também a fila do domínio (`FILA_COPILOT_HIVE.md` ou `FILA_COPILOT_TOS.md`) para prioridade
 - Tratar como pendência também debates abertos com perguntas explícitas ao Copilot ainda sem `Parecer do Copilot`, mesmo quando o inbox estiver faltando
 - Atalho no chat: digitar `inbox` lista automaticamente as pendencias
 
@@ -77,7 +84,7 @@ O Copilot reconhece os seguintes comandos diretamente no chat:
 
 | Comando | O que faz |
 |---|---|
-| `inbox` | Lê `inbox-copilot.md` e também alerta debates abertos com parecer do Copilot pendente |
+| `inbox` | Lê o inbox do domínio ativo (`inbox-copilot-hive.md` ou `inbox-copilot-tos.md`) e alerta debates abertos com parecer pendente |
 | `status` | Mostra a issue ativa no board, estado do lock e próximo passo |
 | `checkpoint` | Resume o ponto de parada técnico da última tarefa executada |
 
@@ -104,7 +111,7 @@ Antes de iniciar qualquer tarefa, o usuario deve rodar:
   npm run squad:inbox -- copilot
 
 Atalho universal:
-- Se o usuario digitar `inbox` no chat, tratar como comando para ler `beehive/construcao/inbox-copilot.md` e listar entradas com `status: pendente`.
+- Se o usuario digitar `inbox` no chat, tratar como comando para ler o inbox do domínio ativo (`inbox-copilot-hive.md` ou `inbox-copilot-tos.md`) e listar entradas com `status: pendente`.
 - Se existir debate aberto com perguntas explícitas ao Copilot e sem parecer registrado, tratar isso como pendência mesmo sem entrada no inbox.
 - Para leitura no terminal: `npm run squad:inbox -- copilot`.
 
@@ -126,7 +133,7 @@ Se `NEXT_STEP` referenciar um arquivo, ler o arquivo antes de qualquer implement
 ## Arquivos de referencia no inicio da sessao
 
 **Leitura obrigatória (mudam a cada sessão):**
-- `beehive/construcao/inbox-copilot.md` — tarefas pendentes, leia PRIMEIRO
+- `beehive/construcao/inbox-copilot-hive.md` (domínio Hive) **ou** `inbox-copilot-tos.md` (domínio TOS) — tarefas pendentes, leia PRIMEIRO
 - `.hive-agent/session-state.env` — estado atual (issue ativa, NEXT_STEP)
 
 **Leitura sob demanda (só quando NEXT_STEP referenciar ou após mudança de governança):**

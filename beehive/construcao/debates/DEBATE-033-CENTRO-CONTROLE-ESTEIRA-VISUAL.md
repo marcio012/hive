@@ -21,7 +21,7 @@ participantes:
 | Gemini (PO) | ✅ |
 | Gemini (Facilitador) | ✅ |
 | Copilot (Engenheiro) | ✅ |
-| Márcio (Owner) | ✅ — ideação aprovada 2026-05-29 |
+| Márcio (Owner) | ✅ — protótipo aprovado 2026-05-29. Agentes como estações (não fases). Funil incluso na mesma WO. |
 
 ---
 
@@ -160,8 +160,8 @@ Resumo: **sem mudar schema de WO**, **com inferência no backend**, **V3 opciona
 - [x] Parecer Claude
 - [x] Parecer Copilot
 - [x] Consolidação / Veredito
-- [ ] Aprovação Márcio
-- [ ] Work Orders despachadas
+- [x] Aprovação Márcio — 2026-05-29. Agentes como estações. Funil incluso na WO-039.
+- [x] Work Orders despachadas — WO-039 criada e despachada ao Copilot 2026-05-29.
 - [ ] Execução concluída
 
 ---

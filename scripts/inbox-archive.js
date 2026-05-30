@@ -14,7 +14,8 @@ const archiveDir = path.join(projectPath, 'beehive/registry/archive/inbox');
 const MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
 const inboxFiles = {
   claude: path.join(inboxDir, 'inbox-claude.md'),
-  copilot: path.join(inboxDir, 'inbox-copilot.md'),
+  'copilot-hive': path.join(inboxDir, 'inbox-copilot-hive.md'),
+  'copilot-tos': path.join(inboxDir, 'inbox-copilot-tos.md'),
   gemini: path.join(inboxDir, 'inbox-gemini.md'),
 };
 

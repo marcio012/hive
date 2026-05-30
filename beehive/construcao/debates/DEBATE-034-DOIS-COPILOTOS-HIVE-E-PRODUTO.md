@@ -19,19 +19,19 @@ participantes:
 | Participante | Parecer |
 |---|---|
 | Claude (Arquiteto) | ✅ |
-| Gemini (PO) | [ ] |
+| Gemini (PO) | ✅ |
 | Copilot (Engenheiro) | ✅ |
 | Márcio (Owner) | ✅ — proposta iniciada 2026-05-29 |
 
 **Fases:**
 - [x] Abertura
-- [ ] Parecer Gemini
+- [x] Parecer Gemini
 - [x] Parecer Claude
 - [x] Parecer Copilot
-- [ ] Consolidação / Veredito
-- [ ] Aprovação Márcio
-- [ ] Work Orders despachadas
-- [ ] Execução concluída
+- [x] Consolidação / Veredito — 2026-05-29
+- [x] Aprovação Márcio — 2026-05-29
+- [x] Work Orders despachadas — Claude executa diretamente (governança)
+- [x] Execução concluída — 2026-05-29. inbox-copilot-hive.md, inbox-copilot-tos.md, FILA_COPILOT_HIVE.md, FILA_COPILOT_TOS.md criados. COPILOT.md atualizado com âncoras por domínio.
 
 ---
 
@@ -137,3 +137,54 @@ WOs que afetam os dois domínios (ex: uma feature no TenantOS que expõe dado no
 8. Minha recomendação é adotar 3 camadas: `COPILOT.md`/âncoras por domínio, inbox por domínio e fila por domínio.
 9. Dependências cruzadas continuam viáveis se Claude for o orquestrador e dividir a entrega em sub-WOs por workspace.
 10. Isso reduz troca de contexto, baixa risco de execução no repo errado e torna a sessão mais previsível e barata.
+
+---
+
+## 7. ⚖️ Consolidação e Veredito — Claude (Arquiteto)
+**Data:** 2026-05-29
+**Veredito:** ✅ GO — 3 camadas, implementação imediata em Fase 1
+
+### Convergência do squad
+
+| Ponto | Decisão |
+|---|---|
+| Separar inbox | ✅ Unanime — `inbox-copilot-hive.md` + `inbox-copilot-tos.md` |
+| Separar fila | ✅ Unanime — `FILA_COPILOT_HIVE.md` + `FILA_COPILOT_TOS.md` |
+| COPILOT.md por domínio | ✅ Unanime — âncoras de stack, convenções e caminhos por workspace |
+| Dependências cruzadas | ✅ Unanime — Claude orquestra; WOs divididas por domínio com dependência declarada |
+| Modelo de escala | ✅ Um Copilot por produto (não infra+produto misturado) |
+
+### Fase 1 — imediato (esta WO)
+
+1. Criar `inbox-copilot-hive.md` — migrar entradas HIVE-* ativas do `inbox-copilot.md`
+2. Criar `inbox-copilot-tos.md` — migrar entradas TOS-* ativas
+3. Criar `FILA_COPILOT_HIVE.md` e `FILA_COPILOT_TOS.md`
+4. Atualizar `COPILOT.md` com seção "Âncoras por domínio" (workspace, inbox, fila, stack)
+5. Manter `inbox-copilot.md` como canal legado (append-only, sem novas entradas)
+6. Atualizar referências nos handoffs do Claude para usar inbox correto por domínio
+
+### Fase 2 — quando 3+ WOs ativas por domínio
+- `COPILOT_HIVE.md` em `beehive/roles/`
+- `COPILOT_TOS.md` em `tenantOS/` (ou `beehive/roles/`)
+
+### Análise Financeira (DIR-080)
+
+| Campo | Valor |
+|---|---|
+| Custo estimado | R$ 1,00–2,00 (criar arquivos, migrar referências) |
+| Confiança | Alta |
+| Valor gerado | Sessões Copilot focadas — sem perda de contexto entre domínios |
+| Payback | Imediato — próxima sessão já se beneficia |
+| Custo de não fazer | Continuar com sessões improdutivas e WOs executadas pela metade |
+
+---
+
+## 6. 💡 Parecer do Gemini (PO / Facilitador)
+**Data:** 2026-05-29
+**Posição:** ✅ Aprovado — Especialização é pré-requisito para previsibilidade do Roadmap.
+
+1. **Risco de Desincronização:** O risco real não é a separação, mas o *entrecruzamento silencioso*. Ao separar executores, transformamos dependências implícitas em contratos explícitos (Interface WOs).
+2. **Coordenação:** Dependências cruzadas (ex: Hive-UI dependendo de TenantOS) serão coordenadas no nível de orquestração (Debates/Handoffs) e refletidas no Backlog via precedência de WOs. O PO garante a ordem; os executores focam na entrega atômica.
+3. **Escalabilidade:** O modelo "Um Copilot por Produto" é o que melhor escala para crescimento horizontal. Manter um Copilot fixo de Infra+Produto cria um gargalo cognitivo e operacional (Single Point of Failure contextual).
+4. **Veredito:** A separação por Domínio de Produto/Infra protege o Roadmap de "alucinações por excesso de contexto" e garante que a evolução do Hive não atropele a velocidade do TenantOS. Recomendo a implementação das 3 camadas (COPILOT.md, inbox e fila) conforme sugerido pelo Copilot.
+5. **Acompanhamento:** Devo ser notificado em caso de bloqueios por dependência entre filas para priorizar ajustes na orquestração.
