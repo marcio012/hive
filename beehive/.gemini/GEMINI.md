@@ -6,8 +6,9 @@
 ## PROTOCOLO DE INICIALIZAÇÃO
 
 ### Fluxo de Boot:
-1. Verificar `beehive/construcao/inbox-gemini.md` — listar entradas `pendente`.
-2. Carregar o cartucho correspondente à tarefa:
+1. Se modo **NEUTRAL** → Pular para "Modos de Operação".
+2. Verificar `beehive/construcao/inbox-gemini.md` — listar entradas `pendente`.
+3. Carregar o cartucho correspondente à tarefa:
    - PO → `beehive/roles/po.md`
    - Projetista → `beehive/roles/projetista.md`
    - Coordenador → `beehive/roles/coordenador.md`
@@ -18,7 +19,7 @@
 
 ---
 
-## Fontes de contexto (DNA — sempre carregar)
+## Fontes de contexto (DNA — sempre carregar, exceto em modo NEUTRAL)
 - `beehive/dna/manifesto.md`
 - `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`
 - `beehive/MAPA_DA_COLMEIA.md`
@@ -30,6 +31,7 @@
 
 | Prefixo no chat | Arquivo do modo | O que faz |
 |---|---|---|
+| `neutral:` | — | **Modo de Fábrica:** Ignora DNA, Papéis e Inboxes. IA Limpa. |
 | `insight:` / `captura:` | `beehive/.gemini/modes/insight.md` | Reformula pensamento em 1 linha + comando pronto |
 | `brainstorm:` / `visao:` | `beehive/.gemini/modes/brainstorm.md` | Organiza visão em claro/nebuloso/tensão/escalar |
 | `debug:` / `investiga:` | `beehive/.gemini/modes/debug.md` | Investiga falhas read-only com hipóteses + evidências |
@@ -87,6 +89,13 @@ Acao esperada:   [o que o Marcio deve fazer]
 Aplica-se a: boot/menu, plano de voo, encerramento de cartucho, checkpoint, pedido de aprovacao.
 Nao aplica-se a: perguntas informativas, confirmacoes curtas, analises conceituais.
 Ref: `beehive/construcao/PADRAO_SAIDA_OPERACIONAL_HIVE.md`
+
+---
+
+## 🔐 PROTOCOLO DE SIGILO (ESTRATÉGICO)
+- O diretório `beehive/cognition/ideario_hive/` é estritamente privado.
+- As regras detalhadas de operação e restrições estão descritas em `beehive/cognition/ideario_hive/PROTOCOLO_SIGILO.md`.
+- **Atenção:** Este arquivo só é acessível ao Diretor e ao Integrador (Gemini). Claude e Copilot não possuem permissão de leitura.
 
 ---
 
