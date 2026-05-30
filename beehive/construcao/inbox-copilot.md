@@ -144,7 +144,7 @@ Critérios-chave: AC-01 (cria Venda + VendaItem + atualiza agendamento em transa
 **backlog_ref:** TOS-015
 **thread:** tos-015-agenda
 **wo_ref:** beehive/construcao/work_orders/WO-036-TOS-015-B-FRONTEND-GRADE.md
-**Status:** pendente
+**Status:** executada — ✅ commits `56123f1` no repo `tenantOS` e `cd65cf1` no repo `hive`.
 
 Onda B do Módulo de Agenda. Adicionar vista de grade horária CSS Grid em `Agenda.tsx` como modo alternativo (toggle lista/grade). Status `bloqueio` visível com estilo distinto.
 Critérios-chave: AC-01 (toggle visível), AC-02 (colunas hora + profissionais), AC-03 (blocos posicionados por horário/duração), AC-05 (lista original intacta).
@@ -169,7 +169,7 @@ Critérios-chave: AC-01 (toggle visível), AC-02 (colunas hora + profissionais),
 **backlog_ref:** HIVE-021
 **thread:** hive-ui-diretrizes-governanca
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-034-PAINEL-DIRETRIZES-GOVERNANCA.md
-**Status:** pendente
+**Status:** executada — ✅ commit `3e653c6` no repo `hive` (`feat(hive-ui): add governance control panel`).
 
 Nova aba "Governança" no Centro de Controle. Criar `GovernanceRepository` file-based com interface estável (`listDirectives`, `getManifesto`, `listRoles`), expor via `getHiveState()`, e renderizar 3 blocos na aba (DIRs, Manifesto, Roles).
 Critérios-chave: AC-01 (campo `governance` na API), AC-05 (sem erro 500 por arquivo ausente), AC-06 (aba renderiza 3 seções), AC-08 (build limpo).
