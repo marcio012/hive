@@ -15,6 +15,7 @@ LINT_SCRIPT="$HIVE_HOME/scripts/inbox-lint.js"
 PENDING_SCRIPT="$HIVE_HOME/scripts/inbox-pending.js"
 ARCHIVE_SCRIPT="$HIVE_HOME/scripts/inbox-archive.js"
 FAIXA_A_SCRIPT="$HIVE_HOME/scripts/inbox-faixa-a.js"
+SESSION_STATE_FILE="$PROJECT_PATH/.hive-agent/session-state.env"
 
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -25,6 +26,70 @@ NC='\033[0m'
 extract_pending_inbox_entries() {
   local file="$1"
   node "$PENDING_SCRIPT" "$file"
+}
+
+resolve_copilot_target() {
+  local legacy_inbox="$INBOX_DIR/inbox-copilot.md"
+  local hive_inbox="$INBOX_DIR/inbox-copilot-hive.md"
+  local tos_inbox="$INBOX_DIR/inbox-copilot-tos.md"
+  local configured_target=""
+  local project_name
+
+  if [[ -f "$SESSION_STATE_FILE" ]]; then
+    configured_target="$(grep -E '^COPILOT_ACTIVE_INBOX=' "$SESSION_STATE_FILE" | head -1 | cut -d'"' -f2 || true)"
+    if [[ "$configured_target" == "copilot-hive" && -f "$hive_inbox" ]]; then
+      printf '%s' "$configured_target"
+      return
+    fi
+    if [[ "$configured_target" == "copilot-tos" && -f "$tos_inbox" ]]; then
+      printf '%s' "$configured_target"
+      return
+    fi
+  fi
+
+  if [[ -f "$hive_inbox" && ! -f "$tos_inbox" ]]; then
+    printf '%s' "copilot-hive"
+    return
+  fi
+  if [[ -f "$tos_inbox" && ! -f "$hive_inbox" ]]; then
+    printf '%s' "copilot-tos"
+    return
+  fi
+
+  project_name="$(basename "$PROJECT_PATH" | tr '[:upper:]' '[:lower:]')"
+  if [[ "$project_name" == "hive" && -f "$hive_inbox" ]]; then
+    printf '%s' "copilot-hive"
+    return
+  fi
+  if [[ "$project_name" == "tenantos" && -f "$tos_inbox" ]]; then
+    printf '%s' "copilot-tos"
+    return
+  fi
+  if [[ -f "$hive_inbox" ]]; then
+    printf '%s' "copilot-hive"
+    return
+  fi
+  if [[ -f "$tos_inbox" ]]; then
+    printf '%s' "copilot-tos"
+    return
+  fi
+  if [[ -f "$legacy_inbox" ]]; then
+    printf '%s' "copilot"
+    return
+  fi
+
+  printf '%s' "copilot"
+}
+
+normalize_target_agent() {
+  local target="$1"
+
+  if [[ "$target" == "copilot" ]]; then
+    resolve_copilot_target
+    return
+  fi
+
+  printf '%s' "$target"
 }
 
 debate_pending_for_agent() {
@@ -88,6 +153,7 @@ case "$COMMAND" in
       echo -e "${RED}Uso: bash beehive/bin/hive-inbox.sh ${COMMAND} <agente>${NC}"
       exit 1
     fi
+    TARGET_AGENT="$(normalize_target_agent "$TARGET_AGENT")"
 
     if [[ ! -f "$FAIXA_A_SCRIPT" ]]; then
       echo -e "${RED}Script de Faixa A não encontrado: $FAIXA_A_SCRIPT${NC}"
@@ -105,7 +171,7 @@ case "$COMMAND" in
     TARGET_AGENT=""
     ;;
   *)
-    TARGET_AGENT="${1:-}"
+    TARGET_AGENT="$(normalize_target_agent "${1:-}")"
     COMMAND="scan"
     ;;
 esac

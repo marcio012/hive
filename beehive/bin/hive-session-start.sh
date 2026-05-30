@@ -10,6 +10,7 @@ PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
 HIVE_ROLES="${HIVE_ROLES:-$HIVE_HOME/beehive/roles/roles.yaml}"
 SESSION_DIR="$PROJECT_PATH/.hive-agent"
 GEMINI_LOCK_FILE="$SESSION_DIR/gemini-session.lock"
+SESSION_STATE_FILE="$SESSION_DIR/session-state.env"
 
 AGENT_NAME=${1:-"gemini"} # Assume gemini se não for passado nada
 shift || true
@@ -43,6 +44,90 @@ GEMINI_ACTIVE_ROLE="$active_role"
 GEMINI_ACTIVE_MODE="$active_mode"
 GEMINI_SESSION_STARTED_AT="$(date '+%Y-%m-%dT%H:%M:%SZ')"
 EOF
+}
+
+resolve_copilot_inbox() {
+  local legacy_inbox="$PROJECT_PATH/beehive/construcao/inbox-copilot.md"
+  local hive_inbox="$PROJECT_PATH/beehive/construcao/inbox-copilot-hive.md"
+  local tos_inbox="$PROJECT_PATH/beehive/construcao/inbox-copilot-tos.md"
+  local project_name
+
+  if [[ -f "$hive_inbox" && ! -f "$tos_inbox" ]]; then
+    printf '%s' "copilot-hive"
+    return
+  fi
+  if [[ -f "$tos_inbox" && ! -f "$hive_inbox" ]]; then
+    printf '%s' "copilot-tos"
+    return
+  fi
+
+  project_name="$(basename "$PROJECT_PATH" | tr '[:upper:]' '[:lower:]')"
+  if [[ "$project_name" == "hive" && -f "$hive_inbox" ]]; then
+    printf '%s' "copilot-hive"
+    return
+  fi
+  if [[ "$project_name" == "tenantos" && -f "$tos_inbox" ]]; then
+    printf '%s' "copilot-tos"
+    return
+  fi
+  if [[ -f "$hive_inbox" ]]; then
+    printf '%s' "copilot-hive"
+    return
+  fi
+  if [[ -f "$tos_inbox" ]]; then
+    printf '%s' "copilot-tos"
+    return
+  fi
+  if [[ -f "$legacy_inbox" ]]; then
+    printf '%s' "copilot"
+    return
+  fi
+}
+
+refresh_session_state() {
+  local started_at session_date project_name active_role active_mode copilot_inbox copilot_domain
+  local temp_file
+
+  started_at="$(date '+%Y-%m-%dT%H:%M:%SZ')"
+  session_date="$(date '+%Y-%m-%d')"
+  project_name="$(basename "$PROJECT_PATH")"
+  active_role=""
+  active_mode="$MODE_NAME"
+  copilot_inbox=""
+  copilot_domain=""
+
+  if [[ "$AGENT_NAME" == "gemini" ]]; then
+    active_role="$(normalize_gemini_role)"
+  elif [[ -n "$ROLE_NAME" ]]; then
+    active_role="$ROLE_NAME"
+  fi
+
+  if [[ "$AGENT_NAME" == "copilot" ]]; then
+    copilot_inbox="$(resolve_copilot_inbox || true)"
+    if [[ -n "$copilot_inbox" ]]; then
+      copilot_domain="${copilot_inbox#copilot-}"
+    fi
+  fi
+
+  temp_file="$(mktemp)"
+  if [[ -f "$SESSION_STATE_FILE" ]]; then
+    grep -Ev '^(SESSION_DATE|LAST_SESSION_START_AT|ACTIVE_AGENT|ACTIVE_ROLE|ACTIVE_MODE|ACTIVE_PROJECT|COPILOT_ACTIVE_INBOX|COPILOT_ACTIVE_DOMAIN)=' "$SESSION_STATE_FILE" > "$temp_file" || true
+  fi
+
+  {
+    printf 'SESSION_DATE="%s"\n' "$session_date"
+    printf 'LAST_SESSION_START_AT="%s"\n' "$started_at"
+    printf 'ACTIVE_AGENT="%s"\n' "$AGENT_NAME"
+    printf 'ACTIVE_ROLE="%s"\n' "$active_role"
+    printf 'ACTIVE_MODE="%s"\n' "$active_mode"
+    printf 'ACTIVE_PROJECT="%s"\n' "$project_name"
+    if [[ -n "$copilot_inbox" ]]; then
+      printf 'COPILOT_ACTIVE_INBOX="%s"\n' "$copilot_inbox"
+      printf 'COPILOT_ACTIVE_DOMAIN="%s"\n' "$copilot_domain"
+    fi
+  } >> "$temp_file"
+
+  mv "$temp_file" "$SESSION_STATE_FILE"
 }
 
 assert_gemini_role_boundary() {
@@ -142,5 +227,6 @@ echo "===================================="
 if [[ "$AGENT_NAME" == "gemini" ]]; then
   write_gemini_lock "$(normalize_gemini_role)" "$MODE_NAME"
 fi
+refresh_session_state
 
 echo -e "\033[0;32mHive operacional. Pronto para orquestrar.\033[0m"

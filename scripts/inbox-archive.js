@@ -11,9 +11,11 @@ const rootDir = path.resolve(__dirname, '..');
 const projectPath = path.resolve(process.env.PROJECT_PATH || rootDir);
 const inboxDir = path.join(projectPath, 'beehive/construcao');
 const archiveDir = path.join(projectPath, 'beehive/registry/archive/inbox');
+const sessionStateFile = path.join(projectPath, '.hive-agent/session-state.env');
 const MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
 const inboxFiles = {
   claude: path.join(inboxDir, 'inbox-claude.md'),
+  copilot: path.join(inboxDir, 'inbox-copilot.md'),
   'copilot-hive': path.join(inboxDir, 'inbox-copilot-hive.md'),
   'copilot-tos': path.join(inboxDir, 'inbox-copilot-tos.md'),
   gemini: path.join(inboxDir, 'inbox-gemini.md'),
@@ -118,6 +120,10 @@ function resolveAgent(target) {
     return null;
   }
 
+  if (target === 'copilot') {
+    return resolveCopilotAlias();
+  }
+
   if (inboxFiles[target]) {
     return target;
   }
@@ -129,6 +135,64 @@ function resolveAgent(target) {
   }
 
   return match[1];
+}
+
+function readSessionState() {
+  if (!fs.existsSync(sessionStateFile)) {
+    return {};
+  }
+
+  const raw = fs.readFileSync(sessionStateFile, 'utf8');
+  const state = {};
+
+  for (const line of raw.split(/\r?\n/)) {
+    const match = line.match(/^([A-Z0-9_]+)="(.*)"$/);
+    if (!match) {
+      continue;
+    }
+
+    state[match[1]] = match[2];
+  }
+
+  return state;
+}
+
+function resolveCopilotAlias() {
+  const hasHiveInbox = fs.existsSync(inboxFiles['copilot-hive']);
+  const hasTosInbox = fs.existsSync(inboxFiles['copilot-tos']);
+  const hasLegacyInbox = fs.existsSync(inboxFiles.copilot);
+
+  const sessionState = readSessionState();
+  const configuredTarget = sessionState.COPILOT_ACTIVE_INBOX;
+  if (configuredTarget && inboxFiles[configuredTarget] && fs.existsSync(inboxFiles[configuredTarget])) {
+    return configuredTarget;
+  }
+
+  if (hasHiveInbox && !hasTosInbox) {
+    return 'copilot-hive';
+  }
+  if (hasTosInbox && !hasHiveInbox) {
+    return 'copilot-tos';
+  }
+
+  const projectName = path.basename(projectPath).toLowerCase();
+  if (projectName === 'hive' && hasHiveInbox) {
+    return 'copilot-hive';
+  }
+  if (projectName === 'tenantos' && hasTosInbox) {
+    return 'copilot-tos';
+  }
+  if (hasHiveInbox) {
+    return 'copilot-hive';
+  }
+  if (hasTosInbox) {
+    return 'copilot-tos';
+  }
+  if (hasLegacyInbox) {
+    return 'copilot';
+  }
+
+  return null;
 }
 
 function resolveTargets(args) {

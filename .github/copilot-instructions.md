@@ -25,7 +25,7 @@
 - Read order matters. The repository-level entrypoints are `AGENTS.md`, `COPILOT.md`, `beehive/.copilot/COPILOT.md`, `beehive/roles/roles.yaml`, and `beehive/cognition/diretrizes.md`.
 - Copilot is an executor here, not the design authority. If a task changes governance, role definitions, or has unresolved design ambiguity, stop and escalate to Claude instead of filling gaps yourself.
 - Use the root npm proxy commands (`npm run squad:*`, `npm run gemini:*`, `npm run po:demand`) instead of invoking sidecar internals directly; the proxy layer is how this repo resolves `HIVE_HOME`, `BEEHIVE_PATH`, and `PROJECT_PATH`.
-- Session boot is workflow-driven: `npm run squad:inbox -- copilot` scans inbox files and open debates, and `npm run squad:session:copilot` initializes the local `.hive-agent/` bridge for the current project.
+- Session boot is workflow-driven: `npm run squad:inbox -- copilot` scans the active Copilot inbox plus open debates, and `npm run squad:session:copilot` initializes the local `.hive-agent/` bridge for the current project.
 - Inbox files in `beehive/construcao/` are append-only. Update `status`, but do not delete entries; open debates can still count as pending work even when no inbox item was materialized yet.
 - Multi-repo work is explicit by contract. Handoffs must declare `workspace_hive`, `workspace_target`, `repo_target`, and `cwd_exec`; do not infer an external target repository by broad filesystem search.
 - The Git hook in `.githooks/commit-msg` is part of normal workflow, not optional ceremony: commit subjects must use Conventional Commits, the body must include `Approved by: Márcio`, non-Márcio committers must include `Dev: Name - Role`, and `Co-authored-by:` trailers are rejected.

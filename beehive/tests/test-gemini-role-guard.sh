@@ -156,11 +156,13 @@ assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="projetista"'
 
 assert_success run_session_start claude
 assert_success run_session_start copilot
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_AGENT="copilot"'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_PROJECT="workspace"'
 
 mkdir -p "$TEST_REPO/beehive/construcao/debates"
-cat > "$TEST_REPO/beehive/construcao/inbox-copilot.md" <<'EOF'
+cat > "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md" <<'EOF'
 ### [CLAUDE-2026-05-29-064] Commit liberado — WO-025-A prevenção de inbox
-**De:** Claude (Arquiteto) → Copilot (Executor)
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
 **Data:** 2026-05-29
 **tipo:** handoff-executavel
 **Status:** executada — commit `8db27c6` realizado.
@@ -173,7 +175,7 @@ cat > "$TEST_REPO/beehive/construcao/inbox-copilot.md" <<'EOF'
 ---
 
 ### [CLAUDE-2026-05-29-064] WO-025-A: Higiene de Inbox — Onda 1 (Prevenção)
-**De:** Claude (Arquiteto) → Copilot (Executor)
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
 **Data:** 2026-05-29
 **tipo:** handoff-executavel
 **Status:** pendente
@@ -192,14 +194,18 @@ Nova pendência real.
 EOF
 printf '' > "$TEST_REPO/beehive/construcao/inbox-claude.md"
 printf '' > "$TEST_REPO/beehive/construcao/inbox-gemini.md"
+assert_success run_session_start copilot
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'COPILOT_ACTIVE_INBOX="copilot-hive"'
 
 INBOX_OUTPUT="$(
   cd "$HIVE_HOME" && \
   PROJECT_PATH="$TEST_REPO" bash "$HIVE_HOME/beehive/bin/hive-inbox.sh" copilot
 )"
+assert_output_contains "$INBOX_OUTPUT" "Agente: copilot-hive"
 assert_output_contains "$INBOX_OUTPUT" "[UI-{YYYY-MM-DD}-{HH:mm}] Intenção despachada via Hive UI (pendente)"
 assert_output_not_contains "$INBOX_OUTPUT" "[CLAUDE-2026-05-29-064] WO-025-A: Higiene de Inbox — Onda 1 (Prevenção) (pendente)"
 assert_output_not_contains "$INBOX_OUTPUT" "[IGNORAR-EM-CODE-FENCE]"
+assert_output_not_contains "$INBOX_OUTPUT" "Alvo de inbox inválido"
 
 cat > "$TEST_REPO/beehive/construcao/inbox-claude.md" <<'EOF'
 ### [COPILOT-2026-05-29-001] Entrega concluída
@@ -239,15 +245,15 @@ if grep -Fq "[COPILOT-2026-05-29-001]" "$TEST_REPO/beehive/construcao/inbox-clau
 fi
 assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-claude-historico.md" "[COPILOT-2026-05-29-001] Entrega concluída"
 
-cat > "$TEST_REPO/beehive/construcao/inbox-copilot.md" <<'EOF'
-# Inbox — Copilot
+cat > "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md" <<'EOF'
+# Inbox — Copilot-Hive
 
-Canal de entrada de contexto e tarefas para o Copilot.
+Canal de entrada de contexto e tarefas para o Copilot-Hive.
 Append-only — nunca apagar entradas. Apenas atualizar `status`.
 Entradas com mais de 7 dias e status consumida/executada → mover para `registry/archive/inbox/`.
 
 ### [CLAUDE-2026-05-20-001] Entrada antiga
-**De:** Claude (Arquiteto) → Copilot (Executor)
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
 **Data:** 2026-05-20
 **tipo:** handoff-executavel
 **Status:** executada
@@ -257,7 +263,7 @@ Arquivar por idade.
 ---
 
 ### [CLAUDE-2026-05-29-002] Entrada recente
-**De:** Claude (Arquiteto) → Copilot (Executor)
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
 **Data:** 2026-05-29
 **tipo:** handoff-executavel
 **Status:** executada
@@ -266,7 +272,7 @@ Ainda deve permanecer no inbox ativo.
 
 ---
 
-**Histórico completo:** `beehive/registry/archive/inbox/inbox-copilot-historico.md`
+**Histórico completo:** `beehive/registry/archive/inbox/inbox-copilot-hive-historico.md`
 
 **Tipos de entrada (metadado opcional — aplicar em novas entradas):**
 - `alerta-roteamento` — o agente identificou algo mas não tem autoridade para agir; Claude deve decidir
@@ -284,26 +290,29 @@ COPILOT_ARCHIVE_OUTPUT="$(
   cd "$HIVE_HOME" && \
   PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/inbox-archive.js" --write --now 2026-05-29T12:00:00Z copilot
 )"
-assert_output_contains "$COPILOT_ARCHIVE_OUTPUT" "inbox-copilot.md — 1 entrada(s) movida(s) para o histórico"
-assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "[CLAUDE-2026-05-29-002] Entrada recente"
-assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" '**Histórico completo:** `beehive/registry/archive/inbox/inbox-copilot-historico.md`'
-assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "**Tipos de entrada (metadado opcional — aplicar em novas entradas):**"
-assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "[UI-{YYYY-MM-DD}-{HH:mm}] Intenção despachada via Hive UI"
-if grep -Fq "[CLAUDE-2026-05-20-001]" "$TEST_REPO/beehive/construcao/inbox-copilot.md"; then
+assert_output_contains "$COPILOT_ARCHIVE_OUTPUT" "inbox-copilot-hive.md"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md" '**Histórico completo:** `beehive/registry/archive/inbox/inbox-copilot-hive-historico.md`'
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md" "**Tipos de entrada (metadado opcional — aplicar em novas entradas):**"
+if grep -Fq "[CLAUDE-2026-05-20-001]" "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md"; then
   echo "Assertion failed: old Copilot entry should be removed from active inbox"
   exit 1
 fi
-assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-copilot-historico.md" "[CLAUDE-2026-05-20-001] Entrada antiga"
+if grep -Fq "[CLAUDE-2026-05-29-002]" "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md"; then
+  echo "Assertion failed: closed Copilot-Hive entries should be removed from active inbox during archive"
+  exit 1
+fi
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-copilot-hive-historico.md" "[CLAUDE-2026-05-20-001] Entrada antiga"
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-copilot-hive-historico.md" "[CLAUDE-2026-05-29-002] Entrada recente"
 
-cat > "$TEST_REPO/beehive/construcao/inbox-copilot.md" <<'EOF'
-# Inbox — Copilot
+cat > "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md" <<'EOF'
+# Inbox — Copilot-Hive
 
-Canal de entrada de contexto e tarefas para o Copilot.
+Canal de entrada de contexto e tarefas para o Copilot-Hive.
 Append-only — nunca apagar entradas. Apenas atualizar `status`.
 Entradas com mais de 7 dias e status consumida/executada → mover para `registry/archive/inbox/`.
 
 ### [CLAUDE-2026-05-29-010] Entrega recente
-**De:** Claude (Arquiteto) → Copilot (Executor)
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
 **Data:** 2026-05-29
 **tipo:** handoff-executavel
 **Status:** executada
@@ -313,7 +322,7 @@ Pode ser arquivada apenas com autorização manual explícita.
 ---
 
 ### [CLAUDE-2026-05-29-011] Pendência real
-**De:** Claude (Arquiteto) → Copilot (Executor)
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
 **Data:** 2026-05-29
 **tipo:** handoff-executavel
 **Status:** pendente
@@ -325,13 +334,13 @@ COPILOT_MANUAL_ARCHIVE_OUTPUT="$(
   cd "$HIVE_HOME" && \
   PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/inbox-archive.js" --write --manual copilot
 )"
-assert_output_contains "$COPILOT_MANUAL_ARCHIVE_OUTPUT" "inbox-copilot.md — 1 entrada(s) movida(s) para o histórico"
-assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot.md" "[CLAUDE-2026-05-29-011] Pendência real"
-if grep -Fq "[CLAUDE-2026-05-29-010]" "$TEST_REPO/beehive/construcao/inbox-copilot.md"; then
+assert_output_contains "$COPILOT_MANUAL_ARCHIVE_OUTPUT" "inbox-copilot-hive.md — 1 entrada(s) movida(s) para o histórico"
+assert_file_contains "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md" "[CLAUDE-2026-05-29-011] Pendência real"
+if grep -Fq "[CLAUDE-2026-05-29-010]" "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md"; then
   echo "Assertion failed: manual archive should remove closed Copilot entry from active inbox"
   exit 1
 fi
-assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-copilot-historico.md" "[CLAUDE-2026-05-29-010] Entrega recente"
+assert_file_contains "$TEST_REPO/beehive/registry/archive/inbox/inbox-copilot-hive-historico.md" "[CLAUDE-2026-05-29-010] Entrega recente"
 
 mkdir -p "$TEST_REPO/beehive/registry/archive/inbox"
 cat > "$TEST_REPO/beehive/registry/archive/inbox/inbox-claude-historico.md" <<'EOF'
