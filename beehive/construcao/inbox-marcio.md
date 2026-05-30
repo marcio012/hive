@@ -19,6 +19,20 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [GATE-2026-05-30-002] SR para afirmar — HIVE-022: Esteira Visual + Funil de Intenção
+**De:** Copilot (Executor) → Márcio (The Gate)
+**Data:** 2026-05-30
+**tipo:** sr-afirmacao
+**backlog_ref:** HIVE-022
+**sr_ref:** beehive/registry/reports/SR-HIVE-022-ESTEIRA-VISUAL-FUNIL-20260530.md
+**Status:** pendente
+
+Esteira visual por processo e tela Funil entregues na Hive UI. O SR cobre a inferência de estação no backend (`flowItems`/`funnel`), o V3 do Centro de Controle, a rota `/funil` e a exibição de `file_path` nos cards com dados reais do Hive.
+Commit: `aead0db`. Auditoria técnica: implementação aderente à WO-039 e ao protótipo aprovado. Sem débito técnico novo registrado.
+**Ação:** ler o SR e confirmar com "afirmo HIVE-022" ou apontar ressalvas.
+
+---
+
 ### [GATE-2026-05-30-001] SR para afirmar — HIVE-016: Telemetria E2 Interações por Tipo
 **De:** Copilot (Executor) → Márcio (The Gate)
 **Data:** 2026-05-30

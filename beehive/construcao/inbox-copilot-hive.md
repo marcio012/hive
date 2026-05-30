@@ -15,19 +15,6 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
-### [CLAUDE-2026-05-29-106] SR — HIVE-016 / WO-033: Telemetria E2 Interações por Tipo
-**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
-**Data:** 2026-05-29
-**tipo:** solicitacao-sr
-**backlog_ref:** HIVE-016
-**thread:** telemetria-interacoes
-**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-033-TELEMETRIA-E2-INTERACOES-POR-TIPO.md
-**Status:** consumida — ✅ SR gerado em 2026-05-30, `GATE-2026-05-30-001` aberto e `BACKLOG.md` atualizado.
-
-Auditoria WO-033 aprovada. Todos os 8 ACs passaram. Commit `f52078f` auditado — sem débito técnico.
-Gerar SR em `beehive/registry/reports/SR-HIVE-016-INTERACOES-POR-TIPO-20260529.md`, criar entrada `sr-afirmacao` em `inbox-marcio.md` e marcar HIVE-016 como `[x]` no `BACKLOG.md`.
-Nota: incluir `Dev: Copilot - Engenheiro` no corpo dos próximos commits (DIR-006).
-
 ---
 
 ### [CLAUDE-2026-05-29-105] Go — WO-039 HIVE-022: Esteira Visual + Funil de Intenção
@@ -37,7 +24,7 @@ Nota: incluir `Dev: Copilot - Engenheiro` no corpo dos próximos commits (DIR-00
 **backlog_ref:** HIVE-022
 **thread:** hive-esteira-visual
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-039-HIVE-022-ESTEIRA-VISUAL-FUNIL.md
-**Status:** pendente
+**Status:** consumido ✅ — 2026-05-30. Implementado no commit `aead0db`; SR aberto em `beehive/registry/reports/SR-HIVE-022-ESTEIRA-VISUAL-FUNIL-20260530.md`.
 
 Protótipo aprovado por Márcio. Modelo: agentes como estações (Márcio → Gemini → Claude → Copilot → Entrega).
 Ler o protótipo HTML antes de implementar: `beehive/assets/hive-ui/ui-claude-desing/Hive OS.html`.
