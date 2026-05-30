@@ -10,16 +10,37 @@ type MapaFabricaProps = {
   telemetry: TelemetryState | null;
 };
 
+type FactoryAgentKey = AgentName | 'marcio';
+
 const agents: Array<{
-  key: AgentName;
+  key: FactoryAgentKey;
   name: string;
+  role: string;
   model: string;
   initial: string;
 }> = [
-  { key: 'claude', name: 'Claude', model: 'claude-sonnet', initial: 'C' },
-  { key: 'copilot', name: 'Copilot', model: 'gpt-5.4', initial: 'P' },
-  { key: 'gemini', name: 'Gemini', model: 'gemini-pro', initial: 'G' },
+  { key: 'marcio',  name: 'Márcio',  role: 'Product Owner',  model: 'Human / Owner', initial: 'M' },
+  { key: 'claude',  name: 'Claude',  role: 'Arquiteto',      model: 'claude-sonnet', initial: 'C' },
+  { key: 'copilot', name: 'Copilot', role: 'Engenheiro',     model: 'gpt-5.4',       initial: 'P' },
+  { key: 'gemini',  name: 'Gemini',  role: 'Projetista Lead', model: 'gemini-pro',    initial: 'G' },
 ];
+
+function getAgentValue<T>(
+  record: Record<AgentName, T> | null | undefined,
+  agent: FactoryAgentKey,
+): T | undefined {
+  if (!record) return undefined;
+  switch (agent) {
+    case 'claude':
+      return record.claude;
+    case 'copilot':
+      return record.copilot;
+    case 'gemini':
+      return record.gemini;
+    case 'marcio':
+      return undefined;
+  }
+}
 
 function formatMinutesAgo(value: number | null): string {
   if (value === null) {
@@ -96,7 +117,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
           <span className="line" />
         </div>
 
-        <div className="grid-3">
+        <div className="grid-4">
           {agents.map((agent) => (
             <AgentCard
               key={agent.key}
@@ -104,6 +125,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
               initial={agent.initial}
               model={agent.model}
               name={agent.name}
+              role={agent.role}
               state={state}
             />
           ))}
@@ -125,7 +147,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
 
         <div className="grid-3">
           {agents.map((agent) => {
-            const count = state?.inboxCounts[agent.key] ?? 0;
+            const count = getAgentValue(state?.inboxCounts ?? null, agent.key) ?? 0;
             const pending = count > 0;
 
             return (
@@ -157,7 +179,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
 
         <div className="grid-3">
           {agents.map((agent) => {
-            const metrics = efficiencyByAgent.get(agent.key);
+            const metrics = agent.key === 'marcio' ? undefined : efficiencyByAgent.get(agent.key);
             const budgetPct = metrics?.weeklyBudgetPct ?? 0;
             const cardState =
               budgetPct >= 90 ? 'eff-critical' : budgetPct >= 75 ? 'eff-alert' : '';

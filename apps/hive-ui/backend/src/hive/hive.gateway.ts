@@ -59,6 +59,8 @@ export class HiveGateway
         this.hiveService.addEvent('info', `${basename} atualizado (${eventName})`);
       } else if (basename === 'debates-abertos.md') {
         this.hiveService.addEvent('info', `${basename} atualizado (${eventName})`);
+      } else if (basename === 'BACKLOG.md') {
+        this.hiveService.addEvent('info', `${basename} atualizado (${eventName})`);
       } else if (basename.startsWith('FILA_')) {
         this.hiveService.addEvent('info', `${basename} atualizado (${eventName})`);
       }

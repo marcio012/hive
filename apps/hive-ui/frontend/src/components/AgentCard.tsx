@@ -1,9 +1,12 @@
 import React from 'react';
 import { type AgentName, type HiveState } from '../hooks/useHiveSocket';
 
+type AgentCardKey = AgentName | 'marcio';
+
 type AgentCardProps = {
-  agentKey: AgentName;
+  agentKey: AgentCardKey;
   name: string;
+  role: string;
   model: string;
   initial: string;
   state: HiveState | null;
@@ -31,6 +34,23 @@ const CTX_LABEL: Record<'ok' | 'warn' | 'critical', string> = {
   critical: 'higiene urgente',
 };
 
+function getAgentValue<T>(
+  record: Record<AgentName, T> | null | undefined,
+  agent: AgentCardKey,
+): T | undefined {
+  if (!record) return undefined;
+  switch (agent) {
+    case 'claude':
+      return record.claude;
+    case 'copilot':
+      return record.copilot;
+    case 'gemini':
+      return record.gemini;
+    case 'marcio':
+      return undefined;
+  }
+}
+
 function formatLockAge(value: string | null): string {
   if (!value) return 'sem lock recente';
   const diffMs = Date.now() - new Date(value).getTime();
@@ -42,15 +62,16 @@ function formatLockAge(value: string | null): string {
 export const AgentCard: React.FC<AgentCardProps> = ({
   agentKey,
   name,
+  role,
   model,
   initial,
   state,
 }) => {
-  const lock = state?.locks[agentKey] ?? null;
+  const lock = getAgentValue(state?.locks ?? null, agentKey) ?? null;
   const active = Boolean(lock);
-  const inboxCount = state?.inboxCounts[agentKey] ?? 0;
+  const inboxCount = getAgentValue(state?.inboxCounts ?? null, agentKey) ?? 0;
   const inboxLevel = inboxCount >= 3 ? 'red' : inboxCount >= 1 ? 'gold' : null;
-  const ctxBytes = state?.agentDetails?.[agentKey]?.contextBytes ?? 0;
+  const ctxBytes = getAgentValue(state?.agentDetails ?? null, agentKey)?.contextBytes ?? 0;
   const ctxLevel = contextLevel(ctxBytes);
 
   return (
@@ -63,8 +84,14 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 
         {/* Coluna 2: Informação */}
         <div className="agent-meta">
-          <div className="agent-name">{name}</div>
-          <div className="agent-model">{model}</div>
+          <div className="agent-name-row">
+            <div className="agent-name">Agente</div>
+            <span className={`badge ${active ? 'green' : 'gray'}`}>
+              <span className={`dot ${active ? 'green' : 'gray'}`} />
+              {active ? 'Ativo' : 'Livre'}
+            </span>
+          </div>
+          <div className="agent-model">{name} · {role}</div>
         </div>
 
         {/* Coluna 3: Sinal do Init (Bytes) */}

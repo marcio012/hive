@@ -69,6 +69,7 @@ export interface DebateEntry {
   status: string;
   responsible: string;
   active: boolean;
+  backlog_ref?: string;
   file_path: string;
 }
 
@@ -212,6 +213,13 @@ export interface PipelineItem {
   priority: 'hi' | 'md' | 'lo';
   updatedAt: string;
   file_path: string | null;
+}
+
+export interface BacklogItem {
+  id: string;
+  titulo: string;
+  prioridade: 'alta' | 'media' | 'dt';
+  status: 'pendente' | 'concluido';
 }
 
 export interface FlowItem {
@@ -374,6 +382,7 @@ export class HiveService {
       debates,
       brainstorm,
       pipeline,
+      backlogItems,
       governance,
       interactionLog,
       artifactIndex,
@@ -390,12 +399,13 @@ export class HiveService {
         this.readActiveDebates(),
         this.readBrainstormFiles(),
         this.readPipeline(),
+        this.readBacklogItems(),
         this.governanceRepository.getAll(),
         this.readInteractionLog(),
         this.readArtifactIndex(),
       ]);
 
-    const resolvedDebates = this.enrichDebatesWithArtifacts(debates, artifactIndex);
+    const resolvedDebates = await this.enrichDebatesWithArtifacts(debates, artifactIndex);
     const resolvedPipeline = this.enrichPipelineWithArtifacts(pipeline, artifactIndex);
     const deliveryReports = await this.readAffirmedReports(artifactIndex);
     const flowItems = this.inferPhase(
@@ -403,6 +413,7 @@ export class HiveService {
       gate.pendentes,
       resolvedDebates,
       resolvedPipeline,
+      backlogItems,
       deliveryReports,
     );
     const funnel = this.buildFunnel(flowItems);
@@ -1560,6 +1571,71 @@ export class HiveService {
     return items;
   }
 
+  private async readBacklogItems(): Promise<BacklogItem[]> {
+    const filePath = path.join(this.hiveRoot, 'beehive', 'construcao', 'BACKLOG.md');
+    const content = await this.readTextFile(filePath);
+    if (!content) {
+      return [];
+    }
+
+    const items: BacklogItem[] = [];
+    let prioridadeAtual: BacklogItem['prioridade'] = 'media';
+
+    content.split('\n').forEach((rawLine) => {
+      const line = rawLine.trim();
+      if (!line) {
+        return;
+      }
+
+      if (/^##\s+.*alta prioridade/i.test(line)) {
+        prioridadeAtual = 'alta';
+        return;
+      }
+
+      if (/^##\s+.*media prioridade/i.test(this.normalizeText(line))) {
+        prioridadeAtual = 'media';
+        return;
+      }
+
+      if (/^##\s+.*debito tecnico/i.test(this.normalizeText(line))) {
+        prioridadeAtual = 'dt';
+        return;
+      }
+
+      if (/^- \*\*DT-\d+\*\*/i.test(line)) {
+        return;
+      }
+
+      const match = line.match(/^- \[( |x)\]\s+([A-Z]+-\d+)\s+[—-]\s+(.+)$/i);
+      if (!match) {
+        return;
+      }
+
+      const status = match[1].toLowerCase() === 'x' ? 'concluido' : 'pendente';
+      if (status !== 'pendente' || prioridadeAtual === 'dt') {
+        return;
+      }
+
+      const titulo = match[3]
+        .split(/\s+[—-]\s+/)
+        .map((segment) => segment.trim())
+        .filter(Boolean)[0];
+
+      if (!titulo) {
+        return;
+      }
+
+      items.push({
+        id: match[2].toUpperCase(),
+        titulo,
+        prioridade: prioridadeAtual,
+        status,
+      });
+    });
+
+    return items;
+  }
+
   private extractSectionRows(content: string, sectionTitle: string): string[][] {
     const lines = content.split('\n');
     const startIndex = lines.findIndex(
@@ -1664,11 +1740,18 @@ export class HiveService {
     gateItems: GateItem[],
     debates: DebateEntry[],
     pipeline: PipelineItem[],
+    backlogItems: BacklogItem[],
     deliveryReports: AffirmedReport[],
   ): FlowItem[] {
     const items = new Map<string, FlowItem>();
+    const trackedBacklogRefs = new Set<string>();
 
     debates.forEach((entry) => {
+      const backlogRef = this.normalizeBacklogRef(entry.backlog_ref ?? entry.title);
+      if (backlogRef) {
+        trackedBacklogRefs.add(backlogRef);
+      }
+
       const phase = this.getDebatePhase(entry.status);
       if (phase >= 7) {
         return;
@@ -1715,7 +1798,32 @@ export class HiveService {
           ativo: activeLock !== null,
           file_path: entry.file_path ?? this.fallbackPipelinePath(entry.agent),
         });
+
+        const backlogRef = this.normalizeBacklogRef(descriptor.backlogRef ?? descriptor.id ?? entry.title);
+        if (backlogRef) {
+          trackedBacklogRefs.add(backlogRef);
+        }
       });
+
+    backlogItems.forEach((item) => {
+      const backlogRef = this.normalizeBacklogRef(item.id);
+      if (!backlogRef || trackedBacklogRefs.has(backlogRef)) {
+        return;
+      }
+
+      items.set(`backlog:${item.id}`, {
+        id: item.id,
+        tipo: 'wo',
+        titulo: item.titulo,
+        lane: 'captura',
+        station: 'marcio',
+        proxima: 'gemini',
+        ativo: false,
+        file_path: 'beehive/construcao/BACKLOG.md',
+      });
+
+      trackedBacklogRefs.add(backlogRef);
+    });
 
     deliveryReports.forEach((report) => {
       items.set(`sr:${report.id}`, {
@@ -1857,11 +1965,30 @@ export class HiveService {
     };
   }
 
-  private enrichDebatesWithArtifacts(entries: DebateEntry[], artifactIndex: ArtifactIndex): DebateEntry[] {
-    return entries.map((entry) => ({
-      ...entry,
-      file_path: this.resolveArtifactPath(artifactIndex.debatePaths, entry.id) ?? entry.file_path,
-    }));
+  private async enrichDebatesWithArtifacts(
+    entries: DebateEntry[],
+    artifactIndex: ArtifactIndex,
+  ): Promise<DebateEntry[]> {
+    return Promise.all(
+      entries.map(async (entry) => {
+        const debatePath = this.resolveArtifactPath(artifactIndex.debatePaths, entry.id);
+        if (!debatePath) {
+          return {
+            ...entry,
+            backlog_ref: this.extractBacklogRef(entry.title) ?? undefined,
+          };
+        }
+
+        const content = await this.readTextFile(path.join(this.hiveRoot, debatePath));
+        const metadata = this.parseFrontmatter(content);
+
+        return {
+          ...entry,
+          file_path: debatePath,
+          backlog_ref: metadata.backlog_ref ?? this.extractBacklogRef(entry.title) ?? undefined,
+        };
+      }),
+    );
   }
 
   private enrichPipelineWithArtifacts(
@@ -2079,6 +2206,14 @@ export class HiveService {
   private extractBacklogRef(value: string): string | null {
     const match = value.match(/\b([A-Z]+-\d+)\b/);
     return match?.[1] ?? null;
+  }
+
+  private normalizeBacklogRef(value: string | null | undefined): string | null {
+    if (!value) {
+      return null;
+    }
+
+    return this.extractBacklogRef(value)?.toUpperCase() ?? null;
   }
 
   private fallbackPipelinePath(agent: PipelineAgent): string {
