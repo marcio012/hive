@@ -22,7 +22,7 @@ backlog_ref: HIVE-026
 - [x] 2. Parecer Claude
 - [x] 3. Parecer Gemini
 - [x] 4. Parecer Copilot
-- [ ] 5. Consolidação / Veredito
+- [x] 5. Consolidação / Veredito
 - [ ] 6. Aprovação Márcio
 - [ ] 7. Work Orders despachadas
 - [ ] 8. Execução concluída
@@ -178,3 +178,47 @@ Se o veredito for GO:
 **Leitura de implementação:** o frontend já tem `/landing` + `/login`, porém ainda usa `localStorage` (`hive-ui-demo-session`). O caminho mais seguro é trocar esse flag demo por `GET /api/auth/session` + login/logout reais, sem reabrir a discussão de UX.
 
 **Risco / esforço:** baixo para médio. O maior trabalho está menos no formulário e mais em endurecer cookie/CORS entre `5174` e `3001`. Com isso fechado, o restante é refactor controlado.
+
+---
+
+## 6. Consolidação / Veredito
+**Data:** 2026-05-30
+**Veredito:** ✅ GO — convergência unânime dos três agentes
+
+### Decisões consolidadas
+
+| # | Questão | Decisão |
+|---|---|---|
+| Q1 | Mecanismo de auth | `HIVE_USER` + `HIVE_PASS_HASH` (bcrypt) em variáveis de ambiente — zero banco para V1 |
+| Q2 | Sessão | JWT em **HttpOnly cookie** — `cookie-parser`, `credentials: true` no CORS, `SameSite`, logout explícito |
+| Q3 | Guard backend | `JwtAuthGuard` global no NestJS + `@Public()` para rotas abertas |
+| Q4 | Estrutura | `AuthModule` dedicado (`AuthController` + `AuthService` + `JwtStrategy`) |
+| Q5 | Landing | Rota `/` na mesma app React — app protegido em `/app` |
+| Q6 | Conteúdo | Landing mínima: hero + 3 features + screenshot + CTA → `/login` |
+| Q7 | Fluxo | Landing pública → `/login` → `/app` (separação clara) |
+
+### Insight do Copilot (implementação)
+
+O frontend já possui `/landing` e `/login` com flag demo em `localStorage` (`hive-ui-demo-session`). A execução é um **refactor controlado**, não construção do zero:
+- Trocar o flag demo por `GET /api/auth/session` real
+- Substituir localStorage por HttpOnly cookie
+- O maior esforço está na configuração de CORS entre porta `5174` (frontend dev) e `3001` (backend) com `credentials: true`
+
+### Divisão de WOs
+
+- **WO-042** → Copilot (Engenheiro): backend — `AuthModule` completo + guard global + endpoints `/api/auth/login`, `/api/auth/logout`, `/api/auth/session`
+- **WO-043** → Gemini + Copilot: frontend — substituir demo localStorage por auth real, refinar `Landing.tsx`, `Login.tsx`, `PrivateRoute`, ajuste de rotas em `App.tsx`
+
+### Análise Financeira
+
+| Item | Valor |
+|---|---|
+| Custo estimado | Baixo-médio — maior parte em CORS/cookie config, não em lógica de negócio |
+| Confiança | Alta — stack conhecida; frontend já tem esqueleto das telas |
+| Valor gerado | Alto — habilita demos externas; elimina risco de acesso aberto |
+| Payback | Imediato — próxima apresentação já se beneficia |
+| Custo de não fazer | Médio-alto — dashboard aberto + incapacidade de apresentar formalmente |
+
+---
+
+*Aguardando aprovação de Márcio para despachar WO-042 e WO-043.*

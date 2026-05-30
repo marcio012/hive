@@ -34,7 +34,7 @@ ultima_revisao: 2026-05-24
 | **DEBATE-032** | **Painel de Diretrizes e Governança (HIVE-UI-015)** | **Veredito GO — aguarda Márcio** | **Claude (Arquiteto)** |
 | **DEBATE-033** | **Centro de Controle: Esteira Visual por Processo** | **Veredito GO (gate: protótipo) — aguarda Márcio** | **Claude (Arquiteto)** |
 | **DEBATE-034** | **Dois Copilotos: Hive vs. Produto** | **Aberto — aguarda pareceres** | **Claude (Arquiteto)** |
-| **DEBATE-036** | **Login e Landing Page do Hive UI** | **Em andamento — aguarda consolidação / veredito** | **Claude (Arquiteto)** |
+| **DEBATE-036** | **Login e Landing Page do Hive UI** | **Veredito GO — aguarda aprovação Márcio** | **Claude (Arquiteto)** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*

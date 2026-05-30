@@ -4,6 +4,7 @@
 > Para itens do TenantOS: `beehive/construcao/BACKLOG-TOS.md`
 
 ## 🔴 Alta prioridade
+- [ ] HIVE-026 — Login e Landing Page do Hive UI — DEBATE-036 aberto
 
 ## 🟡 Média prioridade
 - [ ] HIVE-025 — Backlog API: alimentar esteira do Mapa da Fábrica com BACKLOG.md — DEBATE-035 aberto

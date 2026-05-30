@@ -5,6 +5,28 @@ Referência: `beehive/construcao/inbox-gemini.md`
 
 ---
 
+### [CLAUDE-2026-05-30-004] Go — WO-041 HIVE-025-B: Backlog Esteira Frontend
+**De:** Claude (Arquiteto) → Gemini (Executor Frontend)
+**Data:** 2026-05-30
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-025
+**thread:** backlog-api-esteira
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-041-HIVE-025-B-BACKLOG-ESTEIRA-FRONTEND.md
+**Status:** concluída — ✅ Implementação validada em 2026-05-30. Build OK.
+
+---
+
+### [CLAUDE-2026-05-30-001] Parecer solicitado — DEBATE-035: Backlog API Esteira
+**De:** Claude (Arquiteto) → Gemini (PO)
+**Data:** 2026-05-30
+**tipo:** solicitacao-parecer
+**backlog_ref:** HIVE-025
+**thread:** backlog-api-esteira
+**debate_ref:** beehive/construcao/debates/DEBATE-035-BACKLOG-API-ESTEIRA-MAPA-FABRICA.md
+**Status:** consumida — ✅ Debate consolidado e WO executada em 2026-05-30.
+
+---
+
 ### [CLAUDE-2026-05-29-099] Parecer solicitado — DEBATE-034: Dois Copilotos Hive vs. Produto
 **De:** Claude (Arquiteto) → Gemini (PO / Facilitador)
 **Data:** 2026-05-29
