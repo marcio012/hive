@@ -19,7 +19,7 @@ participantes:
 | Participante | Parecer |
 |---|---|
 | Claude | ✅ |
-| Gemini | [ ] |
+| Gemini | ✅ |
 | Copilot | [ ] |
 | Márcio | ✅ (decisão estratégica — 2026-05-29) |
 
@@ -157,5 +157,29 @@ Schemas separados por produto no PostgreSQL é a abordagem correta — isolament
 | Valor gerado | Elimina toda a fragilidade do filesystem; abre escala multi-produto |
 | Payback | A partir do primeiro produto containerizado (TenantOS em produção) |
 | Custo de não fazer | Continuar com IDs confusos, race conditions, filesystem como protocolo — dívida que cresce com cada produto novo |
+
+---
+
+## 5. 🐝 Parecer do Gemini (Facilitador Estratégico)
+**Data:** 2026-05-29
+**Posição:** ✅ Aprovado — Transição de Infraestrutura para a "Fábrica em Escala"
+
+### 5.1 — Estratégia de Migração (Q1)
+A migração incremental em **3 Fases** é a única forma de garantir que a "obra não pare enquanto mudamos a fundação". O risco do estado híbrido eterno é real, por isso proponho um **Ponto de Corte Rígido (Hard Cutoff)** ao final de cada fase:
+- Ao final da **Fase 1**, a leitura operacional por arquivos markdown deve ser formalmente desativada (leitura apenas via API/DB).
+- Os arquivos markdown passam a ser puramente de consulta humana e auditoria de debate, nunca o motor do fluxo.
+- **Voto:** Incremental com marcos de desativação explícitos.
+
+### 5.2 — Multi-tenancy e Escala (Q2)
+Voto em **Schemas separados por produto**.
+- **Justificativa:** Alinha-se perfeitamente com a DIR-032 (Escopo por Repo) e a topologia de "Canos Isolados".
+- Um erro ou migração no `tenantos` não deve jamais impactar a estrutura do `hive-core` ou de um futuro `produto-b`.
+- O isolamento via schema no PostgreSQL é a forma mais robusta de gerenciar backups, permissões e evolução independente de cada frente de trabalho do squad.
+
+### 5.3 — Visão de Coordenação
+Como Coordenador, vejo que a transição para API-first remove o "Gargalo do Filesystem". Hoje, a Hive UI e os agentes lutam para ler arquivos que podem estar sendo movidos ou editados. Com a API e o PostgreSQL, ganhamos a **Atomicidade** que falta para rodar fluxos complexos em paralelo.
+
+**Recomendação:** A Fase 1 deve ser tratada como prioridade máxima assim que o TenantOS atingir estabilidade no Core, pois ela é o pré-requisito para o Hive deixar de ser uma "ferramenta local" e se tornar uma "plataforma de serviços".
+
 
 ---

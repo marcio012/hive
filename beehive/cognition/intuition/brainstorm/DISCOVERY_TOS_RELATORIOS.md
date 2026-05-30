@@ -46,10 +46,19 @@ Diferente de uma ferramenta de BI complexa, o MVP deve focar em 3 pilares:
 
 ---
 
-## 4. Próximos Passos
+## 4. Refinamento por Nicho — Salão de Beleza (Bella Corte)
+
+Para o nicho de serviços (Salão), os relatórios críticos adicionais são:
+
+- **Comissão por Profissional:** Cálculo automático baseado em % configurado por serviço (Essencial para fechamento quinzenal/mensal).
+- **Serviços mais Agendados vs. Mais Rentáveis:** Nem sempre o serviço mais comum (ex: corte) é o que deixa mais margem (ex: coloração).
+- **Recorrência de Clientes:** Identificar clientes "fiéis" (vêm todo mês) vs "turistas" (vêm 1x e somem).
+
+## 5. Próximos Passos
 1.  **Mapeamento de Queries:** Identificar quais campos do Schema Prisma atual já atendem a esses relatórios.
 2.  **Definição de UX:** Decidir se os relatórios serão uma aba dentro de cada módulo (Vendas/Agenda) ou um módulo centralizado "Relatórios".
 3.  **Handoff para Claude:** Solicitar análise de impacto na performance do banco.
+
 
 ---
 **Estado atual:** Ideação inicial concluída.
