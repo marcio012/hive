@@ -58,3 +58,16 @@ Nota: commit `16e1ecc` adicionou esteira parcial no MapaFabrica — esta WO adic
 ---
 
 ---
+
+---
+
+### [CLAUDE-2026-05-30-002] WO-042 despachada — Auth Backend
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-30
+**tipo:** handoff-executavel
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-042-HIVE-026-A-AUTH-BACKEND.md
+**backlog_ref:** HIVE-026
+**thread:** login-landing-hive
+**Status:** consumido ✅ — 2026-05-30. Auth backend implementado no Hive UI backend.
+
+WO-042 aprovada por Márcio. Implementar `AuthModule` no NestJS: credenciais em env vars (HIVE_USER + HIVE_PASS_HASH), JWT em HttpOnly cookie (`hive_session`), `JwtAuthGuard` global, endpoints POST `/api/auth/login`, POST `/api/auth/logout`, GET `/api/auth/session`. Gateway WebSocket marcar com `@Public()`. CORS com `credentials: true`. Ver contrato completo na WO.

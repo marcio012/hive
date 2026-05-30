@@ -8,11 +8,17 @@ import * as chokidar from 'chokidar';
 import type { FSWatcher } from 'chokidar';
 import * as path from 'path';
 import { Server, Socket } from 'socket.io';
+import { getAllowedOrigins } from '../auth/auth.config';
+import { Public } from '../auth/public.decorator';
 import { HiveService } from './hive.service';
 
+@Public()
 @WebSocketGateway({
   namespace: '/hive',
-  cors: { origin: 'http://localhost:5174' },
+  cors: {
+    origin: getAllowedOrigins(process.env.HIVE_UI_ORIGIN),
+    credentials: true,
+  },
 })
 export class HiveGateway
   implements OnGatewayConnection, OnModuleInit, OnModuleDestroy

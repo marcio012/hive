@@ -9,6 +9,7 @@ import {
   type DispatchPayload,
   type HiveActionResult,
 } from './hive.service';
+import { Public } from '../auth/public.decorator';
 
 type HiveConfigPatch = Partial<HiveConfig>;
 type OrchestratorEventPayload = {
@@ -138,6 +139,7 @@ export class HiveController {
   }
 
   @Post('orchestrator/event')
+  @Public()
   @ApiOperation({ summary: 'Injetar evento do orchestrador', description: 'Adiciona um evento ao log interno e faz broadcast via WebSocket para todos os clientes conectados.' })
   @ApiBody({
     schema: {

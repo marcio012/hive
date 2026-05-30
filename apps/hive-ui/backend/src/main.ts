@@ -1,11 +1,17 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
+import { getAllowedOrigins } from './auth/auth.config';
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({ origin: 'http://localhost:5174' });
+  app.use(cookieParser());
+  app.enableCors({
+    origin: getAllowedOrigins(process.env.HIVE_UI_ORIGIN),
+    credentials: true,
+  });
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
