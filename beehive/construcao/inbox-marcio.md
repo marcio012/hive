@@ -25,7 +25,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **tipo:** sr-afirmacao
 **backlog_ref:** HIVE-022
 **sr_ref:** beehive/registry/reports/SR-HIVE-022-ESTEIRA-VISUAL-FUNIL-20260530.md
-**Status:** pendente
+**Status:** afirmado ✅ — Márcio 2026-05-30. HIVE-022 encerrada.
 
 Esteira visual por processo e tela Funil entregues na Hive UI. O SR cobre a inferência de estação no backend (`flowItems`/`funnel`), o V3 do Centro de Controle, a rota `/funil` e a exibição de `file_path` nos cards com dados reais do Hive.
 Commit: `aead0db`. Auditoria técnica: implementação aderente à WO-039 e ao protótipo aprovado. Sem débito técnico novo registrado.

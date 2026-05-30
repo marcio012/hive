@@ -2,7 +2,9 @@
 id: SR-HIVE-022
 backlog_ref: HIVE-022
 tipo: status-report-entrega
-status: pendente
+status: afirmado
+afirmado_em: 2026-05-30
+afirmado_por: Márcio (Owner)
 data: 2026-05-30
 responsavel: Copilot (Engenheiro) | Auditoria: Claude (Arquiteto)
 aceite_ref: WO-039
@@ -40,8 +42,8 @@ Nenhum débito técnico novo foi registrado nesta entrega.
 
 ## ✍️ Afirmação do Owner
 - **Autorizado por:** Márcio
-- **Data:** pendente
-- **Observações:** aguarda afirmação no Gate com o comando `afirmo HIVE-022`.
+- **Data:** 2026-05-30
+- **Observações:** Afirmado no Gate com o comando `afirmo HIVE-022`.
 
 ---
 *Gerado pelo Copilot conforme DIR-086 — Status Report por Entrega.*

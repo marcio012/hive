@@ -22,7 +22,7 @@
 - [ ] HIVE-020 — Dispatch de Agentes via UI (V1: somente Márcio) — debate pendente
 - [x] HIVE-021 — Painel de Diretrizes e Governança na UI (2026-05-29) — ✅ 3e653c6
 - [x] HIVE-014 — Eficiência do Squad no Hive UI (Seção 03 Mapa + tela Telemetria) (2026-05-29) — ✅ bd782fa
-- [ ] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) — WO-039 na fila Copilot-Hive
+- [x] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) (2026-05-30) — ✅ aead0db
 - [x] HIVE-023 — Gate View: inbox-marcio.md + painel The Gate no Hive UI (2026-05-29) — ✅ 9138908
 - [x] HIVE-024 — Dois Copilotos: separar executor Hive vs. Produto — DEBATE-034 concluído (2026-05-29) — ✅ 8b94926
 - [ ] HIVE-005 — Onboarding automatizado para novo operador
