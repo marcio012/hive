@@ -21,6 +21,12 @@ function normalizeAgentName(value: string | undefined): AgentName | null {
   }
 
   const normalized = value.trim().toLowerCase();
+  if (/copilot[-\s]?hive/.test(normalized)) {
+    return 'copilot-hive';
+  }
+  if (/copilot[-\s]?tos/.test(normalized)) {
+    return 'copilot-tos';
+  }
   if (normalized.includes('claude')) {
     return 'claude';
   }
@@ -129,7 +135,16 @@ export function buildDispatchEntry(entry: InboxEntry, target: AgentName): string
   const date = iso.slice(0, 10);
   const identifier = iso.replace(/[-:.TZ]/g, '').slice(0, 14);
   const sourceLabel = entry.source.toUpperCase();
-  const targetLabel = target === 'claude' ? 'Claude' : target === 'copilot' ? 'Copilot' : 'Gemini';
+  const targetLabel =
+    target === 'claude'
+      ? 'Claude'
+      : target === 'copilot'
+        ? 'Copilot'
+        : target === 'copilot-hive'
+          ? 'Copilot-Hive'
+          : target === 'copilot-tos'
+            ? 'Copilot-TOS'
+            : 'Gemini';
 
   const metadataLines = [
     `**De:** Orchestrator → ${targetLabel}`,
@@ -163,7 +178,7 @@ export function buildDispatchEntry(entry: InboxEntry, target: AgentName): string
 }
 
 export async function listInboxPaths(rootDir: string): Promise<string[]> {
-  return ['claude', 'copilot', 'gemini'].map((agent) =>
+  return ['claude', 'copilot', 'gemini', 'copilot-hive', 'copilot-tos'].map((agent) =>
     path.join(rootDir, 'beehive', 'construcao', `inbox-${agent}.md`),
   );
 }

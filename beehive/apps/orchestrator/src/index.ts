@@ -1,14 +1,16 @@
 import * as path from 'path';
 
+import { SqliteTaskStore } from './db/sqlite-task-store';
 import { OrchestratorLogger } from './logger';
 import { StateStore } from './state';
 import { OrchestratorWatcher } from './watcher';
 
 async function main(): Promise<void> {
-  const rootDir = path.resolve(__dirname, '..', '..', '..');
+  const rootDir = path.resolve(__dirname, '..', '..', '..', '..');
   const logger = new OrchestratorLogger();
   const stateStore = new StateStore(rootDir);
-  const watcher = new OrchestratorWatcher(rootDir, stateStore, logger);
+  const taskStore = new SqliteTaskStore(rootDir);
+  const watcher = new OrchestratorWatcher(rootDir, stateStore, logger, taskStore);
 
   const shutdown = async (signal: string) => {
     await logger.log('info', `Encerrando Orchestrator Core (${signal})`);

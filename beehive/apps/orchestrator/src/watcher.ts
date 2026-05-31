@@ -1,7 +1,7 @@
 import chokidar, { FSWatcher } from 'chokidar';
-import { promises as fs } from 'fs';
 import * as path from 'path';
 
+import { TaskStore } from './db/task-store';
 import { DeadmanSwitch } from './deadman';
 import { isClosedStatus, listInboxPaths, normalizeStatus, parseInboxFile } from './inbox';
 import { Dispatcher } from './dispatcher';
@@ -32,9 +32,10 @@ export class OrchestratorWatcher {
     private readonly rootDir: string,
     private readonly stateStore: StateStore,
     private readonly logger: OrchestratorLogger,
+    taskStore: TaskStore,
   ) {
     this.router = new Router(rootDir);
-    this.dispatcher = new Dispatcher(rootDir, stateStore, logger);
+    this.dispatcher = new Dispatcher(rootDir, stateStore, logger, taskStore);
     this.deadman = new DeadmanSwitch(stateStore, logger);
   }
 

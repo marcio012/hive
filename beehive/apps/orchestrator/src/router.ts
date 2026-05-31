@@ -14,7 +14,7 @@ export class Router {
   private rules: RoutingRule[] = [];
 
   constructor(rootDir: string) {
-    this.routingPath = path.join(rootDir, 'apps', 'orchestrator', 'routing.yaml');
+    this.routingPath = path.join(rootDir, 'beehive', 'apps', 'orchestrator', 'routing.yaml');
   }
 
   async load(): Promise<void> {
@@ -61,9 +61,13 @@ export class Router {
         target:
           rule.action === 'dispatch_to_copilot'
             ? 'copilot'
-            : rule.action === 'notify_claude'
-              ? 'claude'
-              : null,
+            : rule.action === 'dispatch_to_copilot_hive'
+              ? 'copilot-hive'
+              : rule.action === 'dispatch_to_copilot_tos'
+                ? 'copilot-tos'
+                : rule.action === 'notify_claude'
+                  ? 'claude'
+                  : null,
       };
     }
 

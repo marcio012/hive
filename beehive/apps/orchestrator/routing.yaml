@@ -1,7 +1,15 @@
 rules:
   - match:
       tipo: handoff-executavel
-      agent_livre: copilot
+      destinatario: copilot-hive
+    action: dispatch_to_copilot_hive
+  - match:
+      tipo: handoff-executavel
+      destinatario: copilot-tos
+    action: dispatch_to_copilot_tos
+  - match:
+      tipo: handoff-executavel
+      destinatario: copilot
     action: dispatch_to_copilot
   - match:
       tipo: pedido-de-parecer

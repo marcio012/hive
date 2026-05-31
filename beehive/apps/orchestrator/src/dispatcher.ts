@@ -3,10 +3,18 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import { TaskStore } from './db/task-store';
 import { buildDispatchEntry, insertInboxEntry } from './inbox';
 import { OrchestratorLogger } from './logger';
 import { StateStore } from './state';
-import { AgentName, DispatchResult, InboxEntry, LockState, RouteDecision } from './types';
+import {
+  AgentName,
+  DispatchResult,
+  InboxEntry,
+  LockState,
+  RouteDecision,
+  TaskDomain,
+} from './types';
 
 const execFile = promisify(execFileCallback);
 
@@ -18,6 +26,7 @@ export class Dispatcher {
     private readonly rootDir: string,
     private readonly stateStore: StateStore,
     private readonly logger: OrchestratorLogger,
+    private readonly taskStore: TaskStore,
   ) {
     this.proxyScriptPath = path.join(rootDir, '.agile-squad', 'proxy.sh');
     this.lockPath = path.join(rootDir, '.hive-agent', 'locks.json');
@@ -48,10 +57,30 @@ export class Dispatcher {
     );
 
     const existingContent = await this.readTextFile(targetPath);
-    const nextEntry = buildDispatchEntry(entry, decision.target);
-    const updatedContent = insertInboxEntry(existingContent, nextEntry);
+    const alreadyInTargetInbox = path.resolve(entry.filePath) === path.resolve(targetPath);
+    const alreadyProjected = this.hasProjectedEntry(existingContent, entry.id);
 
-    await this.stateStore.writeTextAtomic(targetPath, updatedContent);
+    if (!alreadyInTargetInbox && !alreadyProjected) {
+      const nextEntry = buildDispatchEntry(entry, decision.target);
+      const updatedContent = insertInboxEntry(existingContent, nextEntry);
+      await this.stateStore.writeTextAtomic(targetPath, updatedContent);
+    }
+
+    await this.taskStore.createTask({
+      id: `${entry.id}-${decision.target}`,
+      title: entry.title,
+      domain: this.inferDomain(decision.target),
+      payload: entry.bodyText,
+      status: 'pending',
+      assignee: decision.target,
+      priority: entry.metadata.priority === 'urgent' ? 'urgent' : 'normal',
+      thread: entry.metadata.thread ?? null,
+      backlog_ref: entry.metadata.backlog_ref ?? null,
+      wo_ref: entry.metadata.wo_ref ?? null,
+      source_agent: entry.source,
+      source_entry: entry.id,
+      claimed_at: null,
+    });
     await this.stateStore.markProcessed(entry.id);
 
     try {
@@ -66,6 +95,24 @@ export class Dispatcher {
 
     await this.logger.log('info', `Entrada ${entry.id} roteada para ${decision.target}`);
     return { outcome: 'dispatched' };
+  }
+
+  private inferDomain(agent: AgentName): TaskDomain {
+    if (agent === 'copilot-hive') {
+      return 'hive';
+    }
+
+    if (agent === 'copilot-tos') {
+      return 'product';
+    }
+
+    return 'shared';
+  }
+
+  private hasProjectedEntry(content: string, sourceEntryId: string): boolean {
+    return new RegExp(`^\\*\\*source_entry:\\*\\*\\s*${this.escapeRegex(sourceEntryId)}$`, 'm').test(
+      content,
+    );
   }
 
   private async acquireLock(target: AgentName, activity: string): Promise<void> {
@@ -107,5 +154,9 @@ export class Dispatcher {
     } catch {
       return '';
     }
+  }
+
+  private escapeRegex(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 }
