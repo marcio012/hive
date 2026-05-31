@@ -49,7 +49,7 @@ Arquitetura proposta usa SQLite (WAL) com claim atômico. Avalie viabilidade vs 
 **De:** Staff Engineer (Gemini)
 **Thread:** arquitetura-balcao-central
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-047-HIVE-037-STRESS-TEST.md
-**Status:** pendente
+**Status:** consumida — ✅ 2026-05-31. Stress suite em `beehive/tests/stress-tasks.sh` validada com 50 workers e repetida 7x sem quebra reproduzivel.
 
 **Ação Esperada:**
 Executar testes de estresse em concorrência e idempotência conforme WO-047. O objetivo é quebrar a Fase 1 para garantirmos que a Fase 2 (Cut-over) seja segura.
