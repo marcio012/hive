@@ -1,0 +1,12 @@
+{
+  "name": "hive-ui",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"back,front\" --prefix-colors \"cyan,yellow\" \"npm --prefix backend run start:dev\" \"npm --prefix frontend run dev\"",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "check:types": "npm --prefix backend run check:types && npm --prefix frontend run check:types"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
