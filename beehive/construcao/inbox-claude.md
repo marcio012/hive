@@ -43,9 +43,22 @@ arquitetural do HIVE-037.
 
 ---
 
-### [CLAUDE-2026-05-31-038] Code Review: Finalização Fase 3 - Balcão Central
-**Status:** consumida ✅ — 2026-05-31. Parecer: VETADO (4 achados). WO-050 despachada para Copilot-Hive.
+
+---
+
+### [CLAUDE-2026-05-31-039] Debate Arquitetural: Consolidação da Camada de API (Broker Tasks/Agents)
+**Status:** consumida ✅ — 2026-05-31. Parecer: APROVADO COM CONDIÇÕES. Ver DEBATE-038.
 **Data:** 2026-05-31
-**Ação:** Realizar code review da migração final para o modelo Broker (removido `chokidar` e dual-write no `dispatcher`).
-**Arquivos:** `beehive/apps/orchestrator/src/dispatcher.ts` e `watcher.ts`.
-**Contexto:** O sistema foi migrado para SQLite como única fonte de verdade. Favor auditar consistência arquitetural e completude da remoção de dependências legadas.
+**Contexto:**
+Precisamos expor os dados do *Central Broker* (SQLite) para o Frontend (Hive UI).
+Temos duas opções:
+1. **Opção A (Orchestrator):** Adicionar um servidor HTTP ao Daemon (Orchestrator).
+2. **Opção B (Backend NestJS):** Centralizar as novas rotas de leitura/escrita do Broker no Backend NestJS já existente.
+
+**Proposta:** Adotar a **Opção B**.
+**Justificativa:** O banco é SQLite com modo WAL, permitindo escrita/leitura concorrente segura. Centralizar APIs no NestJS simplifica a infraestrutura e reaproveita autenticação/segurança já implementada.
+
+**Pontos para Auditoria:**
+- Viabilidade técnica dessa descentralização da API (Orchestrator gerencia DB, Backend consulta DB).
+- Riscos de *locking* ou consistência (SQLite WAL é suficiente?).
+- Manutenibilidade a longo prazo.

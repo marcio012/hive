@@ -1,0 +1,625 @@
+{
+  "tldrawFileFormatVersion": 1,
+  "schema": {
+    "schemaVersion": 1,
+    "storeVersion": 4,
+    "recordVersions": {
+      "asset": {
+        "version": 1,
+        "subTypeKey": "type",
+        "subTypeVersions": {
+          "image": 2,
+          "video": 2,
+          "bookmark": 0
+        }
+      },
+      "camera": {
+        "version": 1
+      },
+      "document": {
+        "version": 2
+      },
+      "instance": {
+        "version": 22
+      },
+      "instance_page_state": {
+        "version": 5
+      },
+      "page": {
+        "version": 1
+      },
+      "shape": {
+        "version": 3,
+        "subTypeKey": "type",
+        "subTypeVersions": {
+          "group": 0,
+          "text": 1,
+          "bookmark": 1,
+          "draw": 1,
+          "geo": 7,
+          "note": 4,
+          "line": 1,
+          "frame": 0,
+          "arrow": 2,
+          "highlight": 0,
+          "embed": 4,
+          "image": 2,
+          "video": 1
+        }
+      },
+      "instance_presence": {
+        "version": 5
+      },
+      "pointer": {
+        "version": 1
+      }
+    }
+  },
+  "records": [
+    {
+      "id": "page:page",
+      "typeName": "page",
+      "name": "Page 1",
+      "index": "a1"
+    },
+    {
+      "id": "document:document",
+      "typeName": "document",
+      "props": {
+        "name": "DEBATE-038 — Sequência: Fluxo Proposto (BrokerModule)"
+      }
+    },
+    {
+      "id": "shape:title",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 100,
+      "y": 10,
+      "parentId": "page:page",
+      "index": "a1",
+      "props": {
+        "geo": "rectangle",
+        "w": 1000,
+        "h": 45,
+        "text": "Fluxo Proposto — BrokerModule: conexão persistente readonly + escrita delegada ao Orchestrator",
+        "color": "green",
+        "fill": "semi"
+      }
+    },
+    {
+      "id": "shape:act_ma",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 20,
+      "y": 80,
+      "parentId": "page:page",
+      "index": "a2",
+      "props": {
+        "geo": "ellipse",
+        "w": 110,
+        "h": 60,
+        "text": "Márcio",
+        "color": "violet",
+        "fill": "semi"
+      }
+    },
+    {
+      "id": "shape:act_fe",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 190,
+      "y": 80,
+      "parentId": "page:page",
+      "index": "a3",
+      "props": {
+        "geo": "rectangle",
+        "w": 140,
+        "h": 60,
+        "text": "Frontend\n(React)",
+        "color": "blue",
+        "fill": "semi"
+      }
+    },
+    {
+      "id": "shape:act_ne",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 400,
+      "y": 80,
+      "parentId": "page:page",
+      "index": "a4",
+      "props": {
+        "geo": "rectangle",
+        "w": 140,
+        "h": 60,
+        "text": "NestJS\n:3001",
+        "color": "blue",
+        "fill": "semi"
+      }
+    },
+    {
+      "id": "shape:act_tr",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 620,
+      "y": 80,
+      "parentId": "page:page",
+      "index": "a5",
+      "props": {
+        "geo": "rectangle",
+        "w": 160,
+        "h": 60,
+        "text": "TaskRepository\n(readonly)",
+        "color": "green",
+        "fill": "semi"
+      }
+    },
+    {
+      "id": "shape:act_db",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 870,
+      "y": 80,
+      "parentId": "page:page",
+      "index": "a6",
+      "props": {
+        "geo": "rectangle",
+        "w": 140,
+        "h": 60,
+        "text": "tasks.db\n(SQLite WAL)",
+        "color": "orange",
+        "fill": "semi"
+      }
+    },
+    {
+      "id": "shape:act_or",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 1100,
+      "y": 80,
+      "parentId": "page:page",
+      "index": "a7",
+      "props": {
+        "geo": "rectangle",
+        "w": 150,
+        "h": 60,
+        "text": "Orchestrator\n(daemon)",
+        "color": "violet",
+        "fill": "semi"
+      }
+    },
+    {
+      "id": "shape:note_conn",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 620,
+      "y": 150,
+      "parentId": "page:page",
+      "index": "a8",
+      "props": {
+        "geo": "rectangle",
+        "w": 400,
+        "h": 40,
+        "text": "Conexão readonly aberta uma vez no startup",
+        "color": "green",
+        "fill": "semi"
+      }
+    },
+    {
+      "id": "shape:m1",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "a9",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "black",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 75,
+          "y": 200
+        },
+        "end": {
+          "type": "point",
+          "x": 260,
+          "y": 200
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "Abre Hive UI"
+      }
+    },
+    {
+      "id": "shape:m2",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b1",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "blue",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 260,
+          "y": 250
+        },
+        "end": {
+          "type": "point",
+          "x": 470,
+          "y": 250
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "WebSocket connect (Socket.IO)"
+      }
+    },
+    {
+      "id": "shape:m3",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b2",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "green",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 470,
+          "y": 300
+        },
+        "end": {
+          "type": "point",
+          "x": 700,
+          "y": 300
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "listActive()"
+      }
+    },
+    {
+      "id": "shape:m4",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b3",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "green",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 700,
+          "y": 345
+        },
+        "end": {
+          "type": "point",
+          "x": 940,
+          "y": 345
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "SELECT (snapshot WAL — zero wait)"
+      }
+    },
+    {
+      "id": "shape:m5",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b4",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "grey",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 940,
+          "y": 390
+        },
+        "end": {
+          "type": "point",
+          "x": 700,
+          "y": 390
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "rows[]"
+      }
+    },
+    {
+      "id": "shape:m6",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b5",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "blue",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 470,
+          "y": 435
+        },
+        "end": {
+          "type": "point",
+          "x": 260,
+          "y": 435
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "emit broker:state (Task[])"
+      }
+    },
+    {
+      "id": "shape:m7",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b6",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "black",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 75,
+          "y": 500
+        },
+        "end": {
+          "type": "point",
+          "x": 260,
+          "y": 500
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "Cria Task (dispatch manual)"
+      }
+    },
+    {
+      "id": "shape:m8",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b7",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "blue",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 260,
+          "y": 545
+        },
+        "end": {
+          "type": "point",
+          "x": 470,
+          "y": 545
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "POST /api/broker/tasks"
+      }
+    },
+    {
+      "id": "shape:m9",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b8",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "orange",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 470,
+          "y": 595
+        },
+        "end": {
+          "type": "point",
+          "x": 1175,
+          "y": 595
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "execFile squad:task:create (NestJS NÃO escreve no SQLite)"
+      }
+    },
+    {
+      "id": "shape:m10",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "b9",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "orange",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 1175,
+          "y": 645
+        },
+        "end": {
+          "type": "point",
+          "x": 940,
+          "y": 645
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "INSERT INTO tasks (BEGIN/COMMIT WAL)"
+      }
+    },
+    {
+      "id": "shape:m11",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "c1",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "grey",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 1175,
+          "y": 700
+        },
+        "end": {
+          "type": "point",
+          "x": 470,
+          "y": 700
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "{ id, status: 'pending' }"
+      }
+    },
+    {
+      "id": "shape:m12",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "c2",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "blue",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 470,
+          "y": 750
+        },
+        "end": {
+          "type": "point",
+          "x": 260,
+          "y": 750
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "201 Created + emit broker:updated"
+      }
+    },
+    {
+      "id": "shape:m13",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 0,
+      "y": 0,
+      "parentId": "page:page",
+      "index": "c3",
+      "props": {
+        "dash": "draw",
+        "size": "s",
+        "fill": "none",
+        "color": "black",
+        "labelColor": "black",
+        "bend": 0,
+        "start": {
+          "type": "point",
+          "x": 260,
+          "y": 795
+        },
+        "end": {
+          "type": "point",
+          "x": 75,
+          "y": 795
+        },
+        "arrowheadStart": "none",
+        "arrowheadEnd": "arrow",
+        "labelPosition": 0.5,
+        "font": "draw",
+        "text": "Task aparece na fila"
+      }
+    }
+  ]
+}

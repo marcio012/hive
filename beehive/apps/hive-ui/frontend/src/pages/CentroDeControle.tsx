@@ -15,14 +15,17 @@ import { ArtifactFilePath } from '../components/ArtifactFilePath';
 import { ActiveItem } from '../components/ActiveItem';
 import { DebateCard } from '../components/DebateCard';
 import { EsteiraPorProcesso } from './EsteiraPorProcesso';
+import { TelemetriaContent } from './Telemetria';
+import { type TelemetryState } from '../hooks/useHiveSocket';
 
 type CentroDeControleProps = {
   state: HiveState | null;
+  telemetry: TelemetryState | null;
 };
 
 type HiveConfig = NonNullable<HiveState['config']>;
 type DispatchAgent = AgentName;
-type ControlView = 'v1' | 'v2' | 'v3' | 'governance';
+type ControlView = 'telemetria' | 'controles' | 'visibilidade' | 'esteira' | 'governance';
 
 type DispatchDialogState = {
   agent: DispatchAgent | '';
@@ -48,7 +51,7 @@ const DEFAULT_AGENT_DETAIL: AgentDetail = {
   contextBytes: 0,
 };
 
-const AGENTS: AgentName[] = ['claude', 'copilot', 'gemini'];
+const AGENTS: AgentName[] = ['gemini', 'claude', 'copilot'];
 
 function formatUptime(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600)
@@ -214,17 +217,11 @@ function blockedInboxText(count: number): string {
 }
 
 function viewSubtitle(view: ControlView): string {
-  if (view === 'governance') {
-    return 'DIRs, manifesto e papéis do squad em leitura única';
-  }
-
-  if (view === 'v3') {
-    return 'Esteira visual aprovada para leitura operacional';
-  }
-
-  return view === 'v2'
-    ? 'Visibilidade total do squad em tempo real'
-    : 'Decisões pendentes — aja sem sair do painel';
+  if (view === 'governance') return 'DIRs, manifesto e papéis do squad em leitura única';
+  if (view === 'esteira') return 'Esteira visual aprovada para leitura operacional';
+  if (view === 'visibilidade') return 'Visibilidade total do squad em tempo real';
+  if (view === 'controles') return 'Decisões pendentes — aja sem sair do painel';
+  return 'Custos, tokens e ritmo semanal por agente';
 }
 
 function governanceBadgeClass(status?: string): string {
@@ -287,7 +284,7 @@ function gateBadgeClass(tipo: GateItem['tipo']): string {
   return 'gate-badge gate-badge--decisao';
 }
 
-export function CentroDeControle({ state }: CentroDeControleProps) {
+export function CentroDeControle({ state, telemetry }: CentroDeControleProps) {
   const [busyConfigKey, setBusyConfigKey] = useState<keyof HiveConfig | null>(null);
   const [releasingAgent, setReleasingAgent] = useState<AgentName | null>(null);
   const [dispatchDialog, setDispatchDialog] = useState<DispatchDialogState | null>(null);
@@ -295,7 +292,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
-  const [view, setView] = useState<ControlView>('v1');
+  const [view, setView] = useState<ControlView>('telemetria');
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const config = state?.config ?? DEFAULT_CONFIG;
@@ -905,7 +902,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
         {orchestrator?.status === 'paused' ? (
           <div className="orch-banner" role="status">
             <strong>Orchestrator pausado.</strong>
-            <span>{orchestrator.pauseReason ?? 'Aguardando intervenção manual.'}</span>
+            <span >{orchestrator.pauseReason ?? 'Aguardando intervenção manual.'}</span>
           </div>
         ) : null}
 
@@ -922,9 +919,22 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
           </div>
           <div className="bs-view" id="ccView" style={{ marginTop: 4 }}>
             <button
-              className={`bs-view-btn ${view === 'v1' ? 'active' : ''}`}
-              onClick={() => setView('v1')}
-              title="Controles (v1)"
+              className={`bs-view-btn ${view === 'telemetria' ? 'active' : ''}`}
+              onClick={() => setView('telemetria')}
+              title="Telemetria (v1)"
+              type="button"
+            >
+              <svg viewBox="0 0 24 24" fill="none" height="16" stroke="currentColor" strokeWidth="1.8" width="16">
+                <path d="M4 18h16" />
+                <path d="M7 15V9" />
+                <path d="M12 15V5" />
+                <path d="M17 15v-3" />
+              </svg>
+            </button>
+            <button
+              className={`bs-view-btn ${view === 'controles' ? 'active' : ''}`}
+              onClick={() => setView('controles')}
+              title="Controles (v2)"
               type="button"
             >
               <svg viewBox="0 0 24 24" fill="none" height="16" stroke="currentColor" strokeWidth="1.8" width="16">
@@ -935,9 +945,9 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
               </svg>
             </button>
             <button
-              className={`bs-view-btn ${view === 'v2' ? 'active' : ''}`}
-              onClick={() => setView('v2')}
-              title="Visibilidade (v2)"
+              className={`bs-view-btn ${view === 'visibilidade' ? 'active' : ''}`}
+              onClick={() => setView('visibilidade')}
+              title="Visibilidade (v3)"
               type="button"
             >
               <svg viewBox="0 0 24 24" fill="none" height="16" stroke="currentColor" strokeWidth="1.8" width="16">
@@ -946,9 +956,9 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
               </svg>
             </button>
             <button
-              className={`bs-view-btn ${view === 'v3' ? 'active' : ''}`}
-              onClick={() => setView('v3')}
-              title="Esteira visual (v3)"
+              className={`bs-view-btn ${view === 'esteira' ? 'active' : ''}`}
+              onClick={() => setView('esteira')}
+              title="Esteira visual (v4)"
               type="button"
             >
               <svg viewBox="0 0 24 24" fill="none" height="16" stroke="currentColor" strokeWidth="1.8" width="16">
@@ -975,7 +985,13 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
           </div>
         </div>
 
-        {view === 'v1' ? (
+        {view === 'telemetria' ? (
+          <div id="cc-telemetria">
+            <TelemetriaContent telemetry={telemetry} />
+          </div>
+        ) : null}
+
+        {view === 'controles' ? (
           <div id="cc-v1">
             <div className="cc-stats">
               <div className="stat good">
@@ -1000,7 +1016,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
             </div>
 
             <div className="cc-grid">
-              <div>
+              <div className="cc-grid-left">
                 <div className="panel">
                   <div className="ph">
                     <span className="ph-ico">
@@ -1050,7 +1066,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                   </div>
                 </div>
 
-                <div className="panel">
+                <div className="panel" >
                   <div className="ph">
                     <span className="ph-ico">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -1094,7 +1110,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                   </div>
                 </div>
 
-                <div className="panel">
+                <div className="panel" >
                   <div className="ph">
                     <span className="ph-ico">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -1109,7 +1125,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                   <div className="pb">{renderConfigControls()}</div>
                 </div>
 
-                <div className="panel">
+                <div className="panel" >
                   <div className="ph">
                     <span className="ph-ico">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -1147,12 +1163,12 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
           </div>
         ) : null}
 
-        {view === 'v2' || view === 'v3' ? (
+        {view === 'visibilidade' || view === 'esteira' ? (
           <div id="cc-v2">
             <div className="section-label">
-              <span className="n">01</span> Estado por agente <span className="line" />
+              <span className="n">01</span> Fila dos agentes <span className="line" />
             </div>
-            <div className="grid-3" style={{ marginBottom: 26 }}>
+            <div className="grid-4" style={{ marginBottom: 26 }}>
               {AGENTS.map((agent) => {
                 const detail = agentDetails[agent];
                 const isRunning = Boolean(detail.activeWo);
@@ -1239,6 +1255,44 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                   </div>
                 );
               })}
+
+              {/* Card: Direto Márcio — Gate como inbox */}
+              <div className="cc2-agent marcio">
+                <div className="cc2-head">
+                  <span className="cc2-av av-human">M</span>
+                  <div className="cc2-id">
+                    <div className="cc2-name">Direto Márcio</div>
+                    <div className="cc2-role">Owner / Gate</div>
+                  </div>
+                  {gate.total === 0 ? (
+                    <span className="cc2-lock free">
+                      <span className="dot" />
+                      Livre
+                    </span>
+                  ) : null}
+                  {gate.total > 0 ? <span className="cc2-count">{gate.total}</span> : null}
+                </div>
+                <div className="cc2-body">
+                  {gate.total === 0 ? (
+                    <div className="cc2-clean">
+                      <svg viewBox="0 0 24 24" fill="none" height="15" stroke="currentColor" strokeWidth="2.2" width="15">
+                        <path d="m5 13 4 4L19 7" />
+                      </svg>
+                      Nenhuma pendência
+                    </div>
+                  ) : (
+                    gate.pendentes.map((item) => (
+                      <div key={item.id} className="cc2-item">
+                        <span className="cc2-iid">{item.id.slice(0, 8)}</span>
+                        <span className="cc2-subj">{item.titulo}</span>
+                        <span className={`cc2-tag ${item.tipo === 'gate-commit' ? 'handoff' : 'blocked'}`}>
+                          {gateBadgeLabel(item.tipo)}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="cc2-actions">
@@ -1324,7 +1378,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
               </>
             ) : null}
 
-            {view === 'v3' ? <EsteiraPorProcesso state={state} /> : renderPipeline()}
+            {view === 'esteira' ? <EsteiraPorProcesso state={state} /> : renderPipeline()}
 
             {activeLocks.length === 0 &&
             tasks.length === 0 &&

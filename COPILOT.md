@@ -8,7 +8,7 @@ Estas instruções valem **somente para este repositório**.
 2. inbox do domínio ativo (`inbox-copilot-hive.md` ou `inbox-copilot-tos.md`)
 3. fila do domínio (`FILA_COPILOT_HIVE.md` ou `FILA_COPILOT_TOS.md`) quando houver priorização
 4. `beehive/.copilot/PROMPT_CONTEXTO.md` quando a sessão exigir bootstrap manual
-5. `AGENTS.md` e `beehive/.copilot/COPILOT.md` apenas em cold start, mudança de governança ou referência explícita do handoff/NEXT_STEP
+5. `AGENTS.md` e `beehive/.copilot/COPILOT.md` apenas em cold start, mudança de governança ou referência explícita do handoff/NEXT_STEP 
 
 ## Papel do Copilot aqui
 

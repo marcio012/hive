@@ -4,13 +4,13 @@ import { CentroDeControle } from './pages/CentroDeControle';
 import { DashboardSimples } from './pages/DashboardSimples';
 import { Diagramas } from './pages/Diagramas';
 import { Funil } from './pages/Funil';
-import { InteracoesPorTipo } from './pages/InteracoesPorTipo';
+
 import { MapaFabrica } from './pages/MapaFabrica';
 import { Telemetria } from './pages/Telemetria';
-import { TokensPorAgente } from './pages/TokensPorAgente';
+
 
 type PublicRoute = '/' | '/landing' | '/login';
-type CockpitRoute = '/mapa' | '/operacao' | '/telemetria' | '/tokens' | '/interacoes' | '/funil' | '/controle' | '/diagramas';
+type CockpitRoute = '/mapa' | '/operacao' | '/funil' | '/controle' | '/diagramas';
 type Route = PublicRoute | CockpitRoute;
 
 type NavItem = {
@@ -36,18 +36,6 @@ function normalizeRoute(pathname: string): Route {
     return '/funil';
   }
 
-  if (pathname === '/telemetria') {
-    return '/telemetria';
-  }
-
-  if (pathname === '/tokens') {
-    return '/tokens';
-  }
-
-  if (pathname === '/interacoes') {
-    return '/interacoes';
-  }
-
   if (pathname === '/controle') {
     return '/controle';
   }
@@ -71,9 +59,6 @@ function isCockpitRoute(route: Route): route is CockpitRoute {
   return (
     route === '/mapa' ||
     route === '/operacao' ||
-    route === '/telemetria' ||
-    route === '/tokens' ||
-    route === '/interacoes' ||
     route === '/funil' ||
     route === '/controle' ||
     route === '/diagramas'
@@ -112,41 +97,6 @@ const navItems: NavItem[] = [
     renderIcon: () => (
       <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-      </svg>
-    ),
-  },
-  {
-    route: '/telemetria',
-    label: 'Telemetria',
-    renderIcon: () => (
-      <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M4 18h16" />
-        <path d="M7 15V9" />
-        <path d="M12 15V5" />
-        <path d="M17 15v-3" />
-      </svg>
-    ),
-  },
-  {
-    route: '/tokens',
-    label: 'Tokens',
-    renderIcon: () => (
-      <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="3" y="12" width="4" height="9" rx="1" />
-        <rect x="10" y="7" width="4" height="14" rx="1" />
-        <rect x="17" y="3" width="4" height="18" rx="1" />
-      </svg>
-    ),
-  },
-  {
-    route: '/interacoes',
-    label: 'Interações',
-    renderIcon: () => (
-      <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M4 19h16" />
-        <rect x="5" y="11" width="3" height="6" rx="1" />
-        <rect x="10.5" y="7" width="3" height="10" rx="1" />
-        <rect x="16" y="4" width="3" height="13" rx="1" />
       </svg>
     ),
   },
@@ -190,24 +140,12 @@ function renderScreen(route: CockpitRoute, data: ReturnType<typeof useHiveSocket
     return <DashboardSimples state={data.state} telemetry={data.telemetry} />;
   }
 
-  if (route === '/telemetria') {
-    return <Telemetria telemetry={data.telemetry} />;
-  }
-
-  if (route === '/tokens') {
-    return <TokensPorAgente telemetry={data.telemetry} />;
-  }
-
-  if (route === '/interacoes') {
-    return <InteracoesPorTipo state={data.state} />;
-  }
-
   if (route === '/funil') {
     return <Funil state={data.state} />;
   }
 
   if (route === '/controle') {
-    return <CentroDeControle state={data.state} />;
+    return <CentroDeControle state={data.state} telemetry={data.telemetry} />;
   }
 
   if (route === '/diagramas') {

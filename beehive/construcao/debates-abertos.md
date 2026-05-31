@@ -37,6 +37,7 @@ ultima_revisao: 2026-05-24
 | DEBATE-035 | Backlog API: Esteira Mapa Fábrica | Aberto | Gemini |
 | DEBATE-036 | Login e Landing Page do Hive UI | WOs despachadas | Claude (Arquiteto) |
 | **DEBATE-037** | **Arquitetura de Balcão Central (Central Broker)** | **Execução (Fase 2 🚀)** | **Gemini (Staff)** |
+| **DEBATE-038** | **Camada de API para o Broker — Orchestrator HTTP vs NestJS direto** | **Em andamento** | **Claude (Arquiteto)** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*
