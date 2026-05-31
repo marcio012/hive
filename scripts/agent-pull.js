@@ -19,6 +19,7 @@ const requireFromOrchestrator = createRequire(
 const Database = requireFromOrchestrator('better-sqlite3');
 
 const PRIORITY_SQL = "CASE priority WHEN 'urgent' THEN 0 WHEN 'normal' THEN 1 ELSE 2 END";
+const CLAIMABLE_SQL = '(assignee IS NULL OR assignee = ?)';
 
 const [, , cmd, ...args] = process.argv;
 
@@ -51,11 +52,13 @@ function regenerateReadable() {
     `|---|---|---|---|\n` +
     renderRows(inProgress) +
     `\n## pending\n` +
-    `| ID | Domain | Priority | Title |\n` +
-    `|---|---|---|---|\n` +
+    `| ID | Domain | Assignee | Priority | Title |\n` +
+    `|---|---|---|---|---|\n` +
     (pending.length === 0 
       ? '_nenhuma_\n' 
-      : pending.map((t) => `| ${t.id} | ${t.domain} | ${t.priority} | ${t.title} |`).join('\n') + '\n');
+      : pending
+          .map((t) => `| ${t.id} | ${t.domain} | ${t.assignee ?? 'pool'} | ${t.priority} | ${t.title} |`)
+          .join('\n') + '\n');
 
   mkdirSync(path.dirname(READABLE_PATH), { recursive: true });
   writeFileSync(READABLE_PATH, content, 'utf8');
@@ -77,11 +80,12 @@ if (cmd === 'claim') {
     WHERE id = (
       SELECT id FROM tasks
       WHERE domain = ? AND status = 'pending'
+        AND ${CLAIMABLE_SQL}
       ORDER BY ${PRIORITY_SQL}, created_at ASC
       LIMIT 1
     )
     RETURNING *
-  `).get(agent, now, now, domain);
+  `).get(agent, now, now, domain, agent);
 
   if (!task) {
     console.log('NO_TASKS');
@@ -134,11 +138,11 @@ if (cmd === 'claim') {
   }
 
   const reason = reasonParts.join(' ') || null;
-  const result = db.prepare(`UPDATE tasks SET status = 'failed', fail_reason = ?, updated_at = ? WHERE id = ?`)
+  const result = db.prepare(`UPDATE tasks SET status = 'failed', fail_reason = ?, updated_at = ? WHERE id = ? AND status = 'in_progress'`)
     .run(reason, new Date().toISOString(), id);
 
   if (result.changes === 0) {
-    console.error(`Erro: Task ${id} não encontrada.`);
+    console.error(`Erro: Task ${id} não encontrada ou não está 'in_progress'.`);
     process.exit(1);
   }
 

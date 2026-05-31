@@ -9,6 +9,10 @@ function priorityOrderSql(column = 'priority'): string {
   return `CASE ${column} WHEN 'urgent' THEN 0 WHEN 'normal' THEN 1 ELSE 2 END`;
 }
 
+function claimableByAgentSql(column = 'assignee'): string {
+  return `(${column} IS NULL OR ${column} = ?)`;
+}
+
 export class SqliteTaskStore implements TaskStore {
   private readonly db: Database.Database;
 
@@ -120,13 +124,14 @@ export class SqliteTaskStore implements TaskStore {
               SELECT id
               FROM tasks
               WHERE domain = ? AND status = 'pending'
+                AND ${claimableByAgentSql()}
               ORDER BY ${priorityOrderSql()}, created_at ASC
               LIMIT 1
             )
             RETURNING *
           `,
         )
-        .get(agent, now, now, domain) as Task | undefined) ?? null;
+        .get(agent, now, now, domain, agent) as Task | undefined) ?? null;
 
     return {
       claimed: task !== null,
@@ -155,7 +160,7 @@ export class SqliteTaskStore implements TaskStore {
           SET status = 'failed',
               fail_reason = ?,
               updated_at = ?
-          WHERE id = ?
+          WHERE id = ? AND status = 'in_progress'
         `,
       )
       .run(reason ?? null, new Date().toISOString(), id);
