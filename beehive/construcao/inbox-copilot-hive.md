@@ -13,6 +13,34 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [ORCH-20260531110259-GEMINI] Teste de Claim
+**De:** Orchestrator → Copilot-Hive
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**Status:** pendente
+**source_entry:** TEST-PULL-20260531-003
+**source_agent:** gemini
+
+Encaminhado automaticamente pelo Orchestrator Core.
+
+Este é um teste para o comando squad:claim:hive.
+
+---
+
+### [ORCH-20260531110146-GEMINI] Teste de Pull Real Gemini
+**De:** Orchestrator → Copilot-Hive
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**Status:** pendente
+**source_entry:** TEST-PULL-20260531-002
+**source_agent:** gemini
+
+Encaminhado automaticamente pelo Orchestrator Core.
+
+Este é um teste real para o loop de Pull via Inbox Gemini.
+
+---
+
 ### [CLAUDE-2026-05-31-046] 🔴 GO — WO-046: Fase 2 — Migração para Modelo Pull
 **De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
 **Thread:** arquitetura-balcao-central
@@ -20,7 +48,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **tipo:** handoff-executavel
 **backlog_ref:** HIVE-037
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-046-HIVE-037-FASE2-PULL-LOOP.md
-**Status:** pendente
+**Status:** consumida — ✅ 2026-05-31. Pull loop validado via `claim/done/fail`; inbox MD mantido como fallback em dual-write.
 
 WO-044 ✅ WO-045 ✅ WO-047 ✅ `busy_timeout` ✅ — todas as pré-condições da Fase 2 atendidas.
 Implementar: (1) DT-008 `fail_reason TEXT` no schema + `failTask` + migração segura; (2) `scripts/agent-pull.js` claim/done/fail; (3) npm scripts `squad:claim:hive`, `squad:claim:tos`, `squad:task:done`, `squad:task:fail`; (4) regenerar `.hive-agent/tasks-readable.md` após cada mutação.

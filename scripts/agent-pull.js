@@ -1,212 +1,151 @@
-#!/usr/bin/env node
-
 'use strict';
 
-const fs = require('node:fs');
-const path = require('node:path');
+/**
+ * CLI de Pull para Agentes do Hive OS
+ * Parte da Fase 2 do Balcão Central (DEBATE-037 / WO-046)
+ */
+
+const { readFileSync, writeFileSync, mkdirSync, existsSync } = require('fs');
+const path = require('path');
 const { createRequire } = require('node:module');
 
 const ROOT = path.resolve(__dirname, '..');
 const DB_PATH = path.join(ROOT, '.hive-agent', 'tasks.db');
 const READABLE_PATH = path.join(ROOT, '.hive-agent', 'tasks-readable.md');
 const GATE_PATH = path.join(ROOT, 'beehive', 'roles', 'skills', 'cognitive-reset-gate.md');
-const PRIORITY_SQL = "CASE priority WHEN 'urgent' THEN 0 WHEN 'normal' THEN 1 ELSE 2 END";
-
 const requireFromOrchestrator = createRequire(
   path.join(ROOT, 'beehive', 'apps', 'orchestrator', 'package.json'),
 );
-
 const Database = requireFromOrchestrator('better-sqlite3');
+
+const PRIORITY_SQL = "CASE priority WHEN 'urgent' THEN 0 WHEN 'normal' THEN 1 ELSE 2 END";
 
 const [, , cmd, ...args] = process.argv;
 
-function usage(message) {
-  if (message) {
-    console.error(message);
-  }
-
-  console.error('Usage: agent-pull.js claim <domain> <agent> | done <task-id> | fail <task-id> [reason]');
+if (!existsSync(DB_PATH)) {
+  console.error(`Erro: Banco de dados não encontrado em ${DB_PATH}. O Orchestrator Core já foi iniciado?`);
   process.exit(1);
 }
 
-function openDatabase() {
-  if (!fs.existsSync(DB_PATH)) {
-    if (cmd === 'claim') {
-      console.log('NO_TASKS');
-      process.exit(0);
-    }
+const db = new Database(DB_PATH);
+db.pragma('busy_timeout = 5000');
 
-    console.error(`Database not found: ${DB_PATH}`);
-    process.exit(1);
-  }
-
-  const db = new Database(DB_PATH);
-  db.pragma('busy_timeout = 5000');
-
-  const hasTasksTable = db
-    .prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'tasks'")
-    .get();
-
-  if (!hasTasksTable) {
-    if (cmd === 'claim') {
-      console.log('NO_TASKS');
-      process.exit(0);
-    }
-
-    console.error(`Tasks table not found in ${DB_PATH}`);
-    process.exit(1);
-  }
-
-  return db;
-}
-
-function escapeCell(value) {
-  return String(value ?? '-').replace(/\r?\n/g, ' ').replace(/\|/g, '\\|');
-}
-
-function rowsToTable(rows, columns) {
-  if (rows.length === 0) {
-    return '_nenhuma_\n';
-  }
-
-  return `${rows.map((row) => `| ${columns.map((column) => escapeCell(row[column])).join(' | ')} |`).join('\n')}\n`;
-}
-
-function regenerateReadable(db) {
+function regenerateReadable() {
   const inProgress = db
-    .prepare(
-      `
-        SELECT id, domain, assignee, title
-        FROM tasks
-        WHERE status = 'in_progress'
-        ORDER BY claimed_at ASC, updated_at ASC
-      `,
-    )
+    .prepare(`SELECT * FROM tasks WHERE status = 'in_progress' ORDER BY claimed_at ASC`)
+    .all();
+  const pending = db
+    .prepare(`SELECT * FROM tasks WHERE status = 'pending' ORDER BY ${PRIORITY_SQL}, created_at ASC`)
     .all();
 
-  const pending = db
-    .prepare(
-      `
-        SELECT id, domain, priority, title
-        FROM tasks
-        WHERE status = 'pending'
-        ORDER BY ${PRIORITY_SQL}, created_at ASC
-      `,
-    )
-    .all();
+  const renderRows = (tasks) =>
+    tasks.length === 0
+      ? '_nenhuma_\n'
+      : tasks.map((t) => `| ${t.id} | ${t.domain} | ${t.assignee ?? '-'} | ${t.title} |`).join('\n') + '\n';
 
   const content =
-    `# Tasks - Balcao Central\n> Gerado automaticamente em ${new Date().toISOString()}. Nao editar.\n\n` +
-    `## in_progress\n| ID | Domain | Agent | Title |\n|---|---|---|---|\n${rowsToTable(inProgress, ['id', 'domain', 'assignee', 'title'])}\n` +
-    `## pending\n| ID | Domain | Priority | Title |\n|---|---|---|---|\n${rowsToTable(pending, ['id', 'domain', 'priority', 'title'])}`;
+    `# Tasks — Balcão Central\n` +
+    `> Gerado automaticamente em ${new Date().toISOString()}. Não editar.\n\n` +
+    `## in_progress\n` +
+    `| ID | Domain | Agent | Title |\n` +
+    `|---|---|---|---|\n` +
+    renderRows(inProgress) +
+    `\n## pending\n` +
+    `| ID | Domain | Priority | Title |\n` +
+    `|---|---|---|---|\n` +
+    (pending.length === 0 
+      ? '_nenhuma_\n' 
+      : pending.map((t) => `| ${t.id} | ${t.domain} | ${t.priority} | ${t.title} |`).join('\n') + '\n');
 
-  fs.mkdirSync(path.dirname(READABLE_PATH), { recursive: true });
-  fs.writeFileSync(READABLE_PATH, content, 'utf8');
+  mkdirSync(path.dirname(READABLE_PATH), { recursive: true });
+  writeFileSync(READABLE_PATH, content, 'utf8');
 }
 
-function claim(db, domain, agent) {
+if (cmd === 'claim') {
+  const [domain, agent] = args;
   if (!domain || !agent) {
-    usage('Usage: agent-pull.js claim <domain> <agent>');
+    console.error('Usage: node scripts/agent-pull.js claim <domain> <agent>');
+    process.exit(1);
   }
 
   const now = new Date().toISOString();
-  const task =
-    db
-      .prepare(
-        `
-          UPDATE tasks
-          SET status = 'in_progress',
-              assignee = ?,
-              claimed_at = ?,
-              updated_at = ?
-          WHERE id = (
-            SELECT id
-            FROM tasks
-            WHERE domain = ? AND status = 'pending'
-            ORDER BY ${PRIORITY_SQL}, created_at ASC
-            LIMIT 1
-          )
-          RETURNING *
-        `,
-      )
-      .get(agent, now, now, domain) ?? null;
+  
+  // Claim atômico
+  const task = db.prepare(`
+    UPDATE tasks
+    SET status = 'in_progress', assignee = ?, claimed_at = ?, updated_at = ?
+    WHERE id = (
+      SELECT id FROM tasks
+      WHERE domain = ? AND status = 'pending'
+      ORDER BY ${PRIORITY_SQL}, created_at ASC
+      LIMIT 1
+    )
+    RETURNING *
+  `).get(agent, now, now, domain);
 
   if (!task) {
     console.log('NO_TASKS');
-    return;
+    process.exit(0);
   }
 
-  regenerateReadable(db);
+  regenerateReadable();
 
-  const gate = fs.readFileSync(GATE_PATH, 'utf8').trimEnd();
-  console.log(gate);
+  // Injeção do Cognitive Reset Gate
+  if (existsSync(GATE_PATH)) {
+    const gate = readFileSync(GATE_PATH, 'utf8');
+    console.log(gate);
+  } else {
+    console.warn(`[aviso] Cognitive Reset Gate não encontrado em ${GATE_PATH}`);
+  }
+
   console.log('\n--- TASK ---');
-  console.log(`TASK_ID: ${task.id}`);
-  console.log(`TITLE: ${task.title}`);
-  console.log(`DOMAIN: ${task.domain}`);
-  if (task.thread) {
-    console.log(`THREAD: ${task.thread}`);
-  }
-  if (task.wo_ref) {
-    console.log(`WO_REF: ${task.wo_ref}`);
-  }
-  console.log(`\n${task.payload}`);
-}
+  console.log(`TASK_ID:  ${task.id}`);
+  console.log(`TITLE:    ${task.title}`);
+  console.log(`DOMAIN:   ${task.domain}`);
+  if (task.thread)      console.log(`THREAD:   ${task.thread}`);
+  if (task.wo_ref)      console.log(`WO_REF:   ${task.wo_ref}`);
+  if (task.backlog_ref) console.log(`BACKLOG:  ${task.backlog_ref}`);
+  
+  console.log('\n' + task.payload);
 
-function updateStatus(db, id, status, reason) {
+} else if (cmd === 'done') {
+  const [id] = args;
   if (!id) {
-    usage(`Usage: agent-pull.js ${status === 'done' ? 'done <task-id>' : 'fail <task-id> [reason]'}`);
-  }
-
-  const now = new Date().toISOString();
-  const result =
-    status === 'failed'
-      ? db
-          .prepare(
-            `
-              UPDATE tasks
-              SET status = 'failed',
-                  fail_reason = ?,
-                  updated_at = ?
-              WHERE id = ?
-            `,
-          )
-          .run(reason ?? null, now, id)
-      : db
-          .prepare(
-            `
-              UPDATE tasks
-              SET status = 'done',
-                  updated_at = ?
-              WHERE id = ?
-            `,
-          )
-          .run(now, id);
-
-  if (result.changes === 0) {
-    console.error(`Task ${id} not found.`);
+    console.error('Usage: node scripts/agent-pull.js done <task-id>');
     process.exit(1);
   }
 
-  regenerateReadable(db);
+  const result = db.prepare(`UPDATE tasks SET status = 'done', updated_at = ? WHERE id = ? AND status = 'in_progress'`)
+    .run(new Date().toISOString(), id);
 
-  if (status === 'failed') {
-    const failReason = reason && reason.length > 0 ? reason : '(sem motivo)';
-    console.log(`Task ${id} marcada como failed. Motivo: ${failReason}`);
-    return;
+  if (result.changes === 0) {
+    console.error(`Erro: Task ${id} não encontrada ou não está 'in_progress'.`);
+    process.exit(1);
   }
 
-  console.log(`Task ${id} marcada como done.`);
-}
+  regenerateReadable();
+  console.log(`✅ Task ${id} marcada como done.`);
 
-const db = openDatabase();
-
-if (cmd === 'claim') {
-  claim(db, args[0], args[1]);
-} else if (cmd === 'done') {
-  updateStatus(db, args[0], 'done');
 } else if (cmd === 'fail') {
-  updateStatus(db, args[0], 'failed', args.slice(1).join(' '));
+  const [id, ...reasonParts] = args;
+  if (!id) {
+    console.error('Usage: node scripts/agent-pull.js fail <task-id> [reason]');
+    process.exit(1);
+  }
+
+  const reason = reasonParts.join(' ') || null;
+  const result = db.prepare(`UPDATE tasks SET status = 'failed', fail_reason = ?, updated_at = ? WHERE id = ?`)
+    .run(reason, new Date().toISOString(), id);
+
+  if (result.changes === 0) {
+    console.error(`Erro: Task ${id} não encontrada.`);
+    process.exit(1);
+  }
+
+  regenerateReadable();
+  console.log(`❌ Task ${id} marcada como failed. Motivo: ${reason ?? '(sem motivo)'}`);
+
 } else {
-  usage(`Subcomando desconhecido: ${cmd}.`);
+  console.error(`Subcomando desconhecido: ${cmd}. Use: claim | done | fail`);
+  process.exit(1);
 }
