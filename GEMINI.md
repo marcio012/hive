@@ -25,5 +25,11 @@ Para mais detalhes sobre papéis e processos, consulte:
 
 ---
 *Assinado: Hive OS Kernel* -->
+---
+*Assinado: Diretor do Projeto*
 
-*Assinado: Diretor do Projeto* 
+## 🚨 CONGELAMENTO ESTRATÉGICO (FREEZE-2026-05-31)
+- **STATUS:** ATIVO.
+- **FOCO ÚNICO:** Implementação do Balcão Central (DEBATE-037).
+- **RESTRIÇÃO:** Proibida qualquer evolução paralela no Hive UI ou TenantOS até segunda ordem. Apenas correções de segurança ou bloqueios críticos são permitidos fora do escopo do DEBATE-037.
+

@@ -1,0 +1,31 @@
+```mermaid
+sequenceDiagram
+    participant Marcio as Diretor (Márcio)
+    participant HiveUI as Hive UI (Terminal/Web)
+    participant Broker as Balcão Central (SQLite)
+    participant Agent as Agente (Copilot)
+
+    %% Fase de Criação
+    Marcio->>HiveUI: Cria Work Order (Domain: TenantOS)
+    HiveUI->>Broker: INSERT INTO tasks (status: pending, domain: product)
+    Broker-->>HiveUI: Task ID gerado
+
+    %% Fase de Assunção (Claim)
+    Note over Agent: Agente ocioso dispara loop
+    Agent->>Broker: CLAIM Task (Onde domain = product AND status = pending)
+    
+    %% Atomicidade e Isolamento
+    alt Lock Bem Sucedido
+        Broker-->>Agent: Task ID + Payload + Skills Injetadas
+        Note over Agent: Ativa Skill: Cognitive Reset
+        Note over Agent: Oculta arquivos da Fábrica (Hive)
+    else Outro Agente já pegou
+        Broker-->>Agent: 0 rows returned
+        Note over Agent: Volta a dormir
+    end
+
+    %% Fase de Execução
+    Agent->>Agent: Executa Código (TenantOS)
+    Agent->>Broker: UPDATE status = 'done'
+    Broker-->>HiveUI: Atualiza Dashboard em Tempo Real
+```

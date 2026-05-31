@@ -17,6 +17,7 @@ export interface Task {
   wo_ref: string | null;
   source_agent: string | null;
   source_entry: string | null;
+  fail_reason?: string | null;
   created_at: string;
   updated_at: string;
   claimed_at: string | null;

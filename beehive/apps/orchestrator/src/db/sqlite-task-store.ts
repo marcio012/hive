@@ -20,8 +20,14 @@ export class SqliteTaskStore implements TaskStore {
 
     this.db = new Database(dbPath);
     this.db.pragma('journal_mode = WAL');
+    this.db.pragma('busy_timeout = 5000');
     this.db.pragma('foreign_keys = ON');
     this.db.exec(readFileSync(schemaPath, 'utf8'));
+    try {
+      this.db.exec('ALTER TABLE tasks ADD COLUMN fail_reason TEXT');
+    } catch {
+      // Existing databases already have the column after the first migration.
+    }
   }
 
   async createTask(task: Omit<Task, 'created_at' | 'updated_at'>): Promise<Task> {
@@ -117,18 +123,17 @@ export class SqliteTaskStore implements TaskStore {
   }
 
   async failTask(id: string, reason?: string): Promise<void> {
-    void reason;
-
     this.db
       .prepare(
         `
           UPDATE tasks
           SET status = 'failed',
+              fail_reason = ?,
               updated_at = ?
           WHERE id = ?
         `,
       )
-      .run(new Date().toISOString(), id);
+      .run(reason ?? null, new Date().toISOString(), id);
   }
 
   async listPending(domain?: TaskDomain): Promise<Task[]> {

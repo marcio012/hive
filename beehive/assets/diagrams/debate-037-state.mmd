@@ -1,0 +1,26 @@
+```mermaid
+stateDiagram-v2
+    %% DEBATE-037 State Flow
+    
+    state "Abertura e Provocação" as F1
+    state "Parecer Claude (Arquitetura e Contratos)" as F2
+    state "Parecer Copilot (Implementação e Infra)" as F3
+    state "Parecer Gemini (PO - ROI e Visão)" as F4
+    state "Consolidação e Veredito" as F5
+    state "Aprovação Márcio (The Gate)" as F6
+
+    [*] --> F1 : Início (Gemini Staff)
+    F1 --> F2 : [x] Concluído
+    F2 --> F3 : [x] Concluído
+    
+    F3 --> F4 : [ ] Pendente
+    F4 --> F5 : [ ] Pendente
+    F5 --> F6 : [ ] Pendente
+    F6 --> [*] : [ ] Pendente (Aprovação)
+
+    %% Notes and Styling
+    note right of F1 : Criação do DEBATE-037\nContexto e Motivação definidos
+    note right of F2 : Parecer emitido.\nBalcão Central validado arquiteturalmente.
+    note right of F3 : Aguardando análise de esforço\nsobre o Orchestrator Core (dispatcher.ts).
+    
+```

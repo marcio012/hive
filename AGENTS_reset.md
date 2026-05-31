@@ -9,10 +9,11 @@ Tarefa: Analise friamente o projeto abaixo e dê a sua opinião técnica, neutra
 
 ---
 ARQUIVOS DO PROJETO PARA ANÁLISE:
+Fabric
+
  hive/
  └── .github/
  └── .hive-agent/
- └── .vscode/
  └── .githooks/
  └── beehive/
      └── cognition/
@@ -123,6 +124,8 @@ ARQUIVOS DO PROJETO PARA ANÁLISE:
  └── .agile-squad/
      └── framework/
  └── scripts/
+
+Produto: 
 
  tenantOS/
  └── frontend/

@@ -33,8 +33,10 @@ ultima_revisao: 2026-05-24
 | **DEBATE-031** | **Hive como Plataforma Containerizada com PostgreSQL** | **Em andamento** | **Claude** |
 | **DEBATE-032** | **Painel de Diretrizes e Governança (HIVE-UI-015)** | **Veredito GO — aguarda Márcio** | **Claude (Arquiteto)** |
 | **DEBATE-033** | **Centro de Controle: Esteira Visual por Processo** | **Veredito GO (gate: protótipo) — aguarda Márcio** | **Claude (Arquiteto)** |
-| **DEBATE-034** | **Dois Copilotos: Hive vs. Produto** | **Aberto — aguarda pareceres** | **Claude (Arquiteto)** |
-| **DEBATE-036** | **Login e Landing Page do Hive UI** | **WOs despachadas** | **Claude (Arquiteto)** |
+| DEBATE-034 | Dois Copilotos: Hive vs. Produto | Concluido | Claude |
+| DEBATE-035 | Backlog API: Esteira Mapa Fábrica | Aberto | Gemini |
+| DEBATE-036 | Login e Landing Page do Hive UI | WOs despachadas | Claude (Arquiteto) |
+| **DEBATE-037** | **Arquitetura de Balcão Central (Central Broker)** | **Execução (Fase 2 🚀)** | **Gemini (Staff)** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*

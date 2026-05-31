@@ -1,0 +1,58 @@
+{
+  "tldrawFileFormatVersion": 1,
+  "schema": {
+    "schemaVersion": 2,
+    "sequences": {
+      "com.tldraw.store": 4,
+      "com.tldraw.asset": 1,
+      "com.tldraw.camera": 1,
+      "com.tldraw.document": 2,
+      "com.tldraw.instance": 25,
+      "com.tldraw.instance_page_state": 5,
+      "com.tldraw.page": 1,
+      "com.tldraw.pointer": 1,
+      "com.tldraw.shape": 4,
+      "com.tldraw.shape.geo": 10,
+      "com.tldraw.shape.text": 3,
+      "com.tldraw.shape.note": 9,
+      "com.tldraw.shape.arrow": 6
+    }
+  },
+  "records": [
+    {
+      "id": "document:document",
+      "typeName": "document",
+      "gridSize": 10,
+      "name": "Debate 037 State Flow",
+      "meta": {}
+    },
+    {
+      "id": "page:7e283b9e",
+      "typeName": "page",
+      "name": "Page 1",
+      "index": "a1",
+      "meta": {}
+    },
+    {
+      "id": "instance_page_state:page:7e283b9e",
+      "typeName": "instance_page_state",
+      "pageId": "page:7e283b9e",
+      "selectedShapeIds": [],
+      "hintingShapeIds": [],
+      "erasingShapeIds": [],
+      "hoveredShapeId": null,
+      "editingShapeId": null,
+      "croppingShapeId": null,
+      "focusedGroupId": null,
+      "meta": {}
+    },
+    {
+      "id": "camera:page:7e283b9e",
+      "typeName": "camera",
+      "x": 0,
+      "y": 0,
+      "z": 1,
+      "meta": {}
+    }
+  ]
+}

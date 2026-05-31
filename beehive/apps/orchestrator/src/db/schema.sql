@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   wo_ref       TEXT,
   source_agent TEXT,
   source_entry TEXT,
+  fail_reason  TEXT,
   created_at   TEXT NOT NULL,
   updated_at   TEXT NOT NULL,
   claimed_at   TEXT

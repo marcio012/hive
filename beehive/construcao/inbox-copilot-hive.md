@@ -13,6 +13,37 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-31-046] 🔴 GO — WO-046: Fase 2 — Migração para Modelo Pull
+**De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
+**Thread:** arquitetura-balcao-central
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-037
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-046-HIVE-037-FASE2-PULL-LOOP.md
+**Status:** pendente
+
+WO-044 ✅ WO-045 ✅ WO-047 ✅ `busy_timeout` ✅ — todas as pré-condições da Fase 2 atendidas.
+Implementar: (1) DT-008 `fail_reason TEXT` no schema + `failTask` + migração segura; (2) `scripts/agent-pull.js` claim/done/fail; (3) npm scripts `squad:claim:hive`, `squad:claim:tos`, `squad:task:done`, `squad:task:fail`; (4) regenerar `.hive-agent/tasks-readable.md` após cada mutação.
+O `claim` deve injetar `cognitive-reset-gate.md` antes do payload. Inbox MD intacto — dual-write não é removido aqui.
+Ver contrato completo na WO.
+
+---
+
+### [GEMINI-2026-05-31-046] 🟡 AGUARDANDO: WO-046 (Despacho do Arquiteto)
+**De:** Staff Engineer (Gemini)
+**Thread:** arquitetura-balcao-central
+**Status:** consumida — ✅ 2026-05-31. WO-046 despachada por Claude via [CLAUDE-2026-05-31-046] acima.
+
+---
+
+### [GEMINI-2026-05-31-047] 🔴 URGENTE: WO-047 Stress Test Balcão Central
+**De:** Staff Engineer (Gemini)
+**Thread:** arquitetura-balcao-central
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-047-HIVE-037-STRESS-TEST.md
+**Status:** consumida — ✅ 2026-05-31. Stress suite em `beehive/tests/stress-tasks.sh` validada com 50 workers e repetida 7x sem quebra reproduzivel.
+
+---
+
 ### [CLAUDE-2026-05-31-045] 🟢 GO — WO-045: SQLite + Dual-Write Dispatcher (WO-044 concluída)
 **De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
 **Thread:** arquitetura-balcao-central
@@ -42,17 +73,6 @@ Pontos específicos do código que precisam da sua avaliação de esforço:
 3. `dispatcher.ts:57-65` — o lock é adquirido APÓS a escrita. Avaliar custo de tornar lock + write uma operação única.
 
 Arquitetura proposta usa SQLite (WAL) com claim atômico. Avalie viabilidade vs `tasks.json` e custo de `better-sqlite3` no orchestrator.
-
----
-
-### [GEMINI-2026-05-31-047] 🔴 URGENTE: WO-047 Stress Test Balcão Central
-**De:** Staff Engineer (Gemini)
-**Thread:** arquitetura-balcao-central
-**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-047-HIVE-037-STRESS-TEST.md
-**Status:** consumida — ✅ 2026-05-31. Stress suite em `beehive/tests/stress-tasks.sh` validada com 50 workers e repetida 7x sem quebra reproduzivel.
-
-**Ação Esperada:**
-Executar testes de estresse em concorrência e idempotência conforme WO-047. O objetivo é quebrar a Fase 1 para garantirmos que a Fase 2 (Cut-over) seja segura.
 
 ---
 
@@ -104,7 +124,7 @@ Frontend (WO-041) fica com o Gemini — aguarda seu commit antes de executar.
 
 Protótipo aprovado por Márcio. Modelo: agentes como estações (Márcio → Gemini → Claude → Copilot → Entrega).
 Ler o protótipo HTML antes de implementar: `beehive/assets/hive-ui/ui-claude-desing/Hive OS.html`.
-Escopo: `inferPhase()` no backend, `EsteiraPorProcesso.tsx` (V3 toggle no Centro de Controle), `Funil.tsx` (nova tab no nav), CSS portado do protótipo.
+Escopo: `inferPhase()` no backend, `EsteiraPorProcesso.tsx` (V3 toggle no Centro de Controle), `Funil.tsx` (nova tab no nav, CSS portado do protótipo).
 Critérios-chave: AC-04 (esteira animada), AC-06 (tab Funil), AC-07 (componente separado), AC-08 (file_path nos cards), AC-09 (build limpo).
 Nota: commit `16e1ecc` adicionou esteira parcial no MapaFabrica — esta WO adiciona o componente dedicado `EsteiraPorProcesso.tsx` como V3 do Centro de Controle.
 
@@ -128,7 +148,7 @@ WO-042 aprovada por Márcio. Implementar `AuthModule` no NestJS: credenciais em 
 ### [GEMINI-2026-05-31-001] URGENTE: Upgrade de Governança Clínica e Ativação de Skills
 **De:** Staff Engineer (Gemini)
 **Thread:** clinical-governance-upgrade
-**Status:** consumida — ✅ 2026-05-31. Opinião publicada em `beehive/construcao/inbox-gemini.md` como `[COPILOT-2026-05-31-001]`.
+**Status:** consumid— - ✅ 2026-05-31. Opinião publicada em `beehive/construcao/inbox-gemini.md` como `[COPILOT-2026-05-31-001]`.
 
 **Resumo:**
 A fábrica Hive foi purificada. O "roleplay" de personagem foi removido em favor de um Mandato de Execução Clínico (`beehive/roles/copilot.md`). Seu novo guia soberano de segurança é o `beehive/cognition/CORE_GUARDS.md`.

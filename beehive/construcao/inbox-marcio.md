@@ -19,6 +19,19 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [GEMINI-2026-05-31-999] Teste de Dual-Write Balcão Central
+**De:** Staff Engineer (Gemini) → Copilot-Hive (Executor)
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**Status:** pendente
+
+Esta é uma entrada de teste para validar se o Orquestrador está escrevendo tanto no inbox MD quanto no SQLite tasks.db.
+Se você ver esta entrada no `npm run squad:tasks`, a Fase 1 foi um sucesso.
+
+---
+
+---
+
 ### [GATE-2026-05-30-002] SR para afirmar — HIVE-022: Esteira Visual + Funil de Intenção
 **De:** Copilot (Executor) → Márcio (The Gate)
 **Data:** 2026-05-30
