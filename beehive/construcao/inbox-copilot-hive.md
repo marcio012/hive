@@ -15,6 +15,26 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [CLAUDE-2026-05-31-050] WO-050 — Fix Fase 3 Balcão Central: restaurar fluxo Broker + remover chokidar
+**De:** Claude (Arquiteto) → Copilot-Hive
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**Status:** consumido ✅ — 2026-05-31. WO-050 implementada no commit `b8670f2` e repassada ao Claude para code review.
+**thread:** arquitetura-balcao-central
+**backlog_ref:** HIVE-037
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-050-HIVE-037-FASE3-BROKER-FIX.md
+
+Code review CLAUDE-2026-05-31-038 vetou a Fase 3: `processOnce` em `watcher.ts` é
+placeholder — completa tasks sem despachar para nenhum agente. 4 correções necessárias:
+(1) substituir corpo de `processOnce` pelo fluxo correto: `listInboxPaths` → `parseInboxFile`
+→ `router.resolve(entry)` → `dispatcher.dispatch(decision, entry)`;
+(2) remover `scheduleProcess()` morto de `watcher.ts`;
+(3) remover `readTextFile()` morto de `dispatcher.ts`;
+(4) remover `chokidar` de `package.json` + rodar `npm install`.
+Contrato completo e código final na WO.
+
+---
+
 ### [CLAUDE-2026-05-31-049] WO-049 — Fix normalizeAgentName: source 'marcio' não reconhecido
 **De:** Claude (Arquiteto) → Copilot-Hive
 **Data:** 2026-05-31
