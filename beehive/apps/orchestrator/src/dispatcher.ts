@@ -4,7 +4,6 @@ import * as path from 'path';
 import { promisify } from 'util';
 
 import { TaskStore } from './db/task-store';
-import { buildDispatchEntry, insertInboxEntry } from './inbox';
 import { OrchestratorLogger } from './logger';
 import { StateStore } from './state';
 import {
@@ -47,23 +46,6 @@ export class Dispatcher {
         outcome: 'retry',
         reason: `lock ocupado por ${lock.owner}`,
       };
-    }
-
-    const targetPath = path.join(
-      this.rootDir,
-      'beehive',
-      'construcao',
-      `inbox-${decision.target}.md`,
-    );
-
-    const existingContent = await this.readTextFile(targetPath);
-    const alreadyInTargetInbox = path.resolve(entry.filePath) === path.resolve(targetPath);
-    const alreadyProjected = this.hasProjectedEntry(existingContent, entry.id);
-
-    if (!alreadyInTargetInbox && !alreadyProjected) {
-      const nextEntry = buildDispatchEntry(entry, decision.target);
-      const updatedContent = insertInboxEntry(existingContent, nextEntry);
-      await this.stateStore.writeTextAtomic(targetPath, updatedContent);
     }
 
     await this.taskStore.createTask({
@@ -109,12 +91,6 @@ export class Dispatcher {
     return 'shared';
   }
 
-  private hasProjectedEntry(content: string, sourceEntryId: string): boolean {
-    return new RegExp(`^\\*\\*source_entry:\\*\\*\\s*${this.escapeRegex(sourceEntryId)}$`, 'm').test(
-      content,
-    );
-  }
-
   private async acquireLock(target: AgentName, activity: string): Promise<void> {
     await execFile(
       'bash',
@@ -154,9 +130,5 @@ export class Dispatcher {
     } catch {
       return '';
     }
-  }
-
-  private escapeRegex(value: string): string {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 }

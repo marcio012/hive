@@ -1,4 +1,3 @@
-import chokidar, { FSWatcher } from 'chokidar';
 import * as path from 'path';
 
 import { TaskStore } from './db/task-store';
@@ -21,7 +20,6 @@ export class OrchestratorWatcher {
   private readonly router: Router;
   private readonly dispatcher: Dispatcher;
   private readonly deadman: DeadmanSwitch;
-  private watcher: FSWatcher | null = null;
   private processing = false;
   private pendingRescan = false;
   private debounceTimer: NodeJS.Timeout | null = null;
@@ -54,30 +52,11 @@ export class OrchestratorWatcher {
 
     await this.processAll('startup');
 
-    this.watcher = chokidar.watch(
-      [
-        path.join(this.rootDir, 'beehive', 'construcao', 'inbox-*.md'),
-        path.join(this.rootDir, '.hive-agent', 'hive-ui-config.json'),
-        path.join(this.rootDir, '.hive-agent', 'locks.json'),
-      ],
-      {
-        ignoreInitial: true,
-        awaitWriteFinish: {
-          stabilityThreshold: 300,
-          pollInterval: 100,
-        },
-      },
-    );
-
-    this.watcher.on('all', () => {
-      this.scheduleProcess();
-    });
-
     this.timeoutInterval = setInterval(() => {
       void this.deadman.checkForTimeout();
     }, 60_000);
 
-    await this.logger.log('info', 'Orchestrator Core iniciado e observando inboxes');
+    await this.logger.log('info', 'Orchestrator Core iniciado');
   }
 
   async stop(): Promise<void> {
@@ -95,9 +74,6 @@ export class OrchestratorWatcher {
       clearTimeout(retry.timer);
     }
     this.retries.clear();
-
-    await this.watcher?.close();
-    this.watcher = null;
   }
 
   private scheduleProcess(): void {
