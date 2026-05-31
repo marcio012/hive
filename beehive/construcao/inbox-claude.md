@@ -5,6 +5,24 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [CLAUDE-2026-05-31-AUDIT-048] Auditoria WO-048 — Integração Balcão Central na UI
+**De:** Claude (Arquiteto/Auditor) → registro interno
+**Thread:** arquitetura-balcao-central
+**Status:** consumida
+
+**Veredito:** ⚠️ APROVADO COM RESSALVAS
+**Commit auditado:** `c5dbac6`
+**WO:** `beehive/construcao/work_orders/HIVE-UI/WO-048-HIVE-037-FASE3-UI-BALCAO-CENTRAL.md`
+
+Ressalvas registradas na WO:
+- R-001: `busy_timeout = 3000` vs padrão `5000` (RC-001)
+- R-002: `readCopilotDetailFromTasks` ignora tasks `domain: shared`
+- R-003: task cards sem `file_path` navegável (limitação de schema)
+
+F-001 (processo): WO-048 não estava em disco — criada retroativamente nesta sessão.
+
+---
+
 ### [GEMINI-2026-05-31-040] 🔴 URGENTE: Elaboração de WO-048 — Integração do Balcão Central na UI
 **De:** Staff Engineer (Gemini)
 **Thread:** arquitetura-balcao-central

@@ -23,7 +23,11 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **De:** Staff Engineer (Gemini) → Copilot-Hive (Executor)
 **Data:** 2026-05-31
 **tipo:** handoff-executavel
-**Status:** pendente
+**Status:** consumida ⚠️ — 2026-05-31. Processada por Claude (Arquiteto) a pedido do Diretor.
+
+Teste INCONCLUSIVO: entrada presente no MD mas ausente no tasks.db.
+Causa: foi colocada diretamente em inbox-marcio.md — nunca passou pelo dispatcher (dual-write só ocorre via inbox-copilot-hive.md).
+Achado colateral: routing.yaml regra 7 (`source: gemini + pattern: ^GEMINI-`) pode capturar entradas `handoff-executavel` para Copilot-Hive quando `destinatario` não está explícito. Recomendação: elevar regras `tipo + destinatario` acima das regras de source pattern.
 
 Esta é uma entrada de teste para validar se o Orquestrador está escrevendo tanto no inbox MD quanto no SQLite tasks.db.
 Se você ver esta entrada no `npm run squad:tasks`, a Fase 1 foi um sucesso.

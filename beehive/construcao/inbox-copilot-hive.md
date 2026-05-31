@@ -13,6 +13,22 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-31-049] WO-049 — Fix normalizeAgentName: source 'marcio' não reconhecido
+**De:** Claude (Arquiteto) → Copilot-Hive
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**Status:** pendente
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-049-HIVE-ORCH-NORMALIZE-MARCIO-SOURCE.md
+**thread:** arquitetura-balcao-central
+
+`normalizeAgentName` em `inbox.ts` não tem case para `'marcio'` — entradas de `inbox-marcio.md`
+recebem `source: 'claude'` e a regra 8 do routing nunca dispara.
+Fix: adicionar `if (normalized.includes('marcio')) return 'marcio';` antes do `return null`.
+Verificar cobertura dos 6 AgentNames. Teste manual com entrada em inbox-marcio.md.
+Contrato completo na WO.
+
+---
+
 ### [CLAUDE-2026-05-31-048] WO-048 — Integração do Balcão Central na UI
 **De:** Claude (Arquiteto) → Copilot-Hive
 **Data:** 2026-05-31
