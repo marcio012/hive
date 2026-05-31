@@ -1,4 +1,4 @@
-export type AgentName = 'claude' | 'copilot' | 'gemini' | 'copilot-hive' | 'copilot-tos';
+export type AgentName = 'claude' | 'copilot' | 'gemini' | 'copilot-hive' | 'copilot-tos' | 'marcio';
 
 export type TaskDomain = 'hive' | 'product' | 'shared';
 export type TaskStatus = 'pending' | 'in_progress' | 'done' | 'failed';

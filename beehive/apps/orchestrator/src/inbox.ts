@@ -178,7 +178,7 @@ export function buildDispatchEntry(entry: InboxEntry, target: AgentName): string
 }
 
 export async function listInboxPaths(rootDir: string): Promise<string[]> {
-  return ['claude', 'copilot', 'gemini', 'copilot-hive', 'copilot-tos'].map((agent) =>
+  return ['claude', 'copilot', 'gemini', 'copilot-hive', 'copilot-tos', 'marcio'].map((agent) =>
     path.join(rootDir, 'beehive', 'construcao', `inbox-${agent}.md`),
   );
 }
