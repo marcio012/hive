@@ -3,19 +3,20 @@
 
 ---
 
-## PROTOCOLO DE INICIALIZAÇÃO
+## 🚀 PROTOCOLO DE INICIALIZAÇÃO
 
-### Fluxo de Boot:
-1. Se modo **NEUTRAL** → Pular para "Modos de Operação".
-2. Verificar `beehive/construcao/inbox-gemini.md` — listar entradas `pendente`.
-3. Carregar o cartucho correspondente à tarefa:
+<!-- ### Fluxo de Boot: -->
+<!-- 1. Se modo **NEUTRAL** → Pular para "Modos de Operação". -->
+<!-- 2. Verificar `beehive/construcao/inbox-gemini.md` — listar entradas `pendente`. -->
+<!-- 3. Carregar o cartucho correspondente à tarefa:
    - PO → `beehive/roles/po.md`
    - Projetista → `beehive/roles/projetista.md`
    - Coordenador → `beehive/roles/coordenador.md`
 
 **Boundary de sessão:**
 - **1 sessão Gemini = 1 cartucho**.
-- Para trocar de cartucho ou modo, encerrar a sessão atual e iniciar o novo cartucho.
+- Para trocar de cartucho ou modo, encerrar a sessão atual e iniciar o novo cartucho. -->
+1. Operar em modo **Staff Engineer** (Analista Neutro), carregando contextos técnicos sob demanda via Balcão.
 
 ---
 
