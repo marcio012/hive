@@ -63,6 +63,22 @@ export interface AgentDetail {
   contextBytes: number;
 }
 
+export interface TaskRow {
+  id: string;
+  title: string;
+  domain: 'hive' | 'product' | 'shared';
+  status: 'pending' | 'in_progress' | 'done' | 'failed';
+  assignee: string | null;
+  priority: 'urgent' | 'normal' | 'low';
+  thread: string | null;
+  backlog_ref: string | null;
+  wo_ref: string | null;
+  fail_reason: string | null;
+  created_at: string;
+  updated_at: string;
+  claimed_at: string | null;
+}
+
 export interface DebateEntry {
   id: string;
   title: string;
@@ -119,9 +135,9 @@ export interface HiveState {
     lastAction: string | null;
     nextStep: string | null;
   };
-  inboxCounts: Record<AgentName, number>;
   inboxArchive: Record<AgentName, { eligibleCount: number; totalLines: number }>;
   agentDetails: Record<AgentName, AgentDetail>;
+  tasks: TaskRow[];
   gate: HiveGateState;
   debates: DebateEntry[];
   brainstorm: Array<{
@@ -362,10 +378,11 @@ export class HiveService {
       path.join(this.hiveRoot, 'beehive'),
       path.join(this.hiveRoot, '.hive-agent'),
       path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-claude.md'),
-      path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-copilot.md'),
+      path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-copilot-hive.md'),
       path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-gemini.md'),
       path.join(this.hiveRoot, 'beehive', 'construcao', 'inbox-marcio.md'),
       path.join(this.hiveRoot, 'beehive', 'construcao', 'debates-abertos.md'),
+      path.join(this.hiveRoot, '.hive-agent', 'tasks.db'),
     ];
   }
 
@@ -375,9 +392,7 @@ export class HiveService {
       config,
       orchestrator,
       session,
-      inboxCounts,
       inboxArchive,
-      inboxDetails,
       gate,
       debates,
       brainstorm,
@@ -386,15 +401,14 @@ export class HiveService {
       governance,
       interactionLog,
       artifactIndex,
+      tasks,
     ] =
       await Promise.all([
         this.readLocks(),
         this.readConfig(),
         this.readOrchestratorState(),
         this.readSession(),
-        this.readInboxCounts(),
         this.readInboxArchiveState(),
-        this.readAgentInboxDetails(),
         this.readGateState(),
         this.readActiveDebates(),
         this.readBrainstormFiles(),
@@ -403,9 +417,11 @@ export class HiveService {
         this.governanceRepository.getAll(),
         this.readInteractionLog(),
         this.readArtifactIndex(),
+        this.readCentralTasks(),
       ]);
 
-    const [resolvedDebates, deliveryReports, reservedBacklogRefs] = await Promise.all([
+    const [inboxDetails, resolvedDebates, deliveryReports, reservedBacklogRefs] = await Promise.all([
+      this.readAgentInboxDetails(tasks),
       this.enrichDebatesWithArtifacts(debates, artifactIndex),
       this.readAffirmedReports(artifactIndex),
       this.readReservedBacklogRefs(artifactIndex),
@@ -427,7 +443,6 @@ export class HiveService {
       config,
       orchestrator,
       session,
-      inboxCounts,
       inboxArchive,
       agentDetails: {
         claude: {
@@ -446,6 +461,7 @@ export class HiveService {
           contextBytes: inboxDetails.gemini.contextBytes,
         },
       },
+      tasks,
       gate,
       debates: resolvedDebates,
       brainstorm,
@@ -1092,23 +1108,6 @@ export class HiveService {
     };
   }
 
-  private async readInboxCounts(): Promise<Record<AgentName, number>> {
-    const counts = await Promise.all(
-      AGENTS.map(async (agent) => {
-        const filePath = path.join(
-          this.hiveRoot,
-          'beehive',
-          'construcao',
-          `inbox-${agent}.md`,
-        );
-
-        return [agent, await this.countPendingEntries(filePath)] as const;
-      }),
-    );
-
-    return Object.fromEntries(counts) as Record<AgentName, number>;
-  }
-
   private async readAgentContextBytes(agent: AgentName): Promise<number> {
     const contextFiles: Record<AgentName, string[]> = {
       claude: [
@@ -1143,27 +1142,74 @@ export class HiveService {
     return sizes.reduce((sum, s) => sum + s, 0);
   }
 
-  private async readAgentInboxDetails(): Promise<
-    Record<AgentName, Omit<AgentDetail, 'activeWo'>>
-  > {
-    const details = await Promise.all(
-      AGENTS.map(async (agent) => {
-        const [{ pending, blocked }, contextBytes] = await Promise.all([
-          this.readInboxPending(agent),
-          this.readAgentContextBytes(agent),
-        ]);
-        return [
-          agent,
-          {
-            inboxPending: pending,
-            blockedCount: blocked,
-            contextBytes,
-          },
-        ] as const;
-      }),
-    );
+  private async readCentralTasks(): Promise<TaskRow[]> {
+    const scriptPath = path.join(this.hiveRoot, 'scripts', 'tasks-json.js');
 
-    return Object.fromEntries(details) as Record<AgentName, Omit<AgentDetail, 'activeWo'>>;
+    try {
+      const { stdout } = await execFile('node', [scriptPath], {
+        cwd: this.hiveRoot,
+      });
+      const trimmed = stdout.trim();
+
+      if (!trimmed) {
+        return [];
+      }
+
+      const parsed = JSON.parse(trimmed) as unknown;
+      if (!Array.isArray(parsed)) {
+        this.addEvent('warn', 'Balcao Central retornou payload invalido.');
+        return [];
+      }
+
+      return parsed as TaskRow[];
+    } catch (error) {
+      this.addEvent('warn', this.extractExecError(error, 'Falha ao ler Balcao Central.'));
+      return [];
+    }
+  }
+
+  private async readAgentInboxDetails(
+    tasks: TaskRow[],
+  ): Promise<Record<AgentName, Omit<AgentDetail, 'activeWo'>>> {
+    const [claudeDetail, copilotDetail, geminiDetail] = await Promise.all([
+      this.readInboxDetailForAgent('claude'),
+      this.readCopilotDetailFromTasks(tasks),
+      this.readInboxDetailForAgent('gemini'),
+    ]);
+
+    return {
+      claude: claudeDetail,
+      copilot: copilotDetail,
+      gemini: geminiDetail,
+    };
+  }
+
+  private async readInboxDetailForAgent(
+    agent: 'claude' | 'gemini',
+  ): Promise<Omit<AgentDetail, 'activeWo'>> {
+    const [{ pending, blocked }, contextBytes] = await Promise.all([
+      this.readInboxPending(agent),
+      this.readAgentContextBytes(agent),
+    ]);
+
+    return {
+      inboxPending: pending,
+      blockedCount: blocked,
+      contextBytes,
+    };
+  }
+
+  private async readCopilotDetailFromTasks(
+    tasks: TaskRow[],
+  ): Promise<Omit<AgentDetail, 'activeWo'>> {
+    const contextBytes = await this.readAgentContextBytes('copilot');
+    const pending = tasks.filter((task) => task.domain === 'hive' && task.status === 'pending').length;
+
+    return {
+      inboxPending: pending,
+      blockedCount: 0,
+      contextBytes,
+    };
   }
 
   private async readGateState(): Promise<HiveGateState> {

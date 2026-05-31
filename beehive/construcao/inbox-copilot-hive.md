@@ -13,6 +13,21 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-31-048] WO-048 — Integração do Balcão Central na UI
+**De:** Claude (Arquiteto) → Copilot-Hive
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**Status:** consumida — ✅ 2026-05-31. Hive UI conectado ao `tasks.db`; Balcão Central exibido; `inboxCounts` removido; `check:types`, `build`, `test-gemini-role-guard` e `squad:gate` OK.
+**wo_ref:** WO-048-HIVE-037-FASE3-UI-BALCAO-CENTRAL
+**thread:** arquitetura-balcao-central
+**backlog_ref:** HIVE-037
+
+Conectar o backend do Hive UI ao `tasks.db` (SQLite) e refatorar o frontend para exibir as tasks reais do Balcão Central.
+
+Contrato completo em: `beehive/construcao/work_orders/HIVE-UI/WO-048-HIVE-037-FASE3-UI-BALCAO-CENTRAL.md`
+
+---
+
 ### [ORCH-20260531110259-GEMINI] Teste de Claim
 **De:** Orchestrator → Copilot-Hive
 **Data:** 2026-05-31

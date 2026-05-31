@@ -9,6 +9,7 @@ import {
   type OrchestratorStatus,
   type PipelineItem,
   type RoleEntry,
+  type TaskRow,
 } from '../hooks/useHiveSocket';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
 import { ActiveItem } from '../components/ActiveItem';
@@ -276,6 +277,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
     manifesto: { principios: [] },
     roles: [] as RoleEntry[],
   };
+  const tasks = state?.tasks ?? [];
 
   const activeLocks = useMemo(
     () =>
@@ -304,8 +306,8 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
     [events],
   );
 
-  const totalInboxPending = useMemo(
-    () => AGENTS.reduce((sum, agent) => sum + agentDetails[agent].inboxPending, 0),
+  const nonCopilotInboxPending = useMemo(
+    () => agentDetails.claude.inboxPending + agentDetails.gemini.inboxPending,
     [agentDetails],
   );
 
@@ -1215,9 +1217,63 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
               </button>
             </div>
 
+            {tasks.length > 0 ? (
+              <>
+                <div className="section-label" style={{ marginTop: 24 }}>
+                  <span className="n">02</span> Balcao Central <span className="line" />
+                </div>
+                <div className="panel">
+                  <div className="ph">
+                    <span className="ph-ico">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M3 3h18v4H3z" />
+                        <path d="M3 10h18v11H3z" />
+                        <path d="M8 10v11M16 10v11" />
+                      </svg>
+                    </span>
+                    <h3>Tasks ativas</h3>
+                    <span className="ph-meta">{tasks.length} tarefa(s)</span>
+                  </div>
+                  <div className="pb">
+                    <div className="gate-list">
+                      {tasks.map((task: TaskRow) => (
+                        <article key={task.id} className="gate-card">
+                          <div className="gate-card-head">
+                            <div>
+                              <div className="gate-id">{task.id}</div>
+                              <h4>{task.title}</h4>
+                            </div>
+                            <span
+                              className={`gate-badge ${
+                                task.status === 'in_progress'
+                                  ? 'gate-badge--commit'
+                                  : 'gate-badge--sr'
+                              }`}
+                            >
+                              {task.status === 'in_progress' ? 'em curso' : 'pendente'}
+                            </span>
+                          </div>
+                          <div className="gate-meta">
+                            <span>{task.domain}</span>
+                            <span>{task.priority}</span>
+                            {task.assignee ? <span>{task.assignee}</span> : null}
+                            {task.wo_ref ? <span>{task.wo_ref}</span> : null}
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : null}
+
             {view === 'v3' ? <EsteiraPorProcesso state={state} /> : renderPipeline()}
 
-            {activeLocks.length === 0 && totalInboxPending === 0 && totalBlocked === 0 && gate.total === 0 ? (
+            {activeLocks.length === 0 &&
+            tasks.length === 0 &&
+            nonCopilotInboxPending === 0 &&
+            totalBlocked === 0 &&
+            gate.total === 0 ? (
               <div className="cc2-clean" style={{ marginBottom: 18 }}>
                 <svg viewBox="0 0 24 24" fill="none" height="15" stroke="currentColor" strokeWidth="2.2" width="15">
                   <path d="m5 13 4 4L19 7" />

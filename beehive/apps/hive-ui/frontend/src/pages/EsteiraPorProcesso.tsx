@@ -48,7 +48,7 @@ export function EsteiraPorProcesso({ state }: EsteiraPorProcessoProps) {
     if (key === 'blueprint') return flowItems.filter(i => i.station === 'claude' && i.lane === 'triagem').length;
     if (key === 'wo')        return flowItems.filter(i => i.station === 'claude' && i.lane === 'revisao').length;
     if (key === 'execucao')  return state?.agentDetails?.copilot?.activeWo ? 1 : 0;
-    if (key === 'auditoria') return state?.inboxCounts?.claude ?? 0;
+    if (key === 'auditoria') return state?.agentDetails?.claude?.inboxPending ?? 0;
     if (key === 'sr')        return state?.gate?.pendentes?.filter(g => g.tipo === 'sr-afirmacao').length || 0;
     if (key === 'gate')      return state?.gate?.total ?? 0;
     return 0;

@@ -147,7 +147,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
 
         <div className="grid-3">
           {agents.map((agent) => {
-            const count = getAgentValue(state?.inboxCounts ?? null, agent.key) ?? 0;
+            const count = getAgentValue(state?.agentDetails ?? null, agent.key)?.inboxPending ?? 0;
             const pending = count > 0;
 
             return (

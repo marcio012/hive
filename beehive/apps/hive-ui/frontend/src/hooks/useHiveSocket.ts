@@ -52,6 +52,22 @@ export interface AgentDetail {
   contextBytes: number;
 }
 
+export interface TaskRow {
+  id: string;
+  title: string;
+  domain: 'hive' | 'product' | 'shared';
+  status: 'pending' | 'in_progress' | 'done' | 'failed';
+  assignee: string | null;
+  priority: 'urgent' | 'normal' | 'low';
+  thread: string | null;
+  backlog_ref: string | null;
+  wo_ref: string | null;
+  fail_reason: string | null;
+  created_at: string;
+  updated_at: string;
+  claimed_at: string | null;
+}
+
 export interface DebateEntry {
   id: string;
   title: string;
@@ -129,9 +145,9 @@ export interface HiveState {
     lastAction: string | null;
     nextStep: string | null;
   };
-  inboxCounts: Record<AgentName, number>;
   inboxArchive: Record<AgentName, { eligibleCount: number; totalLines: number }>;
   agentDetails?: Record<AgentName, AgentDetail>;
+  tasks: TaskRow[];
   gate: {
     pendentes: GateItem[];
     total: number;

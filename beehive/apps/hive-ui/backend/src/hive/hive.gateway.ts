@@ -61,6 +61,8 @@ export class HiveGateway
         this.hiveService.addEvent('lock', `lock atualizado (${eventName})`);
       } else if (basename === 'orchestrator-state.json') {
         this.hiveService.addEvent('info', `orchestrator atualizado (${eventName})`);
+      } else if (basename === 'tasks.db') {
+        this.hiveService.addEvent('info', `Balcao Central atualizado (${eventName})`);
       } else if (basename.startsWith('inbox-')) {
         this.hiveService.addEvent('info', `${basename} atualizado (${eventName})`);
       } else if (basename === 'debates-abertos.md') {
