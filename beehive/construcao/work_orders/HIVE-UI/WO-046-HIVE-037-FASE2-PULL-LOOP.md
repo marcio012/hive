@@ -5,7 +5,7 @@ backlog_ref: HIVE-037
 debate_ref: beehive/construcao/debates/DEBATE-037-BALCAO-CENTRAL.md
 thread: arquitetura-balcao-central
 executor: Copilot-Hive
-status: pendente
+status: concluida
 data: 2026-05-31
 workspace_hive: /home/marcio/job/hive
 workspace_target: /home/marcio/job/hive
@@ -279,18 +279,18 @@ numa nota em `beehive/roles/copilot.md`:
 
 ## Critérios de Aceite
 
-- [ ] `schema.sql` contém coluna `fail_reason TEXT`
-- [ ] `SqliteTaskStore` aplica `ALTER TABLE ... ADD COLUMN fail_reason TEXT` com catch silencioso para DBs existentes
-- [ ] `SqliteTaskStore.failTask` persiste `reason` na coluna `fail_reason`
-- [ ] `scripts/agent-pull.js` criado e funcional para os três subcomandos
-- [ ] `npm run squad:claim:hive` retorna gate + payload ou `NO_TASKS`
-- [ ] Output do `claim` inclui conteúdo de `cognitive-reset-gate.md` antes do payload
-- [ ] `.hive-agent/tasks-readable.md` é regenerado após cada operação de mutação
-- [ ] `npm run squad:task:done -- <id>` marca task como `done`
-- [ ] `npm run squad:task:fail -- <id> "razão"` marca task como `failed` com `fail_reason` persistido
-- [ ] `npm run squad:tasks` (WO-045) continua funcional
-- [ ] Inbox MD continua sendo escrito pelo Dispatcher (dual-write intacto)
-- [ ] `check:types` passa no orchestrator
+- [x] `schema.sql` contém coluna `fail_reason TEXT`
+- [x] `SqliteTaskStore` aplica `ALTER TABLE ... ADD COLUMN fail_reason TEXT` com catch silencioso para DBs existentes
+- [x] `SqliteTaskStore.failTask` persiste `reason` na coluna `fail_reason`
+- [x] `scripts/agent-pull.js` criado e funcional para os três subcomandos
+- [x] `npm run squad:claim:hive` retorna gate + payload ou `NO_TASKS`
+- [x] Output do `claim` inclui conteúdo de `cognitive-reset-gate.md` antes do payload
+- [x] `.hive-agent/tasks-readable.md` é regenerado após cada operação de mutação
+- [x] `npm run squad:task:done -- <id>` marca task como `done`
+- [x] `npm run squad:task:fail -- <id> "razão"` marca task como `failed` com `fail_reason` persistido
+- [x] `npm run squad:tasks` (WO-045) continua funcional
+- [x] Inbox MD continua sendo escrito pelo Dispatcher (dual-write intacto)
+- [x] `check:types` passa no orchestrator
 
 ## Análise Financeira (DIR-080)
 

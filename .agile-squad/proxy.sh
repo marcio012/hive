@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Inicio de sessao Copilot-Hive (Fase 2+):
+# 1. executar `npm run squad:claim:hive` antes de qualquer leitura de inbox
+# 2. se retornar `NO_TASKS`, usar `beehive/construcao/inbox-copilot-hive.md` como fallback
+# O inbox MD continua em dual-write ate a Fase 3.
+
 set -euo pipefail
 
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
