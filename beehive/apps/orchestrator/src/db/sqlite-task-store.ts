@@ -44,18 +44,24 @@ export class SqliteTaskStore implements TaskStore {
     ];
 
     for (const migration of migrations) {
-      const applied = this.db
-        .prepare('SELECT version FROM schema_migrations WHERE version = ?')
-        .get(migration.version) as { version: number } | undefined;
+      this.db.exec('BEGIN IMMEDIATE');
+      try {
+        const applied = this.db
+          .prepare('SELECT version FROM schema_migrations WHERE version = ?')
+          .get(migration.version) as { version: number } | undefined;
 
-      if (applied) {
-        continue;
+        if (!applied) {
+          migration.up();
+          this.db
+            .prepare('INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)')
+            .run(migration.version, new Date().toISOString());
+        }
+
+        this.db.exec('COMMIT');
+      } catch (error) {
+        this.db.exec('ROLLBACK');
+        throw error;
       }
-
-      migration.up();
-      this.db
-        .prepare('INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)')
-        .run(migration.version, new Date().toISOString());
     }
   }
 

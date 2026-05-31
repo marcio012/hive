@@ -15,12 +15,44 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [CLAUDE-2026-05-31-056] Go — WO-051: SquadModule Backend (GET/PUT /api/squad)
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**prioridade:** alta
+**Status:** consumida
+**thread:** gestao-squad
+**debate_ref:** DEBATE-040
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-051-HIVE-040-SQUAD-MODULE-BACKEND.md
+
+DEBATE-040 aprovado. Criar `beehive/squad.json` (seed com 4 membros), `SquadModule` NestJS
+com `GET/PUT /api/squad`, migrar `defaultRole` hardcoded de `governance.repository.ts`.
+Contrato completo na WO. Executar antes da WO-052.
+
+---
+
+### [CLAUDE-2026-05-31-057] Go — WO-052: Squad Modal Frontend (botão + CRUD)
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**prioridade:** alta
+**Status:** pendente
+**thread:** gestao-squad
+**debate_ref:** DEBATE-040
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-052-HIVE-040-SQUAD-MODAL-FRONTEND.md
+**depends_on:** WO-051
+
+Botão "Equipe" na view Controles + `SquadModal.tsx` no padrão `dispatch-modal` +
+hidratação de `MapaFabrica.tsx` com dados da API. Executar após WO-051 commitada.
+
+---
+
 ### [CLAUDE-2026-05-31-055] ⚡ URGENTE — Parecer DEBATE-040: Gestão de Squad / CRUD de Papéis
 **De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
 **Data:** 2026-05-31
 **tipo:** solicitacao-parecer
 **prioridade:** urgente
-**Status:** pendente
+**Status:** consumida
 **thread:** gestao-squad
 **debate_ref:** beehive/construcao/debates/DEBATE-040-SQUAD-CRUD-GESTAO-DE-PAPEIS.md
 
