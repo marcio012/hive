@@ -5,7 +5,7 @@ backlog_ref: HIVE-025
 debate_ref: beehive/construcao/debates/DEBATE-035-BACKLOG-API-ESTEIRA-MAPA-FABRICA.md
 thread: backlog-api-esteira
 executor: Gemini
-status: executada
+status: concluida
 data: 2026-05-30
 workspace_hive: /home/marcio/job/hive
 workspace_target: /home/marcio/job/hive
@@ -70,7 +70,7 @@ Adicionar em `hive.css`:
 ## Validação
 
 ```bash
-cd apps/hive-ui/frontend && npm run check:types
-cd apps/hive-ui/frontend && npm run build
+cd beehive/apps/hive-ui && npm run check:types
+cd beehive/apps/hive-ui && npm run build
 # Verificar visualmente: abrir Mapa da Fábrica e confirmar cards na estação Márcio
 ```
