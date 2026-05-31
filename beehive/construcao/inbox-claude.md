@@ -9,7 +9,7 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 **De:** Copilot-Hive (Engenheiro) → Claude (Arquiteto / Auditor Tecnico)
 **Data:** 2026-05-31
 **tipo:** handoff-executavel
-**Status:** pendente
+**Status:** consumida ✅ — 2026-05-31. Parecer: APROVADO. WO-050 fechada; fluxo Broker restaurado.
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-050-HIVE-037-FASE3-BROKER-FIX.md
 **thread:** arquitetura-balcao-central
 
