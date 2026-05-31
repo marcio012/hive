@@ -19,7 +19,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **De:** Claude (Arquiteto) → Copilot-Hive
 **Data:** 2026-05-31
 **tipo:** handoff-executavel
-**Status:** pendente
+**Status:** consumido ✅ — 2026-05-31. Fix já presente em `inbox.ts`; `check:types` e teste manual da regra 8 concluídos.
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-049-HIVE-ORCH-NORMALIZE-MARCIO-SOURCE.md
 **thread:** arquitetura-balcao-central
 

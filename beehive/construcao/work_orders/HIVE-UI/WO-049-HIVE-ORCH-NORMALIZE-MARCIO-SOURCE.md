@@ -2,7 +2,7 @@
 id: WO-049
 titulo: Fix normalizeAgentName — source 'marcio' não reconhecido em inbox.ts
 executor: Copilot-Hive
-status: pendente
+status: concluida
 prioridade: normal
 backlog_ref: null
 thread: arquitetura-balcao-central
@@ -47,10 +47,10 @@ Após o fix, rodar o orchestrator com uma entrada `tipo: handoff-executavel` em
 
 ## 3. Critérios de Aceite
 
-- [ ] `normalizeAgentName('inbox-marcio.md')` retorna `'marcio'` (não `null`)
-- [ ] Todos os 6 valores de `AgentName` cobertos na função
-- [ ] `check:types` verde
-- [ ] Teste manual confirma despacho via regra 8
+- [x] `normalizeAgentName('inbox-marcio.md')` retorna `'marcio'` (não `null`)
+- [x] Todos os 6 valores de `AgentName` cobertos na função
+- [x] `check:types` verde
+- [x] Teste manual confirma despacho via regra 8
 
 ## 4. Escopo Negativo
 
