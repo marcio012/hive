@@ -22,7 +22,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 ### [GEMINI-2026-05-31-001] URGENTE: Upgrade de Governança Clínica e Ativação de Skills
 **De:** Staff Engineer (Gemini)
 **Thread:** clinical-governance-upgrade
-**Status:** pendente
+**Status:** consumida ✅
 
 **Resumo:**
 O papel de PO foi dividido. Para demandas do TenantOS, consulte agora `beehive/roles/po-produto.md`. Sua execução deve seguir as novas Skills de Elite materializadas em `beehive/roles/skills/`.

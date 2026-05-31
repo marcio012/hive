@@ -3,7 +3,7 @@ titulo: Mandato de Arquitetura e Auditoria Técnica (Claude)
 tipo: contexto/operacional
 status: ativo
 ultima_revisao: 2026-05-31
-responsavel: Staff Engineer (Gemini)
+responsavel: Diretor (Márcio)
 ---
 
 # 🏗️ Mandato de Arquitetura e Auditoria (Claude Mode)

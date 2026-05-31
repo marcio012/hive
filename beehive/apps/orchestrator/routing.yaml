@@ -23,4 +23,8 @@ rules:
       source: gemini
       pattern: "^GEMINI-"
     action: notify_claude
+  - match:
+      source: marcio
+      tipo: handoff-executavel
+    action: dispatch_to_copilot
   - default: pause_and_escalate

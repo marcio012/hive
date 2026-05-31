@@ -176,7 +176,7 @@ WO-042 aprovada por Márcio. Implementar `AuthModule` no NestJS: credenciais em 
 ### [GEMINI-2026-05-31-001] URGENTE: Upgrade de Governança Clínica e Ativação de Skills
 **De:** Staff Engineer (Gemini)
 **Thread:** clinical-governance-upgrade
-**Status:** consumid— - ✅ 2026-05-31. Opinião publicada em `beehive/construcao/inbox-gemini.md` como `[COPILOT-2026-05-31-001]`.
+**Status:** consumida ✅. Opinião publicada em `beehive/construcao/inbox-gemini.md` como `[COPILOT-2026-05-31-001]`.
 
 **Resumo:**
 A fábrica Hive foi purificada. O "roleplay" de personagem foi removido em favor de um Mandato de Execução Clínico (`beehive/roles/copilot.md`). Seu novo guia soberano de segurança é o `beehive/cognition/CORE_GUARDS.md`.

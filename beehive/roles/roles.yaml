@@ -75,6 +75,9 @@ agents:
       can_write_product_code: true
       can_read_task_context: true   # Lê apenas o que o contrato e o inbox especificam
       can_audit_code: false         # Não auto-revisa nem revisa trabalho de outros agentes
+    cartuchos:
+      - copilot-hive
+      - copilot-tos
     escalation_path: "Claude"       # Dúvida técnica → Claude. Dúvida de negócio → Gemini/Márcio
     inbox: "beehive/construcao/inbox-copilot.md"
     reference: "beehive/roles/copilot.md"
