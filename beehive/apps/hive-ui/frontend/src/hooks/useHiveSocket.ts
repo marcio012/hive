@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { io } from 'socket.io-client';
 
 export type AgentName = 'claude' | 'copilot' | 'gemini';
+export type SquadMemberId = AgentName | 'marcio';
 
 export type PipelineStage = 'triagem' | 'execucao' | 'revisao' | 'concluido';
 
@@ -128,6 +129,55 @@ export interface InteractionLog {
   mostFrequentType: string | null;
 }
 
+export interface SquadMember {
+  id: SquadMemberId;
+  name: string;
+  role: string;
+  model: string;
+  initial: string;
+  inbox: string;
+  active: boolean;
+}
+
+export const SQUAD_FALLBACK: SquadMember[] = [
+  {
+    id: 'gemini',
+    name: 'Gemini',
+    role: 'Orquestrador',
+    model: 'gemini-flash',
+    initial: 'G',
+    inbox: 'inbox-gemini.md',
+    active: true,
+  },
+  {
+    id: 'claude',
+    name: 'Claude',
+    role: 'Arquiteto',
+    model: 'claude-sonnet',
+    initial: 'C',
+    inbox: 'inbox-claude.md',
+    active: true,
+  },
+  {
+    id: 'copilot',
+    name: 'Copilot',
+    role: 'Engenheiro',
+    model: 'gpt-5.4',
+    initial: 'P',
+    inbox: 'inbox-copilot-hive.md',
+    active: true,
+  },
+  {
+    id: 'marcio',
+    name: 'Diretor',
+    role: 'Product Owner',
+    model: 'Human / Owner',
+    initial: 'M',
+    inbox: 'inbox-marcio.md',
+    active: true,
+  },
+];
+
 export interface HiveState {
   locks: Record<AgentName, { activity: string | null; acquiredAt: string | null } | null>;
   config: {
@@ -246,6 +296,7 @@ async function fetchJson<T>(url: string): Promise<T> {
 export function useHiveSocket() {
   const [state, setState] = useState<HiveState | null>(null);
   const [telemetry, setTelemetry] = useState<TelemetryState | null>(null);
+  const [squadMembers, setSquadMembers] = useState<SquadMember[]>(SQUAD_FALLBACK);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -268,7 +319,20 @@ export function useHiveSocket() {
       }
     };
 
-    Promise.all([fetchJson<HiveState>('/api/hive/state'), syncTelemetry()])
+    const syncSquadMembers = async () => {
+      try {
+        const payload = await fetchJson<SquadMember[]>('/api/squad');
+        if (mounted) {
+          setSquadMembers(payload);
+        }
+      } catch {
+        if (mounted) {
+          setSquadMembers(SQUAD_FALLBACK);
+        }
+      }
+    };
+
+    Promise.all([fetchJson<HiveState>('/api/hive/state'), syncTelemetry(), syncSquadMembers()])
       .then(([payload]) => {
         if (mounted) {
           setState(payload);
@@ -321,5 +385,30 @@ export function useHiveSocket() {
     };
   }, [socket]);
 
-  return { state, telemetry, connected, error };
+  async function saveSquadMembers(updated: SquadMember[]): Promise<SquadMember[]> {
+    const response = await fetch('/api/squad', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    });
+
+    if (!response.ok) {
+      const fallback = `HTTP ${response.status}`;
+      try {
+        const payload = (await response.json()) as { message?: string; error?: string };
+        throw new Error(payload.message ?? payload.error ?? fallback);
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error(fallback);
+      }
+    }
+
+    const payload = (await response.json()) as SquadMember[];
+    setSquadMembers(payload);
+    return payload;
+  }
+
+  return { state, telemetry, squadMembers, connected, error, saveSquadMembers };
 }

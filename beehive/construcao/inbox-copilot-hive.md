@@ -36,7 +36,7 @@ Contrato completo na WO. Executar antes da WO-052.
 **Data:** 2026-05-31
 **tipo:** handoff-executavel
 **prioridade:** alta
-**Status:** pendente
+**Status:** consumida
 **thread:** gestao-squad
 **debate_ref:** DEBATE-040
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-052-HIVE-040-SQUAD-MODAL-FRONTEND.md

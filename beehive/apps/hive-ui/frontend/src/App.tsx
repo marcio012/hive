@@ -145,14 +145,21 @@ function renderScreen(route: CockpitRoute, data: ReturnType<typeof useHiveSocket
   }
 
   if (route === '/controle') {
-    return <CentroDeControle state={data.state} telemetry={data.telemetry} />;
+    return (
+      <CentroDeControle
+        state={data.state}
+        telemetry={data.telemetry}
+        squadMembers={data.squadMembers}
+        onSaveSquad={data.saveSquadMembers}
+      />
+    );
   }
 
   if (route === '/diagramas') {
     return <Diagramas />;
   }
 
-  return <MapaFabrica state={data.state} telemetry={data.telemetry} />;
+  return <MapaFabrica state={data.state} telemetry={data.telemetry} squadMembers={data.squadMembers} />;
 }
 
 type ShellHeaderProps = {

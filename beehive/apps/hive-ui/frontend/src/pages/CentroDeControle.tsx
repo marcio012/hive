@@ -9,11 +9,13 @@ import {
   type OrchestratorStatus,
   type PipelineItem,
   type RoleEntry,
+  type SquadMember,
   type TaskRow,
 } from '../hooks/useHiveSocket';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
 import { ActiveItem } from '../components/ActiveItem';
 import { DebateCard } from '../components/DebateCard';
+import { SquadModal } from '../components/controle/SquadModal';
 import { EsteiraPorProcesso } from './EsteiraPorProcesso';
 import { TelemetriaContent } from './Telemetria';
 import { type TelemetryState } from '../hooks/useHiveSocket';
@@ -21,6 +23,8 @@ import { type TelemetryState } from '../hooks/useHiveSocket';
 type CentroDeControleProps = {
   state: HiveState | null;
   telemetry: TelemetryState | null;
+  squadMembers: SquadMember[];
+  onSaveSquad: (updated: SquadMember[]) => Promise<SquadMember[]>;
 };
 
 type HiveConfig = NonNullable<HiveState['config']>;
@@ -284,10 +288,16 @@ function gateBadgeClass(tipo: GateItem['tipo']): string {
   return 'gate-badge gate-badge--decisao';
 }
 
-export function CentroDeControle({ state, telemetry }: CentroDeControleProps) {
+export function CentroDeControle({
+  state,
+  telemetry,
+  squadMembers,
+  onSaveSquad,
+}: CentroDeControleProps) {
   const [busyConfigKey, setBusyConfigKey] = useState<keyof HiveConfig | null>(null);
   const [releasingAgent, setReleasingAgent] = useState<AgentName | null>(null);
   const [dispatchDialog, setDispatchDialog] = useState<DispatchDialogState | null>(null);
+  const [squadModalOpen, setSquadModalOpen] = useState(false);
   const [dispatching, setDispatching] = useState(false);
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -346,6 +356,10 @@ export function CentroDeControle({ state, telemetry }: CentroDeControleProps) {
   );
 
   const activeDebates = useMemo(() => debates.filter((entry) => entry.active), [debates]);
+  const activeSquadMembers = useMemo(
+    () => squadMembers.filter((member) => member.active).length,
+    [squadMembers],
+  );
 
   useEffect(() => {
     if (!toast) {
@@ -484,6 +498,13 @@ export function CentroDeControle({ state, telemetry }: CentroDeControleProps) {
     }
   }
 
+  async function handleSquadSave(updated: SquadMember[]) {
+    await onSaveSquad(updated);
+    setActionError(null);
+    setToast({ kind: 'success', message: 'Equipe do squad atualizada.' });
+    setSquadModalOpen(false);
+  }
+
   function renderConfigControls() {
     return (
       <>
@@ -527,6 +548,15 @@ export function CentroDeControle({ state, telemetry }: CentroDeControleProps) {
             type="button"
           >
             <i />
+          </button>
+        </div>
+        <div className="ctrl-row">
+          <div className="cmeta">
+            <div className="ct">Equipe do Squad</div>
+            <div className="cd">{activeSquadMembers} membros ativos</div>
+          </div>
+          <button className="btn-ghost" onClick={() => setSquadModalOpen(true)} type="button">
+            →
           </button>
         </div>
       </>
@@ -594,6 +624,20 @@ export function CentroDeControle({ state, telemetry }: CentroDeControleProps) {
           </button>
         </div>
       </div>
+    );
+  }
+
+  function renderSquadModal() {
+    if (!squadModalOpen) {
+      return null;
+    }
+
+    return (
+      <SquadModal
+        members={squadMembers}
+        onClose={() => setSquadModalOpen(false)}
+        onSave={handleSquadSave}
+      />
     );
   }
 
@@ -1154,6 +1198,7 @@ export function CentroDeControle({ state, telemetry }: CentroDeControleProps) {
                     </div>
                     {actionError ? <div className="panel-feedback error">{actionError}</div> : null}
                     {renderDispatchDialog()}
+                    {renderSquadModal()}
                   </div>
                 </div>
               </div>
@@ -1395,6 +1440,7 @@ export function CentroDeControle({ state, telemetry }: CentroDeControleProps) {
 
             {actionError ? <div className="panel-feedback error">{actionError}</div> : null}
             {renderDispatchDialog()}
+            {renderSquadModal()}
 
             <div className={`cc2-settings ${settingsOpen ? 'open' : ''}`}>{renderConfigControls()}</div>
 

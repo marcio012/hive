@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { type AgentName, type HiveState, type TelemetryState } from '../hooks/useHiveSocket';
+import { type AgentName, type HiveState, type SquadMember, type TelemetryState } from '../hooks/useHiveSocket';
 import { ArtifactFilePath } from '../components/ArtifactFilePath';
 import { ActiveItem } from '../components/ActiveItem';
 import { AgentCard } from '../components/AgentCard';
@@ -8,22 +8,14 @@ import { EsteiraPorProcesso } from './EsteiraPorProcesso';
 type MapaFabricaProps = {
   state: HiveState | null;
   telemetry: TelemetryState | null;
+  squadMembers: SquadMember[];
 };
 
-type FactoryAgentKey = AgentName | 'marcio';
+type FactoryAgentKey = AgentName | 'diretor';
 
-const agents: Array<{
-  key: FactoryAgentKey;
-  name: string;
-  role: string;
-  model: string;
-  initial: string;
-}> = [
-  { key: 'marcio',  name: 'Márcio',  role: 'Product Owner',  model: 'Human / Owner', initial: 'M' },
-  { key: 'claude',  name: 'Claude',  role: 'Arquiteto',      model: 'claude-sonnet', initial: 'C' },
-  { key: 'copilot', name: 'Copilot', role: 'Engenheiro',     model: 'gpt-5.4',       initial: 'P' },
-  { key: 'gemini',  name: 'Gemini',  role: 'Projetista Lead', model: 'gemini-pro',    initial: 'G' },
-];
+function toFactoryAgentKey(id: SquadMember['id']): FactoryAgentKey {
+  return id === 'marcio' ? 'diretor' : id;
+}
 
 function getAgentValue<T>(
   record: Record<AgentName, T> | null | undefined,
@@ -37,7 +29,7 @@ function getAgentValue<T>(
       return record.copilot;
     case 'gemini':
       return record.gemini;
-    case 'marcio':
+    case 'diretor':
       return undefined;
   }
 }
@@ -83,14 +75,14 @@ function formatMetric(value: number | null | undefined, digits = 1): string {
 }
 
 const STATIONS = [
-  { key: 'marcio',  name: 'Márcio',  role: 'Operador',       initial: 'M', cls: 'human'   },
-  { key: 'gemini',  name: 'Gemini',  role: 'Product Owner',  initial: 'G', cls: 'gemini'  },
-  { key: 'claude',  name: 'Claude',  role: 'Arquiteto',      initial: 'C', cls: 'claude'  },
-  { key: 'copilot', name: 'Copilot', role: 'Engenheiro',     initial: 'P', cls: 'copilot' },
-  { key: 'entrega', name: 'Entrega', role: 'Mergeado',       initial: '✓', cls: 'deliver' },
+  { key: 'diretor', name: 'Diretor', role: 'Product Owner', initial: 'M', cls: 'human' },
+  { key: 'gemini', name: 'Gemini', role: 'Product Owner', initial: 'G', cls: 'gemini' },
+  { key: 'claude', name: 'Claude', role: 'Arquiteto', initial: 'C', cls: 'claude' },
+  { key: 'copilot', name: 'Copilot', role: 'Engenheiro', initial: 'P', cls: 'copilot' },
+  { key: 'entrega', name: 'Entrega', role: 'Mergeado', initial: '✓', cls: 'deliver' },
 ] as const;
 
-export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
+export function MapaFabrica({ state, telemetry, squadMembers }: MapaFabricaProps) {
   const activeIssue = state?.session.activeIssue ?? '—';
   const lastAction = state?.session.lastAction ?? 'Sem ação registrada.';
   const nextStep = state?.session.nextStep ?? 'Aguardando próximo passo definido.';
@@ -98,6 +90,17 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
     () =>
       new Map((telemetry?.agentEfficiency ?? []).map((item) => [item.agent, item])),
     [telemetry],
+  );
+  const agents = useMemo(
+    () =>
+      squadMembers.map((member) => ({
+        key: toFactoryAgentKey(member.id),
+        name: member.name,
+        role: member.role,
+        model: member.model,
+        initial: member.initial,
+      })),
+    [squadMembers],
   );
 
   return (
@@ -131,7 +134,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
           ))}
         </div>
 
-        <ActiveItem 
+        <ActiveItem
           activeIssue={activeIssue}
           lastAction={lastAction}
           nextStep={nextStep}
@@ -179,7 +182,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
 
         <div className="grid-3">
           {agents.map((agent) => {
-            const metrics = agent.key === 'marcio' ? undefined : efficiencyByAgent.get(agent.key);
+            const metrics = agent.key === 'diretor' ? undefined : efficiencyByAgent.get(agent.key);
             const budgetPct = metrics?.weeklyBudgetPct ?? 0;
             const cardState =
               budgetPct >= 90 ? 'eff-critical' : budgetPct >= 75 ? 'eff-alert' : '';
@@ -193,8 +196,8 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
                     <div className="eff-role">{metrics?.role ?? 'Sem dados'}</div>
                   </div>
                   {metrics?.lastInitMinutesAgo !== null &&
-                  metrics?.lastInitMinutesAgo !== undefined &&
-                  metrics.lastInitMinutesAgo <= 30 ? (
+                    metrics?.lastInitMinutesAgo !== undefined &&
+                    metrics.lastInitMinutesAgo <= 30 ? (
                     <span className="eff-pill">
                       <span className="dot green pulse" />
                       init ativa
@@ -246,7 +249,7 @@ export function MapaFabrica({ state, telemetry }: MapaFabricaProps) {
           })}
         </div>
 
-        
+
       </div>
     </main>
   );
