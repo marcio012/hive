@@ -17,13 +17,17 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **De:** Orchestrator → Copilot-Hive
 **Data:** 2026-05-31
 **tipo:** handoff-executavel
-**Status:** pendente
+**Status:** consumida ✅ — 2026-05-31. `npm run squad:claim:hive` executado manualmente; retorno `NO_TASKS`, com fallback inbox confirmado.
 **source_entry:** TEST-PULL-20260531-003
 **source_agent:** gemini
 
 Encaminhado automaticamente pelo Orchestrator Core.
 
 Este é um teste para o comando squad:claim:hive.
+
+Resultado operacional:
+1. `npm run squad:claim:hive` retornou `NO_TASKS`.
+2. O fluxo de fallback para `inbox-copilot-hive.md` foi confirmado.
 
 ---
 
