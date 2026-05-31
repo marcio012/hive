@@ -37,6 +37,7 @@ export interface HiveOrchestratorState {
   currentItem: string | null;
   pauseReason: string | null;
   updatedAt: string | null;
+  offline: boolean;
 }
 
 export interface DispatchPayload {
@@ -673,9 +674,9 @@ export class HiveService {
   }
 
   private parseCostLogBlock(block: string): ParsedCostEntry | null {
-    const rawAgent = this.matchField(block, /TELEMETRIA DE TOKENS\s+[—-]\s+\[([^\]]+)\]/i);
+    const rawAgent = this.matchField(block, /TELEMETRIA DE TOKENS.*?\[([^\]]+)\]/i);
     const occurredAt = this.parseLocalDateTime(
-      this.matchField(block, /Data\/Hora:\s*([0-9:-]+\s+[0-9:]+)/i),
+      this.matchField(block, /Data\/Hora:.*\s+([0-9:-]+\s+[0-9:]+)/i),
     );
     const agent = this.normalizeTelemetryAgent(rawAgent);
 
@@ -1100,11 +1101,17 @@ export class HiveService {
       return null;
     }
 
+    const updatedAt = typeof raw.updatedAt === 'string' ? raw.updatedAt : null;
+    const status = this.isOrchestratorStatus(raw.status) ? raw.status : 'idle';
+    const staleMs = updatedAt ? Date.now() - new Date(updatedAt).getTime() : Infinity;
+    const offline = status !== 'paused' && staleMs > 3 * 60 * 1000;
+
     return {
-      status: this.isOrchestratorStatus(raw.status) ? raw.status : 'idle',
+      status,
       currentItem: raw.currentItem ?? null,
       pauseReason: raw.pauseReason ?? null,
-      updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : null,
+      updatedAt,
+      offline,
     };
   }
 
@@ -2511,4 +2518,5 @@ export class HiveService {
 
     return `${content.trimEnd()}\n\n${entry}`;
   }
+
 }

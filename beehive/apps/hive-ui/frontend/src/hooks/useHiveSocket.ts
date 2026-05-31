@@ -63,6 +63,7 @@ export interface TaskRow {
   backlog_ref: string | null;
   wo_ref: string | null;
   fail_reason: string | null;
+  source_entry: string | null;
   created_at: string;
   updated_at: string;
   claimed_at: string | null;
@@ -139,6 +140,7 @@ export interface HiveState {
     currentItem: string | null;
     pauseReason: string | null;
     updatedAt: string | null;
+    offline: boolean;
   } | null;
   session: {
     activeIssue: string | null;

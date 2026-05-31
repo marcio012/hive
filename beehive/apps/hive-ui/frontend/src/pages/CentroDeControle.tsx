@@ -92,6 +92,12 @@ function agentName(agent: AgentName): string {
   return 'Gemini';
 }
 
+function shortActivityLabel(activity: string | null): string {
+  if (!activity) return '';
+  const match = activity.match(/\b([A-Z]+-\d+[A-Z]?)\b/);
+  return match ? match[1] : activity.split(/\s[—–-]\s/)[0].trim().slice(0, 16);
+}
+
 function agentRole(agent: AgentName): string {
   if (agent === 'claude') {
     return 'Arquiteto';
@@ -104,7 +110,33 @@ function agentRole(agent: AgentName): string {
   return 'Coordenador';
 }
 
-function orchestratorLabel(status: OrchestratorStatus | null | undefined): string {
+function shortTaskId(task: TaskRow): string {
+  const src = task.source_entry ?? task.id;
+  const match = src.match(/(\d+)(?:-\w[\w-]*)?$/);
+  return match ? match[1].padStart(3, '0') : task.id.slice(-3);
+}
+
+function taskTag(task: TaskRow): 'handoff' | 'blocked' | 'em-curso' {
+  if (task.status === 'failed' || /bloquead/i.test(task.title)) return 'blocked';
+  if (task.status === 'in_progress') return 'em-curso';
+  return 'handoff';
+}
+
+function agentTasksFor(agent: AgentName, tasks: TaskRow[]): TaskRow[] {
+  const active = tasks.filter((t) => t.status !== 'done');
+  if (agent === 'copilot') {
+    return active.filter(
+      (t) => t.assignee === 'copilot' || t.assignee === 'copilot-hive' || t.assignee === 'copilot-tos',
+    );
+  }
+  return active.filter((t) => t.assignee === agent);
+}
+
+function orchestratorLabel(status: OrchestratorStatus | null | undefined, offline?: boolean): string {
+  if (offline) {
+    return 'OFFLINE';
+  }
+
   if (status === 'watching') {
     return 'MONITORANDO';
   }
@@ -263,7 +295,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
-  const [view, setView] = useState<ControlView>('v2');
+  const [view, setView] = useState<ControlView>('v1');
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const config = state?.config ?? DEFAULT_CONFIG;
@@ -961,9 +993,9 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                 <div className="k">Comandos</div>
                 <div className="v">{commandCount}</div>
               </div>
-              <div className="stat good">
+              <div className={`stat ${orchestrator?.offline ? 'warn' : 'good'}`}>
                 <div className="k">Orchestrator</div>
-                <div className="v">{orchestratorLabel(orchestrator?.status)}</div>
+                <div className="v">{orchestratorLabel(orchestrator?.status, orchestrator?.offline)}</div>
               </div>
             </div>
 
@@ -980,8 +1012,8 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                       </svg>
                     </span>
                     <h3>Orchestrator</h3>
-                    <span className={`ph-meta orch-status orch-${orchestrator?.status ?? 'idle'}`}>
-                      {orchestratorLabel(orchestrator?.status)}
+                    <span className={`ph-meta orch-status orch-${orchestrator?.offline ? 'offline' : (orchestrator?.status ?? 'idle')}`}>
+                      {orchestratorLabel(orchestrator?.status, orchestrator?.offline)}
                     </span>
                   </div>
                   <div className="pb">
@@ -994,23 +1026,25 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                       </div>
                       <div className="orch-row">
                         <span className="orch-label">Estado</span>
-                        <span className={`orch-pill orch-${orchestrator?.status ?? 'idle'}`}>
-                          {orchestratorLabel(orchestrator?.status)}
+                        <span className={`orch-pill orch-${orchestrator?.offline ? 'offline' : (orchestrator?.status ?? 'idle')}`}>
+                          {orchestratorLabel(orchestrator?.status, orchestrator?.offline)}
                         </span>
                       </div>
                       {orchestrator?.pauseReason ? (
                         <div className="panel-feedback error">{orchestrator.pauseReason}</div>
                       ) : null}
                       <div className="orch-hint">
-                        {orchestrator?.status === 'dispatching'
-                          ? 'O core está despachando a próxima ação para a inbox correta.'
-                          : orchestrator?.status === 'watching'
-                            ? 'O core está monitorando inboxes e locks para reagir em tempo real.'
-                            : orchestrator?.status === 'paused'
-                              ? 'A execução automática foi interrompida e precisa de decisão manual.'
-                              : orchestrator?.status === 'error'
-                                ? 'O core registrou falha; verifique o stream de eventos para diagnosticar.'
-                                : 'O core está pronto para processar novas entradas.'}
+                        {orchestrator?.offline
+                          ? 'O processo não responde há mais de 3 minutos. Verifique se o pm2 está rodando.'
+                          : orchestrator?.status === 'dispatching'
+                            ? 'O core está despachando a próxima ação para a inbox correta.'
+                            : orchestrator?.status === 'watching'
+                              ? 'O core está monitorando inboxes e locks para reagir em tempo real.'
+                              : orchestrator?.status === 'paused'
+                                ? 'A execução automática foi interrompida e precisa de decisão manual.'
+                                : orchestrator?.status === 'error'
+                                  ? 'O core registrou falha; verifique o stream de eventos para diagnosticar.'
+                                  : 'O core está pronto para processar novas entradas.'}
                       </div>
                     </div>
                   </div>
@@ -1137,7 +1171,7 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                             <rect height="9" rx="2" width="14" x="5" y="11" />
                             <path d="M8 11V8a4 4 0 0 1 8 0v3" />
                           </svg>
-                          {detail.activeWo}
+                          {shortActivityLabel(detail.activeWo)}
                         </span>
                       ) : (
                         <span className="cc2-lock free">
@@ -1148,31 +1182,54 @@ export function CentroDeControle({ state }: CentroDeControleProps) {
                       {detail.inboxPending > 0 ? <span className="cc2-count">{detail.inboxPending}</span> : null}
                     </div>
                     <div className="cc2-body">
-                      {detail.inboxPending === 0 && detail.blockedCount === 0 ? (
-                        <div className="cc2-clean">
-                          <svg viewBox="0 0 24 24" fill="none" height="15" stroke="currentColor" strokeWidth="2.2" width="15">
-                            <path d="m5 13 4 4L19 7" />
-                          </svg>
-                          Nenhuma pendência
-                        </div>
-                      ) : (
-                        <>
-                          {detail.inboxPending > 0 ? (
-                            <div className="cc2-item">
-                              <span className="cc2-iid">INBOX</span>
-                              <span className="cc2-subj">{pendingInboxText(detail.inboxPending)}</span>
-                              <span className="cc2-tag handoff">inbox</span>
+                      {(() => {
+                        const agentTasks = agentTasksFor(agent, tasks);
+                        const hasInbox = detail.inboxPending > 0;
+                        const hasBlocked = detail.blockedCount > 0;
+                        const isEmpty = agentTasks.length === 0 && !hasInbox && !hasBlocked;
+
+                        if (isEmpty) {
+                          return (
+                            <div className="cc2-clean">
+                              <svg viewBox="0 0 24 24" fill="none" height="15" stroke="currentColor" strokeWidth="2.2" width="15">
+                                <path d="m5 13 4 4L19 7" />
+                              </svg>
+                              Nenhuma pendência
                             </div>
-                          ) : null}
-                          {detail.blockedCount > 0 ? (
-                            <div className="cc2-item blocked">
-                              <span className="cc2-iid">BLOCK</span>
-                              <span className="cc2-subj">{blockedInboxText(detail.blockedCount)}</span>
-                              <span className="cc2-tag blocked">bloqueado</span>
-                            </div>
-                          ) : null}
-                        </>
-                      )}
+                          );
+                        }
+
+                        return (
+                          <>
+                            {agentTasks.map((task) => {
+                              const tag = taskTag(task);
+                              return (
+                                <div key={task.id} className={`cc2-item${tag === 'blocked' ? ' blocked' : ''}`}>
+                                  <span className="cc2-iid">{shortTaskId(task)}</span>
+                                  <span className="cc2-subj">{task.title}</span>
+                                  <span className={`cc2-tag ${tag === 'em-curso' ? 'handoff' : tag}`}>
+                                    {tag === 'em-curso' ? 'em curso' : tag === 'blocked' ? 'bloqueado' : 'handoff'}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                            {hasInbox && agentTasks.length === 0 ? (
+                              <div className="cc2-item">
+                                <span className="cc2-iid">INBOX</span>
+                                <span className="cc2-subj">{pendingInboxText(detail.inboxPending)}</span>
+                                <span className="cc2-tag handoff">inbox</span>
+                              </div>
+                            ) : null}
+                            {hasBlocked && agentTasks.length === 0 ? (
+                              <div className="cc2-item blocked">
+                                <span className="cc2-iid">BLOCK</span>
+                                <span className="cc2-subj">{blockedInboxText(detail.blockedCount)}</span>
+                                <span className="cc2-tag blocked">bloqueado</span>
+                              </div>
+                            ) : null}
+                          </>
+                        );
+                      })()}
                     </div>
                     <div className="cc2-foot">
                       <button className="btn-ghost" onClick={() => openDispatchDialog(agent)} type="button">

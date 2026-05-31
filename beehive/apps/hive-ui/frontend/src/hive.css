@@ -787,6 +787,7 @@ a { color: inherit; text-decoration: none; }
 .stat .v { font-family: var(--mono); font-size: 26px; font-weight: 600; margin-top: 10px; }
 .stat .v small { font-size: 14px; color: var(--t2); font-weight: 400; }
 .stat.good .v { color: var(--green); }
+.stat.warn .v { color: #aaa; }
 .stat.gold .v { color: var(--gold); }
 
 .cc-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 18px; align-items: start; }
@@ -898,6 +899,7 @@ a { color: inherit; text-decoration: none; }
 .orch-dispatching { color: var(--gold); background: rgba(255,215,0,.14); }
 .orch-paused,
 .orch-error { color: #ffd8c6; background: rgba(255,107,53,.14); }
+.orch-offline { color: #aaa; background: rgba(255,255,255,.06); }
 .orch-hint {
   color: var(--t2);
   font-size: 13px;

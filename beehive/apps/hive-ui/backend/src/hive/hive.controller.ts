@@ -21,6 +21,7 @@ type OrchestratorEventPayload = {
   msg?: unknown;
 };
 
+@Public()
 @ApiTags('hive')
 @Controller('hive')
 export class HiveController {
