@@ -14,6 +14,7 @@ const RETRY_DELAYS_MS = [2 * 60_000, 5 * 60_000, 10 * 60_000];
 interface RetryHandle {
   attempts: number;
   timer: NodeJS.Timeout;
+  nextAttemptAt: number;
 }
 
 export class OrchestratorWatcher {
@@ -118,6 +119,11 @@ export class OrchestratorWatcher {
           continue;
         }
 
+        const pendingRetry = this.retries.get(entry.id);
+        if (pendingRetry && pendingRetry.nextAttemptAt > Date.now()) {
+          continue;
+        }
+
         const decision = this.router.resolve(entry);
         if (!decision) {
           continue;
@@ -168,11 +174,12 @@ export class OrchestratorWatcher {
     }
 
     const delayMs = RETRY_DELAYS_MS[attempts - 1] ?? RETRY_DELAYS_MS[RETRY_DELAYS_MS.length - 1];
+    const nextAttemptAt = Date.now() + delayMs;
     const timer = setTimeout(() => {
       void this.processAll('retry');
     }, delayMs);
 
-    this.retries.set(entryId, { attempts, timer });
+    this.retries.set(entryId, { attempts, timer, nextAttemptAt });
     void this.logger.log(
       'info',
       `Entrada ${entryId}: retry ${attempts}/${MAX_RETRY_ATTEMPTS} agendado em ${delayMs / 1000}s`,

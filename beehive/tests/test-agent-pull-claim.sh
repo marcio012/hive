@@ -66,7 +66,7 @@ db_query() {
   local sql="$1"
   (
     cd "$TEST_REPO"
-    DB_SQL="$sql" TEST_REPO="$TEST_REPO" node <<'EOF'
+    DB_SQL="$sql" TEST_REPO="$TEST_REPO" node --input-type=commonjs <<'EOF'
 const fs = require('node:fs');
 const path = require('node:path');
 const { createRequire } = require('node:module');
@@ -85,7 +85,7 @@ EOF
   )
 }
 
-DB_SQL="" TEST_REPO="$TEST_REPO" node <<'EOF'
+DB_SQL="" TEST_REPO="$TEST_REPO" node --input-type=commonjs <<'EOF'
 const fs = require('node:fs');
 const path = require('node:path');
 const { createRequire } = require('node:module');
