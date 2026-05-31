@@ -8,7 +8,8 @@ import { OrchestratorLogger } from './logger';
 import { Router } from './router';
 import { StateStore } from './state';
 
-const RETRY_DELAY_MS = 60_000;
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAYS_MS = [2 * 60_000, 5 * 60_000, 10 * 60_000];
 
 interface RetryHandle {
   attempts: number;
@@ -122,16 +123,59 @@ export class OrchestratorWatcher {
           continue;
         }
 
+        if (decision.action === 'pause_and_escalate') {
+          await this.deadman.pause(`Entrada sem rota definida: ${entry.id} — ${entry.title}`);
+          return;
+        }
+
         await this.deadman.startDispatch(entry.id);
         const result = await this.dispatcher.dispatch(decision, entry);
 
         if (result.outcome === 'dispatched') {
+          const pending = this.retries.get(entry.id);
+          if (pending) {
+            clearTimeout(pending.timer);
+            this.retries.delete(entry.id);
+          }
           await this.deadman.recordSuccess();
+        } else if (result.outcome === 'retry') {
+          await this.deadman.resumeWatching();
+          this.scheduleRetry(entry.id);
         } else if (result.outcome === 'failed') {
           await this.deadman.recordFailure(entry.id, result.reason ?? 'dispatch falhou');
           return;
         }
       }
     }
+  }
+
+  private scheduleRetry(entryId: string): void {
+    const existing = this.retries.get(entryId);
+    const attempts = (existing?.attempts ?? 0) + 1;
+
+    if (existing?.timer) {
+      clearTimeout(existing.timer);
+    }
+
+    if (attempts > MAX_RETRY_ATTEMPTS) {
+      this.retries.delete(entryId);
+      void this.logger.log(
+        'warn',
+        `Entrada ${entryId}: ${MAX_RETRY_ATTEMPTS} tentativas esgotadas (lock ocupado) — entrada ignorada`,
+      );
+      void this.stateStore.markProcessed(entryId);
+      return;
+    }
+
+    const delayMs = RETRY_DELAYS_MS[attempts - 1] ?? RETRY_DELAYS_MS[RETRY_DELAYS_MS.length - 1];
+    const timer = setTimeout(() => {
+      void this.processAll('retry');
+    }, delayMs);
+
+    this.retries.set(entryId, { attempts, timer });
+    void this.logger.log(
+      'info',
+      `Entrada ${entryId}: retry ${attempts}/${MAX_RETRY_ATTEMPTS} agendado em ${delayMs / 1000}s`,
+    );
   }
 }

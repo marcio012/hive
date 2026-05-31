@@ -23,10 +23,35 @@ export class SqliteTaskStore implements TaskStore {
     this.db.pragma('busy_timeout = 5000');
     this.db.pragma('foreign_keys = ON');
     this.db.exec(readFileSync(schemaPath, 'utf8'));
-    try {
-      this.db.exec('ALTER TABLE tasks ADD COLUMN fail_reason TEXT');
-    } catch {
-      // Existing databases already have the column after the first migration.
+    this.applyMigrations();
+  }
+
+  private applyMigrations(): void {
+    const migrations: Array<{ version: number; up: () => void }> = [
+      {
+        version: 1,
+        up: () => {
+          const cols = this.db.pragma('table_info(tasks)') as { name: string }[];
+          if (!cols.some((c) => c.name === 'fail_reason')) {
+            this.db.exec('ALTER TABLE tasks ADD COLUMN fail_reason TEXT');
+          }
+        },
+      },
+    ];
+
+    for (const migration of migrations) {
+      const applied = this.db
+        .prepare('SELECT version FROM schema_migrations WHERE version = ?')
+        .get(migration.version) as { version: number } | undefined;
+
+      if (applied) {
+        continue;
+      }
+
+      migration.up();
+      this.db
+        .prepare('INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)')
+        .run(migration.version, new Date().toISOString());
     }
   }
 

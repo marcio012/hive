@@ -21,3 +21,8 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 CREATE INDEX IF NOT EXISTS idx_tasks_domain_status
   ON tasks(domain, status, priority, created_at);
+
+CREATE TABLE IF NOT EXISTS schema_migrations (
+  version    INTEGER PRIMARY KEY,
+  applied_at TEXT    NOT NULL
+);
