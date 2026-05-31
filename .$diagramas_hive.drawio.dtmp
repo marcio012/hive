@@ -1,0 +1,185 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.5 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36" version="28.2.5" pages="2">
+  <diagram id="flow-gemini" name="Fluxo Gemini (Lead)">
+    <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="start" value="INÍCIO" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="350" y="40" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step1" value="Etapa 1: Início de Sessão&lt;br&gt;&lt;b&gt;npm run squad:session:gemini&lt;/b&gt;&lt;br&gt;(Carrega roles.yaml)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="160" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="step2" value="Etapa 2: Escolha de Cartucho&lt;br&gt;(Lê HIVE.md e roles/[cartucho].md)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="260" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="step3" value="Etapa 3: Triagem de Inbox&lt;br&gt;(Lê inbox-gemini.md)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="360" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="step4" value="Etapa 4: Execução&lt;br&gt;(Gera Blueprints / Planejamento)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="460" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="step5" value="Etapa 5: Finalização&lt;br&gt;&lt;b&gt;npm run squad:session:end&lt;/b&gt;&lt;br&gt;(Gera Telemetria)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="560" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="end" value="FIM" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="350" y="670" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="start" target="step1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step1" target="step2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step2" target="step3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step3" target="step4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step4" target="step5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step5" target="end">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="0AGGBDWgNrWcPI5dJn_9" name="Page-2">
+    <mxGraphModel dx="2867" dy="1730" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-27" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="20" y="20" width="784.54" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-1" value="Márcio (User)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry width="54.7353488372093" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-2" value="proxy.sh (.agile-squad/)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="124.06679069767442" width="75.53478139534884" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-3" value="run.sh (framework/)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="229.15866046511627" width="65.68241860465116" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-4" value="hive.sh (beehive/bin/)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="384.2421488372093" width="70.7910511627907" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-5" value="hive-session-start.sh" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="535.6766139534884" width="67.87183255813953" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-6" value="File System (.hive-agent/)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="702.436976744186" width="82.10302325581395" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-7" value="" style="shape=umlFrame;dashed=1;pointerEvents=0;dropTarget=0;strokeColor=#B3B3B3;height=20;width=0" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="206.53471627906976" y="80.27801911381408" width="134.2840558139535" height="94.50912250217203" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-8" value="" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-7">
+          <mxGeometry width="134.2840558139535" height="7.298001737619462" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-9" value="" style="shape=umlFrame;dashed=1;pointerEvents=0;dropTarget=0;strokeColor=#B3B3B3;height=20;width=0" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="469.2643906976744" y="267.4717636837533" width="201.79098604651162" height="65.31711555169419" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-10" value="" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-9">
+          <mxGeometry width="201.79098604651162" height="7.298001737619462" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-11" value="bash .agile-squad/proxy.sh gemini:po" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-1" target="MDLHKnDE3bVXQFEvGdZo-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="97.79382325581395" y="55.46481320590791" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-12" value="Executa run.sh gemini:po" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-2" target="MDLHKnDE3bVXQFEvGdZo-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="214.92746976744186" y="72.98001737619461" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-13" value="Resolve HIVE_HOME (hive-paths.sh)" style="curved=1;endArrow=block;rounded=0;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-3" target="MDLHKnDE3bVXQFEvGdZo-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280.609888372093" y="116.40312771503041" />
+              <mxPoint x="280.609888372093" y="127.3501303214596" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-14" value="Valida Node v24 (ensure_node24)" style="curved=1;endArrow=block;rounded=0;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-3" target="MDLHKnDE3bVXQFEvGdZo-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280.609888372093" y="145.59513466550825" />
+              <mxPoint x="280.609888372093" y="156.54213727193746" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-15" value="npm run hive -- session-start gemini --role po" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-3" target="MDLHKnDE3bVXQFEvGdZo-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="344.10289302325583" y="206.53344917463076" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-16" value="bash hive-session-start.sh gemini --role po" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-4" target="MDLHKnDE3bVXQFEvGdZo-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="497.72677209302327" y="224.04865334491748" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-17" value="ensure_bridge_dir (Cria .hive-agent/ se não existir)" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-5" target="MDLHKnDE3bVXQFEvGdZo-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="659.7434046511628" y="260.1737619461338" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-18" value="assert_gemini_role_boundary (Evita troca de cartucho sem fechar)" style="curved=1;endArrow=block;rounded=0;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-5" target="MDLHKnDE3bVXQFEvGdZo-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="588.2225488372093" y="303.5968722849696" />
+              <mxPoint x="588.2225488372093" y="314.5438748913988" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-19" value="Grava gemini-session.lock (role=po)" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-5" target="MDLHKnDE3bVXQFEvGdZo-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="659.7434046511628" y="346.65508253692445" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-20" value="Grava session-state.env (Estado Global)" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-5" target="MDLHKnDE3bVXQFEvGdZo-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="659.7434046511628" y="364.1702867072111" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-21" value="Retorna STDOUT: &quot;Hive operacional. Pronto para orquestrar.&quot;" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="MDLHKnDE3bVXQFEvGdZo-27" source="MDLHKnDE3bVXQFEvGdZo-5" target="MDLHKnDE3bVXQFEvGdZo-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="302.8689302325581" y="381.68549087749784" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-22" value="--- INICIALIZAÇÃO DE INFRA (BRIDGE) ---" style="fillColor=#ffff88;strokeColor=#9E916F;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="18.245116279069766" y="27.367506516072982" width="734.1834790697675" height="17.88010425716768" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-23" value="Soberania de Infra" style="fillColor=#ffff88;strokeColor=#9E916F;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="271.1224279069767" y="87.57602085143354" width="65.68241860465116" height="17.88010425716768" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-24" value="--- ROTEAMENTO DE COMANDO ---" style="fillColor=#ffff88;strokeColor=#9E916F;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="252.87731162790698" y="178.43614248479585" width="175.88292093023256" height="17.88010425716768" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-25" value="--- CONSTRUÇÃO DE CONTEXTO (KERNEL) ---" style="fillColor=#ffff88;strokeColor=#9E916F;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="560.4899720930232" y="231.34665508253693" width="191.93862325581395" height="17.88010425716768" as="geometry" />
+        </mxCell>
+        <mxCell id="MDLHKnDE3bVXQFEvGdZo-26" value="Trava de Segurança" style="fillColor=#ffff88;strokeColor=#9E916F;" vertex="1" parent="MDLHKnDE3bVXQFEvGdZo-27">
+          <mxGeometry x="578.7350883720931" y="274.7697654213727" width="67.87183255813953" height="17.88010425716768" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

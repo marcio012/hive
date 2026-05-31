@@ -20,3 +20,4 @@ node_modules/
 # Build outputs
 dist/
 debug_dist/
+/home/marcio/job/hive/.agile-squad

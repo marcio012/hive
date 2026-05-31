@@ -32,3 +32,4 @@ globals.txt
 
 # Locks de CI/ops (não de telemetria)
 ai/construcao/*.lock
+/home/marcio/job/hive/.agile-squad

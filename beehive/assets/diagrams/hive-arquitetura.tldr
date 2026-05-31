@@ -1,0 +1,134 @@
+{
+  "tldrawFileFormatVersion": 1,
+  "schema": {
+    "schemaVersion": 2,
+    "sequences": {
+      "com.tldraw.store": 4,
+      "com.tldraw.asset": 1,
+      "com.tldraw.camera": 1,
+      "com.tldraw.document": 2,
+      "com.tldraw.instance": 25,
+      "com.tldraw.instance_page_state": 5,
+      "com.tldraw.page": 1,
+      "com.tldraw.pointer": 1,
+      "com.tldraw.shape": 4,
+      "com.tldraw.shape.geo": 10,
+      "com.tldraw.shape.text": 3,
+      "com.tldraw.shape.note": 9,
+      "com.tldraw.shape.arrow": 6
+    }
+  },
+  "records": [
+    {
+      "id": "document:document",
+      "typeName": "document",
+      "gridSize": 10,
+      "name": "Hive - Arquitetura",
+      "meta": {}
+    },
+    {
+      "id": "page:b35f4bfd",
+      "typeName": "page",
+      "name": "Page 1",
+      "index": "a1",
+      "meta": {}
+    },
+    {
+      "id": "instance_page_state:page:b35f4bfd",
+      "typeName": "instance_page_state",
+      "pageId": "page:b35f4bfd",
+      "selectedShapeIds": [],
+      "hintingShapeIds": [],
+      "erasingShapeIds": [],
+      "hoveredShapeId": null,
+      "editingShapeId": null,
+      "croppingShapeId": null,
+      "focusedGroupId": null,
+      "meta": {}
+    },
+    {
+      "id": "camera:page:b35f4bfd",
+      "typeName": "camera",
+      "x": 0,
+      "y": 0,
+      "z": 1,
+      "meta": {}
+    },
+    {
+      "id": "shape:c56dd727",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 400,
+      "y": 200,
+      "rotation": 0,
+      "isLocked": false,
+      "opacity": 1,
+      "parentId": "page:b35f4bfd",
+      "index": "a1",
+      "meta": {},
+      "props": {
+        "geo": "rectangle",
+        "w": 200,
+        "h": 80,
+        "text": "Beehive (Core)"
+      }
+    },
+    {
+      "id": "shape:3942f4b9",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 150,
+      "y": 50,
+      "rotation": 0,
+      "isLocked": false,
+      "opacity": 1,
+      "parentId": "page:b35f4bfd",
+      "index": "a2",
+      "meta": {},
+      "props": {
+        "geo": "ellipse",
+        "w": 180,
+        "h": 80,
+        "text": "Claude Code"
+      }
+    },
+    {
+      "id": "shape:7ea4aa26",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 650,
+      "y": 50,
+      "rotation": 0,
+      "isLocked": false,
+      "opacity": 1,
+      "parentId": "page:b35f4bfd",
+      "index": "a3",
+      "meta": {},
+      "props": {
+        "geo": "ellipse",
+        "w": 180,
+        "h": 80,
+        "text": "Gemini CLI"
+      }
+    },
+    {
+      "id": "shape:6e057493",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 400,
+      "y": 380,
+      "rotation": 0,
+      "isLocked": false,
+      "opacity": 1,
+      "parentId": "page:b35f4bfd",
+      "index": "a4",
+      "meta": {},
+      "props": {
+        "geo": "rectangle",
+        "w": 180,
+        "h": 80,
+        "text": "PostgreSQL"
+      }
+    }
+  ]
+}

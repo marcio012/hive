@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tldraw": {
+      "command": "npx",
+      "args": ["-y", "@talhaorak/tldraw-mcp"],
+      "env": {
+        "TLDRAW_DIR": "/home/marcio/job/hive/beehive/assets/diagrams"
+      }
+    }
+  }
+}

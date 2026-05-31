@@ -1,0 +1,49 @@
+<mxfile host="Electron" modified="2026-05-30T12:00:00.000Z" agent="Draw.io" version="21.3.7" type="device">
+  <diagram id="flow-gemini" name="Fluxo Gemini (Lead)">
+    <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="start" value="INÍCIO" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="350" y="40" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step1" value="Etapa 1: Início de Sessão&lt;br&gt;&lt;b&gt;npm run squad:session:gemini&lt;/b&gt;&lt;br&gt;(Carrega roles.yaml)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="160" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="step2" value="Etapa 2: Escolha de Cartucho&lt;br&gt;(Lê HIVE.md e roles/[cartucho].md)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="260" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="step3" value="Etapa 3: Triagem de Inbox&lt;br&gt;(Lê inbox-gemini.md)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="360" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="step4" value="Etapa 4: Execução&lt;br&gt;(Gera Blueprints / Planejamento)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="460" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="step5" value="Etapa 5: Finalização&lt;br&gt;&lt;b&gt;npm run squad:session:end&lt;/b&gt;&lt;br&gt;(Gera Telemetria)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="560" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="end" value="FIM" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="350" y="670" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="start" target="step1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step1" target="step2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step2" target="step3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step3" target="step4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step4" target="step5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step5" target="end">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

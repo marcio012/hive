@@ -23,8 +23,8 @@ backlog_ref: HIVE-026
 - [x] 3. Parecer Gemini
 - [x] 4. Parecer Copilot
 - [x] 5. Consolidação / Veredito
-- [ ] 6. Aprovação Márcio
-- [ ] 7. Work Orders despachadas
+- [x] 6. Aprovação Márcio
+- [x] 7. Work Orders despachadas
 - [ ] 8. Execução concluída
 
 ---
@@ -221,4 +221,8 @@ O frontend já possui `/landing` e `/login` com flag demo em `localStorage` (`hi
 
 ---
 
-*Aguardando aprovação de Márcio para despachar WO-042 e WO-043.*
+**Aprovado por Márcio em 2026-05-30.**
+
+WOs despachadas:
+- `beehive/construcao/work_orders/HIVE-UI/WO-042-HIVE-026-A-AUTH-BACKEND.md`
+- `beehive/construcao/work_orders/HIVE-UI/WO-043-HIVE-026-B-AUTH-FRONTEND.md`

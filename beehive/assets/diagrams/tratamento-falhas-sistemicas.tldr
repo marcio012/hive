@@ -1,0 +1,255 @@
+{
+  "tldrawFileFormatVersion": 1,
+  "schema": {
+    "schemaVersion": 2,
+    "sequences": {
+      "com.tldraw.store": 4,
+      "com.tldraw.asset": 1,
+      "com.tldraw.camera": 1,
+      "com.tldraw.document": 2,
+      "com.tldraw.instance": 25,
+      "com.tldraw.instance_page_state": 5,
+      "com.tldraw.page": 1,
+      "com.tldraw.pointer": 1,
+      "com.tldraw.shape": 4,
+      "com.tldraw.shape.geo": 10,
+      "com.tldraw.shape.text": 3,
+      "com.tldraw.shape.note": 9,
+      "com.tldraw.shape.arrow": 6
+    }
+  },
+  "records": [
+    {
+      "id": "document:document",
+      "typeName": "document",
+      "gridSize": 10,
+      "name": "tratamento-falhas-sistemicas",
+      "meta": {}
+    },
+    {
+      "id": "page:page1",
+      "typeName": "page",
+      "name": "Page 1",
+      "index": "a1",
+      "meta": {}
+    },
+    {
+      "id": "instance_page_state:page:page1",
+      "typeName": "instance_page_state",
+      "pageId": "page:page1",
+      "selectedShapeIds": [],
+      "hintingShapeIds": [],
+      "erasingShapeIds": [],
+      "hoveredShapeId": null,
+      "editingShapeId": null,
+      "croppingShapeId": null,
+      "focusedGroupId": null,
+      "meta": {}
+    },
+    {
+      "id": "camera:page:page1",
+      "typeName": "camera",
+      "x": 0,
+      "y": 0,
+      "z": 1,
+      "meta": {}
+    },
+    {
+      "id": "shape:title",
+      "typeName": "shape",
+      "type": "text",
+      "x": 250,
+      "y": 20,
+      "parentId": "page:page1",
+      "index": "a1",
+      "props": {
+        "text": "ARQUITETURA DE TRATAMENTO DE FALHAS SISTÊMICAS (DEBATE-027)"
+      }
+    },
+    {
+      "id": "shape:local",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 300,
+      "y": 100,
+      "parentId": "page:page1",
+      "index": "a2",
+      "props": {
+        "geo": "rectangle",
+        "text": "CAMADA LOCAL (Prevenção)\nAgentes + action-guard.js",
+        "align": "middle"
+      }
+    },
+    {
+      "id": "shape:state",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 350,
+      "y": 250,
+      "parentId": "page:page1",
+      "index": "a3",
+      "props": {
+        "geo": "rhombus",
+        "text": "ALERTA CENTRAL\nerror-state.json",
+        "align": "middle",
+        "color": "red"
+      }
+    },
+    {
+      "id": "shape:systemic",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 300,
+      "y": 450,
+      "parentId": "page:page1",
+      "index": "a4",
+      "props": {
+        "geo": "rectangle",
+        "text": "CAMADA SISTÊMICA (Contenção)\nOrchestrator (Safe Stop)",
+        "align": "middle"
+      }
+    },
+    {
+      "id": "shape:audit",
+      "typeName": "shape",
+      "type": "geo",
+      "x": 600,
+      "y": 275,
+      "parentId": "page:page1",
+      "index": "a5",
+      "props": {
+        "geo": "note",
+        "text": "CAMADA DE AUDITORIA\nRegistry de Incidentes",
+        "align": "middle"
+      }
+    },
+    {
+      "id": "shape:49f971d6",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 400,
+      "y": 200,
+      "rotation": 0,
+      "isLocked": false,
+      "opacity": 1,
+      "parentId": "page:page1",
+      "index": "a6",
+      "meta": {},
+      "props": {
+        "text": "Escrita Atômica",
+        "start": {
+          "boundShapeId": "shape:local",
+          "type": "binding",
+          "normalizedAnchor": {
+            "y": 1,
+            "x": 0.5
+          }
+        },
+        "end": {
+          "normalizedAnchor": {
+            "y": 0,
+            "x": 0.5
+          },
+          "type": "binding",
+          "boundShapeId": "shape:state"
+        }
+      }
+    },
+    {
+      "id": "shape:dc9b8188",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 400,
+      "y": 400,
+      "rotation": 0,
+      "isLocked": false,
+      "opacity": 1,
+      "parentId": "page:page1",
+      "index": "a7",
+      "meta": {},
+      "props": {
+        "text": "Polling / Reconciliação",
+        "start": {
+          "normalizedAnchor": {
+            "y": 1,
+            "x": 0.5
+          },
+          "type": "binding",
+          "boundShapeId": "shape:state"
+        },
+        "end": {
+          "boundShapeId": "shape:systemic",
+          "type": "binding",
+          "normalizedAnchor": {
+            "x": 0.5,
+            "y": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "shape:1614fdf7",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 550,
+      "y": 150,
+      "rotation": 0,
+      "isLocked": false,
+      "opacity": 1,
+      "parentId": "page:page1",
+      "index": "a8",
+      "meta": {},
+      "props": {
+        "start": {
+          "normalizedAnchor": {
+            "y": 0.5,
+            "x": 1
+          },
+          "type": "binding",
+          "boundShapeId": "shape:local"
+        },
+        "text": "Cria Post-Mortem",
+        "end": {
+          "type": "binding",
+          "normalizedAnchor": {
+            "y": 0.5,
+            "x": 0
+          },
+          "boundShapeId": "shape:audit"
+        }
+      }
+    },
+    {
+      "id": "shape:27c4352e",
+      "typeName": "shape",
+      "type": "arrow",
+      "x": 200,
+      "y": 300,
+      "rotation": 0,
+      "isLocked": false,
+      "opacity": 1,
+      "parentId": "page:page1",
+      "index": "a9",
+      "meta": {},
+      "props": {
+        "text": "Bloqueia Ações (Safe Stop)",
+        "start": {
+          "normalizedAnchor": {
+            "y": 0.5,
+            "x": 0
+          },
+          "type": "binding",
+          "boundShapeId": "shape:systemic"
+        },
+        "end": {
+          "normalizedAnchor": {
+            "y": 0.5,
+            "x": 0
+          },
+          "type": "binding",
+          "boundShapeId": "shape:local"
+        }
+      }
+    }
+  ]
+}

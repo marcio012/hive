@@ -1,0 +1,122 @@
+flowchart TD
+    subgraph Root ["🏠 HIVE ROOT"]
+        R_HIVE["📂 hive/"]
+        R_DOT_GITHUB["📁 .github/"]
+        R_DOT_HIVE_AGENT["📁 .hive-agent/"]
+        R_DOT_VSCODE["📁 .vscode/"]
+        R_DOT_GITHOOKS["📁 .githooks/"]
+        R_BEEHIVE["📂 beehive/"]
+        R_DOT_CLAUDE["📁 .claude/"]
+        R_DOT_AGILE_SQUAD["📁 .agile-squad/"]
+        R_SCRIPTS["📁 scripts/"]
+        
+        R_HIVE --> R_DOT_GITHUB
+        R_HIVE --> R_DOT_HIVE_AGENT
+        R_HIVE --> R_DOT_VSCODE
+        R_HIVE --> R_DOT_GITHOOKS
+        R_HIVE --> R_BEEHIVE
+        R_HIVE --> R_DOT_CLAUDE
+        R_HIVE --> R_DOT_AGILE_SQUAD
+        R_HIVE --> R_SCRIPTS
+    end
+
+    subgraph BeehiveCore ["🧠 BEEHIVE CORE"]
+        R_BEEHIVE --> B_COGNITION["📂 cognition/"]
+        R_BEEHIVE --> B_REGISTRY["📂 registry/"]
+        R_BEEHIVE --> B_CONSTRUCAO["📂 construcao/"]
+        R_BEEHIVE --> B_DNA["📂 dna/"]
+        R_BEEHIVE --> B_ROLES["📂 roles/"]
+        
+        subgraph Cognition ["🔍 Cognition"]
+            B_COGNITION --> C_SUST["📁 sustentacao/"]
+            B_COGNITION --> C_REG["📂 registry/"]
+            C_REG --> C_REG_ARQ["📄 arquivo/"]
+            B_COGNITION --> C_INT["📂 intuition/"]
+            C_INT --> C_INT_BRAIN["📁 brainstorm/"]
+            B_COGNITION --> C_DIR["📁 diretrizes/"]
+        end
+
+        subgraph Registry ["📋 Registry"]
+            B_REGISTRY --> REG_TELE["📁 telemetria/"]
+            B_REGISTRY --> REG_ACEITE["📁 aceites/"]
+            B_REGISTRY --> REG_INC["📁 incidents/"]
+            B_REGISTRY --> REG_REPORTS["📁 reports/"]
+            B_REGISTRY --> REG_ARCH["📂 archive/"]
+            REG_ARCH --> ARCH_INBOX["📁 inbox/"]
+            REG_ARCH --> ARCH_COG["📁 cognition/"]
+            REG_ARCH --> ARCH_TASK["📁 tasks/"]
+            REG_ARCH --> ARCH_HAND["📁 handoffs/"]
+        end
+
+        subgraph Construcao ["🏗️ Construcao"]
+            B_CONSTRUCAO --> CONS_TASKS["📁 tasks/"]
+            B_CONSTRUCAO --> CONS_SUST["📂 sustentacao/"]
+            CONS_SUST --> CONS_SCRIPTS["📁 scripts/"]
+            B_CONSTRUCAO --> CONS_BLUE["📁 blueprints/"]
+            B_CONSTRUCAO --> CONS_WO["📂 work_orders/"]
+            CONS_WO --> WO_CORE["📁 CORE-FOUNDATION/"]
+            CONS_WO --> WO_UI["📁 HIVE-UI/"]
+            CONS_WO --> WO_HIVE["📁 HIVE/"]
+            B_CONSTRUCAO --> CONS_AG["📂 agentes/"]
+            CONS_AG --> AG_ARQ["📁 arquivo/"]
+            CONS_AG --> AG_COM["📁 comuicacao/"]
+            B_CONSTRUCAO --> CONS_BRAIN["📂 propostas_brainstorm/"]
+            CONS_BRAIN --> BRAIN_ESCL["📁 esclarecidas/"]
+            B_CONSTRUCAO --> CONS_DEB["📂 debates/"]
+            CONS_DEB --> DEB_ARQ["📁 arquivo/"]
+            B_CONSTRUCAO --> CONS_TEMP["📁 templates/"]
+            B_CONSTRUCAO --> CONS_HAND["📁 handoffs/"]
+        end
+    end
+
+    subgraph BeehiveExecution ["🚀 EXECUTION & APPS"]
+        R_BEEHIVE --> B_APPS["📂 apps/"]
+        R_BEEHIVE --> B_ASSETS["📂 assets/"]
+        R_BEEHIVE --> B_DOCS["📂 docs/"]
+        
+        subgraph Apps ["📱 Apps"]
+            B_APPS --> APP_UI["📂 hive-ui/"]
+            APP_UI --> UI_FE["📂 frontend/"]
+            UI_FE --> UI_FE_SRC["📁 src/"]
+            UI_FE --> UI_FE_DIST["📁 dist/"]
+            APP_UI --> UI_BE["📂 backend/"]
+            UI_BE --> UI_BE_SRC["📁 src/"]
+            UI_BE --> UI_BE_DIST["📁 dist/"]
+            B_APPS --> APP_ORCH["📂 orchestrator/"]
+            APP_ORCH --> ORCH_SRC["📁 src/"]
+            APP_ORCH --> ORCH_DIST["📁 dist/"]
+        end
+
+        subgraph Assets ["🎨 Assets"]
+            B_ASSETS --> AS_UI["📂 hive-ui/"]
+            AS_UI --> AS_UI_PROMPT["📁 prompts/"]
+            AS_UI --> AS_UI_DESIGN["📂 ui-claude-desing/"]
+            AS_UI_DESIGN --> AS_UI_H1["📁 hive (1)/"]
+            AS_UI_DESIGN --> AS_UI_HREF["📁 hive/"]
+            AS_UI_DESIGN --> AS_UI_H2["📁 hive (2)/"]
+            
+            B_ASSETS --> AS_TOS["📂 tenantOS/"]
+            AS_TOS --> AS_TOS_BLUE["📁 blueprints/"]
+            AS_TOS --> AS_TOS_PROMPT["📁 prompts/"]
+            AS_TOS --> AS_TOS_ARCH["📁 archive/"]
+        end
+
+        subgraph Docs ["📄 Docs"]
+            B_DOCS --> DOC_ENG["📁 engenharia/"]
+            B_DOCS --> DOC_MAT["📂 materializacao/"]
+            DOC_MAT --> MAT_ISSUE["📁 ISSUE-97/"]
+            DOC_MAT --> MAT_GOV["📁 GOV-SENTINEL/"]
+            DOC_MAT --> MAT_DEB14["📁 DEBATE-014/"]
+            B_DOCS --> DOC_EVID["📁 evidencias/"]
+        end
+    end
+
+    subgraph Tools ["🛠️ TOOLS & CONFIG"]
+        R_BEEHIVE --> B_TESTS["📁 tests/"]
+        R_BEEHIVE --> B_BIN["📁 bin/"]
+        R_BEEHIVE --> B_GEMINI["📁 .gemini/"]
+        R_BEEHIVE --> B_CLAUDE["📁 .claude/"]
+        R_BEEHIVE --> B_COPILOT["📁 .copilot/"]
+        R_BEEHIVE --> B_CI["📂 collective_intelligence/"]
+        B_CI --> CI_IDEA["📁 ideacao/"]
+    end
