@@ -135,7 +135,7 @@ export interface SquadMember {
   role: string;
   model: string;
   initial: string;
-  inbox: string;
+  inbox?: string;
   active: boolean;
 }
 
@@ -143,37 +143,36 @@ export const SQUAD_FALLBACK: SquadMember[] = [
   {
     id: 'gemini',
     name: 'Gemini',
-    role: 'Orquestrador',
-    model: 'gemini-flash',
+    role: 'Facilitador Estratégico / PO',
+    model: 'gemini-1.5-pro',
     initial: 'G',
-    inbox: 'inbox-gemini.md',
+    inbox: 'beehive/construcao/inbox-gemini.md',
     active: true,
   },
   {
     id: 'claude',
     name: 'Claude',
-    role: 'Arquiteto',
-    model: 'claude-sonnet',
+    role: 'Arquiteto + Auditor Técnico',
+    model: 'claude-sonnet-4-6',
     initial: 'C',
-    inbox: 'inbox-claude.md',
+    inbox: 'beehive/construcao/inbox-claude.md',
     active: true,
   },
   {
     id: 'copilot',
     name: 'Copilot',
-    role: 'Engenheiro',
-    model: 'gpt-5.4',
+    role: 'Engenheiro / Executor',
+    model: 'gpt-4o',
     initial: 'P',
-    inbox: 'inbox-copilot-hive.md',
+    inbox: 'beehive/construcao/inbox-copilot-hive.md',
     active: true,
   },
   {
     id: 'marcio',
-    name: 'Diretor',
-    role: 'Product Owner',
-    model: 'Human / Owner',
+    name: 'Márcio',
+    role: 'Owner / The Gate',
+    model: 'Human',
     initial: 'M',
-    inbox: 'inbox-marcio.md',
     active: true,
   },
 ];

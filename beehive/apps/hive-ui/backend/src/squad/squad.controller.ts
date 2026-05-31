@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Put } from '@nestjs/common';
+import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Public } from '../auth/public.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SquadService } from './squad.service';
-import { type SquadMember } from './squad.types';
+import { SquadMemberDto } from './squad.dto';
 
-@Public()
+@UseGuards(JwtAuthGuard)
 @ApiTags('squad')
 @Controller('squad')
 export class SquadController {
@@ -13,14 +13,14 @@ export class SquadController {
   @Get()
   @ApiOperation({ summary: 'Listar membros do squad' })
   @ApiResponse({ status: 200, description: 'Array com os membros atuais do squad.' })
-  getSquad(): Promise<SquadMember[]> {
+  getSquad(): Promise<SquadMemberDto[]> {
     return this.squadService.getSquad();
   }
 
   @Put()
   @ApiOperation({ summary: 'Atualizar membros do squad' })
   @ApiResponse({ status: 200, description: 'Array com os membros atualizados do squad.' })
-  updateSquad(@Body() members: unknown): Promise<SquadMember[]> {
+  updateSquad(@Body() members: SquadMemberDto[]): Promise<SquadMemberDto[]> {
     return this.squadService.updateSquad(members);
   }
 }

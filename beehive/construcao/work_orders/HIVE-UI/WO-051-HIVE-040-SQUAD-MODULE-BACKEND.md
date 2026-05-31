@@ -2,7 +2,7 @@
 id: WO-051
 titulo: SquadModule Backend — GET/PUT /api/squad + squad.json
 executor: Copilot-Hive
-status: despachada
+status: concluida
 prioridade: alta
 backlog_ref: HIVE-UI
 thread: gestao-squad
@@ -132,12 +132,12 @@ via `SquadService`. Injetar o serviço ou passar os dados como parâmetro.
 
 ## 3. Critérios de Aceite
 
-- [ ] `beehive/squad.json` criado com os 4 membros seed
-- [ ] `GET /api/squad` retorna array de `SquadMemberDto`
-- [ ] `PUT /api/squad` persiste alterações em `squad.json` (escrita atômica)
-- [ ] `governance.repository.ts` lê `role` do `squad.json` (não hardcoded)
-- [ ] `check:types` verde
-- [ ] `build` verde
+- [x] `beehive/squad.json` criado com os 4 membros seed
+- [x] `GET /api/squad` retorna array de `SquadMemberDto`
+- [x] `PUT /api/squad` persiste alterações em `squad.json` (escrita atômica)
+- [x] `governance.repository.ts` lê `role` do `squad.json` (não hardcoded)
+- [x] `check:types` verde
+- [x] `build` verde
 
 ## 4. Escopo Negativo
 

@@ -1,14 +1,25 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { DEFAULT_SQUAD_MEMBERS, type SquadMember, type SquadMemberId } from './squad.types';
+import {
+  DEFAULT_SQUAD_MEMBERS,
+  SQUAD_MEMBER_IDS,
+  type SquadMemberDto,
+  type SquadMemberId,
+} from './squad.dto';
 
 @Injectable()
 export class SquadService {
-  private readonly hiveRoot = process.env.HIVE_ROOT || path.resolve(process.cwd(), '../../..');
-  private readonly squadPath = path.join(this.hiveRoot, 'beehive', 'squad.json');
+  private readonly hiveRoot: string;
+  private readonly squadPath: string;
 
-  async getSquad(): Promise<SquadMember[]> {
+  constructor(private readonly config: ConfigService) {
+    this.hiveRoot = this.config.get<string>('HIVE_ROOT') ?? path.resolve(process.cwd(), '../../..');
+    this.squadPath = path.join(this.hiveRoot, 'beehive', 'squad.json');
+  }
+
+  async getSquad(): Promise<SquadMemberDto[]> {
     try {
       const content = await fs.readFile(this.squadPath, 'utf-8');
       return this.parseSquadContent(content);
@@ -21,14 +32,14 @@ export class SquadService {
     }
   }
 
-  async updateSquad(payload: unknown): Promise<SquadMember[]> {
+  async updateSquad(payload: SquadMemberDto[]): Promise<SquadMemberDto[]> {
     const current = await this.getSquad();
     const next = this.normalizeUpdate(payload, current);
     await this.writeAtomically(next);
     return next;
   }
 
-  private parseSquadContent(content: string): SquadMember[] {
+  private parseSquadContent(content: string): SquadMemberDto[] {
     try {
       const parsed = JSON.parse(content) as unknown;
       return this.normalizeStoredMembers(parsed);
@@ -41,7 +52,7 @@ export class SquadService {
     }
   }
 
-  private normalizeStoredMembers(payload: unknown): SquadMember[] {
+  private normalizeStoredMembers(payload: unknown): SquadMemberDto[] {
     if (!Array.isArray(payload)) {
       throw new BadRequestException('squad.json deve conter um array de membros.');
     }
@@ -71,12 +82,12 @@ export class SquadService {
     });
   }
 
-  private normalizeStoredMember(entry: unknown): SquadMember {
+  private normalizeStoredMember(entry: unknown): SquadMemberDto {
     if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
       throw new BadRequestException('Membro de squad inválido.');
     }
 
-    const candidate = entry as Partial<SquadMember>;
+    const candidate = entry as Partial<SquadMemberDto>;
     if (!this.isSquadMemberId(candidate.id)) {
       throw new BadRequestException('id de membro inválido em squad.json.');
     }
@@ -87,12 +98,12 @@ export class SquadService {
       role: this.cleanText(candidate.role, 'role'),
       model: this.cleanText(candidate.model, 'model'),
       initial: this.cleanInitial(candidate.initial),
-      inbox: this.cleanText(candidate.inbox, 'inbox'),
+      inbox: this.cleanOptionalText(candidate.inbox, 'inbox'),
       active: this.cleanBoolean(candidate.active, 'active'),
     };
   }
 
-  private normalizeUpdate(payload: unknown, current: SquadMember[]): SquadMember[] {
+  private normalizeUpdate(payload: SquadMemberDto[], current: SquadMemberDto[]): SquadMemberDto[] {
     if (!Array.isArray(payload)) {
       throw new BadRequestException('Payload inválido. Envie um array de membros.');
     }
@@ -105,7 +116,7 @@ export class SquadService {
         throw new BadRequestException('Payload inválido. Cada membro deve ser um objeto.');
       }
 
-      const candidate = entry as Partial<SquadMember>;
+      const candidate = entry as Partial<SquadMemberDto>;
       if (!this.isSquadMemberId(candidate.id) || !currentById.has(candidate.id)) {
         throw new BadRequestException('Payload inválido. Encontrado id de membro desconhecido.');
       }
@@ -122,14 +133,7 @@ export class SquadService {
     }
 
     return current.map((member) => {
-      const update = payload.find(
-        (entry): entry is Partial<SquadMember> =>
-          typeof entry === 'object' &&
-          entry !== null &&
-          !Array.isArray(entry) &&
-          'id' in entry &&
-          entry.id === member.id,
-      );
+      const update = payload.find((entry) => entry.id === member.id);
 
       if (!update) {
         throw new BadRequestException(`Payload inválido. Membro ausente: ${member.id}.`);
@@ -141,11 +145,13 @@ export class SquadService {
         role: this.cleanText(update.role, `role de ${member.id}`),
         model: this.cleanText(update.model, `model de ${member.id}`),
         initial: this.cleanInitial(update.initial),
+        inbox: this.cleanOptionalText(update.inbox, `inbox de ${member.id}`),
+        active: this.cleanBoolean(update.active, `active de ${member.id}`),
       };
     });
   }
 
-  private async writeAtomically(members: SquadMember[]): Promise<void> {
+  private async writeAtomically(members: SquadMemberDto[]): Promise<void> {
     const dir = path.dirname(this.squadPath);
     const tempPath = `${this.squadPath}.tmp`;
     const content = `${JSON.stringify(members, null, 2)}\n`;
@@ -166,6 +172,14 @@ export class SquadService {
     }
 
     return cleaned;
+  }
+
+  private cleanOptionalText(value: unknown, field: string): string | undefined {
+    if (value === undefined) {
+      return undefined;
+    }
+
+    return this.cleanText(value, field);
   }
 
   private cleanInitial(value: unknown): string {
@@ -194,7 +208,7 @@ export class SquadService {
   }
 
   private isSquadMemberId(value: unknown): value is SquadMemberId {
-    return ['claude', 'copilot', 'gemini', 'marcio'].includes(String(value));
+    return SQUAD_MEMBER_IDS.includes(String(value) as SquadMemberId);
   }
 
   private isMissingFile(error: unknown): error is NodeJS.ErrnoException {

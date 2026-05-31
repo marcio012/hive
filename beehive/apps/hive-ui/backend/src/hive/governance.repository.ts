@@ -41,12 +41,14 @@ export class FileBasedGovernanceRepository implements GovernanceRepository {
   private readonly manifestoPath: string;
   private readonly rolesYamlPath: string;
   private readonly rolesDirPath: string;
+  private readonly squadPath: string;
 
   constructor(private readonly hiveRoot: string) {
     this.directivesPath = path.join(this.hiveRoot, 'beehive', 'cognition', 'diretrizes.md');
     this.manifestoPath = path.join(this.hiveRoot, 'beehive', 'dna', 'manifesto.md');
     this.rolesYamlPath = path.join(this.hiveRoot, 'beehive', 'roles', 'roles.yaml');
     this.rolesDirPath = path.join(this.hiveRoot, 'beehive', 'roles');
+    this.squadPath = path.join(this.hiveRoot, 'beehive', 'squad.json');
   }
 
   async getAll(): Promise<GovernanceData> {
@@ -139,20 +141,22 @@ export class FileBasedGovernanceRepository implements GovernanceRepository {
   }
 
   private async listRolesFromMarkdownFallback(): Promise<RoleEntry[]> {
+    const squadRoles = await this.readSquadRoleMap();
     const fallbackMap = [
       { agente: 'claude', file: 'claude.md', defaultRole: 'Arquiteto + Auditor Técnico' },
       { agente: 'copilot', file: 'copilot.md', defaultRole: 'Engenheiro / Executor' },
-      { agente: 'gemini', file: 'coordenador.md', defaultRole: 'Facilitador Estratégico / Squad Lead' },
+      { agente: 'gemini', file: 'coordenador.md', defaultRole: 'Facilitador Estratégico / PO' },
       { agente: 'marcio', file: 'marcio.md', defaultRole: 'Owner / The Gate' },
     ] as const;
 
     const roles = await Promise.all(
       fallbackMap.map(async (entry) => {
         const content = await this.readFile(path.join(this.rolesDirPath, entry.file), `role ${entry.agente}`);
+        const defaultRole = squadRoles.get(entry.agente) ?? entry.defaultRole;
         if (!content) {
           return {
             agente: entry.agente,
-            papel: entry.defaultRole,
+            papel: defaultRole,
             descricao: '',
           } satisfies RoleEntry;
         }
@@ -168,7 +172,7 @@ export class FileBasedGovernanceRepository implements GovernanceRepository {
 
         return {
           agente: entry.agente,
-          papel: this.cleanInlineMarkdown(heading?.[1] ?? entry.defaultRole),
+          papel: this.cleanInlineMarkdown(heading?.[1] ?? defaultRole),
           descricao: this.cleanInlineMarkdown(strongLine?.[1] ?? firstParagraph),
         } satisfies RoleEntry;
       }),
@@ -252,6 +256,40 @@ export class FileBasedGovernanceRepository implements GovernanceRepository {
 
   private cleanYamlScalar(value: string): string {
     return value.trim().replace(/^['"]|['"]$/g, '');
+  }
+
+  private async readSquadRoleMap(): Promise<Map<string, string>> {
+    const content = await this.readFile(this.squadPath, 'squad.json');
+    if (!content) {
+      return new Map();
+    }
+
+    try {
+      const parsed = JSON.parse(content) as unknown;
+      if (!Array.isArray(parsed)) {
+        return new Map();
+      }
+
+      return new Map(
+        parsed
+          .filter(
+            (entry): entry is { id: string; role: string } =>
+              Boolean(
+                entry &&
+                  typeof entry === 'object' &&
+                  !Array.isArray(entry) &&
+                  'id' in entry &&
+                  typeof entry.id === 'string' &&
+                  'role' in entry &&
+                  typeof entry.role === 'string',
+              ),
+          )
+          .map((entry) => [entry.id.trim().toLowerCase(), entry.role.trim()]),
+      );
+    } catch (error) {
+      this.warn('Falha ao interpretar squad.json.', error);
+      return new Map();
+    }
   }
 
   private extractSection(content: string, headingRegex: RegExp): string | null {

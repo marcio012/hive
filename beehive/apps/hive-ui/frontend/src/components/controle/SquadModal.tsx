@@ -139,7 +139,7 @@ export function SquadModal({ members, onClose, onSave }: SquadModalProps) {
                 ) : (
                   <div className="squad-summary">
                     <span>{member.model}</span>
-                    <span>{member.inbox}</span>
+                    <span>{member.inbox ?? 'Sem inbox dedicada'}</span>
                   </div>
                 )}
               </div>
