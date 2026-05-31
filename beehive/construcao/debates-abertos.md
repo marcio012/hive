@@ -39,7 +39,7 @@ ultima_revisao: 2026-05-24
 | **DEBATE-037** | **Arquitetura de Balcão Central (Central Broker)** | **Execução (Fase 2 🚀)** | **Gemini (Staff)** |
 | **DEBATE-038** | **Camada de API para o Broker — Orchestrator HTTP vs NestJS direto** | **Em andamento** | **Claude (Arquiteto)** |
 | **DEBATE-039** | **Componentização do Hive UI Frontend** | **Em andamento** | **Claude (Arquiteto)** |
-| **DEBATE-040** | **Gestão de Squad — CRUD de Papéis e Agentes no Hive UI** | **Em andamento** | **Claude (Arquiteto)** |
+| **DEBATE-040** | **Gestão de Squad — CRUD de Papéis e Agentes no Hive UI** | **WOs despachadas** | **Claude (Arquiteto)** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*

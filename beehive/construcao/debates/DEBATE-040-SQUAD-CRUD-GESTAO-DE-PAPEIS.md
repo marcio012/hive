@@ -15,16 +15,16 @@ backlog_ref: HIVE-UI
 **Participantes:**
 - Gemini (PO): `✅`
 - Claude (Arquiteto): `✅`
-- Copilot (Engenheiro): `[ ]`
+- Copilot (Engenheiro): `✅`
 
 **Fases:**
 - `[x]` 1. Abertura
 - `[x]` 2. Parecer Claude (Arquitetura)
 - `[x]` 3. Parecer Gemini (PO / ROI)
-- `[ ]` 4. Parecer Copilot (Implementação)
-- `[ ]` 5. Consolidação / Veredito
-- `[ ]` 6. Aprovação Márcio
-- `[ ]` 7. Work Orders despachadas
+- `[x]` 4. Parecer Copilot (Implementação)
+- `[x]` 5. Consolidação / Veredito
+- `[x]` 6. Aprovação Márcio ✅ — 2026-05-31
+- `[x]` 7. Work Orders despachadas
 - `[ ]` 8. Execução concluída
 
 ---
@@ -189,13 +189,106 @@ Não foram identificadas restrições de agenda impeditivas. A proposta de escop
 
 ## 5. Parecer Copilot — Engenheiro
 
-*Aguardando.*
+**Data:** 2026-05-31
+**Posição:** ✅ GO — com V1 restrita a membros fixos e uma fonte única de exibição compartilhada.
+
+### 5.1 Complexidade de `GET/PUT /api/squad`
+
+**Complexidade: baixa para média**, desde que a feature seja tratada como **configuração operacional da UI** e não como extensão do repositório de governança.
+
+O backend já tem os blocos que importam para isso:
+- leitura file-based e parsing local (`governance.repository.ts`);
+- escrita atômica de JSON já usada em config (`hive.service.ts`);
+- endpoints simples no controller com validação explícita (`hive.controller.ts`).
+
+Ou seja: ler e escrever um `squad.json` no NestJS é direto. O risco real não está no I/O, e sim em **modelagem e fronteira de responsabilidade**. Minha recomendação é:
+
+- criar um repositório/serviço dedicado de `squad`;
+- validar DTO com shape fechado (`id`, `name`, `role`, `model`, `initial`, `active`, `inbox?`);
+- **não** acoplar escrita no `governance.repository.ts`, porque hoje ele é leitor de governança (`roles.yaml` + fallback markdown), não storage operacional editável.
+
+### 5.2 Viabilidade do modal no padrão `dispatch-modal`
+
+**Viável sem refatoração maior.**
+
+O `CentroDeControle.tsx` já tem exatamente o que essa feature precisa:
+- linha de controle no padrão `ctrl-row`;
+- modal funcional com estado local, erro, loading e ação assíncrona (`dispatch-modal`);
+- estrutura de painel consistente para encaixar um novo botão "Equipe".
+
+Portanto, o trabalho aqui é mais de **replicação controlada do padrão existente** do que de redesenho da tela. O cuidado principal é só garantir refresh consistente após salvar, para não deixar Centro de Controle, Mapa da Fábrica e Telemetria divergirem.
+
+### 5.3 Risco de migrar `agents[]` hardcoded do `MapaFabrica.tsx`
+
+**Risco baixo/médio se a V1 apenas editar os 4 membros atuais.**
+**Risco alto se a V1 tentar virar CRUD realmente livre (adicionar/remover IDs arbitrários).**
+
+Hoje o acoplamento com agentes fixos aparece em vários pontos:
+
+- `useHiveSocket.ts` tipa `AgentName` como `'claude' | 'copilot' | 'gemini'`;
+- `MapaFabrica.tsx` usa `Record<AgentName, ...>` e `switch` por agente;
+- `AgentCard.tsx` tem ícones, lock e contexto amarrados a esse conjunto fixo;
+- `Telemetria` e `hive.service.ts` ainda têm papéis hardcoded (`AGENT_ROLES`);
+- já existe até divergência de chave (`diretor` no mapa vs `marcio` em outros pontos), sinal de que a tipagem atual não está pronta para lista arbitrária.
+
+Então, **trocar o array hardcoded por dados vindos da API não quebra o build por si só** se:
+
+1. os IDs continuarem restritos a `claude`, `copilot`, `gemini` e `marcio/diretor`;
+2. a ordem/renderização continuar controlada no frontend;
+3. a API só hidratar metadados (`name`, `role`, `model`, `initial`, `active`) com fallback local;
+4. os papéis de telemetria e governança também passarem a ler a mesma fonte para evitar inconsistência visual.
+
+Se a proposta for permitir adicionar/remover membros já na V1, aí não é mais uma troca simples de fonte: vira refactor transversal de tipos, cards, métricas, esteiras e estado websocket.
+
+### 5.4 Recomendação de implementação
+
+**Minha recomendação é GO com escopo travado:**
+
+- **V1:** editar somente os membros fixos do squad;
+- `squad.json` como fonte de **exibição operacional**;
+- `roles.yaml` continua como fonte de **governança/capabilities**;
+- backend expõe `GET/PUT /api/squad`;
+- frontend mantém a malha tipada atual e só substitui labels/metadados, sem abrir cadastro livre.
+
+Nesse formato, a entrega é segura, incremental e resolve o problema central sem forçar uma refatoração ampla do Hive UI.
 
 ---
 
 ## 6. Consolidação / Veredito
 
-*Aguardando pareceres de Gemini e Copilot.*
+**Data:** 2026-05-31
+**Veredito:** ✅ GO — escopo V1 travado, dois agentes envolvidos (backend + frontend)
+
+### Consenso dos três pareceres
+
+| Ponto | Claude | Gemini | Copilot |
+|---|---|---|---|
+| Opção B (`squad.json`) | ✅ | ✅ | ✅ |
+| V1: editar apenas membros fixos | ✅ | ✅ | ✅ |
+| `roles.yaml` imutável | ✅ | ✅ | ✅ |
+| Prioridade alta | ✅ | ✅ | ✅ |
+| Modal no padrão `dispatch-modal` | ✅ | — | ✅ viável sem refatoração |
+
+### Decisões consolidadas
+
+**D1 — Persistência:** `beehive/squad.json` como SSoT de exibição. `roles.yaml` continua como SSoT de capabilities/governança. Nenhum agente mexe no YAML pela UI.
+
+**D2 — Escopo V1 (travado):** Editar `name`, `role`, `model`, `initial`, `active` dos 4 membros fixos (`claude`, `copilot`, `gemini`, `marcio`). **Sem** adicionar/remover membros — o tipo `AgentName` e os hooks do WebSocket dependem dos IDs fixos.
+
+**D3 — Backend:** `SquadModule` próprio no NestJS (não acoplar ao `governance.repository.ts`). Endpoints `GET /api/squad` e `PUT /api/squad`. Escrita atômica em `squad.json`.
+
+**D4 — Frontend:** Botão "Equipe" na seção Controles (padrão `ctrl-row`). Modal no padrão `dispatch-modal`. Hidrata `MapaFabrica.tsx` e `governance.repository.ts` com dados da API — fallback local mantido para resiliência.
+
+**D5 — Telemetria e consistência:** `hive.service.ts` (`AGENT_ROLES` hardcoded) também passa a ler da API para evitar divergência visual entre Mapa, Telemetria e Centro de Controle.
+
+### Work Orders a despachar
+
+- **WO-A:** Backend — `SquadModule` + `GET/PUT /api/squad` + `squad.json` seed com valores atuais
+- **WO-B:** Frontend — botão "Equipe" + modal CRUD + hidratação de `MapaFabrica.tsx`
+
+### Aprovado por Márcio — 2026-05-31
+
+WOs despachadas: WO-051 (backend) e WO-052 (frontend).
 
 ---
 
