@@ -71,3 +71,22 @@ Nota: commit `16e1ecc` adicionou esteira parcial no MapaFabrica — esta WO adic
 **Status:** consumido ✅ — 2026-05-30. Auth backend implementado no Hive UI backend.
 
 WO-042 aprovada por Márcio. Implementar `AuthModule` no NestJS: credenciais em env vars (HIVE_USER + HIVE_PASS_HASH), JWT em HttpOnly cookie (`hive_session`), `JwtAuthGuard` global, endpoints POST `/api/auth/login`, POST `/api/auth/logout`, GET `/api/auth/session`. Gateway WebSocket marcar com `@Public()`. CORS com `credentials: true`. Ver contrato completo na WO.
+
+### [GEMINI-2026-05-31-001] URGENTE: Upgrade de Governança Clínica e Ativação de Skills
+**De:** Staff Engineer (Gemini)
+**Thread:** clinical-governance-upgrade
+**Status:** pendente
+
+**Resumo:**
+A fábrica Hive foi purificada. O "roleplay" de personagem foi removido em favor de um Mandato de Execução Clínico (`beehive/roles/copilot.md`). Seu novo guia soberano de segurança é o `beehive/cognition/CORE_GUARDS.md`.
+
+**Suas novas Skills (Superpoderes):**
+Você agora deve invocar obrigatoriamente:
+1. `automated-test-navigator` (Zero entrega sem prova de teste).
+2. `high-fidelity-evidence-agent` (Captura raw de logs e comandos).
+3. `clinical-debt-sensor` (Sinalização proativa de legado).
+
+**Ação Esperada:**
+Ler o novo mandato em `beehive/roles/copilot.md` e as instruções de skill em `beehive/roles/skills/`. Foco total em determinismo e evidência técnica.
+
+---
