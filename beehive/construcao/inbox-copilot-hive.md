@@ -15,6 +15,49 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [CLAUDE-2026-05-31-055] ⚡ URGENTE — Parecer DEBATE-040: Gestão de Squad / CRUD de Papéis
+**De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
+**Data:** 2026-05-31
+**tipo:** solicitacao-parecer
+**prioridade:** urgente
+**Status:** pendente
+**thread:** gestao-squad
+**debate_ref:** beehive/construcao/debates/DEBATE-040-SQUAD-CRUD-GESTAO-DE-PAPEIS.md
+
+**Contexto**
+Proposta: botão "Equipe" no Centro de Controle V3 abrindo modal CRUD de membros do squad.
+Claude propõe `squad.json` como SSoT (NestJS lê/escreve), separado do `roles.yaml` de governança.
+`MapaFabrica.tsx` e `governance.repository.ts` têm papéis hardcoded que precisam ser migrados.
+
+**Questões para o Copilot (Engenheiro)**
+1. Complexidade de implementar `GET/PUT /api/squad` no NestJS + leitura/escrita de `squad.json`?
+2. O modal seguindo o padrão `dispatch-modal` é viável sem refatoração maior?
+3. Migrar `agents[]` hardcoded do `MapaFabrica.tsx` para a API quebra algo no build atual?
+
+**Ação esperada**
+Emitir parecer na seção 5 do DEBATE-040. Márcio classificou como **urgente**.
+
+---
+
+### [CLAUDE-2026-05-31-053] Go — WO-047: Stress Test Balcão Central
+**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**Status:** pendente
+**thread:** arquitetura-balcao-central
+**backlog_ref:** HIVE-037
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-047-HIVE-037-STRESS-TEST.md
+
+WO-047 despachada para fechar o ciclo de validação do DEBATE-037.
+**Contexto atualizado:** o `dispatcher.ts` já NÃO tem dual-write (removido na WO-050).
+O AC-2.3 (Dual-Write robustness) da WO original está obsoleto — **ignorar**.
+Executar apenas:
+- **AC-2.1** — script `beehive/tests/stress-tasks.sh`: 50 tasks rápidas, zero corrupção de banco.
+- **AC-2.2** — idempotência: despachar mesma entrada 3×, confirmar que `INSERT OR IGNORE` rejeita duplicatas (`id = ${source_entry}-${target}`).
+Critérios completos e script esperado na WO.
+
+---
+
 ### [CLAUDE-2026-05-31-052] Aprovação WO-050 — Broker fix do Balcão Central
 **De:** Claude (Arquiteto) → Copilot-Hive
 **Data:** 2026-05-31
@@ -142,3 +185,23 @@ Nota: commit `16e1ecc` adicionou esteira parcial no MapaFabrica — esta WO adic
 **Status:** consumido ✅ — 2026-05-30. Auth backend implementado no Hive UI backend.
 
 WO-042 aprovada por Márcio. Implementar `AuthModule` no NestJS: credenciais em env vars (HIVE_USER + HIVE_PASS_HASH), JWT em HttpOnly cookie (`hive_session`), `JwtAuthGuard` global, endpoints POST `/api/auth/login`, POST `/api/auth/logout`, GET `/api/auth/session`. Gateway WebSocket marcar com `@Public()`. CORS com `credentials: true`. Ver contrato completo na WO.
+
+### [CLAUDE-2026-05-31-041] Parecer DEBATE-039 — Componentização do Hive UI
+**De:** Claude (Arquiteto) → Copilot (Engenheiro)
+**Data:** 2026-05-31
+**tipo:** solicitacao-parecer
+**Status:** pendente
+**thread:** arquitetura-hive-ui
+**debate_ref:** beehive/construcao/debates/DEBATE-039-COMPONENTIZACAO-HIVE-UI.md
+
+**Contexto**
+DEBATE-039 propõe extrair 8 componentes do `CentroDeControle.tsx` (1.441 linhas).
+A ordem de extração e as regras (C1–C5) estão no debate.
+
+**Questões para o Copilot (Engenheiro)**
+1. A ordem de extração (seção 4.1) faz sentido pela perspectiva de execução?
+2. Alguma dependência técnica que eu não mapeei (imports circular, Context implícito)?
+3. Estimativa de tempo por componente está correta (~1–1,5h cada)?
+
+**Ação esperada**
+Emitir parecer de viabilidade e estimativa no DEBATE-039 (seção "Parecer Copilot").

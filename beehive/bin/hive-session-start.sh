@@ -207,9 +207,10 @@ if [[ ! -f "$PROJECT_PATH/package.json" ]] && [[ ! -d "$PROJECT_PATH/.git" ]]; t
   exit 1
 fi
 
-# 2. Extração de Metadados da Colmeia (via roles.yaml)
+# 2. Extração de Metadados da Hive (via roles.yaml)
 # Busca o modelo complexo ou dedicado definido para o agente
 MODEL=$(grep -A 15 "$AGENT_NAME:" "$HIVE_ROLES" | grep -E "complex:|model:" | head -1 | cut -d'"' -f2 || echo "default")
+AGENT_ROLE_LABEL=$(grep -A 5 "^  $AGENT_NAME:" "$HIVE_ROLES" | grep 'role:' | head -1 | cut -d'"' -f2 || echo "")
 ROLE_FILE=""
 if [[ -n "$ROLE_NAME" ]]; then
   ROLE_FILE="beehive/roles/$ROLE_NAME.md"
@@ -218,6 +219,9 @@ fi
 # 3. Registro de Sessão
 echo -e "Agente Ativo : \033[0;32m$AGENT_NAME\033[0m"
 echo -e "Modelo       : \033[0;32m$MODEL\033[0m"
+if [[ -n "$AGENT_ROLE_LABEL" ]]; then
+  echo -e "Papéis       : \033[0;32m$AGENT_ROLE_LABEL\033[0m"
+fi
 if [[ -n "$ROLE_NAME" ]]; then
   echo -e "Cartucho     : \033[0;32m$ROLE_NAME\033[0m"
 fi
@@ -239,3 +243,52 @@ fi
 refresh_session_state
 
 echo -e "\033[0;32mHive operacional. Pronto para orquestrar.\033[0m"
+
+# 5. Resumo de Pendências do Inbox
+show_inbox_summary() {
+  local inbox_file="$1"
+  if [[ ! -f "$inbox_file" ]]; then
+    return
+  fi
+
+  local pending_titles
+  pending_titles=$(awk '/^### \[/{title=$0} /\*\*Status:\*\* pendente/{print title}' "$inbox_file")
+
+  if [[ -z "$pending_titles" ]]; then
+    echo -e "\033[0;32mInbox limpo — nenhuma pendência.\033[0m"
+    return
+  fi
+
+  local count
+  count=$(echo "$pending_titles" | grep -c '^' || true)
+
+  echo ""
+  echo -e "\033[1;33m--- $count pendência(s) no inbox ---\033[0m"
+  while IFS= read -r line; do
+    local entry
+    entry="${line#\#\#\# }"
+    echo -e "  \033[0;33m•\033[0m $entry"
+  done <<< "$pending_titles"
+  echo "------------------------------------"
+}
+
+INBOX_FILE=""
+case "$AGENT_NAME" in
+  claude)
+    INBOX_FILE="$PROJECT_PATH/beehive/construcao/inbox-claude.md"
+    ;;
+  gemini)
+    INBOX_FILE="$PROJECT_PATH/beehive/construcao/inbox-gemini.md"
+    ;;
+  copilot)
+    case "$ROLE_NAME" in
+      copilot-hive) INBOX_FILE="$PROJECT_PATH/beehive/construcao/inbox-copilot-hive.md" ;;
+      copilot-tos)  INBOX_FILE="$PROJECT_PATH/beehive/construcao/inbox-copilot-tos.md" ;;
+      *)            INBOX_FILE="$PROJECT_PATH/beehive/construcao/inbox-copilot.md" ;;
+    esac
+    ;;
+esac
+
+if [[ -n "$INBOX_FILE" ]]; then
+  show_inbox_summary "$INBOX_FILE"
+fi
