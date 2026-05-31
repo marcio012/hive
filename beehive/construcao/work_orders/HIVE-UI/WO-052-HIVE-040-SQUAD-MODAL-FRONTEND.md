@@ -2,7 +2,7 @@
 id: WO-052
 titulo: Squad Modal Frontend — botão "Equipe" + CRUD no Centro de Controle
 executor: Copilot-Hive
-status: despachada
+status: concluida
 prioridade: alta
 backlog_ref: HIVE-UI
 thread: gestao-squad
@@ -121,13 +121,13 @@ e alinhar com a tipagem `FactoryAgentKey`.
 
 ## 3. Critérios de Aceite
 
-- [ ] Botão "Equipe" aparece na view Controles do Centro de Controle
-- [ ] Modal abre com os 4 membros carregados da API
-- [ ] Editar `role` de um membro e salvar persiste em `squad.json`
-- [ ] `MapaFabrica.tsx` exibe os papéis vindos da API (não mais hardcoded)
-- [ ] Fallback local funciona se a API não responder
-- [ ] `check:types` verde
-- [ ] `build` verde
+- [x] Botão "Equipe" aparece na view Controles do Centro de Controle
+- [x] Modal abre com os 4 membros carregados da API
+- [x] Editar `role` de um membro e salvar persiste em `squad.json`
+- [x] `MapaFabrica.tsx` exibe os papéis vindos da API (não mais hardcoded)
+- [x] Fallback local funciona se a API não responder
+- [x] `check:types` verde
+- [x] `build` verde
 
 ## 4. Escopo Negativo
 
