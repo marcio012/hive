@@ -124,11 +124,4 @@ export class Dispatcher {
     };
   }
 
-  private async readTextFile(filePath: string): Promise<string> {
-    try {
-      return await fs.readFile(filePath, 'utf8');
-    } catch {
-      return '';
-    }
-  }
 }

@@ -2,12 +2,11 @@ import * as path from 'path';
 
 import { TaskStore } from './db/task-store';
 import { DeadmanSwitch } from './deadman';
-import { isClosedStatus, listInboxPaths, normalizeStatus, parseInboxFile } from './inbox';
 import { Dispatcher } from './dispatcher';
+import { isClosedStatus, listInboxPaths, parseInboxFile } from './inbox';
 import { OrchestratorLogger } from './logger';
 import { Router } from './router';
 import { StateStore } from './state';
-import { DispatchResult, InboxEntry } from './types';
 
 const RETRY_DELAY_MS = 60_000;
 
@@ -30,7 +29,7 @@ export class OrchestratorWatcher {
     private readonly rootDir: string,
     private readonly stateStore: StateStore,
     private readonly logger: OrchestratorLogger,
-    taskStore: TaskStore,
+    private readonly taskStore: TaskStore,
   ) {
     this.router = new Router(rootDir);
     this.dispatcher = new Dispatcher(rootDir, stateStore, logger, taskStore);
@@ -40,12 +39,7 @@ export class OrchestratorWatcher {
   async start(): Promise<void> {
     await this.router.load();
 
-    const inboxPaths = await listInboxPaths(this.rootDir);
-    const seedEntries = (await Promise.all(inboxPaths.map((filePath) => parseInboxFile(filePath))))
-      .flat()
-      .map((entry) => entry.id);
-
-    const state = await this.stateStore.ensureState(seedEntries);
+    const state = await this.stateStore.ensureState([]);
     if (state.status !== 'paused') {
       await this.deadman.resumeWatching();
     }
@@ -54,9 +48,10 @@ export class OrchestratorWatcher {
 
     this.timeoutInterval = setInterval(() => {
       void this.deadman.checkForTimeout();
+      void this.processAll('polling');
     }, 60_000);
 
-    await this.logger.log('info', 'Orchestrator Core iniciado');
+    await this.logger.log('info', 'Orchestrator Core iniciado (Modo Broker)');
   }
 
   async stop(): Promise<void> {
@@ -74,16 +69,6 @@ export class OrchestratorWatcher {
       clearTimeout(retry.timer);
     }
     this.retries.clear();
-  }
-
-  private scheduleProcess(): void {
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer);
-    }
-
-    this.debounceTimer = setTimeout(() => {
-      void this.processAll('watcher');
-    }, 400);
   }
 
   private async processAll(reason: string): Promise<void> {
@@ -121,12 +106,14 @@ export class OrchestratorWatcher {
 
     await this.deadman.resumeWatching();
 
-    const inboxPaths = await listInboxPaths(this.rootDir);
-    for (const filePath of inboxPaths) {
-      const entries = await parseInboxFile(filePath);
+    const currentState = await this.stateStore.readState();
+    const processedIds = new Set(currentState?.processedEntries ?? []);
 
+    const inboxPaths = await listInboxPaths(this.rootDir);
+    for (const inboxPath of inboxPaths) {
+      const entries = await parseInboxFile(inboxPath);
       for (const entry of entries) {
-        if (!(await this.shouldHandleEntry(entry))) {
+        if (processedIds.has(entry.id) || isClosedStatus(entry.status)) {
           continue;
         }
 
@@ -135,106 +122,16 @@ export class OrchestratorWatcher {
           continue;
         }
 
-        if (decision.action === 'pause_and_escalate') {
-          await this.deadman.pause(`sem rota segura para ${entry.id}`);
+        await this.deadman.startDispatch(entry.id);
+        const result = await this.dispatcher.dispatch(decision, entry);
+
+        if (result.outcome === 'dispatched') {
+          await this.deadman.recordSuccess();
+        } else if (result.outcome === 'failed') {
+          await this.deadman.recordFailure(entry.id, result.reason ?? 'dispatch falhou');
           return;
         }
-
-        if (this.retries.has(entry.id)) {
-          continue;
-        }
-
-        await this.handleDispatch(entry, 0);
-        return;
       }
     }
-  }
-
-  private async shouldHandleEntry(entry: InboxEntry): Promise<boolean> {
-    if (entry.id.startsWith('ORCH-')) {
-      return false;
-    }
-
-    if (isClosedStatus(entry.status) || normalizeStatus(entry.status) !== 'pendente') {
-      return false;
-    }
-
-    const state = await this.stateStore.readState();
-    if (!state) {
-      return true;
-    }
-
-    return !state.processedEntries.includes(entry.id);
-  }
-
-  private async handleDispatch(entry: InboxEntry, attempts: number): Promise<void> {
-    const decision = this.router.resolve(entry);
-    if (!decision) {
-      return;
-    }
-
-    await this.deadman.startDispatch(entry.id);
-    const result = await this.dispatcher.dispatch(decision, entry);
-    await this.handleDispatchResult(entry, attempts, result);
-  }
-
-  private async handleDispatchResult(
-    entry: InboxEntry,
-    attempts: number,
-    result: DispatchResult,
-  ): Promise<void> {
-    if (result.outcome === 'dispatched' || result.outcome === 'ignored') {
-      await this.deadman.recordSuccess();
-      return;
-    }
-
-    if (result.outcome === 'retry' && attempts < 3) {
-      await this.deadman.resumeWatching();
-      const timer = setTimeout(() => {
-        void this.retryEntry(entry.id, attempts + 1);
-      }, RETRY_DELAY_MS);
-
-      this.retries.set(entry.id, {
-        attempts: attempts + 1,
-        timer,
-      });
-
-      await this.logger.log(
-        'info',
-        `Entrada ${entry.id} enfileirada para nova tentativa em 60s (${attempts + 1}/3)`,
-      );
-      return;
-    }
-
-    await this.deadman.recordFailure(entry.id, result.reason ?? 'falha desconhecida');
-  }
-
-  private async retryEntry(entryId: string, attempts: number): Promise<void> {
-    const handle = this.retries.get(entryId);
-    if (!handle || handle.attempts !== attempts) {
-      return;
-    }
-
-    this.retries.delete(entryId);
-
-    const entry = await this.findEntry(entryId);
-    if (!entry || !(await this.shouldHandleEntry(entry))) {
-      return;
-    }
-
-    await this.handleDispatch(entry, attempts);
-  }
-
-  private async findEntry(entryId: string): Promise<InboxEntry | null> {
-    const inboxPaths = await listInboxPaths(this.rootDir);
-    for (const filePath of inboxPaths) {
-      const entries = await parseInboxFile(filePath);
-      const match = entries.find((entry) => entry.id === entryId);
-      if (match) {
-        return match;
-      }
-    }
-
-    return null;
   }
 }
