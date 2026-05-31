@@ -43,7 +43,8 @@ agents:
       complex: "gemini-1.5-pro"         # Orquestração, estratégia, planejamento
       routine: "gemini-1.5-flash"       # Triagem, automação, documentação derivada
     cartuchos:
-      - po           # beehive/roles/po.md — foco: valor de negócio
+      - po-hive      # beehive/roles/po-hive.md — foco: governança da fábrica
+      - po-produto   # beehive/roles/po-produto.md — foco: valor do produto
       - projetista   # beehive/roles/projetista.md — foco: design e modelagem
       - coordenador  # beehive/roles/coordenador.md — foco: planejamento e orquestração
 
