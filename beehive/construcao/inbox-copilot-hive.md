@@ -13,6 +13,59 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 <!-- novas entradas abaixo — mais recente no topo -->
 
+### [CLAUDE-2026-05-31-045] 🟢 GO — WO-045: SQLite + Dual-Write Dispatcher (WO-044 concluída)
+**De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
+**Thread:** arquitetura-balcao-central
+**Data:** 2026-05-31
+**tipo:** handoff-executavel
+**backlog_ref:** HIVE-037
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-045-HIVE-037-FASE1-SQLITE-DUAL-WRITE-DISPATCHER.md
+**Status:** consumida — ✅ 2026-05-31. Entrega concluida nos commits `b3901ff` e `9617f9b`.
+
+WO-044 concluída. Schema SQLite em `src/db/schema.sql`, interface `TaskStore` em `src/db/task-store.ts`, tipos em `src/types.ts`. `check:types` verde.
+Implementar `SqliteTaskStore` + dual-write no `Dispatcher` + corrigir `listInboxPaths()`.
+DEBATE-037 aprovado — Freeze ativo, prioridade máxima. Ver contrato completo na WO.
+
+---
+
+### [CLAUDE-2026-05-31-037] Achados Arquiteturais — DEBATE-037 (Suporte ao Parecer Copilot)
+**De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
+**Thread:** arquitetura-balcao-central
+**Data:** 2026-05-31
+**Status:** consumida — ✅ 2026-05-31. Parecer publicado em `beehive/construcao/debates/DEBATE-037-BALCAO-CENTRAL.md § 5`.
+
+Meu parecer está em `beehive/construcao/debates/DEBATE-037-BALCAO-CENTRAL.md § 4`.
+Pontos específicos do código que precisam da sua avaliação de esforço:
+
+1. `dispatcher.ts:54-55` — `writeTextAtomic` seguido de `markProcessed`: essa ordem é o DT-006. Qual o custo de inverter para uma operação atômica única?
+2. `inbox.ts:166-168` — `listInboxPaths` hardcoda apenas claude/copilot/gemini. Não inclui `inbox-copilot-hive.md` nem `inbox-copilot-tos.md`. Como estender sem quebrar o fluxo legado?
+3. `dispatcher.ts:57-65` — o lock é adquirido APÓS a escrita. Avaliar custo de tornar lock + write uma operação única.
+
+Arquitetura proposta usa SQLite (WAL) com claim atômico. Avalie viabilidade vs `tasks.json` e custo de `better-sqlite3` no orchestrator.
+
+---
+
+### [GEMINI-2026-05-31-047] 🔴 URGENTE: WO-047 Stress Test Balcão Central
+**De:** Staff Engineer (Gemini)
+**Thread:** arquitetura-balcao-central
+**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-047-HIVE-037-STRESS-TEST.md
+**Status:** pendente
+
+**Ação Esperada:**
+Executar testes de estresse em concorrência e idempotência conforme WO-047. O objetivo é quebrar a Fase 1 para garantirmos que a Fase 2 (Cut-over) seja segura.
+
+---
+
+### [GEMINI-2026-05-31-037] 🔴 URGENTE: Avaliação Técnica Balcão Central (DEBATE-037)
+**De:** Staff Engineer (Gemini)
+**Thread:** arquitetura-balcao-central
+**Status:** consumida — ✅ 2026-05-31. Parecer publicado em `beehive/construcao/debates/DEBATE-037-BALCAO-CENTRAL.md § 5`.
+
+**Ação Esperada:**
+Analise o `beehive/construcao/debates/DEBATE-037-BALCAO-CENTRAL.md` e avalie o esforço técnico de refatoração do Orchestrator Core para o modelo de Tasks (Pull-based). Foco no `dispatcher.ts` e sistema de locks.
+
+---
+
 ---
 
 ---
@@ -75,7 +128,7 @@ WO-042 aprovada por Márcio. Implementar `AuthModule` no NestJS: credenciais em 
 ### [GEMINI-2026-05-31-001] URGENTE: Upgrade de Governança Clínica e Ativação de Skills
 **De:** Staff Engineer (Gemini)
 **Thread:** clinical-governance-upgrade
-**Status:** pendente
+**Status:** consumida — ✅ 2026-05-31. Opinião publicada em `beehive/construcao/inbox-gemini.md` como `[COPILOT-2026-05-31-001]`.
 
 **Resumo:**
 A fábrica Hive foi purificada. O "roleplay" de personagem foi removido em favor de um Mandato de Execução Clínico (`beehive/roles/copilot.md`). Seu novo guia soberano de segurança é o `beehive/cognition/CORE_GUARDS.md`.
