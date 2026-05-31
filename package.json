@@ -23,7 +23,7 @@
     "squad:bridge": "bash .agile-squad/proxy.sh squad:bridge",
     "squad:inbox": "bash .agile-squad/proxy.sh hive:inbox",
     "squad:next": "bash .agile-squad/proxy.sh squad:next",
-    "// --- AGENT SESSIONS & ROLES ---": "",
+    "// --- AGENT SESSIONS & ROLES (New PO Commands: po:hive / po:produto) ---": "",
     "gemini:po:hive": "bash .agile-squad/proxy.sh gemini:po:hive",
     "gemini:po:produto": "bash .agile-squad/proxy.sh gemini:po:produto",
     "gemini:projetista": "bash .agile-squad/proxy.sh gemini:projetista",
