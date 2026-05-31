@@ -15,11 +15,12 @@ const sessionStateFile = path.join(projectPath, '.hive-agent/session-state.env')
 const MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
 const inboxFiles = {
   claude: path.join(inboxDir, 'inbox-claude.md'),
-  copilot: path.join(inboxDir, 'inbox-copilot.md'),
   'copilot-hive': path.join(inboxDir, 'inbox-copilot-hive.md'),
   'copilot-tos': path.join(inboxDir, 'inbox-copilot-tos.md'),
   gemini: path.join(inboxDir, 'inbox-gemini.md'),
 };
+
+const legacyCopilotPath = path.join(inboxDir, 'inbox-copilot.md');
 
 const structuralRules = [
   {
@@ -160,7 +161,7 @@ function readSessionState() {
 function resolveCopilotAlias() {
   const hasHiveInbox = fs.existsSync(inboxFiles['copilot-hive']);
   const hasTosInbox = fs.existsSync(inboxFiles['copilot-tos']);
-  const hasLegacyInbox = fs.existsSync(inboxFiles.copilot);
+  const hasLegacyInbox = fs.existsSync(legacyCopilotPath);
 
   const sessionState = readSessionState();
   const configuredTarget = sessionState.COPILOT_ACTIVE_INBOX;
