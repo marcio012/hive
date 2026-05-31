@@ -37,7 +37,7 @@ Contrato completo na WO.
 **De:** Orchestrator → Copilot-Hive
 **Data:** 2026-05-31
 **tipo:** handoff-executavel
-**Status:** pendente
+**Status:** consumido ✅ — 2026-05-31. Entrada de teste já refletida no Balcão Central como concluída (`TEST-PULL-20260531-002-copilot-hive`).
 **source_entry:** TEST-PULL-20260531-002
 **source_agent:** gemini
 
