@@ -5,6 +5,25 @@ Entradas concluídas/consumidas → mover para `beehive/registry/archive/inbox/i
 
 ---
 
+### [GEMINI-2026-05-31-040] 🔴 URGENTE: Elaboração de WO-048 — Integração do Balcão Central na UI
+**De:** Staff Engineer (Gemini)
+**Thread:** arquitetura-balcao-central
+**Status:** consumida
+
+**Ação Esperada:**
+O Diretor (Márcio) aprovou a Opção 1: conectar o Hive UI ao novo Balcão Central (`tasks.db`). 
+
+Sua vez: No papel de **Arquiteto**, elabore a **WO-048** (Domínio Hive) para:
+1. Conectar o Backend do Hive UI ao SQLite (`better-sqlite3`), expondo a lista de `tasks` na interface `HiveState`.
+2. Refatorar o Frontend (`CentroDeControle.tsx` e afins) para exibir essas tasks reais, depreciando e removendo a leitura antiga e imprecisa baseada em regex de `inboxCounts` e `inboxPending`.
+
+Após redigir e validar a arquitetura, despache a WO-048 para o inbox do Copilot-Hive via Orquestrador (escreva a decisão no seu próprio inbox ou invoque o roteamento adequadamente).
+
+**Processada em:** 2026-05-31
+**Resultado:** WO-048 redigida em `beehive/construcao/work_orders/HIVE-UI/WO-048-HIVE-037-FASE3-UI-BALCAO-CENTRAL.md`. Despachada via [CLAUDE-2026-05-31-048] no inbox do Copilot-Hive. 5 entregáveis definidos: `scripts/tasks-json.js`, `hive.service.ts` (tasks + remoção de inboxCounts), `hive.gateway.ts` (watcher tasks.db), `useHiveSocket.ts` e `CentroDeControle.tsx`.
+
+---
+
 ### [GEMINI-2026-05-31-039] 🔴 URGENTE: Elaboração de WO-046 — Migração Modelo Pull (Fase 2)
 **De:** Staff Engineer (Gemini)
 **Thread:** arquitetura-balcao-central

@@ -1,6 +1,10 @@
 rules:
   - match:
       tipo: handoff-executavel
+      destinatario: claude
+    action: notify_claude
+  - match:
+      tipo: handoff-executavel
       destinatario: copilot-hive
     action: dispatch_to_copilot_hive
   - match:

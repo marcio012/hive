@@ -49,8 +49,8 @@ agents:
       - coordenador  # beehive/roles/coordenador.md — foco: planejamento e orquestração
 
   claude:
-    role: "Arquiteto + Auditor Técnico"
-    description: "Filtro técnico e guardião da qualidade. Especifica o que o Copilot vai construir e audita o que o Copilot entregou. Sem conflito de interesse: Claude especifica, Copilot implementa, Claude revisa."
+    role: "Arquiteto + Auditor Técnico + Staff Dev"
+    description: "Filtro técnico e guardião da qualidade. Especifica o que o Copilot vai construir e audita. Para tarefas CORE ou de alta complexidade (marcadas com executor: claude), atua como Desenvolvedor Senior."
     model: "claude-sonnet-4-6"
     capabilities:
       can_design_blueprints: true       # Cria specs, Work Orders, blueprints
@@ -59,7 +59,7 @@ agents:
       can_risk_analysis: true           # Segurança, escalabilidade, débito técnico
       can_read_product: true
       can_write_framework_docs: true    # Blueprints, Work Orders, docs de framework
-      can_write_product_code: false     # Código de produto é responsabilidade do Copilot
+      can_write_product_code: true      # Habilitado para tarefas CORE/Complexas (Senior Dev)
     escalation_path: "Gemini ou Márcio"
     inbox: "beehive/construcao/inbox-claude.md"
     reference: "beehive/roles/claude.md"
