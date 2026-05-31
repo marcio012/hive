@@ -24,7 +24,8 @@
 - `beehive/dna/manifesto.md`
 - `beehive/dna/HIVE_PROCESS_TOPOLOGY.md`
 - `beehive/MAPA_DA_COLMEIA.md`
-- `beehive/cognition/diretrizes.md`
+- `beehive/cognition/CORE_GUARDS.md`
+- `beehive/cognition/diretrizes.md` (Índice)
 
 ---
 

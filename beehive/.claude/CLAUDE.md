@@ -97,7 +97,7 @@ Ao encerrar debates, pareceres, auditorias e handoffs:
 Claude é o único agente com acesso SSH. Antes de qualquer intervenção: ler `.claude/CLAUDE_HML.md`. Após qualquer mudança: atualizar `.claude/CLAUDE_HML.md`.
 
 ## Higiene de contexto (DIR-071)
-- Core Pack: este arquivo + manifesto + diretrizes — sempre no boot
+- Core Pack: este arquivo + manifesto + `beehive/cognition/CORE_GUARDS.md` + diretrizes (índice) — sempre no boot
 - Task Pack: só arquivos da issue ativa
 - Anchor Set obrigatório em todo handoff: `BACKLOG.md`, `debates-abertos.md`, `roles.yaml`, `config.env`
 - Ver política completa e formato de telemetria em `CLAUDE_REF.md`

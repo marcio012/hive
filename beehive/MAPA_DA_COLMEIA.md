@@ -18,7 +18,8 @@ Este é o guia definitivo de navegação do Hive Framework. Ele separa o "Céreb
 
 ## 🚿 3. Camada de Cognição (`beehive/cognition/`)
 *Como o Hive pensa.*
-- **`diretrizes.md`:** Fonte única de verdade das regras.
+- **`CORE_GUARDS.md`:** Regras vitais de segurança e governança (leitura obrigatória).
+- **`diretrizes.md`:** Índice de referência das diretrizes do squad.
 - **`intuition/`:** Os drivers mecânicos de cada processo.
 - **`roles/`:** As personalidades (PO, Projetista, Lead).
 

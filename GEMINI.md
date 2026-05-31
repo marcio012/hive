@@ -15,7 +15,8 @@ Se o usuário invocar o modo Neutral, ignore os protocolos acima e as diretrizes
 ## 🧩 REFERÊNCIAS MESTRAS
 Para mais detalhes sobre papéis e processos, consulte:
 - `beehive/.gemini/GEMINI.md` (Instruções detalhadas de modos)
-- `beehive/cognition/diretrizes.md` (Regras de Ouro)
+- `beehive/cognition/CORE_GUARDS.md` (Regras Vitais)
+- `beehive/cognition/diretrizes.md` (Índice de Governança)
 
 ## 🔐 PROTOCOLO DE SIGILO (ESTRATÉGICO)
 - O diretório `beehive/cognition/ideario_hive/` é estritamente privado.

@@ -7,10 +7,10 @@ Copilot = **Engenheiro de Software / Executor**. Debate e escopo chegam prontos 
 
 ## 🔒 Lock de Commit em Arquivos de Governança (regra inviolável)
 
-Antes de commitar qualquer arquivo abaixo, **parar e escalar para Claude** via `inbox-claude.md`:
+Before commiting any file below, **parar e escalar para Claude** via `inbox-claude.md`:
 ```
 AGENTS.md · GEMINI.md · beehive/.gemini/GEMINI.md · beehive/.claude/CLAUDE.md
-beehive/.copilot/COPILOT.md · beehive/cognition/diretrizes.md
+beehive/.copilot/COPILOT.md · beehive/cognition/diretrizes.md · beehive/cognition/CORE_GUARDS.md
 beehive/cognition/OPERACAO_COMPARTILHADA_HIVE.md · beehive/roles/*.md · beehive/bin/*.sh
 ```
 Aguardar parecer explícito do Claude antes de commitar.
@@ -67,7 +67,7 @@ Ver template e tabela de triggers em `COPILOT_REF.md`.
 Quando Márcio digitar `opiniao: <DEBATE-NNN>`: ler debate, responder só às questões do Copilot, posição clara ✅/❌/⚠️. Ver formato completo em `COPILOT_REF.md`.
 
 ## Higiene de contexto (DIR-071)
-- Core Pack: este arquivo — sempre no boot
+- Core Pack: este arquivo + `beehive/cognition/CORE_GUARDS.md` — sempre no boot
 - Task Pack: só arquivos da issue ativa
 - Respeitar blocos `[LER AGORA]` e `[NÃO LER]` nos handoffs
 - Ver Anchor Set e protocolo de telemetria em `COPILOT_REF.md`

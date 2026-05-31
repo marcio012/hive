@@ -19,7 +19,7 @@
   1. `npm run squad:session:copilot`
   2. `.hive-agent/session-state.env`
   3. `npm run squad:inbox -- copilot` or the active inbox file
-- Read stable references (`AGENTS.md`, `COPILOT.md`, `beehive/.copilot/COPILOT.md`, `beehive/roles/roles.yaml`, `beehive/cognition/diretrizes.md`) only on cold start, governance change, or when the handoff/NEXT_STEP points there.
+- Read stable references (`AGENTS.md`, `COPILOT.md`, `beehive/.copilot/COPILOT.md`, `beehive/roles/roles.yaml`, `beehive/cognition/CORE_GUARDS.md`, `beehive/cognition/diretrizes.md`) only on cold start, governance change, or when the handoff/NEXT_STEP points there.
 
 ## Operating rules
 
