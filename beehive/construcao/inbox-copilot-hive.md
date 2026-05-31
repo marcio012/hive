@@ -15,67 +15,13 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
-### [CLAUDE-2026-05-31-056] Go — WO-051: SquadModule Backend (GET/PUT /api/squad)
-**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
-**Data:** 2026-05-31
-**tipo:** handoff-executavel
-**prioridade:** alta
-**Status:** consumida
-**thread:** gestao-squad
-**debate_ref:** DEBATE-040
-**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-051-HIVE-040-SQUAD-MODULE-BACKEND.md
-
-DEBATE-040 aprovado. Criar `beehive/squad.json` (seed com 4 membros), `SquadModule` NestJS
-com `GET/PUT /api/squad`, migrar `defaultRole` hardcoded de `governance.repository.ts`.
-Contrato completo na WO. Executar antes da WO-052.
-
----
-
-### [CLAUDE-2026-05-31-057] Go — WO-052: Squad Modal Frontend (botão + CRUD)
-**De:** Claude (Arquiteto) → Copilot-Hive (Executor)
-**Data:** 2026-05-31
-**tipo:** handoff-executavel
-**prioridade:** alta
-**Status:** consumida
-**thread:** gestao-squad
-**debate_ref:** DEBATE-040
-**wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-052-HIVE-040-SQUAD-MODAL-FRONTEND.md
-**depends_on:** WO-051
-
-Botão "Equipe" na view Controles + `SquadModal.tsx` no padrão `dispatch-modal` +
-hidratação de `MapaFabrica.tsx` com dados da API. Executar após WO-051 commitada.
-
----
-
-### [CLAUDE-2026-05-31-055] ⚡ URGENTE — Parecer DEBATE-040: Gestão de Squad / CRUD de Papéis
-**De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
-**Data:** 2026-05-31
-**tipo:** solicitacao-parecer
-**prioridade:** urgente
-**Status:** consumida
-**thread:** gestao-squad
-**debate_ref:** beehive/construcao/debates/DEBATE-040-SQUAD-CRUD-GESTAO-DE-PAPEIS.md
-
-**Contexto**
-Proposta: botão "Equipe" no Centro de Controle V3 abrindo modal CRUD de membros do squad.
-Claude propõe `squad.json` como SSoT (NestJS lê/escreve), separado do `roles.yaml` de governança.
-`MapaFabrica.tsx` e `governance.repository.ts` têm papéis hardcoded que precisam ser migrados.
-
-**Questões para o Copilot (Engenheiro)**
-1. Complexidade de implementar `GET/PUT /api/squad` no NestJS + leitura/escrita de `squad.json`?
-2. O modal seguindo o padrão `dispatch-modal` é viável sem refatoração maior?
-3. Migrar `agents[]` hardcoded do `MapaFabrica.tsx` para a API quebra algo no build atual?
-
-**Ação esperada**
-Emitir parecer na seção 5 do DEBATE-040. Márcio classificou como **urgente**.
-
 ---
 
 ### [CLAUDE-2026-05-31-053] Go — WO-047: Stress Test Balcão Central
 **De:** Claude (Arquiteto) → Copilot-Hive (Executor)
 **Data:** 2026-05-31
 **tipo:** handoff-executavel
-**Status:** pendente
+**Status:** consumido ✅ — 2026-05-31. WO-047 já concluída no artefato com stress test e validação de idempotência.
 **thread:** arquitetura-balcao-central
 **backlog_ref:** HIVE-037
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-047-HIVE-037-STRESS-TEST.md
@@ -90,11 +36,13 @@ Critérios completos e script esperado na WO.
 
 ---
 
+---
+
 ### [CLAUDE-2026-05-31-052] Aprovação WO-050 — Broker fix do Balcão Central
 **De:** Claude (Arquiteto) → Copilot-Hive
 **Data:** 2026-05-31
 **tipo:** aviso
-**Status:** pendente
+**Status:** consumido ✅ — 2026-05-31. Aprovação registrada; fase 3 do Broker encerrada.
 **thread:** arquitetura-balcao-central
 **wo_ref:** beehive/construcao/work_orders/HIVE-UI/WO-050-HIVE-037-FASE3-BROKER-FIX.md
 
@@ -104,6 +52,8 @@ Todos os 4 critérios da WO-050 atendidos com precisão:
 router.resolve → dispatcher.dispatch), `scheduleProcess()` removido, `readTextFile()`
 removido, `chokidar` fora das dependências diretas. Build e check:types limpos.
 HIVE-037 Fase 3 encerrada. O Orchestrator Broker está funcional.
+
+---
 
 ---
 
@@ -127,6 +77,8 @@ Contrato completo e código final na WO.
 
 ---
 
+---
+
 ### [CLAUDE-2026-05-31-049] WO-049 — Fix normalizeAgentName: source 'marcio' não reconhecido
 **De:** Claude (Arquiteto) → Copilot-Hive
 **Data:** 2026-05-31
@@ -140,6 +92,8 @@ recebem `source: 'claude'` e a regra 8 do routing nunca dispara.
 Fix: adicionar `if (normalized.includes('marcio')) return 'marcio';` antes do `return null`.
 Verificar cobertura dos 6 AgentNames. Teste manual com entrada em inbox-marcio.md.
 Contrato completo na WO.
+
+---
 
 ---
 
@@ -161,6 +115,8 @@ Este é um teste real para o loop de Pull via Inbox Gemini.
 
 ---
 
+---
+
 ### [CLAUDE-2026-05-30-003] Go — WO-040 HIVE-025-A: Backlog API Backend
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-30
@@ -175,6 +131,8 @@ Implementar `readBacklogItems()` + injeção em `inferPhase()` + chokidar watch.
 Itens `[ ]` do BACKLOG.md (sem match em pipeline/debates) → `station: marcio`, `lane: captura`.
 Filtrar `DT-*` e itens `[x]`. Deduplicar por id normalizado.
 Frontend (WO-041) fica com o Gemini — aguarda seu commit antes de executar.
+
+---
 
 ---
 
@@ -207,6 +165,8 @@ Nota: commit `16e1ecc` adicionou esteira parcial no MapaFabrica — esta WO adic
 
 ---
 
+---
+
 ### [CLAUDE-2026-05-30-002] WO-042 despachada — Auth Backend
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-30
@@ -218,11 +178,13 @@ Nota: commit `16e1ecc` adicionou esteira parcial no MapaFabrica — esta WO adic
 
 WO-042 aprovada por Márcio. Implementar `AuthModule` no NestJS: credenciais em env vars (HIVE_USER + HIVE_PASS_HASH), JWT em HttpOnly cookie (`hive_session`), `JwtAuthGuard` global, endpoints POST `/api/auth/login`, POST `/api/auth/logout`, GET `/api/auth/session`. Gateway WebSocket marcar com `@Public()`. CORS com `credentials: true`. Ver contrato completo na WO.
 
+---
+
 ### [CLAUDE-2026-05-31-041] Parecer DEBATE-039 — Componentização do Hive UI
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-31
 **tipo:** solicitacao-parecer
-**Status:** pendente
+**Status:** consumido ✅ — 2026-05-31. Parecer Copilot registrado no DEBATE-039.
 **thread:** arquitetura-hive-ui
 **debate_ref:** beehive/construcao/debates/DEBATE-039-COMPONENTIZACAO-HIVE-UI.md
 
