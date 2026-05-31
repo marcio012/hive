@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# hive/bin/hive-gate.sh
+
+# ==============================================================================
+# SCRIPT: hive-gate.sh
+# FINALIDADE: Validador de conformidade da Colmeia (The Gate).
+# CONTEXTO: Governança de entrega - valida commits e evidências.
+# ==============================================================================
+
 # Validador de conformidade da Colmeia (The Gate)
 
 set -euo pipefail
@@ -47,5 +53,6 @@ else
   echo -e "${YELLOW}WARN${NC} (Verifique se há impacto documental)"
 fi
 
-echo -e "\n${GREEN}Portão aberto. A tarefa está qualificada para o OK do Márcio.${NC}"
+echo -e "
+${GREEN}Portão aberto. A tarefa está qualificada para o OK do Márcio.${NC}"
 echo "===================================="

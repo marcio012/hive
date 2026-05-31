@@ -31,5 +31,19 @@ Este arquivo é um índice de referência. Para regras de execução obrigatóri
 | DIR-092 | Márcio como Agente Ativo | `DIRETRIZES_ATIVAS.md` |
 | **DIR-093** | **Dual-Layer Vision** | `CORE_GUARDS.md` |
 
+
+## 🏗️ Normas de Implementação
+
+### Documentação de Scripts Shell (.sh)
+Todos os scripts localizados em `beehive/bin/` devem conter um cabeçalho de documentação padrão logo após o shebang (`#!/usr/bin/env bash`):
+
+```bash
+# ==============================================================================
+# SCRIPT: <FILENAME>
+# FINALIDADE: <Descrição concisa do propósito do script>
+# CONTEXTO: <Referência a WO, Debate ou contexto sistêmico>
+# ==============================================================================
+```
+
 ---
 **Instrução para IAs:** Não carregue o arquivo de histórico completo (`DIRETRIZES_ATIVAS.md`) a menos que precise consultar o texto detalhado de uma regra específica via `read_file`. Priorize sempre o `CORE_GUARDS.md`.

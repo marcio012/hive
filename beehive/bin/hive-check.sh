@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# beehive/bin/hive-check.sh
+
+# ==============================================================================
+# SCRIPT: hive-check.sh
+# FINALIDADE: Ferramenta de integridade e governança do sistema.
+# CONTEXTO: Hive Sentinel / DIR-035 (Alinhamento de diretrizes e saúde).
+# ==============================================================================
+
 # HIVE SENTINEL - Ferramenta de Integridade e Governança
 
 set -euo pipefail

@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-# beehive/bin/gemini-neutral-init.sh
+# ==============================================================================
+# SCRIPT: gemini-neutral-init.sh
+# FINALIDADE: Inicialização limpa para o papel de Conselheiro Neutro.
+# CONTEXTO: Ideário Hive - foca em estratégia pura ignorando o maquinário da fábrica.
+# ==============================================================================
+
 # Objetivo: Inicialização limpa para o papel de Conselheiro Neutro.
 # Este script ignora propositalmente o maquinário da fábrica para focar em estratégia pura.
 

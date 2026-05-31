@@ -36,6 +36,9 @@ function normalizeAgentName(value: string | undefined): AgentName | null {
   if (normalized.includes('gemini')) {
     return 'gemini';
   }
+  if (normalized.includes('marcio')) {
+    return 'marcio';
+  }
 
   return null;
 }
