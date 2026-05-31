@@ -164,8 +164,15 @@ function resolveCopilotAlias() {
 
   const sessionState = readSessionState();
   const configuredTarget = sessionState.COPILOT_ACTIVE_INBOX;
-  if (configuredTarget && inboxFiles[configuredTarget] && fs.existsSync(inboxFiles[configuredTarget])) {
+  if (configuredTarget && inboxFiles[configuredTarget]) {
     return configuredTarget;
+  }
+
+  if (sessionState.COPILOT_ACTIVE_DOMAIN === 'hive') {
+    return 'copilot-hive';
+  }
+  if (sessionState.COPILOT_ACTIVE_DOMAIN === 'product' || sessionState.COPILOT_ACTIVE_DOMAIN === 'tos') {
+    return 'copilot-tos';
   }
 
   if (hasHiveInbox && !hasTosInbox) {

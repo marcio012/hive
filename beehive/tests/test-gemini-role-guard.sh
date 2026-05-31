@@ -159,6 +159,26 @@ assert_success run_session_start copilot
 assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_AGENT="copilot"'
 assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_PROJECT="workspace"'
 
+assert_success run_session_start copilot --role copilot-hive
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_ROLE="copilot-hive"'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'COPILOT_ACTIVE_INBOX="copilot-hive"'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'COPILOT_ACTIVE_DOMAIN="hive"'
+
+INBOX_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" bash "$HIVE_HOME/beehive/bin/hive-inbox.sh" copilot
+)"
+assert_output_contains "$INBOX_OUTPUT" "Agente: copilot-hive"
+assert_output_contains "$INBOX_OUTPUT" "Inbox não materializado"
+assert_output_not_contains "$INBOX_OUTPUT" "Alvo de inbox inválido"
+
+ARCHIVE_OUTPUT="$(
+  cd "$HIVE_HOME" && \
+  PROJECT_PATH="$TEST_REPO" node "$HIVE_HOME/scripts/inbox-archive.js" copilot
+)"
+assert_output_contains "$ARCHIVE_OUTPUT" "inbox-copilot-hive.md"
+assert_output_not_contains "$ARCHIVE_OUTPUT" "Alvo de inbox inválido"
+
 mkdir -p "$TEST_REPO/beehive/construcao/debates"
 cat > "$TEST_REPO/beehive/construcao/inbox-copilot-hive.md" <<'EOF'
 ### [CLAUDE-2026-05-29-064] Commit liberado — WO-025-A prevenção de inbox

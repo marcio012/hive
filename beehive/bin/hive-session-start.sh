@@ -46,46 +46,57 @@ GEMINI_SESSION_STARTED_AT="$(date '+%Y-%m-%dT%H:%M:%SZ')"
 EOF
 }
 
-resolve_copilot_inbox() {
+resolve_copilot_binding() {
   local legacy_inbox="$PROJECT_PATH/beehive/construcao/inbox-copilot.md"
   local hive_inbox="$PROJECT_PATH/beehive/construcao/inbox-copilot-hive.md"
   local tos_inbox="$PROJECT_PATH/beehive/construcao/inbox-copilot-tos.md"
   local project_name
 
+  case "$ROLE_NAME" in
+    copilot-hive)
+      printf '%s' "copilot-hive|hive"
+      return
+      ;;
+    copilot-tos)
+      printf '%s' "copilot-tos|product"
+      return
+      ;;
+  esac
+
   if [[ -f "$hive_inbox" && ! -f "$tos_inbox" ]]; then
-    printf '%s' "copilot-hive"
+    printf '%s' "copilot-hive|hive"
     return
   fi
   if [[ -f "$tos_inbox" && ! -f "$hive_inbox" ]]; then
-    printf '%s' "copilot-tos"
+    printf '%s' "copilot-tos|product"
     return
   fi
 
   project_name="$(basename "$PROJECT_PATH" | tr '[:upper:]' '[:lower:]')"
   if [[ "$project_name" == "hive" && -f "$hive_inbox" ]]; then
-    printf '%s' "copilot-hive"
+    printf '%s' "copilot-hive|hive"
     return
   fi
   if [[ "$project_name" == "tenantos" && -f "$tos_inbox" ]]; then
-    printf '%s' "copilot-tos"
+    printf '%s' "copilot-tos|product"
     return
   fi
   if [[ -f "$hive_inbox" ]]; then
-    printf '%s' "copilot-hive"
+    printf '%s' "copilot-hive|hive"
     return
   fi
   if [[ -f "$tos_inbox" ]]; then
-    printf '%s' "copilot-tos"
+    printf '%s' "copilot-tos|product"
     return
   fi
   if [[ -f "$legacy_inbox" ]]; then
-    printf '%s' "copilot"
+    printf '%s' "copilot|"
     return
   fi
 }
 
 refresh_session_state() {
-  local started_at session_date project_name active_role active_mode copilot_inbox copilot_domain
+  local started_at session_date project_name active_role active_mode copilot_binding copilot_inbox copilot_domain
   local temp_file
 
   started_at="$(date '+%Y-%m-%dT%H:%M:%SZ')"
@@ -103,10 +114,8 @@ refresh_session_state() {
   fi
 
   if [[ "$AGENT_NAME" == "copilot" ]]; then
-    copilot_inbox="$(resolve_copilot_inbox || true)"
-    if [[ -n "$copilot_inbox" ]]; then
-      copilot_domain="${copilot_inbox#copilot-}"
-    fi
+    copilot_binding="$(resolve_copilot_binding || true)"
+    IFS='|' read -r copilot_inbox copilot_domain <<< "$copilot_binding"
   fi
 
   temp_file="$(mktemp)"

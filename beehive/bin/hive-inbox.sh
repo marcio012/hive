@@ -28,23 +28,48 @@ extract_pending_inbox_entries() {
   node "$PENDING_SCRIPT" "$file"
 }
 
+read_session_state_value() {
+  local key="$1"
+
+  if [[ ! -f "$SESSION_STATE_FILE" ]]; then
+    return
+  fi
+
+  grep -E "^${key}=" "$SESSION_STATE_FILE" | head -1 | cut -d'"' -f2 || true
+}
+
+map_copilot_domain_to_target() {
+  local domain="$1"
+
+  case "$domain" in
+    hive)
+      printf '%s' "copilot-hive"
+      ;;
+    product|tos)
+      printf '%s' "copilot-tos"
+      ;;
+  esac
+}
+
 resolve_copilot_target() {
   local legacy_inbox="$INBOX_DIR/inbox-copilot.md"
   local hive_inbox="$INBOX_DIR/inbox-copilot-hive.md"
   local tos_inbox="$INBOX_DIR/inbox-copilot-tos.md"
   local configured_target=""
+  local configured_domain=""
   local project_name
 
-  if [[ -f "$SESSION_STATE_FILE" ]]; then
-    configured_target="$(grep -E '^COPILOT_ACTIVE_INBOX=' "$SESSION_STATE_FILE" | head -1 | cut -d'"' -f2 || true)"
-    if [[ "$configured_target" == "copilot-hive" && -f "$hive_inbox" ]]; then
-      printf '%s' "$configured_target"
-      return
-    fi
-    if [[ "$configured_target" == "copilot-tos" && -f "$tos_inbox" ]]; then
-      printf '%s' "$configured_target"
-      return
-    fi
+  configured_target="$(read_session_state_value "COPILOT_ACTIVE_INBOX")"
+  if [[ "$configured_target" == "copilot-hive" || "$configured_target" == "copilot-tos" || "$configured_target" == "copilot" ]]; then
+    printf '%s' "$configured_target"
+    return
+  fi
+
+  configured_domain="$(read_session_state_value "COPILOT_ACTIVE_DOMAIN")"
+  configured_target="$(map_copilot_domain_to_target "$configured_domain")"
+  if [[ -n "$configured_target" ]]; then
+    printf '%s' "$configured_target"
+    return
   fi
 
   if [[ -f "$hive_inbox" && ! -f "$tos_inbox" ]]; then
@@ -198,24 +223,33 @@ shopt -s nullglob
 FILES=("$INBOX_DIR"/inbox-*.md)
 shopt -u nullglob
 
-if (( ${#FILES[@]} == 0 )); then
+if [[ -z "$TARGET_AGENT" ]] && (( ${#FILES[@]} == 0 )); then
   echo -e "${RED}Nenhum arquivo de inbox encontrado em $INBOX_DIR${NC}"
   exit 1
 fi
 
 TOTAL_PENDING=0
 
-for FILE in "${FILES[@]}"; do
-  AGENT="$(basename "$FILE" | sed 's/inbox-\(.*\)\.md/\1/')"
+TARGET_FILES=("${FILES[@]}")
+if [[ -n "$TARGET_AGENT" ]]; then
+  TARGET_FILES=("$INBOX_DIR/inbox-$TARGET_AGENT.md")
+fi
 
-  if [[ -n "$TARGET_AGENT" && "$AGENT" != "$TARGET_AGENT" ]]; then
-    continue
-  fi
+for FILE in "${TARGET_FILES[@]}"; do
+  AGENT="$(basename "$FILE" | sed 's/inbox-\(.*\)\.md/\1/')"
 
   echo -e "\n${BLUE}Agente: ${AGENT}${NC}"
 
-  PENDING_TASKS="$(extract_pending_inbox_entries "$FILE")"
+  PENDING_TASKS=""
+  if [[ -f "$FILE" ]]; then
+    PENDING_TASKS="$(extract_pending_inbox_entries "$FILE")"
+  fi
   DEBATE_ALERTS=""
+  INBOX_NOTE=""
+
+  if [[ ! -f "$FILE" ]]; then
+    INBOX_NOTE="  ${YELLOW}(Inbox não materializado; fallback por arquivo permanece opcional nesta sessão)${NC}"
+  fi
 
   shopt -s nullglob
   for debate_file in "$DEBATES_DIR"/DEBATE-*.md; do
@@ -240,6 +274,10 @@ for FILE in "${FILES[@]}"; do
     echo "$PENDING_TASKS"
     COUNT=$(printf '%s\n' "$PENDING_TASKS" | grep -c "^  \[" || true)
     TOTAL_PENDING=$((TOTAL_PENDING + COUNT))
+  fi
+
+  if [[ -n "$INBOX_NOTE" ]]; then
+    echo -e "$INBOX_NOTE"
   fi
 
   if [[ -n "$DEBATE_ALERTS" ]]; then
