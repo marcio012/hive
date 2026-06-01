@@ -78,6 +78,12 @@ Ação esperada: [o que Márcio deve fazer]
 - `inbox` no chat → ler inbox imediatamente
 - Terminal: `npm run squad:inbox`
 - Guard: rodar `npm run squad:session:claude` antes de executar trabalho
+- **Threshold:** ao atingir 55% do contexto, avisar Márcio com:
+  ```
+  ⚠️ Contexto em [X]% — recomendo fechar esta sessão após o próximo commit.
+  Próximo passo sugerido: [item]
+  ```
+- **Compactação de inbox:** entradas `status: consumida` com mais de 7 dias não devem ser carregadas no contexto — apenas contar e informar o total.
 
 ## Política de Commits (DIR-006)
 - Conventional Commits obrigatórios
@@ -99,5 +105,8 @@ Claude é o único agente com acesso SSH. Antes de qualquer intervenção: ler `
 ## Higiene de contexto (DIR-071)
 - Core Pack: este arquivo + manifesto + `beehive/cognition/CORE_GUARDS.md` + diretrizes (índice) — sempre no boot
 - Task Pack: só arquivos da issue ativa
-- Anchor Set obrigatório em todo handoff: `BACKLOG.md`, `debates-abertos.md`, `roles.yaml`, `config.env`
+- Anchor Set obrigatório em todo Task Pack / handoff — ler com limite:
+  - `BACKLOG.md` → `head -n 80` (itens ativos ficam no topo)
+  - `debates-abertos.md` → `head -n 60`
+  - `roles.yaml` e `config.env` → leitura completa (arquivos estáveis)
 - Ver política completa e formato de telemetria em `CLAUDE_REF.md`

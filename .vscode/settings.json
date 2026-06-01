@@ -4,5 +4,10 @@
   "auto-close-tag.enableAutoCloseTag": false,
   "editor.fontSize": 18,
   "editor.fontFamily": "Fira Code, Consolas, 'Courier New', monospace",
-  "editor.lineHeight": 1.6
+  "editor.lineHeight": 1.6,
+  "files.insertFinalNewline": true,
+  "[markdown]": {
+    "editor.wordWrap": "off",
+    "editor.formatOnSave": false
+  }
 }
