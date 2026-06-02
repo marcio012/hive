@@ -92,6 +92,14 @@ assert_file_exists() {
   fi
 }
 
+assert_file_not_exists() {
+  local file="$1"
+  if [[ -f "$file" ]]; then
+    echo "Assertion failed: expected file to be absent: $file"
+    exit 1
+  fi
+}
+
 assert_file_not_contains() {
   local file="$1"
   local unexpected="$2"
@@ -125,15 +133,44 @@ assert_jq_equals() {
 }
 
 LOCK_FILE="$TEST_REPO/.hive-agent/gemini-session.lock"
+ROLE_CONTEXT_FILE="$TEST_REPO/.hive-agent/active-role-context.md"
 
-assert_success run_session_start gemini --role coordenador
-assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="coordenador"'
+assert_success run_session_start gemini
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE=""'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_ROLE=""'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_MODE=""'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_ROLE_CONTEXT_FILE=""'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_ROLE_SOURCE_FILE=""'
+assert_file_not_exists "$ROLE_CONTEXT_FILE"
 
-assert_success run_session_start gemini --role coordenador
-assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="coordenador"'
+assert_success run_session_start gemini
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE=""'
+
+assert_failure_contains "Troca de cartucho detectada" run_session_start gemini --role arquiteto
+
+assert_success run_session_end gemini
+if [[ -f "$LOCK_FILE" ]]; then
+  echo "Assertion failed: lock file should be removed after neutral session-end"
+  exit 1
+fi
+
+assert_success run_session_start gemini --role arquiteto
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="arquiteto"'
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_MODE="decisivo"'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_ROLE="arquiteto"'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_MODE="decisivo"'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_ROLE_SOURCE_FILE="beehive/roles/arquiteto.md"'
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_ROLE_CONTEXT_FILE=".hive-agent/active-role-context.md"'
+assert_file_exists "$ROLE_CONTEXT_FILE"
+assert_file_contains "$ROLE_CONTEXT_FILE" 'modo: "decisivo"'
+assert_file_contains "$ROLE_CONTEXT_FILE" 'papel: "arquiteto"'
+
+assert_success run_session_start gemini --role arquiteto
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="arquiteto"'
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_MODE="decisivo"'
 
 assert_failure_contains "Troca de cartucho detectada" run_session_start gemini --role po
-assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="coordenador"'
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="arquiteto"'
 
 assert_success run_session_end gemini
 if [[ -f "$LOCK_FILE" ]]; then
@@ -143,6 +180,8 @@ fi
 
 assert_success run_session_start gemini --role po
 assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="po"'
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_MODE=""'
+assert_file_contains "$ROLE_CONTEXT_FILE" 'papel: "po"'
 
 cat > "$LOCK_FILE" <<'EOF'
 GEMINI_ACTIVE_ROLE="projetista"
@@ -153,6 +192,18 @@ EOF
 
 assert_success run_session_start gemini --role projetista
 assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="projetista"'
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_MODE="exploratorio"'
+
+assert_success run_session_end gemini
+assert_file_not_exists "$ROLE_CONTEXT_FILE"
+
+assert_success run_session_start gemini --role dev --modo completo
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_ROLE="dev"'
+assert_file_contains "$LOCK_FILE" 'GEMINI_ACTIVE_MODE="completo"'
+assert_file_contains "$ROLE_CONTEXT_FILE" 'modo: "completo"'
+
+assert_success run_session_end gemini
+assert_failure_contains "Papéis disponíveis:" run_session_start gemini --role inexistente
 
 assert_success run_session_start claude
 assert_success run_session_start copilot

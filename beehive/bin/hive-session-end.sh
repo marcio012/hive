@@ -9,6 +9,7 @@ ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 HIVE_HOME="${HIVE_HOME:-$ROOT_DIR}"
 PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR}"
 SESSION_DIR="$PROJECT_PATH/.hive-agent"
+ROLE_CONTEXT_FILE="$SESSION_DIR/active-role-context.md"
 
 AGENT_NAME=${1:-""}
 
@@ -22,8 +23,10 @@ case "$AGENT_NAME" in
     LOCK_FILE="$SESSION_DIR/gemini-session.lock"
     if [[ -f "$LOCK_FILE" ]]; then
       rm -f "$LOCK_FILE"
+      rm -f "$ROLE_CONTEXT_FILE"
       echo "Sessão Gemini encerrada. Próximo cartucho liberado."
     else
+      rm -f "$ROLE_CONTEXT_FILE"
       echo "Nenhuma sessão Gemini ativa para encerrar."
     fi
     ;;

@@ -21,7 +21,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
 **Data:** 2026-06-01
 **tipo:** handoff-wo
-**Status:** pendente
+**Status:** executada — `CUSTO_PAPEIS_DINAMICOS.md` criado no padrão solicitado.
 **thread:** hive-029-custo-papeis
 **wo_ref:** beehive/construcao/work_orders/HIVE/WO-056-HIVE-029-CUSTO-PAPEIS-DINAMICOS.md
 
@@ -33,7 +33,7 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 **De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
 **Data:** 2026-06-01
 **tipo:** handoff-wo
-**Status:** pendente
+**Status:** executada — `hive-session-start.sh` atualizado com injeção de papel, `--modo`, Gemini neutro e testes ajustados.
 **thread:** hive-029-role-injection
 **wo_ref:** beehive/construcao/work_orders/HIVE/WO-055-HIVE-029-INJECAO-PAPEL-SESSION-SCRIPT.md
 
