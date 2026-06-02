@@ -4,7 +4,7 @@ titulo: HIVE-021 — Painel de Diretrizes e Governança na Hive UI
 backlog_ref: HIVE-021
 debate_ref: beehive/construcao/debates/DEBATE-032-PAINEL-DIRETRIZES-GOVERNANCA.md
 ideacao_ref: beehive/cognition/intuition/brainstorm/HIVE_UI_PAINEL_DIRETRIZES.md
-status: despachada
+status: concluída
 executor: Copilot
 auditor: Claude
 data: 2026-05-29

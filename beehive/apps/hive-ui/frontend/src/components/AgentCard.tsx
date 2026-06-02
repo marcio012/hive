@@ -2,7 +2,7 @@ import React from 'react';
 import { type AgentName, type HiveState } from '../hooks/useHiveSocket';
 
 type AgentCardProps = {
-  agentKey: AgentName | 'marcio';
+  agentKey: AgentName | 'diretor';
   name: string;
   role: string;
   model: string;
@@ -75,7 +75,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
               <circle cx="12" cy="12" r="10" /><path d="m16.2 7.8-2 2.1-2.2 2.2-2.1 2.1" /><path d="m7.8 7.8 2.1 2 2.2 2.2 2.1 2.1" />
             </svg>
           )}
-          {agentKey === 'marcio' && <span className="initial-m">{initial}</span>}
+          {agentKey === 'diretor' && <span className="initial-m">{initial}</span>}
         </div>
 
         <div className="agent-v2-meta">

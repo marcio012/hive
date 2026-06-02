@@ -31,7 +31,7 @@ ultima_revisao: 2026-05-24
 | **DEBATE-029** | **Gestão de Agenda (Módulo Serviços)** | **WOs criadas — aguarda Márcio** | **Gemini (PO)** |
 | **DEBATE-030** | **Telemetria E2: Interações por Tipo + Guard Lock** | **Veredito GO — aguarda Márcio** | **Claude** |
 | **DEBATE-031** | **Hive como Plataforma Containerizada com PostgreSQL** | **Em andamento** | **Claude** |
-| **DEBATE-032** | **Painel de Diretrizes e Governança (HIVE-UI-015)** | **Veredito GO — aguarda Márcio** | **Claude (Arquiteto)** |
+| DEBATE-032 | Painel de Diretrizes e Governança (HIVE-UI-015) | Encerrado — HIVE-021 ✅ commit 3e653c6 | Claude (Arquiteto) |
 | **DEBATE-033** | **Centro de Controle: Esteira Visual por Processo** | **Veredito GO (gate: protótipo) — aguarda Márcio** | **Claude (Arquiteto)** |
 | DEBATE-034 | Dois Copilotos: Hive vs. Produto | Concluido | Claude |
 | DEBATE-035 | Backlog API: Esteira Mapa Fábrica | Aberto | Gemini |
@@ -40,6 +40,9 @@ ultima_revisao: 2026-05-24
 | **DEBATE-038** | **Camada de API para o Broker — Orchestrator HTTP vs NestJS direto** | **Em andamento** | **Claude (Arquiteto)** |
 | **DEBATE-039** | **Componentização do Hive UI Frontend** | **Em andamento** | **Claude (Arquiteto)** |
 | **DEBATE-040** | **Gestão de Squad — CRUD de Papéis e Agentes no Hive UI** | **WOs despachadas** | **Claude (Arquiteto)** |
+| **DEBATE-041** | **Centro de Controle v3 — Tasks Concluídas + Limpeza via UI** | **Em andamento** | **Claude (Arquiteto)** |
+| **DEBATE-042** | **Endereçamento de Work Orders por Papel (executor_role / auditor_role)** | **Em andamento** | **Claude (Arquiteto)** |
+| **DEBATE-043** | **Dispatch de Agentes via Hive UI — V1 (somente Márcio)** | **Em andamento** | **Claude (Arquiteto)** |
 
 ---
 *Para detalhes, acesse `beehive/construcao/debates/DEBATE-NNN.md`*

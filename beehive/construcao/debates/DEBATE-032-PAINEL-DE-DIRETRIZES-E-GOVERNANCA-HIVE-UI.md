@@ -1,10 +1,11 @@
 ---
 id: DEBATE-032
 titulo: Painel de Diretrizes e Governança na Hive UI (HIVE-UI-015)
-status: aberto
+status: obsoleto
 thread: hive-ui-diretrizes-governança
 responsavel: Claude (Arquiteto)
 data_abertura: 2026-05-29
+nota: rascunho inicial — versão definitiva em DEBATE-032-PAINEL-DIRETRIZES-GOVERNANCA.md. Encerrado via commit 3e653c6.
 ---
 
 # DEBATE-032 — Painel de Diretrizes e Governança na Hive UI

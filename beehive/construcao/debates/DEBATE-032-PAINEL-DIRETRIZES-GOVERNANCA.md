@@ -1,7 +1,7 @@
 ---
 titulo: DEBATE-032 — Painel de Diretrizes e Governança (HIVE-UI-015)
 tipo: operacional / UI
-status: veredito-emitido
+status: encerrado
 data: 2026-05-29
 responsavel: Claude (Arquiteto)
 backlog_ref: HIVE-021
@@ -32,9 +32,9 @@ ideacao_ref: beehive/cognition/intuition/brainstorm/HIVE_UI_PAINEL_DIRETRIZES.md
 - [x] Parecer Claude
 - [x] Parecer Copilot
 - [x] Consolidação / Veredito
-- [ ] Aprovação Márcio
+- [x] Aprovação Márcio — 2026-05-29 (commit 3e653c6)
 - [x] Work Orders despachadas
-- [ ] Execução concluída
+- [x] Execução concluída — WO-034 implementada, commit 3e653c6
 
 ## 1. 🎯 Contexto
 
