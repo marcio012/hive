@@ -4,9 +4,12 @@
 > Para itens do TenantOS: `beehive/construcao/BACKLOG-TOS.md`
 
 ## 🔴 Alta prioridade
+- [ ] HIVE-029 — Papéis Dinâmicos + PO Dual: enforcement técnico do isolamento de papel por sessão (DIR-094) — **FREEZE ATIVO**
 - [ ] HIVE-026 — Login e Landing Page do Hive UI — WO-042 (backend) + WO-043 (frontend) despachadas
 
 ## 🟡 Média prioridade
+- [ ] HIVE-028 — Endereçamento de WOs por papel (executor_role / auditor_role) — DEBATE-042 aberto
+- [ ] HIVE-027 — Centro de Controle v3: caixa de tasks concluídas + limpeza via UI — DEBATE-041 aberto
 - [ ] HIVE-025 — Backlog API: alimentar esteira do Mapa da Fábrica com BACKLOG.md — DEBATE-035 aberto
 
 
@@ -25,8 +28,8 @@
 - [x] HIVE-016 — Telemetria E2: interações por tipo com tag no lock acquire (2026-05-29) — ✅ f52078f
 - [ ] HIVE-017 — Centro de Controle: componentização (WO-031) — WO-030 commitada (7d8aff9), aguarda execução da WO-031
 - [x] HIVE-018 — Centro de Controle V2 (2026-05-29) — ✅ 7d8aff9 (retroativo — WO-030)
-- [ ] HIVE-019 — Lock System: Márcio como agente ativo (DIR-092) — WO pendente
-- [ ] HIVE-020 — Dispatch de Agentes via UI (V1: somente Márcio) — debate pendente
+- [ ] HIVE-019 — Lock System: Márcio como agente ativo (DIR-092) — WO-053 despachada
+- [ ] HIVE-020 — Dispatch de Agentes via UI (V1: somente Márcio) — DEBATE-043 aberto
 - [x] HIVE-021 — Painel de Diretrizes e Governança na UI (2026-05-29) — ✅ 3e653c6
 - [x] HIVE-014 — Eficiência do Squad no Hive UI (Seção 03 Mapa + tela Telemetria) (2026-05-29) — ✅ bd782fa
 - [x] HIVE-022 — Centro de Controle: esteira visual por processo (pipeline Kanban) (2026-05-30) — ✅ aead0db

@@ -30,6 +30,7 @@ Este arquivo é um índice de referência. Para regras de execução obrigatóri
 | DIR-091 | Rigor de Cano | `CORE_GUARDS.md` |
 | DIR-092 | Márcio como Agente Ativo | `DIRETRIZES_ATIVAS.md` |
 | **DIR-093** | **Dual-Layer Vision** | `CORE_GUARDS.md` |
+| **DIR-094** | **Isolamento de Papel por Sessão** | `CORE_GUARDS.md` |
 
 
 ## 🏗️ Normas de Implementação

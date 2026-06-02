@@ -3,6 +3,7 @@
 Este arquivo rege a operação do Gemini CLI no repositório Hive.
 
 ## 🚀 PROTOCOLO DE INICIALIZAÇÃO
+Sempre inicie em portugues.
 Este protocolo aplica-se a todas as sessões do Gemini CLI, dentro desse projeto seja tudo 
 dentro do path desse projeto o /home/marcio/job/hive/ [GEMINI criar um varivel para configurar].
 <!-- Vamos criar um arquivo de configuracao para web -> [GEMINI] -->
@@ -25,11 +26,13 @@ Para mais detalhes sobre papéis e processos, consulte:
 
 ---
 *Assinado: Hive OS Kernel* -->
+## 🚨 CONGELAMENTO ESTRATÉGICO (FREEZE-2026-06-01)
+- **STATUS:** ATIVO.
+- **FOCO ÚNICO:** Papéis Dinâmicos + PO Dual — HIVE-029.
+- **RESTRIÇÃO:** Proibida qualquer evolução paralela no Hive UI ou TenantOS até segunda ordem. Apenas correções de segurança ou bloqueios críticos são permitidos fora do escopo do HIVE-029.
+
 ---
 *Assinado: Diretor do Projeto*
 
-## 🚨 CONGELAMENTO ESTRATÉGICO (FREEZE-2026-05-31)
-- **STATUS:** ATIVO.
-- **FOCO ÚNICO:** Implementação do Balcão Central (DEBATE-037).
-- **RESTRIÇÃO:** Proibida qualquer evolução paralela no Hive UI ou TenantOS até segunda ordem. Apenas correções de segurança ou bloqueios críticos são permitidos fora do escopo do DEBATE-037.
+
 

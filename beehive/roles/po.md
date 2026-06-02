@@ -1,21 +1,23 @@
 ---
-titulo: Contexto de Product Owner (Genérico)
-tipo: contexto/operacional
+titulo: Papel PO (Índice)
+tipo: contexto/referencia
 status: ativo
-ultima_revisao: 2026-05-31
+ultima_revisao: 2026-06-01
 responsavel: Staff Engineer (Gemini)
 ---
 
-# 🎯 Contexto: Product Owner (PO)
+# 🎯 Papel: PO (Índice)
 
-Este é o papel genérico de Product Owner. Para contextos específicos, utilize:
-- `po-hive`: Foco na evolução da Fábrica Hive.
-- `po-produto`: Foco no desenvolvimento do TenantOS.
+**Não inicie sessão como `po` genérico.** O papel de PO é sempre especializado.
 
-## 1. Atribuições
-- Definição de prioridades no BACKLOG.
-- Validação de critérios de aceite.
-- Decisões de ROI (Retorno sobre Investimento).
+Use o papel correto conforme o domínio da sessão:
+
+| Papel | Arquivo | Domínio |
+|---|---|---|
+| `po-hive` | `po-hive.md` | Evolução da fábrica (squad, orquestração, governança) |
+| `po-produto` | `po-produto.md` | Produtos finais (TenantOS + produtos futuros) |
+
+O papel é da sessão, não do agente (DIR-094). Trocar de papel = abrir nova sessão.
 
 ---
 *Assinado: Staff Engineer (Gemini)*

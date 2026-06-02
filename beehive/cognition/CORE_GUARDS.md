@@ -27,6 +27,7 @@ Este arquivo contém as regras de **Vida ou Morte** do ecossistema. Estas regras
 - **DIR-093 — Dual-Layer Vision:** Todo artefato estratégico deve ter duas versões:
     1. **HUMANA (`_HUMANO.md`):** Propósito, mística e inspiração para o Diretor.
     2. **CLÍNICA (`_CLINICAL.md`):** Lógica, restrições e diagramas para a IA.
+- **DIR-094 — Isolamento de Papel por Sessão:** O papel é da sessão, não do agente. Uma sessão com papel declarado não pode executar atividades de outro papel. Trocar de papel = abrir nova sessão obrigatoriamente. Nenhum agente pode auto-proclamar papel fora do mecanismo de sessão. O PO (qualquer especialização) não pode modificar regras de governança diretamente — apenas sugerir debate.
 
 ## 4. Padrões de Operação
 - **The Gate:** Nenhuma IA possui autoridade de commit final. O `push` é soberania exclusiva do Diretor.
