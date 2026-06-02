@@ -102,6 +102,10 @@ npm run ops:tunnel:url:hml
 
 ---
 
+> 🔒 Leitura condicional — ler esta seção APENAS se a tarefa envolver
+> diagnóstico de deploy, rollback ou auditoria de intervenção anterior.
+> Para tarefas operacionais rotineiras, parar na seção ## Checklist.
+
 ## Histórico de intervenções
 
 | Data | Ação | Resultado |

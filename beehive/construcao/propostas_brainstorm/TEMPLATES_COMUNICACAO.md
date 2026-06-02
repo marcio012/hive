@@ -1,4 +1,6 @@
-# Templates de Comunicação — Squad Lead (Gemini)
+> **DEPRECIADO** — não ler, não referenciar. Conteúdo supersedido pelas diretrizes ativas em `beehive/cognition/diretrizes/`. Mantido apenas para histórico. Data: 2026-05-31.
+
+# Templates de Comunicação — Squad Lead
 
 Para garantir que a comunicação seja rápida e objetiva, toda escalada ou barreira imposta aos outros agentes deve seguir este formato.
 

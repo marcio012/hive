@@ -24,6 +24,9 @@ ops/environments/**/*-ref.txt
 apps/backend/prisma/dev.db
 apps/backend/prisma/dev.db-journal
 
+# Arquivos depreciados — não ler, não referenciar
+beehive/construcao/propostas_brainstorm/TEMPLATES_COMUNICACAO.md
+
 # Temporários e backups
 .tmp/
 .agile-squad/session-state.env.bak.*
