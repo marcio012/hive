@@ -206,6 +206,10 @@ assert_success run_session_end gemini
 assert_failure_contains "Papéis disponíveis:" run_session_start gemini --role inexistente
 
 assert_success run_session_start claude
+assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_AGENT="claude"'
+assert_success run_session_end claude
+assert_file_not_exists "$ROLE_CONTEXT_FILE"
+
 assert_success run_session_start copilot
 assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_AGENT="copilot"'
 assert_file_contains "$TEST_REPO/.hive-agent/session-state.env" 'ACTIVE_PROJECT="workspace"'

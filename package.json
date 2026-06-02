@@ -37,6 +37,7 @@
     "squad:session:copilot": "bash .agile-squad/proxy.sh hive:session:copilot",
     "squad:session:copilot:hive": "bash .agile-squad/proxy.sh hive:session:copilot:hive",
     "squad:session:end:gemini": "bash .agile-squad/proxy.sh hive:session:end:gemini",
+    "squad:session:end:claude": "bash .agile-squad/proxy.sh hive:session:end:claude",
 
     "// --- 🛠️ FÁBRICA: INFRAESTRUTURA E GOVERNANÇA (HIVE OS) ---": "",
     "squad:bridge": "bash .agile-squad/proxy.sh squad:bridge",

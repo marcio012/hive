@@ -30,6 +30,10 @@ case "$AGENT_NAME" in
       echo "Nenhuma sessão Gemini ativa para encerrar."
     fi
     ;;
+  claude)
+    rm -f "$ROLE_CONTEXT_FILE"
+    echo "Sessão Claude encerrada."
+    ;;
   *)
     echo "Sessão '$AGENT_NAME' não exige encerramento explícito."
     ;;

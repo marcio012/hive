@@ -21,6 +21,7 @@
     "hive:session:copilot:hive": "npm run hive -- session-start copilot --role copilot-hive",
     "hive:session:copilot:tos": "npm run hive -- session-start copilot --role copilot-tos",
     "hive:session:end:gemini": "npm run hive -- session-end gemini",
+    "hive:session:end:claude": "npm run hive -- session-end claude",
     "hive:session:state": "npm run hive -- session-update",
     "gemini:po:hive": "npm run hive -- session-start gemini --role po-hive",
     "gemini:po:produto": "npm run hive -- session-start gemini --role po-produto",
