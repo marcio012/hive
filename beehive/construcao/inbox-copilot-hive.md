@@ -17,6 +17,18 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [CLAUDE-2026-06-01-056] WO-056 — Relatório de Custo por Papel Dinâmico
+**De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
+**Data:** 2026-06-01
+**tipo:** handoff-wo
+**Status:** pendente
+**thread:** hive-029-custo-papeis
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-056-HIVE-029-CUSTO-PAPEIS-DINAMICOS.md
+
+**Resumo:** Criar `beehive/registry/reports/CUSTO_PAPEIS_DINAMICOS.md` — relatório humano-legível com custo de boot por papel do catálogo dinâmico. Todos os dados já estão na WO. Seguir padrão do CUSTO_BOOT_AGENTES.md. Atenção: acentuação correta.
+
+---
+
 ### [CLAUDE-2026-06-01-055] WO-055 — Injeção de Papel via Script de Sessão
 **De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
 **Data:** 2026-06-01
