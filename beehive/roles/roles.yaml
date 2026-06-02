@@ -1,18 +1,21 @@
 # beehive/roles/roles.yaml
-# Governança Global do Hive Framework — Revisado 2026-05-26
+# Governança Global do Hive Framework — Revisado 2026-06-01
 #
-# Os 4 atores do squad:
-#   Márcio        → Owner. Aprova tudo via The Gate. Único com autoridade de commit.
-#   Gemini (Lead) → Facilitador Estratégico. Opera em 3 modos: PO, Projetista, Coordenador.
-#                   NUNCA audita código nem revisa spec técnica — isso é Claude.
-#   Claude        → Arquiteto + Auditor Técnico. Filtro entre intenção e execução.
-#                   Revisa código que o Copilot escreveu (não há conflito de interesse).
-#   Copilot       → Engenheiro / Executor. Implementa contratos fechados. Não decide design.
+# Modelo de papéis dinâmicos (DIR-094):
+#   - Papéis não são fixos por agente — qualquer agente pode assumir qualquer papel
+#   - Papel é da SESSÃO, não do agente
+#   - Papel é injetado pelo script de sessão (--role <nome>), nunca auto-carregado
+#   - Sem instrução de papel: Gemini inicia neutro; Claude inicia como Arquiteto (soberano por default)
+#   - Troca de papel = nova sessão — decisão exclusiva de Márcio
 #
-# Regra anti-chapéu-duplo:
-#   Gemini NÃO audita o que Gemini projetou.
-#   Claude audita o que Copilot implementou.
-#   Nenhum agente revisa o próprio trabalho.
+# Papéis padrão (quando nenhum --role é especificado):
+#   Márcio  → Owner / The Gate (imutável)
+#   Claude  → Arquiteto + Auditor (soberano quando sem instrução contrária)
+#   Copilot → Engenheiro / Executor
+#   Gemini  → Neutro (aguarda --role de Márcio)
+#
+# Regra anti-autocrítica:
+#   Nenhum agente revisa o próprio trabalho — independente do papel da sessão.
 
 hive:
   name: "Hive Framework"
@@ -30,23 +33,13 @@ agents:
       can_veto: true
 
   gemini:
-    role: "Facilitador Estratégico / Squad Lead"
-    description: "Facilita o pensamento do Márcio. Opera em 3 modos de conversa: PO (valor), Projetista (design), Coordenador (planning). NÃO audita código nem spec — essa função pertence ao Claude."
+    role: "Neutro por padrão — papel atribuído por Márcio via --role"
+    description: "Inicia sem papel pré-carregado. Márcio define o papel da sessão via script. Sem instrução: assistente neutro do projeto."
     capabilities:
-      can_orchestrate: true
-      can_facilitate_design: true       # Ajuda a modelar soluções junto com Márcio
-      can_prioritize_backlog: true
-      can_audit_code: false             # EXPLÍCITO: Gemini não faz code review
-      can_audit_specs: false            # EXPLÍCITO: Gemini não audita specs do Projetista
+      can_audit_code: false             # EXPLÍCITO: não faz code review sem papel de auditor
     models:
-      # Valores de referência — versões reais dependem da API disponível no momento
-      complex: "gemini-1.5-pro"         # Orquestração, estratégia, planejamento
-      routine: "gemini-1.5-flash"       # Triagem, automação, documentação derivada
-    cartuchos:
-      - po-hive      # beehive/roles/po-hive.md — foco: governança da fábrica
-      - po-produto   # beehive/roles/po-produto.md — foco: valor do produto
-      - projetista   # beehive/roles/projetista.md — foco: design e modelagem
-      - coordenador  # beehive/roles/coordenador.md — foco: planejamento e orquestração
+      complex: "gemini-1.5-pro"
+      routine: "gemini-1.5-flash"
 
   claude:
     role: "Arquiteto + Auditor Técnico + Staff Dev"
@@ -75,16 +68,30 @@ agents:
       can_write_product_code: true
       can_read_task_context: true   # Lê apenas o que o contrato e o inbox especificam
       can_audit_code: false         # Não auto-revisa nem revisa trabalho de outros agentes
-    cartuchos:
-      - copilot-hive
-      - copilot-tos
+    papel_padrao: engenheiro
     escalation_path: "Claude"       # Dúvida técnica → Claude. Dúvida de negócio → Gemini/Márcio
     inbox: "beehive/construcao/inbox-copilot.md"
     reference: "beehive/roles/copilot.md"
 
+catalogo_papeis:
+  # Papéis disponíveis para qualquer agente — injetados via --role
+  # Arquivos em beehive/roles/<papel>.md
+  arquiteto:    { foco: "especificação, debates, riscos, blueprints" }
+  auditor:      { foco: "code review formal, parecer Aprovado/Vetado/Ressalvas" }
+  engenheiro:   { foco: "implementação de contratos fechados" }
+  dev:          { foco: "implementação genérica, qualquer stack" }
+  qa:           { foco: "testes, cobertura, casos de borda, regressão" }
+  code-review:  { foco: "revisão de código — qualidade, segurança, arquitetura" }
+  conselheiro:  { foco: "opinião e validação, sem implementar" }
+  documentador: { foco: "documentação técnica, de processo e de produto" }
+  po-hive:      { foco: "PO da fábrica — prioridade, ROI, governança do squad" }
+  po-produto:   { foco: "PO dos produtos — valor de usuário, portfólio" }
+
 rules:
-  context_caching: true           # Ativa economia via cache nas APIs que suportam
-  enforce_contracts: true         # Claude DEVE barrar se spec fugir do que foi aprovado
-  gate_required: true             # Nenhum commit sem OK explícito do Márcio
-  no_self_review: true            # Nenhum agente revisa o próprio trabalho
+  context_caching: true
+  enforce_contracts: true
+  gate_required: true
+  no_self_review: true            # Nenhum agente revisa o próprio trabalho — independente do papel
+  role_per_session: true          # DIR-094: papel é da sessão, não do agente
+  role_injection: "hive-session-start.sh --role <nome>"
   telemetry_log: "beehive/registry/telemetria/custos.log"

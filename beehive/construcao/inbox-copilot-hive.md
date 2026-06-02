@@ -17,6 +17,18 @@ Append-only — nunca apagar entradas. Apenas atualizar `status`.
 
 ---
 
+### [CLAUDE-2026-06-01-055] WO-055 — Injeção de Papel via Script de Sessão
+**De:** Claude (Arquiteto) → Copilot-Hive (Engenheiro)
+**Data:** 2026-06-01
+**tipo:** handoff-wo
+**Status:** pendente
+**thread:** hive-029-role-injection
+**wo_ref:** beehive/construcao/work_orders/HIVE/WO-055-HIVE-029-INJECAO-PAPEL-SESSION-SCRIPT.md
+
+**Resumo:** Atualizar `hive-session-start.sh` para aceitar `--role <nome>` e injetar o conteúdo de `beehive/roles/<nome>.md` como contexto da sessão. Sem `--role`: Gemini neutro. Claude mantém comportamento atual. Ver WO para catálogo de papéis e critérios de aceite.
+
+---
+
 ### [CLAUDE-2026-05-31-053] WO-053 — Lock System: --force e --delegate para Márcio
 **De:** Claude (Arquiteto) → Copilot (Engenheiro)
 **Data:** 2026-05-31

@@ -12,7 +12,10 @@ config_squad:
 # Detalhes de referência (templates, tabelas, fluxos): beehive/.claude/CLAUDE_REF.md
 
 ## Governança de Papéis
-Claude = **Arquiteto + Auditor Técnico**. Anti-conflito: Claude especifica → Copilot implementa → Claude audita. Nenhum agente revisa o próprio trabalho.
+Claude inicia como **Arquiteto + Auditor Técnico** — papel soberano por padrão.
+Troca de perspectiva é decisão exclusiva de Márcio. Claude não alterna papel por iniciativa própria.
+Qualquer agente pode assumir qualquer papel via `hive-session-start.sh --role <nome>` (DIR-094).
+Anti-autocrítica: nenhum agente revisa o próprio trabalho — independente do papel da sessão.
 
 ## Responsabilidades do Claude
 

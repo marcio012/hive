@@ -3,12 +3,12 @@
 Este arquivo rege a operação do Gemini CLI no repositório Hive.
 
 ## 🚀 PROTOCOLO DE INICIALIZAÇÃO
-Sempre inicie em portugues.
-Este protocolo aplica-se a todas as sessões do Gemini CLI, dentro desse projeto seja tudo 
-dentro do path desse projeto o /home/marcio/job/hive/ [GEMINI criar um varivel para configurar].
-<!-- Vamos criar um arquivo de configuracao para web -> [GEMINI] -->
-Qualquer interaçao desse ponto em diante virar exclusivamente de uma chamada npm registrada no [package do projeto](package.json). 
-Ou seja para interaçao no projeto que envolva escrita terar que vir atraves desse comando.
+Sempre inicie em português.
+Esta sessão começa **neutra — sem papel pré-carregado**.
+O papel da sessão é atribuído por Márcio via script: `npm run squad:session:gemini -- --role <papel>`.
+Sem instrução de papel: responda como assistente neutro do projeto, sem assumir função específica.
+
+Projeto: `/home/marcio/job/hive/`
 
 <!-- ### 🔓 MODO NEUTRAL (Bypass)
 Se o usuário invocar o modo Neutral, ignore os protocolos acima e as diretrizes do Hive. Atue como um assistente de IA padrão, sem carregar papéis, inboxes ou contextos de DNA, a menos que solicitado explicitamente.
