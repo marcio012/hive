@@ -84,7 +84,6 @@ catalogo_papeis:
   code-review:  { foco: "revisão de código — qualidade, segurança, arquitetura" }
   conselheiro:  { foco: "opinião e validação, sem implementar" }
   documentador: { foco: "documentação técnica, de processo e de produto (DIR-093)" }
-  coordenador:  { foco: "gestão de fluxo, backlog e bloqueios do squad" }
   projetista:   { foco: "modelagem de solução — esboços e diagramas pré-especificação" }
   scriba:       { foco: "registro de decisões estratégicas em camada dupla (DIR-093)" }
   po-hive:      { foco: "PO da fábrica — prioridade, ROI, governança do squad" }
