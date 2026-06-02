@@ -77,13 +77,16 @@ catalogo_papeis:
   # Papéis disponíveis para qualquer agente — injetados via --role
   # Arquivos em beehive/roles/<papel>.md
   arquiteto:    { foco: "especificação, debates, riscos, blueprints" }
-  auditor:      { foco: "code review formal, parecer Aprovado/Vetado/Ressalvas" }
-  engenheiro:   { foco: "implementação de contratos fechados" }
+  auditor:      { foco: "auditoria formal — veredito Aprovado/Vetado/Ressalvas" }
+  engenheiro:   { foco: "implementação de contratos fechados com qualidade" }
   dev:          { foco: "implementação genérica, qualquer stack" }
   qa:           { foco: "testes, cobertura, casos de borda, regressão" }
   code-review:  { foco: "revisão de código — qualidade, segurança, arquitetura" }
   conselheiro:  { foco: "opinião e validação, sem implementar" }
-  documentador: { foco: "documentação técnica, de processo e de produto" }
+  documentador: { foco: "documentação técnica, de processo e de produto (DIR-093)" }
+  coordenador:  { foco: "gestão de fluxo, backlog e bloqueios do squad" }
+  projetista:   { foco: "modelagem de solução — esboços e diagramas pré-especificação" }
+  scriba:       { foco: "registro de decisões estratégicas em camada dupla (DIR-093)" }
   po-hive:      { foco: "PO da fábrica — prioridade, ROI, governança do squad" }
   po-produto:   { foco: "PO dos produtos — valor de usuário, portfólio" }
 
